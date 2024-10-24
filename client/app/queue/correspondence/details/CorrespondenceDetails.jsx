@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { updateCorrespondenceInfo,
+  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -30,6 +31,7 @@ const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
+  const expandedLinkedAppeals = props.expandedLinkedAppeals;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
@@ -351,6 +353,10 @@ const CorrespondenceDetails = (props) => {
     corAppeals.push(selectedAppeal);
     cor.correspondenceAppeals = corAppeals;
     dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
   };
 
   const unlinkLinkedAppeal = (appealId) => {
@@ -360,6 +366,12 @@ const CorrespondenceDetails = (props) => {
 
     cor.correspondenceAppeals = corAppeals;
     dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    if (expandedLinkedAppeals.find((linkedAppealUuid) => linkedAppealUuid === selectedAppealUuid)) {
+      dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
+    }
   };
 
   const allCorrespondencesList = () => {
@@ -444,8 +456,8 @@ const CorrespondenceDetails = (props) => {
       corAppeal?.taskAddedData?.data.map((taskData) => {
         corAppealTasks.push(taskData);
       });
-
     });
+
     // // load appeal tasks into the store
     const preparedTasks = prepareTasksForStore(corAppealTasks);
 
@@ -960,6 +972,7 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
+  expandedLinkedAppeals: PropTypes.array,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
@@ -975,13 +988,15 @@ CorrespondenceDetails.propTypes = {
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     updateCorrespondenceInfo,
-    deleteAppeal
+    deleteAppeal,
+    updateExpandedLinkedAppeals
   }, dispatch)
 );
 

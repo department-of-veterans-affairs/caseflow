@@ -325,15 +325,14 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
   });
 };
 
-export const updateCorrespondenceInfo = (correspondence) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.CORRESPONDENCE_INFO,
-      payload: {
-        correspondence
-      }
-    });
-  };
+export const updateCorrespondenceInfo = (correspondence) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_INFO,
+    payload: {
+      correspondence
+    }
+  });
+};
 
 export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch) => {
   return ApiUtil.patch(`/queue/correspondence/${uuid}/edit_general_information`, payload).
@@ -355,4 +354,27 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
 
       console.error(errorMessage);
     });
+};
+
+export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dispatch) => {
+  if (expandedLinkedAppeals.find((id) => id === uuid)) {
+    const filteredList = expandedLinkedAppeals.filter((id) => id !== uuid);
+
+    dispatch({
+      type: ACTIONS.EXPANDED_LINKED_APPEALS,
+      payload: {
+        expandedLinkedAppeals: filteredList
+      }
+    });
+
+  } else {
+    expandedLinkedAppeals.push(uuid);
+
+    dispatch({
+      type: ACTIONS.EXPANDED_LINKED_APPEALS,
+      payload: {
+        expandedLinkedAppeals
+      }
+    });
+  }
 };

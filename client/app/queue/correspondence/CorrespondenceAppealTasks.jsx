@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
-import { useSelector, connect } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
 import Alert from '../../components/Alert';
 import {
-  setWaiveEvidenceAlertBanner
+  setWaiveEvidenceAlertBanner,
+  updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
     waiveEvidenceAlertBanner,
+    expandedLinkedAppeals
   } = { ...props };
 
+  const dispatch = useDispatch();
   const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appeal.external_id;
   const appeal = useSelector((state) =>
@@ -26,13 +29,13 @@ const CorrespondenceAppealTasks = (props) => {
   const tasks = useSelector((state) =>
     taskSnapshotTasksForAppeal(state, { appealId })
   );
-  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState({});
 
-  const toggleLinkedAppealSection = (appealId) => {
-    setIsLinkedAppealExpanded((prev) => ({
-      ...prev,
-      [appealId]: !prev[appealId],
-    }));
+  const isLinkedAppealExpanded = props.expandedLinkedAppeals.some((id) => id === appealId);
+
+  const toggleLinkedAppealSection = () => {
+
+    dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, appealId));
+
   };
 
   useEffect(() => {
@@ -40,10 +43,9 @@ const CorrespondenceAppealTasks = (props) => {
       waiveEvidenceAlertBanner?.message &&
       waiveEvidenceAlertBanner?.appealId?.toString() === appeal?.id?.toString()
     ) {
-      setIsLinkedAppealExpanded((prev) => ({
-        ...prev,
-        [appeal.id]: true,
-      }));
+
+      dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, appealId));
+
     }
   }, [waiveEvidenceAlertBanner, appeal]);
 
@@ -69,16 +71,16 @@ const CorrespondenceAppealTasks = (props) => {
         </div>
         <div className="toggleButton-plus-or-minus">
           <Button
-            onClick={() => toggleLinkedAppealSection(appeal?.id)}
+            onClick={() => toggleLinkedAppealSection()}
             linkStyling
             aria-label="Toggle section"
-            aria-expanded={isLinkedAppealExpanded[appeal?.id] || false}
+            aria-expanded={isLinkedAppealExpanded}
           >
-            {isLinkedAppealExpanded[appeal?.id] ? '_' : <span className="plus-symbol">+</span>}
+            {isLinkedAppealExpanded ? '_' : <span className="plus-symbol">+</span>}
           </Button>
         </div>
       </div>
-      {isLinkedAppealExpanded[appeal?.id] && (
+      {isLinkedAppealExpanded && (
         <div className="tasks-added-container">
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
@@ -166,16 +168,21 @@ CorrespondenceAppealTasks.propTypes = {
   userCssId: PropTypes.string,
   appeal: PropTypes.object,
   waivableUser: PropTypes.bool,
-  setWaiveEvidenceAlertBanner: PropTypes.func
+  correspondenceInfo: PropTypes.object,
+  setWaiveEvidenceAlertBanner: PropTypes.func,
+  expandedLinkedAppeals: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   waiveEvidenceAlertBanner: state.correspondenceDetails.waiveEvidenceAlertBanner,
+  expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setWaiveEvidenceAlertBanner,
+    updateExpandedLinkedAppeals
   }, dispatch)
 );
 
