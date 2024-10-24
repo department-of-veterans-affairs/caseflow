@@ -137,7 +137,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.nonrating_issue_description).to eq(nil)
         expect(new_request_issue.decision_date).to be_a(Date)
-        # expect(new_request_issue.rating_issue_associated_at).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.is_unidentified).to eq(true)
         expect(new_request_issue.nonrating_issue_bgs_id).to eq("some_bgs_id")
