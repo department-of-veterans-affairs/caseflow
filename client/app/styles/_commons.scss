@@ -734,7 +734,7 @@ form {
 }
 
 .cf-file-input-container {
-  border: 1px dashed #adadad;
+  border: 1px dashed $color-gray-dark;
   display: block;
   margin-top: .5rem;
   margin-bottom: 2rem;
@@ -745,8 +745,8 @@ form {
 }
 
 .cf-file-input-container-selected {
-  border: 1px dashed #adadad;
-  background-color: lightcyan;
+  border: 1px dashed $color-gray-dark;
+  background-color: $color-teal-lightest;
   display: flex;
   position: relative;
   text-align: center;
@@ -757,7 +757,7 @@ form {
 
 .cf-file-container-selected-container {
   background: none;
-  border: 2px solid gold;
+  border: 2px solid $color-gold;
   padding: 2px;
   margin-top: 5px;
   margin-bottom: 10px;
