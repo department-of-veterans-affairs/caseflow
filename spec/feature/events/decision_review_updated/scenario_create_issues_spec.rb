@@ -10,14 +10,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:review) { epe.source }
     let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
 
-    def logical_date_converter(logical_date_int)
-      return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
-
-      base_date = Date.new(1970, 1, 1)
-      converted_date = base_date + logical_date_int.to_i.days
-      converted_date
-    end
-
     def json_test_payload
       {
         "event_id": 214_786,
