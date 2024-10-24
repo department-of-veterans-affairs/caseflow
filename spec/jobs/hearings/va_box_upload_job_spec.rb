@@ -16,7 +16,6 @@ RSpec.describe Hearings::VaBoxUploadJob, type: :job do
     }
   end
   let(:box_folder_id) { "255974435715" }
-  let(:hearing) { { hearing_id: 1, hearing_type: "LegacyHearing" } }
   let(:transcription_package) do
     instance_double(TranscriptionPackage, aws_link_zip: "s3://bucket/file.zip", contractor_id: 123, id: 1)
   end

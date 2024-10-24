@@ -110,6 +110,7 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
+import ErrorsFoundAndCorrectedModal from './components/ErrorsFoundAndCorrectedModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -682,6 +683,14 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
+  );
+
+  routedErrorsFoundAndCorrectedModal = (props) => (
+    <ErrorsFoundAndCorrectedModal
+      modalType="errors_found_and_corrected"
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
 
   queueName = () =>
@@ -1380,6 +1389,13 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Return to SCT | Caseflow"
               render={this.routedReturnToSctModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED.value
+                }`}
+              title="Transcript Errors found and Corrected | Caseflow"
+              render={this.routedErrorsFoundAndCorrectedModal}
             />
             <PageRoute
               exact
