@@ -849,7 +849,7 @@ const CorrespondenceDetails = (props) => {
             />
           </div>
       }
-      <AppSegment filledBackground extraClassNames="app-segment-cd-details">
+      <AppSegment filledBackground extraClassNames="app-segment-cd-details correspondence-details-page">
         <div className="correspondence-details-header">
           <h1> {correspondence?.veteranFullName} </h1>
           <div className="copy-id">

@@ -1790,3 +1790,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 0;
 }
 
+.correspondence-details-page {
+  .cf-modal-body {
+    .cf-modal-controls {
+      .cf-btn-link {
+        padding-left: 0;
+      }
+    }
+  }
+}
