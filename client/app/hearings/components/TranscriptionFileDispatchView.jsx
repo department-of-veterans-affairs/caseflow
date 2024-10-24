@@ -140,9 +140,11 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
 
   const handleSearchBarSubmit = () => {
     // use saved search input value and update URL params and pass search to children
+    // making sure to reset page to 1 as well to avoid weird page states
 
     const currentParams = new URLSearchParams(window.location.search);
 
+    currentParams.set('page', 1);
     currentParams.set('search', searchInput);
     const qs = currentParams.toString();
 
