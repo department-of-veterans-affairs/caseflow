@@ -1989,6 +1989,7 @@ ActiveRecord::Schema.define(version: 2024_10_08_145121) do
     t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
     t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
   end
+  
 
   create_table "transcription_files", force: :cascade do |t|
     t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
