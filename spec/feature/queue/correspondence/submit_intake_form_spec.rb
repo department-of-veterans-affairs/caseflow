@@ -295,7 +295,7 @@ RSpec.feature("Correspondence Intake submission") do
       end
     end
 
-    before(:all) do
+    before do
       # Need to add user to BvaDispatch - new BvaDispatch tasks are automatically assigned to users
       BvaDispatch.singleton.add_user(create(:user))
 
@@ -336,22 +336,18 @@ RSpec.feature("Correspondence Intake submission") do
       end
     end
 
-    it "creates and associates each task related to an inactive appeal" do
+    it "tasks are created and assigned to proper organization without changing appeal root task" do
       created_task_strings = created_tasks.map { |task| task.class.to_s }
       klasses = inactive_appeal_tasks.map { |json_obj| json_obj["value"]["klass"] }
       expect(klasses).to eq(created_task_strings)
-    end
 
-    it "assigns each created task to the proper organization" do
       created_tasks.each do |task|
         org_klass_string = Organization.find(task.assigned_to_id).class.to_s
         expect(task.assigned?).to eq(true)
         expect(task.assigned_to_type).to eq("Organization")
         expect(organization_assignments[org_klass_string]).to include(task.class.to_s)
       end
-    end
 
-    it "does not change the status of appeal root tasks - appeals remain inactive" do
       appeals = Correspondence.first.appeals
       appeals.each { |appeal| expect(appeal.active?).to eq(false) }
     end
