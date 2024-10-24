@@ -131,6 +131,7 @@ const DocumentViewer = (props) => {
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
+              onrequestCancel={() => props.history.push(props.documentPathBase)}
             />
           </div>
           <ReaderFooter
