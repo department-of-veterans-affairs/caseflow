@@ -48,7 +48,7 @@ module Seeds
             transcriptions = Transcription.where(task_number: task_number)
             if transcriptions
               transcriptions.each do |transcription|
-                TranscriptionFile.where(transcription_id: transcription.id).delete_all
+                Hearings::TranscriptionFile.where(transcription_id: transcription.id).delete_all
               end
               transcriptions.delete_all
             end
@@ -62,7 +62,7 @@ module Seeds
             # Debugging information
             puts "Creating TranscriptionFile with hearing: #{hearing.inspect}, file: #{file.inspect}"
 
-            TranscriptionFile.find_or_create_by(
+            Hearings::TranscriptionFile.find_or_create_by(
               hearing: hearing,
               file_name: file[:fileName],
               file_status: file[:fileStatus],
