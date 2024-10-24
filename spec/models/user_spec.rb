@@ -21,8 +21,6 @@ describe User, :all_dbs do
     let!(:user) { create(:user, css_id: "NEWUSER") }
 
     it "returns true unless user.last_login_at is false" do
-      byebug
-
       expect(User.first_time_logging_in?(session)).to eq true
     end
   end
