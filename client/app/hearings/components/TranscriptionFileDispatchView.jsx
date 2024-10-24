@@ -47,7 +47,22 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
 
     return page;
   };
+
   const [currentTab] = useState(tabFromUrl());
+
+  const searchFromUrl = () => {
+    let search = '';
+    const params = getQueryParams(window.location.search);
+
+    if (params.search) {
+      search = params.search;
+    }
+
+    return search;
+  };
+
+  const [searchValue, setSearchValue] = useState(searchFromUrl());
+  const [searchInput, setSearchInput] = useState('');
 
   /**
    * Fetches available contractors
@@ -108,12 +123,32 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
   };
 
   const onTabChange = () => {
-    // reset pagenation and filtering settings when tab changes
+    // reset pagenation, filtering and search settings when tab changes
     const base = `${window.location.origin}${window.location.pathname}`;
     const params = getQueryParams(window.location.search);
     const qs = encodeQueryParams({ tab: params.tab, page: 1 });
 
+    setSearchValue('');
+
     history.pushState('', '', `${base}${qs}`);
+  };
+
+  const handleSearchBarChange = (input) => {
+    // save value for use on search submit
+    setSearchInput(input);
+  };
+
+  const handleSearchBarSubmit = () => {
+    // use saved search input value and update URL params and pass search to children
+
+    const currentParams = new URLSearchParams(window.location.search);
+
+    currentParams.set('search', searchInput);
+    const qs = currentParams.toString();
+
+    history.replaceState('', '', `?${qs}`);
+
+    setSearchValue(searchInput);
   };
 
   useEffect(() => {
@@ -140,7 +175,16 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
           defaultPage={currentTab}
           fullPage={false}
           onChange={onTabChange}
-          tabs={tabConfig(openModal, selectFilesForPackage, selectedFiles.length)}
+          tabs={tabConfig(
+            openModal,
+            selectFilesForPackage,
+            selectedFiles.length,
+            {
+              value: searchValue,
+              onChange: handleSearchBarChange,
+              onSubmit: handleSearchBarSubmit
+            }
+          )}
         />
         { modalConfig.opened && renderModal(modalConfig)}
       </AppSegment>
