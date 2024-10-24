@@ -20,6 +20,7 @@ const PdfDocument = ({
   rotateDeg,
   setIsDocumentLoadError,
   setNumPages,
+  onrequestCancel,
   zoomLevel }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -28,6 +29,7 @@ const PdfDocument = ({
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
+  const requestRef = useRef(null);
 
   const containerStyle = {
     width: '100%',
@@ -97,6 +99,15 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
+  const handleCancelRequest = () => {
+    if (requestRef.current) {
+      // Abort the download
+      requestRef.current.abort();
+      // Redirect
+      onrequestCancel();
+    }
+  };
+
   useEffect(() => {
     const getDocData = async () => {
       pdfMetrics.current.renderedPageCount = 0;
@@ -110,10 +121,25 @@ const PdfDocument = ({
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        onProgress: ({ loaded }) => {
+          let percentage = 0;
+
+          if (doc.file_size > 0) {
+            percentage = (loaded / doc.file_size) * 100;
+          }
+
+          console.log(`### Downloaded ${percentage.toFixed(0)}%\n`);
+
+        },
+        cancellableRequest: ({ request }) => {
+          requestRef.current = request;
+        }
       };
 
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
+        requestRef.current = null;
+
         return response.body;
       });
 
@@ -202,12 +228,14 @@ PdfDocument.propTypes = {
     filename: PropTypes.string,
     id: PropTypes.number,
     type: PropTypes.string,
+    file_size: PropTypes.number,
   }),
   isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  onrequestCancel: PropTypes.func,
 };
 
 export default PdfDocument;
