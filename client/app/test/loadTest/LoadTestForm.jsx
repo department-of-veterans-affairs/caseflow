@@ -45,6 +45,7 @@ export default function LoadTestForm(props) {
         }
       }
     });
+
     ApiUtil.post('/test/load_tests/run_load_tests', payload);
 
   };
