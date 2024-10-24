@@ -746,6 +746,7 @@ describe HearingRequestDocket, :postgres do
       end
 
       before do
+        Timecop.freeze(Time.zone.now)
         FeatureToggle.enable!(:specialty_case_team_distribution)
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "21")
@@ -753,6 +754,10 @@ describe HearingRequestDocket, :postgres do
         CaseDistributionLever
           .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
           .update!(value: "15")
+      end
+
+      after do
+        Timecop.return
       end
 
       context "for priority appeals" do
@@ -1063,7 +1068,8 @@ describe HearingRequestDocket, :postgres do
                     :ready_for_distribution,
                     :denied_advance_on_docket,
                     :with_vha_issue,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
+                    docket_type: Constants.AMA_DOCKETS.hearing,
+                    receipt_date: 3.days.ago)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
   end
