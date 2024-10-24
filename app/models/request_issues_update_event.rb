@@ -332,6 +332,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+  private
   # Legacy issue checks
   def vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
