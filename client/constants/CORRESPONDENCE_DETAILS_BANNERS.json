@@ -29,6 +29,12 @@
     "type": "error"
   },
 
+  "completeTaskNotRelatedBanner": {
+    "title": "Success",
+    "message": "You have successfully created an %s task.",
+    "type": "success"
+  },
+
   "evidenceWindowBanner": {
     "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task.",
     "type": "success"
