@@ -285,6 +285,8 @@ RSpec.feature("Correspondence Intake submission") do
     let(:inactive_appeal_tasks) { tasks_json["relatedToAppealInactive"] }
     let(:inactive_appeal_tasks_count) { tasks_json["relatedToAppealInactive"].length }
     let(:max_new_tasks) { 4 }
+    let(:correspondence_appeals) { CorrespondenceAppeal.where(correspondence_id: Correspondence.first.id) }
+    let(:created_tasks) { correspondence_appeals.map(&:tasks).flatten }
 
     before do
       # Need to add user to BvaDispatch - new BvaDispatch tasks are automatically assigned to users
@@ -328,13 +330,20 @@ RSpec.feature("Correspondence Intake submission") do
     end
 
     it "creates and associates each task related to an inactive appeal" do
-      correspondence_appeals = CorrespondenceAppeal.where(correspondence_id: Correspondence.first.id)
-      created_tasks = correspondence_appeals.each_with_object([]) do |appeal, arr|
-        tasks = appeal.tasks
-        tasks.each { |task| arr << task.class.to_s }
-      end
+      created_task_strings = created_tasks.map { |task| task.class.to_s }
       klasses = inactive_appeal_tasks.map { |json_obj| json_obj["value"]["klass"] }
-      expect(klasses).to eq(created_tasks)
+      expect(klasses).to eq(created_task_strings)
+    end
+
+    it "assigns each created task to the proper organization" do
+      created_tasks.each do |task|
+        expect(task.assigned?).to eq(true)
+      end
+    end
+
+    it "does not change the status of appeal root tasks - appeals remain inactive" do
+      appeals = Correspondence.first.appeals
+      appeals.each { |appeal| expect(appeal.active?).to eq(false) }
     end
   end
 end
