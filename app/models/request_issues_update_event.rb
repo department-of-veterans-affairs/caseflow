@@ -332,6 +332,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+  private
   # Legacy issue checks
   def vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
@@ -353,14 +354,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def create_legacy_optin_backfill(request_issue, legacy_issue)
     vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
-    optin = LegacyIssueOptin.create!(
+    optin = LegacyIssueOptinCreator.create_optin(
       request_issue: request_issue,
-      original_disposition_code: vacols_issue.disposition_id,
-      original_disposition_date: vacols_issue.disposition_date,
-      legacy_issue: legacy_issue,
-      original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
-      original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
-      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
+      vacols_issue: vacols_issue,
+      legacy_issue: legacy_issue
     )
     add_event_record(optin, "A", nil)
     optin
