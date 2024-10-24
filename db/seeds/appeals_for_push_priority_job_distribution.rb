@@ -7,13 +7,16 @@ module Seeds
     def seed!
       RequestStore[:current_user] = User.system_user
 
-      instantiate_judges
-      create_direct_review_cases
-      create_evidence_submission_cases
-      create_hearing_cases
-      create_legacy_cases
-      create_aoj_legacy_cases
-      create_previous_distribtions
+      # TODO: take the transaction block out after testing
+      ApplicationRecord.multi_transaction do
+        instantiate_judges
+        create_direct_review_cases
+        create_evidence_submission_cases
+        create_hearing_cases
+        create_legacy_cases
+        create_aoj_legacy_cases
+        create_previous_distribtions
+      end
     end
 
     private
@@ -107,41 +110,41 @@ module Seeds
       create_direct_review_priority_not_genpop_cases
       create_direct_review_priority_genpop_cases
       create_direct_review_priority_not_ready_cases
-      create_direct_review_nonpriority_cases
+      create_direct_review_nonpriority_ready_cases
     end
 
     def create_evidence_submission_cases
       create_evidence_submission_priority_not_genpop_cases
       create_evidence_submission_priority_genpop_cases
       create_evidence_submission_priority_not_ready_cases
-      create_evidence_submission_nonpriority_cases
+      create_evidence_submission_nonpriority_ready_cases
     end
 
     def create_hearing_cases
       create_hearing_priority_not_genpop_cases
       create_hearing_priority_genpop_cases
       create_hearing_priority_not_ready_cases
-      create_hearing_nonpriority_cases
+      create_hearing_nonpriority_ready_cases
     end
 
     def create_legacy_cases
       create_legacy_priority_not_genpop_cases
       create_legacy_priority_genpop_cases
       create_legacy_priority_not_ready_cases
-      create_legacy_nonpriority_cases
+      create_legacy_nonpriority_ready_cases
     end
 
     def create_aoj_legacy_cases
       create_aoj_legacy_priority_not_genpop_cases
       create_aoj_legacy_priority_genpop_cases
       create_aoj_legacy_priority_not_ready_cases
-      create_aoj_legacy_nonpriority_cases
+      create_aoj_legacy_nonpriority_ready_cases
     end
 
     # these distributions will cause the associated judges to not recieve as many (or any) cases in the push job
     def create_previous_distribtions
       statistics = { batch_size: 10, info: "See related row in distribution_stats for additional stats" }
-      (1..4).times do |n|
+      4.times do |n|
         create(:distribution, :completed, :priority,
                judge: judge_many_previous_distributions, completed_at: n.weeks.ago, statistics: statistics)
       end
