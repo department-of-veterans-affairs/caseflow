@@ -172,7 +172,8 @@ class DecisionReviewsController < ApplicationController
 
   def decision_date
     return unless task.instance_of? DecisionReviewTask
-    if business_line_slug == 'vha'
+
+    if business_line_slug == "vha"
       verify_decision_date
     end
 
