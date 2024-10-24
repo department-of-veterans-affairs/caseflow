@@ -220,7 +220,7 @@ jobs:
         run: bundle exec rake spec:setup_vacols
 
       - name: Set Up Foreign Tables
-        run: psql -h postgres -U postgres -d caseflow_certification_test -a -f local/sql/create_foreign_tables_for_vacols.sql
+        run: psql -h postgres -U postgres -d caseflow_certification_test -a -f local/sql/create_foreign_tables_for_vacols_test.sql
 
       - name: "Wait for localstack"
         run: dockerize -wait tcp://localstack:4566 -timeout 30s
