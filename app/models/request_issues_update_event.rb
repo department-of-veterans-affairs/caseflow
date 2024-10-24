@@ -225,27 +225,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def find_request_issue(parser_issue)
-    request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
-
-    if request_issue.nil?
-      original_request_issue = RequestIssue.find_by(id: parser_issue.ri_original_caseflow_request_issue_id)
-
-      if original_request_issue
-        original_request_issue.update!(reference_id: parser_issue.ri_reference_id)
-        request_issue = original_request_issue
-      end
-    end
-
-    if request_issue.nil?
-      contention_issue = RequestIssue.find_by(contention_reference_id: parser_issue.ri_contention_reference_id)
-
-      if contention_issue
-        contention_issue.update!(reference_id: parser_issue.ri_reference_id)
-        request_issue = contention_issue
-      end
-    end
+  request_issue = find_by_reference_id(parser_issue) ||
+                  find_and_update_original_issue(parser_issue) ||
+                  find_and_update_contention_issue(parser_issue)
 
     if request_issue.nil?
       fail(
@@ -258,7 +241,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     request_issue
   end
   # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
@@ -335,6 +317,26 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
+
+  def find_by_reference_id(parser_issue)
+    RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
+  end
+
+  def find_and_update_original_issue(parser_issue)
+    original_issue = RequestIssue.find_by(id: parser_issue.ri_original_caseflow_request_issue_id)
+    if original_issue
+      original_issue.update!(reference_id: parser_issue.ri_reference_id)
+    end
+    original_issue
+  end
+
+  def find_and_update_contention_issue(parser_issue)
+    contention_issue = RequestIssue.find_by(contention_reference_id: parser_issue.ri_contention_reference_id)
+    if contention_issue
+      contention_issue.update!(reference_id: parser_issue.ri_reference_id)
+    end
+    contention_issue
+  end
 
   # Legacy issue checks
   def vacols_ids_exist?(request_issue)
