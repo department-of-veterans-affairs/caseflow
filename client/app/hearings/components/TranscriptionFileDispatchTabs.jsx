@@ -91,10 +91,11 @@ export const completedColumns = (columns) => {
 };
 
 export const allColumns = (columns) => {
-  const { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE,  CONTRACTOR, STATUS, WORK_ORDER } = columns;
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
 
   return { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE, CONTRACTOR, STATUS, WORK_ORDER };
 };
+
 /**
  * A mini template component for transcription settings link
  */
