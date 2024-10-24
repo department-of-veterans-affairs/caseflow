@@ -16,6 +16,7 @@ const AddTaskModalCorrespondenceDetails = ({
   task,
   displayRemoveCheck,
   removeTask,
+  setIsTasksUnrelatedSectionExpanded
 }) => {
   const dispatch = useDispatch();
 
@@ -94,6 +95,7 @@ const AddTaskModalCorrespondenceDetails = ({
           // Clear the TextAreaField and reset selection after successful submission
           setTaskContent('');
           setSelectedTaskType(null);
+          setIsTasksUnrelatedSectionExpanded(true);
 
           // Close the modal only after the patch request has succeeded
           handleClose();
@@ -181,6 +183,7 @@ AddTaskModalCorrespondenceDetails.propTypes = {
   task: PropTypes.object.isRequired,
   displayRemoveCheck: PropTypes.bool.isRequired,
   removeTask: PropTypes.func.isRequired,
+  setIsTasksUnrelatedSectionExpanded: PropTypes.func.isRequired,
 };
 
 export default AddTaskModalCorrespondenceDetails;

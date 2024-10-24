@@ -421,14 +421,6 @@ const CorrespondenceDetails = (props) => {
 
   }, []);
 
-  const isTasksUnrelatedToAppealEmpty = () => {
-    if (props.tasksUnrelatedToAppealEmpty === true) {
-      return 'Completed';
-    }
-
-    return props.correspondence.status;
-  };
-
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
@@ -538,6 +530,7 @@ const CorrespondenceDetails = (props) => {
           isOpen={isModalOpen}
           handleClose={handleCloseModal}
           correspondence={props.correspondence}
+          setIsTasksUnrelatedSectionExpanded= {setIsTasksUnrelatedSectionExpanded}
         />
       </div>
       <div className="toggleButton-plus-or-minus">
@@ -905,7 +898,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{isTasksUnrelatedToAppealEmpty()}</p>
+          <p className="last-item"><b>Record status: </b>{correspondenceInfo.status}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }
