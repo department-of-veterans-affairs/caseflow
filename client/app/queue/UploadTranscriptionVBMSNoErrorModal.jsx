@@ -68,6 +68,7 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
           <TextareaField
             name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
             onChange={(value) => this.setState({ instructions: value })}
+            placeholder= "This is the reason this is being put on hold."
             value={instructions} />
         </div>
       </div>
@@ -75,8 +76,6 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
   };
 
   render = () => {
-    const { error } = this.props;
-
     return <QueueFlowModal
       validateForm={this.validateForm}
       submit={this.submit}
@@ -86,9 +85,6 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
       submitButtonClassNames={['usa-button']}
       submitDisabled={!this.validateForm()}
     >
-      {error && <Alert title={error.title} type="error">
-        {error.detail}
-      </Alert>}
       { this.actionForm() }
     </QueueFlowModal>;
   }
