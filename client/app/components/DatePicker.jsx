@@ -154,12 +154,30 @@ class DatePicker extends React.PureComponent {
       endDate: '',
       position,
       buttons,
-      selected
+      selected,
+      first: true
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const defaultMode = props.settings?.defaultMode || '';
+    const startDate = defaultMode ? moment().subtract(7, 'days') : '';
+
+    if (state.first) {
+      console.log('getDerivedStateFromProps, first: ', state.first)
+      if (defaultMode !== '') {
+        return {
+          mode: defaultMode,
+          startDate
+        };
+      }
+    }
   }
 
   apply() {
     const { onChange } = this.props;
+
+    this.setState({ first: false });
 
     if (onChange) {
       onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
@@ -189,6 +207,16 @@ class DatePicker extends React.PureComponent {
 
   componentDidMount() {
     document.addEventListener('click', this.onGlobalClick, true);
+
+    this.setState({ first: false });
+
+    // if (this.state.first === false) {
+      // console.log('componentDidMount, first: ', this.state.first);
+    // }
+
+    // if (this.state.mode === this.props.settings.defaultMode) {
+    //   this.apply();
+    // }
   }
 
   componentWillUnmount() {
