@@ -29,7 +29,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
         transcription_files.hearing_type = 'LegacyHearing'")
       .joins("LEFT OUTER JOIN appeals ON hearings.appeal_id = appeals.id AND
         transcription_files.hearing_type = 'Hearing'")
-      .joins("LEFT OUTER JOIN legacy_appeals ON hearings.appeal_id = legacy_appeals.id AND
+      .joins("LEFT OUTER JOIN legacy_appeals ON legacy_hearings.appeal_id = legacy_appeals.id AND
         transcription_files.hearing_type = 'LegacyHearing'")
       .joins("LEFT OUTER JOIN advance_on_docket_motions AS aodm ON
         ((aodm.appeal_id = appeals.id AND aodm.appeal_type = 'Appeal') OR
@@ -40,7 +40,8 @@ class Hearings::TranscriptionFile < CaseflowRecord
       .joins("LEFT OUTER JOIN claimants ON claimants.decision_review_id = appeals.id AND
         claimants.decision_review_type = 'Appeal'")
       .joins("LEFT OUTER JOIN people ON people.participant_id = claimants.participant_id")
-      .joins("LEFT OUTER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .joins("LEFT OUTER JOIN veterans ON
+        veterans.file_number = appeals.veteran_file_number OR legacy_appeals.vbms_id ~ veterans.file_number")
       .joins("LEFT OUTER JOIN transcriptions ON transcriptions.id = transcription_files.transcription_id")
   }
 
@@ -91,11 +92,19 @@ class Hearings::TranscriptionFile < CaseflowRecord
   }
 
   scope :search, lambda { |search|
+    legacy_hearing_ids = legacy_hearing_ids_from_vacols_name(search)
+    legacy_search = ""
+    if !legacy_hearing_ids.empty?
+      legacy_search = "(transcription_files.hearing_type = 'LegacyHearing'
+        AND transcription_files.hearing_id IN (" + legacy_hearing_ids.join(",") + ")) OR"
+    end
+
     where("(docket_number LIKE :query) OR
       (LOWER(CONCAT_WS(' ', people.first_name, people.last_name)) LIKE :query) OR
       (LOWER(CONCAT_WS(' ', veterans.first_name, veterans.last_name)) LIKE :query) OR
-      (veterans.file_number LIKE :query) OR
-      (LOWER(transcriptions.task_number) LIKE :query)", query: "%#{search.downcase.strip}%")
+      (veterans.file_number LIKE :query) OR " +
+      legacy_search +
+      "(LOWER(transcriptions.task_number) LIKE :query)", query: "%#{search.downcase.strip}%")
   }
 
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
@@ -237,5 +246,29 @@ class Hearings::TranscriptionFile < CaseflowRecord
     transcription_files.each do |file|
       file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)
     end
+  end
+
+  def self.legacy_hearing_ids_from_vacols_name(query)
+    legacy_hearing_ids = []
+
+    # look in VACOLS CORRES table for veterans names that match and return the IDs
+    vacols_ids = MetricsService.record(
+      "VACOLS: Get ID values from Correspondents for transcription dispatch search",
+      name: "Hearings::TranscriptionFile"
+    ) do
+      VACOLS::Correspondent
+        .where("(LOWER(snamef) || ' ' || LOWER(snamel)) LIKE :query", query: "%#{query.downcase.strip}%")
+        .pluck(:stafkey)
+    end
+
+    # find any legacy hearings that have an appeal matching those VACOLS IDs
+    if vacols_ids.length
+      legacy_hearing_ids = LegacyHearing
+        .where("legacy_appeals.vacols_id IN ('" + vacols_ids.join("','") + "')")
+        .joins("LEFT OUTER JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
+        .pluck(:id)
+    end
+
+    legacy_hearing_ids
   end
 end
