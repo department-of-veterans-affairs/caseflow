@@ -347,9 +347,9 @@ RSpec.feature("Correspondence Intake submission") do
 
         # BvaDispatch tasks are automatically assigned to a BvaDispatch user
         if organization_assignments["BvaDispatch"].include?(task_klass_string)
-          expect(task.assigned?).to eq(true)
-        else
           expect(task.on_hold?).to eq(true)
+        else
+          expect(task.assigned?).to eq(true)
         end
 
         expect(task.assigned_to_type).to eq("Organization")
