@@ -5,13 +5,16 @@ import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 import { ICON_SIZES } from '../constants/AppConstants';
 
 const DocSizeIndicator = (props) => {
+  const downloadTime = props.docSize / props.browserSpeedInBytes
+
   return (
-    <span>{filesize(props.docSize)} <SizeWarningIcon size={ICON_SIZES.SMALL} /></span>
+    <span>{filesize(props.docSize)} {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}</span>
   );
 };
 
 DocSizeIndicator.propTypes = {
-  docSize: PropTypes.number.isRequired
+  docSize: PropTypes.number.isRequired,
+  browserSpeedInBytes: PropTypes.number.isRequired
 };
 
 export default DocSizeIndicator;
