@@ -709,6 +709,8 @@ class DocumentsTable extends React.Component {
   };
 
   render() {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    console.log("=====", connection);
     const rowObjects = getRowObjects(
       this.props.documents,
       this.props.annotationsPerDocument
