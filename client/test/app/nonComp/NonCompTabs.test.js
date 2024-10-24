@@ -177,8 +177,7 @@ describe('NonCompTabsVha', () => {
     await tabs[3].click();
 
     await waitFor(() => {
-      // expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
-      expect(screen.getByText('Cases completed:')).toBeInTheDocument();
+      expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
     });
 
     // Check for the correct completed tasks header values

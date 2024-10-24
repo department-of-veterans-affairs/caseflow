@@ -13,7 +13,7 @@ class VhaBusinessLine < BusinessLine
     {
       incomplete: "on_hold",
       in_progress: "active",
-      completed: "completed",
+      completed: "recently_completed",
       pending: "active"
     }
   end
