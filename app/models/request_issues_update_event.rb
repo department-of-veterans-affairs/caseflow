@@ -225,6 +225,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def find_request_issue(parser_issue)
     request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
 
@@ -257,6 +258,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     request_issue
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
@@ -333,7 +335,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
-  
+
   # Legacy issue checks
   def vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
