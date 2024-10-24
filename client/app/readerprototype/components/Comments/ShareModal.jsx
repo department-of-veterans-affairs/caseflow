@@ -27,6 +27,7 @@ const ShareModal = () => {
     >
       <CopyTextButton
         text={`${location.origin}${location.pathname}?annotation=${shareAnnotationModalIsOpenFor}`}
+        // textToCopy={`${location.origin}${location.pathname}?annotation=${shareAnnotationModalIsOpenFor}`}
         label="Link to annotation"
       />
     </Modal>
