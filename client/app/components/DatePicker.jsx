@@ -223,11 +223,6 @@ class DatePicker extends React.PureComponent {
 
         disabled = startDate >= endDate;
       }
-    } else if (this.state.mode === 'before' || this.state.mode === 'after' || this.state.mode === 'on') {
-      const startDate = moment(`${this.state.startDate} 00:00:00`).valueOf();
-      const currentDate = moment().valueOf();
-
-      disabled = startDate >= currentDate;
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
     }

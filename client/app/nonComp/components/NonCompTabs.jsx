@@ -8,6 +8,8 @@ import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
+import { sprintf } from 'sprintf-js';
+import { formatDateStr } from '../../util/DateUtil';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -46,6 +48,43 @@ const NonCompTabsUnconnected = (props) => {
   const taskCounts = useMemo(() => (
     mapValues(props.taskFilterDetails, (obj) => sumBy(Object.values(obj)))
   ), [props.taskFilterDetails]);
+
+  const buildCompletedTabDescriptionFromFilter = (filters) => {
+    const completedDateFilter = filters.find((value) => value.includes('col=completedDateColumn'));
+
+    if (completedDateFilter) {
+      const match = completedDateFilter.match(/val=([^&]*)/);
+
+      if (match) {
+        const dateFilter = match[1];
+        const [mode, startDate = null, endDate = null] = dateFilter.split(',');
+
+        const formattedStartDate = startDate ? formatDateStr(startDate) : '';
+
+        const formattedEndDate = endDate ? formatDateStr(endDate) : '';
+
+        // Object that defines how to build the string based on the mode
+        const completedDateFilterModeHandlers = {
+          before: `Before ${formattedStartDate}`,
+          after: `After ${formattedStartDate}`,
+          on: `On ${formattedStartDate}`,
+          between: `Between ${formattedStartDate} and ${formattedEndDate}`,
+          last7: 'Last 7 Days',
+          last30: 'Last 30 Days',
+          last365: 'Last 365 Days'
+        };
+
+        return sprintf(COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_WITH_FILTER,
+          completedDateFilterModeHandlers[mode]);
+      }
+
+    } else if (!isVhaBusinessLine) {
+      return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
+    }
+
+    return COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
+
+  };
 
   const ALL_TABS = {
     incomplete: {
@@ -97,7 +136,7 @@ const NonCompTabsUnconnected = (props) => {
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
-        description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
+        description={buildCompletedTabDescriptionFromFilter(filter)}
         tabName="completed" />
     }
   };
