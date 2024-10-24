@@ -110,7 +110,7 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
-import ErrorsFoundAndCorrectedModal from '../hearings/components/ErrorsFoundAndCorrectedModal';
+import ErrorsFoundAndCorrectedModal from './components/ErrorsFoundAndCorrectedModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
