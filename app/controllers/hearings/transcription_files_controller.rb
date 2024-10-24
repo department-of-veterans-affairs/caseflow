@@ -12,6 +12,17 @@ class Hearings::TranscriptionFilesController < ApplicationController
     file.clean_up_tmp_location
   end
 
+  def download_transcription_file_by_docket
+    docket_number = params[:docket_number]
+    file_path = TranscriptionFile.fetch_file_by_docket_and_type(docket_number)
+
+    if file_path
+      send_file file_path, filename: File.basename(file_path)
+    else
+      render json: { error: 'File not found or failed to fetch the file.' }, status: :not_found
+    end
+  end
+
   def transcription_file_tasks
     @transcription_files = TranscriptionFile.filterable_values
     select_based_on_tab

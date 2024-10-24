@@ -213,4 +213,15 @@ class TranscriptionFile < CaseflowRecord
       file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)
     end
   end
+
+  # method to retrieve the aws_link by docket_number, file_type, and date_returned_box
+  def self.fetch_file_by_docket_and_type(docket_number)
+    file = where(docket_number: docket_number, file_type: "xls")
+      .where.not(date_returned_box: nil)
+      .first
+
+    return nil unless file
+
+    file.fetch_file_from_s3!
+  end
 end
