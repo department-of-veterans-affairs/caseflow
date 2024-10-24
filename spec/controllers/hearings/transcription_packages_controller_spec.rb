@@ -205,6 +205,22 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
       expect(response.body).to eq(expected_response)
     end
 
+    it "filters by search" do
+      get :transcription_package_tasks, params: { search: "BVA2024003" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_3]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
     it "orders by date sent" do
       get :transcription_package_tasks, params: { sort_by: "dateSentColumn", order: "desc" }
 
