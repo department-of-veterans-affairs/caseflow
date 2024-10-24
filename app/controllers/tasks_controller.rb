@@ -198,7 +198,8 @@ class TasksController < ApplicationController
 
       Task.where(id: task.id).update_all(
         instructions: new_instructions,
-        status: Constants.TASK_STATUSES.completed
+        status: Constants.TASK_STATUSES.completed,
+        closed_at: Time.zone.now
       )
     end
   end
