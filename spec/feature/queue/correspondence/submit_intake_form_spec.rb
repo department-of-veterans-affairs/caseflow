@@ -343,9 +343,17 @@ RSpec.feature("Correspondence Intake submission") do
 
       created_tasks.each do |task|
         org_klass_string = Organization.find(task.assigned_to_id).class.to_s
-        expect(task.assigned?).to eq(true)
+        task_klass_string = task.class.to_s
+
+        # BvaDispatch tasks are automatically assigned to a BvaDispatch user
+        if organization_assignments["BvaDispatch"].include?(task_klass_string)
+          expect(task.assigned?).to eq(true)
+        else
+          expect(task.on_hold?).to eq(true)
+        end
+
         expect(task.assigned_to_type).to eq("Organization")
-        expect(organization_assignments[org_klass_string]).to include(task.class.to_s)
+        expect(organization_assignments[org_klass_string]).to include(task_klass_string)
       end
 
       appeals = Correspondence.first.appeals
