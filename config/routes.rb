@@ -308,6 +308,7 @@ Rails.application.routes.draw do
   get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
+    resources :saved_searches, only: [:index, :create, :destroy, :show]
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :history
@@ -337,7 +338,6 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :saved_searches, only: [:index, :create, :destroy, :show]
   resources :users, only: [:index, :update] do
     resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
