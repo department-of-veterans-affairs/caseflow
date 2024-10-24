@@ -236,7 +236,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Only accessible from prod-test environment
   def check_environment
-    return true if Rails.env.test?
+    return true if Rails.deploy_env?(:prodtest)
 
     redirect_to "/unauthorized"
   end
