@@ -1644,6 +1644,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .corr-tasks-added-col {
   flex-direction: column;
   width: 15%;
+
+  .stream-type {
+    text-transform: capitalize;
+  }
 }
 
 .first-row {

@@ -11,6 +11,7 @@ import {
   setWaiveEvidenceAlertBanner
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
+import { renderLegacyAppealType } from 'app/queue/utils';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
@@ -100,7 +101,10 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPEAL STREAM TYPE</p>
-              <p>{props.task_added.streamType}</p>
+              <p className="stream-type">{renderLegacyAppealType({
+                aod: props.task_added.appeal.data.attributes.aod,
+                type: props.task_added.streamType
+              })}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">NUMBER OF ISSUES</p>
