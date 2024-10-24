@@ -115,7 +115,10 @@ const PdfDocument = ({
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         return response.body;
-      });
+      }).
+        catch(() => {
+          setIsDocumentLoadError(true);
+        });
 
       pdfMetrics.current.getEndTime = new Date().getTime();
       const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
@@ -128,7 +131,6 @@ const PdfDocument = ({
 
     getDocData().catch((error) => {
       console.error(`ERROR with getting doc data: ${error}`);
-      setIsDocumentLoadError(true);
     });
   }, [doc.content_url]);
 
