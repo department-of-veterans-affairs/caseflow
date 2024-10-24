@@ -46,26 +46,11 @@ describe Events::DecisionReviewUpdated do
     subject { described_class.update!(params, headers, payload) }
 
     context "when lock acquisition fails" do
-      before do
-        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
-      end
-
-      it "logs the error message" do
-        expect(Rails.logger).to receive(:error)
-          .with("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
-                " processed. Please try again later.")
-        expect { subject }.to raise_error(RedisMutex::LockError)
-      end
+      it_behaves_like "when lock acquisition fails", "12201"
     end
 
     context "when lock Key is already in the Redis Cache" do
-      it "throws a RedisLockFailed error" do
-        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:EndProductEstablishment:#{claim_id}"
-        redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
-        expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
-        redis.del(lock_key)
-      end
+      it_behaves_like "when lock key is already in the Redis Cache", "12201"
     end
 
     it "finds or creates an event" do

@@ -9,7 +9,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
     let!(:claim_review) { create(:higher_level_review) }
     # conversions to mimic parser logic
     let!(:converted_long) { Time.zone.at(171_046_496_764_2) }
-    let!(:converted_claim_date) { logical_date_converter(202_403_14) }
+    let!(:converted_claim_date) { "Thu, 14 Mar 2024" }
     let!(:parser_double) do
       double("ParserDouble",
              station_id: "101",
@@ -51,16 +51,6 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         claimant_participant_id: "1826209"
       ).and_return(parser_double)
       described_class.process!(parser: parser_double, claim_review: claim_review, user: user_double)
-    end
-
-    # needed to convert the logical date int for the expect block
-    def logical_date_converter(logical_date_int)
-      # Extract year, month, and day components
-      year = logical_date_int / 100_00
-      month = (logical_date_int % 100_00) / 100
-      day = logical_date_int % 100
-      date = Date.new(year, month, day)
-      date
     end
 
     context "when an error occurs" do
