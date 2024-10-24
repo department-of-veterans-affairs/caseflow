@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::MonitorBoxJob, type: :job do
-  describe "#perform" do
-    subject { described_class.perform_now }
+  describe "#poll_box_dot_com_for_new_files" do
+    subject { described_class.new.poll_box_dot_com_for_new_files }
 
     before do
       allow(ExternalApi::VaBoxService).to receive(:new)

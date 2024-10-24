@@ -1,3 +1,5 @@
+# db/seeds/transcription_files.rb
+
 module Seeds
   class TranscriptionFiles < Base
 
@@ -5,19 +7,19 @@ module Seeds
       transcription_files = [
         {
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
-          hearingType: 'Legacy',
+          hearingType: 'LegacyHearing',
           fileType: 'vtt',
           fileName: 'transcript.vtt'
         },
         {
-          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
-          hearingType: 'AMA',
+          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
+          hearingType: 'Hearing',
           fileType: 'rtf',
           fileName: 'transcript.rtf'
         },
         {
-          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
-          hearingType: 'AMA',
+          fileStatus: 'conversion_success',
+          hearingType: 'Hearing',
           fileType: 'csv',
           fileName: 'transcript.csv'
         },
@@ -32,7 +34,7 @@ module Seeds
       transcription_files.each do |file|
         (0..39).each do |index|
 
-          if file[:hearingType] == 'Legacy'
+          if file[:hearingType] == 'LegacyHearing'
             hearing = legacy_hearings[index]
           else
             hearing = hearings[index]
@@ -51,7 +53,14 @@ module Seeds
               transcriptions.delete_all
             end
 
-            transcription = Transcription.create!(task_number: task_number)
+            transcription = Transcription.create!(
+              task_number: task_number,
+              hearing_type: file[:hearingType],
+              hearing_id: hearing.id
+            )
+
+            # Debugging information
+            puts "Creating TranscriptionFile with hearing: #{hearing.inspect}, file: #{file.inspect}"
 
             TranscriptionFile.find_or_create_by(
               hearing: hearing,
@@ -62,6 +71,9 @@ module Seeds
               aws_link: "aws-link/#{hearing.docket_number}_#{hearing.id}_Hearing.vtt",
               transcription_id: transcription.id
             )
+          else
+            # Debugging information
+            puts "No hearing found for file: #{file.inspect}, index: #{index}"
           end
         end
       end

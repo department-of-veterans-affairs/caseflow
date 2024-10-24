@@ -30,6 +30,7 @@ const menuStyle = css({
   background: 'white',
   width: '250px',
   border: '1px solid #CCC',
+  boxShadow: '5px 5px 4px -3px #d6d7d9',
   zIndex: '1',
   '& .input-wrapper': {
     padding: '0 1rem 2.5rem',
@@ -70,7 +71,7 @@ const menuStyle = css({
 /* This is called for every row of data in the table */
 /* rowValue is a date string such as '5/15/2024' */
 /* filterValues is the array of filter options such as ['between,2024-05-01,2024-05-31']
-/* It returns true or false if the row belongs in the data still */
+/* It returns true or false if the row belongs in the data still  */
 export const datePickerFilterValue = (rowValue, filterValues) => {
   let pick = false;
   const rowDate = moment(rowValue).valueOf();
@@ -142,7 +143,7 @@ class DatePicker extends React.PureComponent {
     if (open) {
       const { values } = this.props;
 
-      if (values) {
+      if (values && values.length) {
         const splitValues = values[0].split(',');
 
         if (splitValues) {
@@ -196,7 +197,7 @@ class DatePicker extends React.PureComponent {
     this.setState({ mode: '', startDate: '', endDate: '' });
 
     if (onChange) {
-      onChange('');
+      onChange('', true);
     }
 
     this.hideDropdown();
@@ -224,7 +225,7 @@ class DatePicker extends React.PureComponent {
     }
 
     if (onChange) {
-      onChange(`${ mode },${ startDate },${ endDate}`);
+      onChange(`${ mode },${ startDate },${ endDate}`, false);
     }
 
     this.hideDropdown();

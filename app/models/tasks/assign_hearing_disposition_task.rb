@@ -299,6 +299,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
+    # binding.pry
     transcription_task = TranscriptionTask.create!(
       appeal: appeal,
       parent: self,

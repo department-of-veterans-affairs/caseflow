@@ -58,11 +58,11 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   end
 
   it "creates a transcription file record for each zip file" do
-    expect(TranscriptionFile.where(file_type: "zip").empty?).to eq true
+    expect(Hearings::TranscriptionFile.where(file_type: "zip").empty?).to eq true
 
     subject
 
-    TranscriptionFile.where(file_type: "zip").each do |file|
+    Hearings::TranscriptionFile.where(file_type: "zip").each do |file|
       expect(file.file_name).to be_a String
       expect(file.date_upload_aws).to be_a Time
       expect(file.created_by_id).to be_a Integer
@@ -73,7 +73,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   it "uploads the zip file to s3 bucket" do
     subject
 
-    TranscriptionFile.where(file_type: "zip").pluck("aws_link").each do |link|
+    Hearings::TranscriptionFile.where(file_type: "zip").pluck("aws_link").each do |link|
       expect(link.include?("vaec-appeals-caseflow-test/transcript_text")).to eq true
     end
   end

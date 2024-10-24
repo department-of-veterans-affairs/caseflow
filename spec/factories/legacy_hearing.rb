@@ -102,7 +102,7 @@ FactoryBot.define do
         2.times do |count|
           { mp4: s3_dirs[:ta], mp3: s3_dirs[:ta], vtt: s3_dirs[:tr], rtf: s3_dirs[:tt] }.each do |file_type, dir|
             file_name = "#{hearing.docket_number}_#{hearing.id}_LegacyHearing#{count == 1 ? '-2' : ''}.#{file_type}"
-            TranscriptionFile.create!(
+            Hearings::TranscriptionFile.create!(
               hearing_id: hearing.id,
               hearing_type: "LegacyHearing",
               file_name: file_name,

@@ -236,7 +236,7 @@ exports[`QueueTable DatePicker filter Back end filtering renders in a queue tabl
                 </svg>
                 <div
                   class="date-picker left"
-                  data-css-1yplfb5=""
+                  data-css-f2bff0=""
                 >
                   <div
                     class="clear-wrapper"
@@ -725,7 +725,7 @@ exports[`QueueTable DatePicker filter Front end filtering renders in a queue tab
                 </svg>
                 <div
                   class="date-picker left"
-                  data-css-1yplfb5=""
+                  data-css-f2bff0=""
                 >
                   <div
                     class="clear-wrapper"

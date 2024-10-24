@@ -7,6 +7,7 @@ import {
   unassignedColumns,
   assignedColumns,
   completedColumns,
+  allColumns
 } from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
@@ -227,6 +228,18 @@ const mockCompletedTranscriptionFilesResponse = {
     total_task_count: 2,
   },
 };
+
+const mockAllTranscriptionFilesResponse = {
+  body: {
+    task_page_count: 1,
+    tasks: {
+      data: mockCompletedTranscriptionFiles,
+    },
+    tasks_per_page: 15,
+    total_task_count: 2,
+  },
+};
+
 
 const mockTranscriptionFilesResponse = {
   body: {
@@ -500,6 +513,17 @@ const setupCompletedTable = () =>
     </Router>
   );
 
+const setupAllTable = () =>
+  render(
+    <Router>
+      <TranscriptionFileDispatchTable
+        columns={allColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+        statusFilter={['All']}
+      />
+    </Router>
+  );
+
+
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
     ApiUtil.get = jest.fn();
@@ -534,6 +558,12 @@ describe('TranscriptionFileDispatchTable', () => {
         '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
       ).
       mockResolvedValue(mockCompletedTranscriptionFilesResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
+      ).
+      mockResolvedValue(mockAllTranscriptionFilesResponse);
 
     when(ApiUtil.get).
       calledWith('/hearings/find_by_contractor/filterable_contractors').
@@ -725,6 +755,20 @@ describe('TranscriptionFileDispatchTable', () => {
   describe('Completed Tab', () => {
     it('loads a table from backend data', async () => {
       const { container } = setupCompletedTable();
+
+      await waitFor(() =>
+        expect(
+          screen.getAllByText('Viewing 1-2 of 2 total')[0]
+        ).toBeInTheDocument()
+      );
+
+      expect(container).toMatchSnapshot();
+    });
+  });
+
+  describe('All Tab', () => {
+    it('loads a table from backend data', async () => {
+      const { container } = setupAllTable();
 
       await waitFor(() =>
         expect(
