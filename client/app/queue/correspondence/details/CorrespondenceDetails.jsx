@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import {updateCorrespondenceInfo} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -520,14 +520,17 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
-        <Button
-          type="button"
-          onClick={handleOpenModal}
-          name="addTaskOpen"
-          classNames={['cf-left-side']}
-        >
+
+        {isAdminNotLoggedIn() ?
+          '' :
+          <Button
+            type="button"
+            onClick={handleOpenModal}
+            name="addTaskOpen"
+            classNames={['cf-left-side']}
+          >
             + Add task
-        </Button>
+          </Button>}
 
         {/* Render the modal */}
         <AddTaskModalCorrespondenceDetails
@@ -817,14 +820,12 @@ const CorrespondenceDetails = (props) => {
   const handleModalClose = () => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
+    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+      window.location.href = '/queue/correspondence/team';
+    } else if (props.isInboundOpsUser) {
+      window.location.href = '/queue/correspondence/team';
     } else {
-      if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
-        window.location.href = '/queue/correspondence/team';
-      } else if (props.isInboundOpsUser) {
-        window.location.href = '/queue/correspondence/team';
-      } else {
-        window.location.href = '/queue';
-      }
+      window.location.href = '/queue';
     }
   };
 
@@ -916,11 +917,11 @@ const CorrespondenceDetails = (props) => {
       </AppSegment>
       <div className="margin-top-for-add-task-view">
         <div className="cf-push-left">
-              <Button
-                name="Return to queue"
-                classNames={['cf-btn-link']}
-                onClick={handleModalClose}
-              />
+          <Button
+            name="Return to queue"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
         {
           // eslint-disable-next-line max-len
