@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class SavedSearchesController < ApplicationController
-  include ValidationConcern
 
-  before_action :react_routed, :verify_vha_admin
+  before_action :react_routed, :verify_access
 
   PERMITTED_PARAMS = [
     :name,
@@ -12,8 +11,8 @@ class SavedSearchesController < ApplicationController
   ].freeze
 
   def index
-    searches = SavedSearch.all_saved_searches
-    my_search = SavedSearch.my_saved_searches(current_user)
+    searches = organization.users.map(&:saved_search).order(created_at: :desc)
+    my_search = SavedSearch.for_user(current_user)
     respond_to do |format|
       format.html { render "index" }
       format.json do
@@ -25,10 +24,10 @@ class SavedSearchesController < ApplicationController
   end
 
   def show
-    search = SavedSearch.find_by_id(params[:id])
+    @search = SavedSearch.find_by_id(params[:id])
     respond_to do |format|
       format.html { render "show" }
-      format.json { render json: SavedSearchSerializer.new(search).serializable_hash[:data] }
+      format.json { render json: SavedSearchSerializer.new(@search).serializable_hash[:data] }
     end
   end
 
@@ -41,21 +40,27 @@ class SavedSearchesController < ApplicationController
   end
 
   def destroy
-    @search = current_user.saved_searches.find(params[:id])
-    @search.destroy!
-    render json: { status: :ok }
+    begin
+      @search = current_user.saved_searches.find(params[:id])
+      @search.destroy!
+      render json: { status: :ok }
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { error: e.to_s }, status: :not_found
+    end
   end
 
   private
+
+  def organization
+    @organization ||= BusinessLine.find_by(url: params[:business_line_slug])
+  end
 
   def save_search_create_params
     params.require(:search).permit(PERMITTED_PARAMS)
   end
 
-  def verify_vha_admin
-    return true if current_user.vha_business_line_admin_user?
-
-    redirect_to_unauthorized
+  def verify_access
+    return redirect_to_unauthorized if current_user.vha_employee? && !current_user.vha_business_line_admin_user?
   end
 
   def redirect_to_unauthorized
