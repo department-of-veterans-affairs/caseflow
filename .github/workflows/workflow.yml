@@ -223,7 +223,7 @@ jobs:
 
       - name: Postgres Database Schema Setup
         run: |
-          bundle exec db:schema:load:etl
+          bundle exec rake db:schema:load:etl
           bundle exec rake db:schema:load:primary
           make -f Makefile.example external-db-create
         # added line to create external table(s) that are needed for tests
