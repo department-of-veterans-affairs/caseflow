@@ -287,8 +287,15 @@ RSpec.feature("Correspondence Intake submission") do
     let(:max_new_tasks) { 4 }
     let(:correspondence_appeals) { CorrespondenceAppeal.where(correspondence_id: Correspondence.first.id) }
     let(:created_tasks) { correspondence_appeals.map(&:tasks).flatten }
+    let(:organization_assignments) do
+      groups_by_organization = inactive_appeal_tasks.group_by { |e| e["value"]["assigned_to"] }
+      groups_by_organization.each do |key, value|
+        new_value = value.map { |v| v["value"]["klass"] }
+        groups_by_organization[key] = new_value
+      end
+    end
 
-    before do
+    before(:all) do
       # Need to add user to BvaDispatch - new BvaDispatch tasks are automatically assigned to users
       BvaDispatch.singleton.add_user(create(:user))
 
@@ -337,7 +344,10 @@ RSpec.feature("Correspondence Intake submission") do
 
     it "assigns each created task to the proper organization" do
       created_tasks.each do |task|
+        org_klass_string = Organization.find(task.assigned_to_id).class.to_s
         expect(task.assigned?).to eq(true)
+        expect(task.assigned_to_type).to eq("Organization")
+        expect(organization_assignments[org_klass_string]).to include(task.class.to_s)
       end
     end
 
