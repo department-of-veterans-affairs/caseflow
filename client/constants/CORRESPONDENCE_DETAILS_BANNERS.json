@@ -30,7 +30,7 @@
   },
 
   "evidenceWindowBanner": {
-    "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task",
+    "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task.",
     "type": "success"
   }
 }
