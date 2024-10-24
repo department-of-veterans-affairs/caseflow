@@ -586,14 +586,23 @@ export default class QueueTable extends React.PureComponent {
 
     // Remove paramsToClear from currentParams if they are not in tableParams
     paramsToClear.forEach((param) => {
-      if (!tableParams.has(param)) {
-        currentParams.delete(param);
-      }
+      currentParams.delete(param);
     });
 
     // Merge tableParams and tabParams into currentParams, overwriting any duplicate keys
     for (const [key, value] of [...tabParams.entries(), ...tableParams.entries()]) {
-      currentParams.set(key, value);
+      if (key.includes('[]')) {
+        // Get all current values for the key
+        const existingValues = currentParams.getAll(key);
+
+        // If the new value doesn't already exist, append it
+        if (!existingValues.includes(value)) {
+          currentParams.append(key, value);
+        }
+      } else {
+        // Set for all other keys (overrides existing values)
+        currentParams.set(key, value);
+      }
     }
 
     return `${base}?${currentParams.toString()}`;
