@@ -140,7 +140,7 @@ class TableFilter extends React.PureComponent {
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
-    if (filtersForColumn) {
+    if (filtersForColumn || resetValue) {
       if (resetValue) {
         if (value !== '') {
           newFilters = [value];
@@ -242,7 +242,7 @@ class TableFilter extends React.PureComponent {
             type="date"
             value=""
             ariaLabelText="date-selector"
-            onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName, false)} />
+            onChange={(value, reset) => this.updateSelectedFilter(formatDate(value), columnName, reset)} />
         </span>
       );
     } else if (filterType === 'date-picker') {

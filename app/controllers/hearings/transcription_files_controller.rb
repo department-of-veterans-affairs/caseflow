@@ -13,8 +13,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def transcription_file_tasks
-    @transcription_files = TranscriptionFile.filterable_values
+    @transcription_files = Hearings::TranscriptionFile.filterable_values
     select_based_on_tab
+    apply_search
     apply_filters
     setup_pagination
     apply_sorting
@@ -26,65 +27,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
     }
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def transcription_packages_tasks
-    contractors = TranscriptionContractor.all
-
-    temp_json_1 = [
-      { id: 1, workOrder: "BVA20240001", items: 25, dateSent: "01/01/2024", expectedReturnDate: "01/15/2024",
-        contractor: contractors[0].name, status: "Sent" },
-      { id: 2, workOrder: "BVA20240002", items: 1, dateSent: "01/01/2024", expectedReturnDate: "01/15/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 3, workOrder: "BVA20240003", items: 15, dateSent: "01/01/2024", expectedReturnDate: "01/15/2024",
-        contractor: contractors[0].name, status: "Sent" },
-      { id: 4, workOrder: "BVA20240004", items: 5, dateSent: "01/08/2024", expectedReturnDate: "01/23/2024",
-        contractor: contractors[0].name, status: "Overdue" },
-      { id: 5, workOrder: "BVA20240005", items: 7, dateSent: "01/08/2024", expectedReturnDate: "01/23/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 6, workOrder: "BVA20240006", items: 11, dateSent: "01/08/2024", expectedReturnDate: "01/23/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 7, workOrder: "BVA20240007", items: 5, dateSent: "01/10/2024", expectedReturnDate: "01/25/2024",
-        contractor: contractors[0].name, status: "Sent" },
-      { id: 8, workOrder: "BVA20240008", items: 7, dateSent: "01/10/2024", expectedReturnDate: "01/25/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 9, workOrder: "BVA20240009", items: 11, dateSent: "01/10/2024", expectedReturnDate: "01/25/2024",
-        contractor: contractors[2].name, status: "Sent" },
-      { id: 10, workOrder: "BVA20240010", items: 3, dateSent: "01/12/2024", expectedReturnDate: "01/27/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 11, workOrder: "BVA20240011", items: 22, dateSent: "01/12/2024", expectedReturnDate: "01/27/2024",
-        contractor: contractors[1].name, status: "Sent" },
-      { id: 12, workOrder: "BVA20240012", items: 14, dateSent: "01/12/2024", expectedReturnDate: "01/27/2024",
-        contractor: contractors[2].name, status: "Sent" },
-      { id: 13, workOrder: "BVA20240013", items: 3, dateSent: "01/17/2024", expectedReturnDate: "02/01/2024",
-        contractor: contractors[0].name, status: "Sent" },
-      { id: 14, workOrder: "BVA20240014", items: 22, dateSent: "01/17/2024", expectedReturnDate: "02/01/2024",
-        contractor: contractors[2].name, status: "Sent" },
-      { id: 15, workOrder: "BVA20240015", items: 14, dateSent: "01/17/2024", expectedReturnDate: "02/01/2024",
-        contractor: contractors[2].name, status: "Sent" }
-    ]
-
-    temp_json_2 = [
-      { id: 16, workOrder: "BVA20240016", items: 1, dateSent: "01/19/2024", expectedReturnDate: "02/05/2024",
-        contractor: contractors[2].name, status: "Sent" },
-      { id: 17, workOrder: "BVA20240017", items: 4, dateSent: "01/19/2024", expectedReturnDate: "02/05/2024",
-        contractor: contractors[2].name, status: "Sent" },
-      { id: 18, workOrder: "BVA20240018", items: 6, dateSent: "01/19/2024", expectedReturnDate: "02/05/2024",
-        contractor: contractors[2].name, status: "Sent" }
-    ]
-
-    current_page = (params[:page] || 1).to_i
-
-    render json: {
-      task_page_count: 2,
-      tasks: { data: current_page == 1 ? temp_json_1 : temp_json_2 },
-      tasks_per_page: 15,
-      total_task_count: 18
-    }
-  end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
-
   def locked
-    locked_files = TranscriptionFile.locked.preload(:locked_by)
+    locked_files = Hearings::TranscriptionFile.locked.preload(:locked_by)
     files = []
     locked_files.each do |file|
       status = file.locked_by_id == current_user.id ? "selected" : "locked"
@@ -96,7 +40,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def lock
-    files = TranscriptionFile.where(id: params[:file_ids])
+    files = Hearings::TranscriptionFile.where(id: params[:file_ids])
     status = params[:status] && params[:status].to_s == "true" ? true : false
     lockable_file_ids = []
     files.each do |file|
@@ -113,7 +57,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
       locked_at = nil
     end
 
-    TranscriptionFile.where(id: lockable_file_ids).update_all(locked_by_id: locked_by_id, locked_at: locked_at)
+    Hearings::TranscriptionFile.where(id: lockable_file_ids).update_all(
+      locked_by_id: locked_by_id, locked_at: locked_at
+    )
 
     locked
   end
@@ -129,7 +75,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def selected_files_info
     files = []
     ids = params[:file_ids].split(",")
-    TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
+    Hearings::TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
       hearing = transcription_file.hearing
       files << {
         id: transcription_file.id,
@@ -151,13 +97,14 @@ class Hearings::TranscriptionFilesController < ApplicationController
   private
 
   def file
-    @file ||= TranscriptionFile.find(params[:file_id])
+    @file ||= Hearings::TranscriptionFile.find(params[:file_id])
   end
 
   def select_based_on_tab
-    if params[:tab] == "Unassigned"
+    case params[:tab]
+    when "Unassigned"
       @transcription_files = @transcription_files.unassigned
-    elsif params[:tab] == "Completed"
+    when "Completed"
       @transcription_files = @transcription_files.completed
     end
   end
@@ -180,6 +127,12 @@ class Hearings::TranscriptionFilesController < ApplicationController
         end
       end
     end
+  end
+
+  def apply_search
+    return if params[:search].blank?
+
+    @transcription_files = @transcription_files.search(params[:search])
   end
 
   def apply_sorting
@@ -225,8 +178,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status
       }
-
       task = add_completed_tab_fields(task, transcription_file) if params[:tab] == "Completed"
+      task = add_all_tab_fields(task, transcription_file) if params[:tab] == "All"
       tasks << task
     end
     tasks
@@ -238,6 +191,17 @@ class Hearings::TranscriptionFilesController < ApplicationController
         workOrder: transcription_file.transcription&.task_number,
         expectedReturnDate: transcription_file&.transcription&.transcription_package
           &.expected_return_date&.to_formatted_s(:short_date),
+        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
+        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
+      }
+    )
+  end
+
+  def add_all_tab_fields(task, transcription_file)
+    task.merge(
+      {
+        workOrder: transcription_file.transcription&.task_number,
+        uploadDate: transcription_file&.date_returned_box&.to_formatted_s(:short_date),
         returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
         contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
       }

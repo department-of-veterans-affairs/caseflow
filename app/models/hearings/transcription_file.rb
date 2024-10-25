@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionFile < CaseflowRecord
+class Hearings::TranscriptionFile < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
   belongs_to :transcription
@@ -8,7 +8,7 @@ class TranscriptionFile < CaseflowRecord
 
   belongs_to :locked_by, class_name: "User"
 
-  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip].freeze
+  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip doc pdf].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
@@ -18,7 +18,7 @@ class TranscriptionFile < CaseflowRecord
       (CASE WHEN aod_based_on_age IS NOT NULL THEN aod_based_on_age ELSE false END) AS aod_based_on_age,
       (CASE WHEN aodm.granted IS NOT NULL THEN aodm.granted ELSE false END) AS aod_motion_granted,
       scheduled_for,
-      concat_ws(' ',
+      CONCAT_WS(' ',
         CASE WHEN aodm.granted OR aod_based_on_age THEN 'AOD' END,
         CASE WHEN appeals.stream_type IS NOT NULL THEN appeals.stream_type ELSE 'original' END
         ) AS sortable_case_type
@@ -37,6 +37,11 @@ class TranscriptionFile < CaseflowRecord
         AND aodm.granted = true")
       .joins("LEFT OUTER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id OR
         hearing_days.id = legacy_hearings.hearing_day_id")
+      .joins("LEFT OUTER JOIN claimants ON claimants.decision_review_id = appeals.id AND
+        claimants.decision_review_type = 'Appeal'")
+      .joins("LEFT OUTER JOIN people ON people.participant_id = claimants.participant_id")
+      .joins("LEFT OUTER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .joins("LEFT OUTER JOIN transcriptions ON transcriptions.id = transcription_files.transcription_id")
   }
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
@@ -45,7 +50,11 @@ class TranscriptionFile < CaseflowRecord
     where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Completed Overdue"])
   }
 
-  scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
+  scope :completed, lambda {
+    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
+  }
+
+  scope :filter_by_hearing_type, ->(values) { where("transcription_files.hearing_type IN (?)", values) }
 
   scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
 
@@ -59,7 +68,8 @@ class TranscriptionFile < CaseflowRecord
       else
         stream_types << value
         filter_parts <<
-          "((hearing_type = 'Hearing' AND stream_type IN (?)) OR hearing_type = 'LegacyHearing')"
+          "((transcription_files.hearing_type = 'Hearing' AND stream_type IN (?)) OR
+            transcription_files.hearing_type = 'LegacyHearing')"
       end
     end
     where(filter_parts.join(" OR "), stream_types)
@@ -82,6 +92,14 @@ class TranscriptionFile < CaseflowRecord
       end_date = values[1] + " 23:59:59"
       where(Arel.sql("scheduled_for >= '" + start_date + "' AND scheduled_for <= '" + end_date + "'"))
     end
+  }
+
+  scope :search, lambda { |search|
+    where("(docket_number LIKE :query) OR
+      (LOWER(CONCAT_WS(' ', people.first_name, people.last_name)) LIKE :query) OR
+      (LOWER(CONCAT_WS(' ', veterans.first_name, veterans.last_name)) LIKE :query) OR
+      (veterans.file_number LIKE :query) OR
+      (LOWER(transcriptions.task_number) LIKE :query)", query: "%#{search.downcase.strip}%")
   }
 
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
@@ -207,7 +225,7 @@ class TranscriptionFile < CaseflowRecord
     transcription = Transcription.find_by(task_number: task_number)
     return unless transcription
 
-    transcription_files = TranscriptionFile.where(transcription_id: transcription.id)
+    transcription_files = Hearings::TranscriptionFile.where(transcription_id: transcription.id)
 
     transcription_files.each do |file|
       file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)

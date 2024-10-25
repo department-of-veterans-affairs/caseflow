@@ -106,7 +106,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Clear filter');
 
-    expect(handleChange).toHaveBeenCalledWith('');
+    expect(handleChange).toHaveBeenCalledWith('', true);
   });
 
   it('has menu position left by default', async () => {
@@ -151,7 +151,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Last 30 days');
 
-    expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17');
+    expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17', false);
   });
 
   describe('datePickerFilterValue', () => {

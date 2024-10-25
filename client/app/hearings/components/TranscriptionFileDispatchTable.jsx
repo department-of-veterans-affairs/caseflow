@@ -15,7 +15,8 @@ import {
   contractorColumn,
   statusColumn,
   unassignColumn,
-  returnDateColumn
+  returnDateColumn,
+  uploadDateColumn
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
@@ -57,7 +58,7 @@ const styles = css({
     margin: '0',
   },
   '& th:last-child .cf-dropdown-filter': {
-    left: '-200px',
+    left: '-231px',
   },
   '& .cf-table-wrapper': {
     minHeight: '620px',
@@ -70,6 +71,7 @@ export const TranscriptionFileDispatchTable = ({
   statusFilter,
   selectFilesForPackage,
   openModal,
+  searchValue,
 }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -135,16 +137,17 @@ export const TranscriptionFileDispatchTable = ({
    * Adds custom url params to the params used for pagination
    * @returns The url params needed to handle pagination
    */
-  const qs = encodeQueryParams({
-    tab: statusFilter[0]
-  });
+  const qs = encodeQueryParams(searchValue ? {
+    tab: statusFilter[0],
+    search: searchValue
+  } : { tab: statusFilter[0] });
 
   /**
    * Sets the correct API endpoint based on the tab we're in
    * @returns The url string
    */
   const apiEndpoint = () => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed') {
+    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
@@ -230,6 +233,7 @@ export const TranscriptionFileDispatchTable = ({
       contractorColumn: contractorColumn(contractors),
       statusColumn: statusColumn(statusFilter[0]),
       unassignColumn: unassignColumn(unassignPackage),
+      uploadDateColumn: uploadDateColumn(),
     };
 
     return functionForColumn[column.name];
@@ -312,4 +316,5 @@ TranscriptionFileDispatchTable.propTypes = {
   selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func,
   openModal: PropTypes.func,
+  searchValue: PropTypes.string
 };

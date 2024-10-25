@@ -41,7 +41,7 @@ exports[`DatePicker renders default state correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1yplfb5=""
+      data-css-f2bff0=""
     >
       <div
         class="clear-wrapper"
@@ -211,7 +211,7 @@ exports[`DatePicker restores input values correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1yplfb5=""
+      data-css-f2bff0=""
     >
       <div
         class="clear-wrapper"
@@ -411,7 +411,7 @@ exports[`DatePicker shows one date field for after mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1yplfb5=""
+      data-css-f2bff0=""
     >
       <div
         class="clear-wrapper"
@@ -595,7 +595,7 @@ exports[`DatePicker shows one date field for before mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1yplfb5=""
+      data-css-f2bff0=""
     >
       <div
         class="clear-wrapper"
@@ -779,7 +779,7 @@ exports[`DatePicker shows one date field for on mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1yplfb5=""
+      data-css-f2bff0=""
     >
       <div
         class="clear-wrapper"
