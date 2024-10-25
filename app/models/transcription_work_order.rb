@@ -124,7 +124,6 @@ class TranscriptionWorkOrder
   end
 
   def self.find_transcription_with_files(task_number)
-    byebug
     transcription = Transcription.includes(
       transcription_files: { hearing: [:hearing_day, :appeal, :judge] }
     ).find_by(task_number: task_number)
