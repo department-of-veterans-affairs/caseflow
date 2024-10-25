@@ -137,7 +137,7 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
           </div>
           <div className="tasks-added-details">
-            {appeal && props.task_added.CorrespondenceAppealTasks ?
+            {appeal && Object.keys(props.task_added.taskAddedData.data).length !== 0 ?
               (<div>
                 <span className="tasks-added-text">Tasks added to appeal</span>
                 <TaskRows

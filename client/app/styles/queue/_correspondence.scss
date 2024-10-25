@@ -14,6 +14,7 @@ $color-black: #323a45;
 $color-background-color: #f1f1f1;
 $color-red: #cd2026;
 $color-dark-red: #ff0000;
+$color-red-alternate: #e31c3d;
 $color-gray-darker: #5b616b;
 $color-gray: #5b616b;
 $color-bg-hsl: hsl(0, 0%, 100%);
@@ -1777,11 +1778,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .add-autotext-button {
     margin-top: 1rem;
-    color: #0071bc;
+    color: $color-blue;
   }
 
   .remove-task-button {
-    color: #e31c3d;
+    color: $color-red-alternate;
     float: right;
     margin-top: 1rem;
   }
@@ -1793,13 +1794,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .new-tasks-gray-border-styling {
-  border: 1px solid #d6d7d9;
+  border: 1px solid $color-cream;
   padding: 1rem;
   margin-bottom: 1.5rem;
 }
 
 .gray-border {
-  border: 1px solid #d6d7d9;
+  border: 1px solid $color-cream;
   padding: 1.5rem;
 }
 
@@ -1809,43 +1810,43 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 
 .add-task-dropdown-style {
-  /* Override the control (outer container) for the select dropdown */
+  // Override the control (outer container) for the select dropdown
   .react-select__control {
-    border-color: black !important;
-    border-radius: 0 !important; /* Make the borders 90 degrees */
+    border-color: $color-black !important;
+    border-radius: 0 !important; // Make the borders 90 degrees
     &:hover {
-      border-color: black !important; /* Black border on hover */
+      border-color: $color-black !important; // Black border on hover
     }
   }
 
-  /* Adjust the dropdown menu styles */
+  // Adjust the dropdown menu styles
   .react-select__menu {
-    border-radius: 0 !important; /* Make the menu borders 90 degrees as well */
+    border-radius: 0 !important; // Make the menu borders 90 degrees as well
   }
 
-  /* Set the color for each option */
+  // Set the color for each option
   .react-select__option {
-    color: black !important; /* Make the text of each option black */
+    color: $color-black !important; // Make the text of each option black
   }
 
-  /* Style the indicator separator */
+  // Style the indicator separator
   .react-select__indicator-separator {
-    background-color: black !important;
+    background-color: $color-black !important;
     width: 1px !important;
     padding-bottom: 10px;
   }
 
-  /* Style the dropdown indicator (arrow) */
+  // Style the dropdown indicator (arrow)
   .react-select__dropdown-indicator {
-    color: black !important; /* Make the arrow black */
+    color: $color-black !important; // Make the arrow black
     &:hover {
-      color: black !important; /* Keep arrow black on hover */
+      color: $color-black !important; // Keep arrow black on hover
     }
   }
 
-  /* Hover style for options */
+  // Hover style for options
   .react-select__option--is-focused {
-    background-color: $color-gray-darker !important; /* Dark gray background on hover */
-    color: white !important; /* White text on hover */
+    background-color: $color-gray-darker !important; // Dark gray background on hover
+    color: white !important; // White text on hover
   }
 }
