@@ -187,7 +187,7 @@ class TasksController < ApplicationController
   end
 
   def upload_transcription_to_vbms
-    if task.type == "ReviewTranscriptTask" && task.status == "in_progress"
+    return unless task.type == "ReviewTranscriptTask" && task.status == "in_progress"
       new_instructions = task.instructions.push(params[:task][:instructions])
 
       Transcription.where(task_id: task.id).update_all(
@@ -201,7 +201,6 @@ class TasksController < ApplicationController
         status: Constants.TASK_STATUSES.completed,
         closed_at: Time.zone.now
       )
-    end
   end
 
   private
