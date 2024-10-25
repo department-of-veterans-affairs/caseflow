@@ -413,7 +413,7 @@ const ReportPage = ({ history }) => {
     >
       <div className="report-page-header">
         <h1>Generate task report</h1>
-        <Link button="secondary" to={`/${businessLineUrl}/saved_searches`}>View saved searches</Link>
+        <Link button="secondary" to={`/${businessLineUrl}/report/searches`}>View saved searches</Link>
       </div>
       <FormProvider {...methods}>
         <form>

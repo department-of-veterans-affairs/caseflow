@@ -11,9 +11,9 @@ class SavedSearchSerializer
     object.user.css_id
   end
   attribute :userFullName do |object|
-    object&.user.full_name
+    object.user.full_name
   end
   attribute :userId do |object|
-    object&.user.id
+    object.user.id
   end
 end
