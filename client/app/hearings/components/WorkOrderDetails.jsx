@@ -45,7 +45,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const fetchData = async () => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_work_order/display_wo_summary', {
-        query: { task_number: taskNumber },
+        query: { taskNumber: taskNumber },
       });
 
       setData(response.body.data);
