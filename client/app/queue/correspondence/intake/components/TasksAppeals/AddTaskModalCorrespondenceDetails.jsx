@@ -116,7 +116,7 @@ const AddTaskModalCorrespondenceDetails = ({
 
   return (
     <Modal
-      title="Add New Task"
+      title="Add task to correspondence"
       closeHandler={handleClose}
       confirmButton={
         <Button
