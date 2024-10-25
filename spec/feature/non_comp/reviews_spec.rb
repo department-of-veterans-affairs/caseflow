@@ -586,7 +586,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Verify the filter counts for the completed tab
       click_on "Completed Tasks"
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       # Turn this back on after last 7 days prefilter is added
       # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
@@ -1004,7 +1004,7 @@ feature "NonComp Reviews Queue", :postgres do
       # expect(page).to have_content("Viewing 1-2 of 2 total")
 
       # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content("Cases completed:")
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       expect(page).to_not have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
 
