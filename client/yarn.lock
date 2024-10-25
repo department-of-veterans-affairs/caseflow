@@ -2736,9 +2736,9 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#e5ea4904":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#23189e99":
   version "2.6.1"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#e5ea4904b989fab8bcbbe82bd2a0bdacf7383280"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#23189e99f72135edb4c9b3115270457931d2ddff"
   dependencies:
     babel-jest "^29.7.0"
     classnames "^2.2.5"
