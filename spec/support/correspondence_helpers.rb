@@ -204,5 +204,9 @@ module CorrespondenceHelpers
     end
   end
 
+  def click_page_body
+    find("body").click
+  end
+
   # rubocop:enable Metrics/ModuleLength
 end

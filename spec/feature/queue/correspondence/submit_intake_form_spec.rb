@@ -317,7 +317,7 @@ RSpec.feature("Correspondence Intake submission") do
       react_select_containers = page.all("#reactSelectContainer")
       react_select_containers.each_with_index do |select_container, index|
         using_wait_time(wait_time) do
-          retry_if_not_found(cleanup: find("body").click) do
+          retry_if_not_found(cleanup: click_page_body) do
             select_container.click
             expect(page).to have_selector("div[class*=MenuList]", visible: true)
             within "div[class*=MenuList]" do
