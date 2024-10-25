@@ -31,7 +31,6 @@ import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
   const expandedLinkedAppeals = props.expandedLinkedAppeals;

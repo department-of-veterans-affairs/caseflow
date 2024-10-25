@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -30,12 +30,11 @@ const CorrespondenceAppealTasks = (props) => {
     taskSnapshotTasksForAppeal(state, { appealId })
   );
 
-  const isLinkedAppealExpanded = props.expandedLinkedAppeals.some((id) => id === appealId);
+  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState(props.expandedLinkedAppeals.includes(appealId));
 
   const toggleLinkedAppealSection = () => {
-
+    setIsLinkedAppealExpanded(!isLinkedAppealExpanded);
     dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, appealId));
-
   };
 
   useEffect(() => {
