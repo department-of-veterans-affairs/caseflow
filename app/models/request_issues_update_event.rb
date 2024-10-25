@@ -226,9 +226,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # rubocop:disable Metrics/MethodLength
   def find_request_issue(parser_issue)
-  request_issue = find_by_reference_id(parser_issue) ||
-                  find_and_update_original_issue(parser_issue) ||
-                  find_and_update_contention_issue(parser_issue)
+    request_issue = find_by_reference_id(parser_issue) ||
+                    find_and_update_original_issue(parser_issue) ||
+                    find_and_update_contention_issue(parser_issue)
 
     if request_issue.nil?
       fail(
@@ -324,17 +324,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def find_and_update_original_issue(parser_issue)
     original_issue = RequestIssue.find_by(id: parser_issue.ri_original_caseflow_request_issue_id)
-    if original_issue
-      original_issue.update!(reference_id: parser_issue.ri_reference_id)
-    end
+    original_issue&.update!(reference_id: parser_issue.ri_reference_id)
     original_issue
   end
 
   def find_and_update_contention_issue(parser_issue)
     contention_issue = RequestIssue.find_by(contention_reference_id: parser_issue.ri_contention_reference_id)
-    if contention_issue
-      contention_issue.update!(reference_id: parser_issue.ri_reference_id)
-    end
+    contention_issue&.update!(reference_id: parser_issue.ri_reference_id)
     contention_issue
   end
 
