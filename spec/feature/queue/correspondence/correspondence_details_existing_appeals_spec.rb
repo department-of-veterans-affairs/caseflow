@@ -63,7 +63,7 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       all(".plus-symbol")[0].click
       page.all(".cf-form-checkbox")[1].click
       find(".cf-btn-link", text: "Return to queue").click
-      expect(page).to have_selector('#submit-correspondence-intake-modal', visible: true)
+      expect(page).to have_selector("#submit-correspondence-intake-modal", visible: true)
       within("#submit-correspondence-intake-modal") do
         click_button "Cancel"
       end
