@@ -193,5 +193,16 @@ module CorrespondenceHelpers
     User.authenticate!(user: current_user)
   end
 
+  def retry_if_not_found(max_attempts: 3, cleanup: nil)
+    attempts = 0
+    begin
+      yield
+    rescue Capybara::ElementNotFound
+      attempts += 1
+      cleanup&.call
+      retry if attempts < max_attempts
+    end
+  end
+
   # rubocop:enable Metrics/ModuleLength
 end
