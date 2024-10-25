@@ -8,6 +8,7 @@ describe SavedSearchesController, :postgres, type: :controller do
   let(:default_user) { create(:user) }
   let(:vha_business_line) { VhaBusinessLine.singleton }
   let(:options) { { format: :json, decision_review_business_line_slug: non_comp_org.url } }
+  let(:delete_param) { { id: user.saved_searches.first.id, decision_review_business_line_slug: non_comp_org.url } }
 
   before do
     User.stub = user
@@ -51,7 +52,7 @@ describe SavedSearchesController, :postgres, type: :controller do
   describe "#destory /saved_searches/:id" do
     context "VHA user saved search exists" do
       it "should delete search" do
-        delete :destroy, params: { id: user.saved_searches.first.id, decision_review_business_line_slug: non_comp_org.url }
+        delete :destroy, params: delete_param
 
         expect(response).to have_http_status(:ok)
       end

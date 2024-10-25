@@ -10,8 +10,6 @@ class SavedSearchesController < ApplicationController
   ].freeze
 
   def index
-    # binding.pry
-
     searches = organization.users.map(&:saved_searches).flatten
     my_search = SavedSearch.for_user(current_user)
     respond_to do |format|
