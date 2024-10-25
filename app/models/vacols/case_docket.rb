@@ -757,6 +757,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         cavc_aod_affinity_filter(dry_appeals, judge_sattyid, cavc_aod_affinity_lever_value,
                                  excluded_judges_attorney_ids, genpop)
 
+        genpop_filter(dry_appeals) if genpop == "not_genpop"
+
         dry_appeals
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
@@ -766,6 +768,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids, genpop)
         cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids, genpop)
+
+        genpop_filter(appeals) if genpop == "not_genpop"
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
@@ -818,7 +822,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if tied_to_or_not_cavc?(appeal, judge_sattyid, genpop)
 
       if not_distributing_to_tied_judge?(appeal, judge_sattyid)
-        next if ineligible_judges_sattyids.include?(appeal["vlj"])
+        next if ineligible_judges_sattyids.include?(appeal["vlj"]) && genpop != "not_genpop"
 
         next (appeal["vlj"] != judge_sattyid)
       end
@@ -835,11 +839,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         genpop == "not_genpop" || reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
+        next true if appeal["vlj"] != judge_sattyid && genpop == "not_genpop"
         next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
-        appeal["prev_deciding_judge"] == appeal["vlj"]
+        appeal["prev_deciding_judge"] == appeal["vlj"] || genpop == "not_genpop"
       end
     end
   end
@@ -850,7 +855,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid, genpop)
 
       if not_distributing_to_tied_judge?(appeal, judge_sattyid)
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"]) && genpop != "not_genpop"
 
         next (appeal["vlj"] != judge_sattyid)
       end
@@ -867,15 +872,27 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         genpop == "not_genpop" || reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
+        next true if appeal["vlj"] != judge_sattyid && genpop == "not_genpop"
         next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.omit
-        appeal["prev_deciding_judge"] == appeal["vlj"]
+        appeal["prev_deciding_judge"] == appeal["vlj"] || genpop == "not_genpop"
       end
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  # this will currently only apply to priority appeals via the push priority job because we don't pass
+  # "not_genpop" through any nonpriority distributions
+  def self.genpop_filter(appeals)
+    appeals.reject! do |appeal|
+      # bfac 3 = AOJ and bfac 7 = CAVC which are filtered in their own methods to account for affinities
+      next if %w[3 7].include?(appeal["bfac"])
+
+      appeal["vlj"].nil? || ineligible_judges_sattyids&.include?(appeal["vlj"])
+    end
+  end
 
   def self.tied_to_or_not_cavc?(appeal, judge_sattyid, genpop)
     (appeal["bfac"] != "7" || appeal["aod"] != 0) ||
@@ -951,7 +968,13 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
 
       vljs_strings = split_lists.flat_map do |k, v|
-        base = "(#{v.join(', ')})"
+        # running array.join(', ') creates a string where each ID is considered an integer which causes issues
+        # in the VACOLS queries if a user's SATTYID has leading zeroes (which exists in production)
+        base = ""
+        v.map { |vlj_id| base += "'#{vlj_id}', " }
+        2.times { base.chop! }
+        base = "(#{base})"
+
         if prev_deciding_judge
           base += " or PREV_DECIDING_JUDGE in " unless k == split_lists.keys.last
         else
