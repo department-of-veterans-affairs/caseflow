@@ -194,11 +194,12 @@ module CorrespondenceHelpers
   end
 
   def retry_if_not_found(max_attempts: 3, cleanup: nil)
-    attempts = 0
+    attempts ||= 0
     begin
       yield
-    rescue Capybara::ElementNotFound
+    rescue Capybara::ElementNotFound => e
       attempts += 1
+      Rails.logger.warn("#{e} caught. Retry attempt: #{attempts}")
       cleanup&.call
       retry if attempts < max_attempts
     end
