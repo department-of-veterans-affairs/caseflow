@@ -96,7 +96,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
             className="csv-link"
             data={workOrderLink}
             target="_blank"
-            filename={`HearingSchedule ${workOrder}.zip`}>
+            filename={`HearingSchedule ${workOrder}.xls`}>
             <button className={['usa-button-secondary']}
               aria-label="Download return work order"
               style= {{ position: 'absolute', bottom: '0', right: '0' }}>
