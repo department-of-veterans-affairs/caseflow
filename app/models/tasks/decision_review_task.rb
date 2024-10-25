@@ -26,8 +26,7 @@ class DecisionReviewTask < Task
   end
 
   def complete_with_payload!(decision_issue_params, decision_date, user)
-    return false unless validate_task(decision_issue_params)
-    return false unless validate_decision_date(decision_date)
+    return false unless validate_task(decision_issue_params, decision_date)
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
@@ -46,11 +45,13 @@ class DecisionReviewTask < Task
 
   private
 
-  def validate_task(decision_issue_params)
+  def validate_task(decision_issue_params, decision_date)
     if completed?
       @error_code = :task_completed
     elsif !validate_decision_issue_per_request_issue(decision_issue_params)
       @error_code = :invalid_decision_issue_per_request_issue
+    elsif !validate_decision_date(decision_date)
+      @error_code = "invalid decision date"
     end
 
     !@error_code
@@ -63,7 +64,7 @@ class DecisionReviewTask < Task
   end
 
   def validate_decision_date(decision_date)
-    return true unless appeal.benefit_type == "vha"
+    return true unless assigned_to == VhaBusinessLine.singleton
 
     dd = decision_date.to_datetime
     dd <= Time.zone.now && dd >= appeal.receipt_date

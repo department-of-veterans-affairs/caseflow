@@ -329,6 +329,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted", "granted")
         scroll_to(page, align: :bottom)
         expect(page).to have_button("Complete", disabled: false)
+        Timecop.return # Time.zone.now is used to validate date during complete_with_payload!
         click_button("Complete")
         expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1")
       end

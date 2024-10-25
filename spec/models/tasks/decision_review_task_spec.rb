@@ -97,10 +97,10 @@ describe DecisionReviewTask, :postgres do
 
       context "vha business line" do
         let(:vha_business_line) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
-        let(:decision_date) { "01/01/1801" }
+        let(:decision_date) { 500.years.ago }
 
         before do
-          task.update!(assigned_to: vha_business_line)
+          task.update!(assigned_to: VhaBusinessLine.singleton)
           task.appeal.update!(benefit_type: "vha")
         end
         it "cannot be completed on invalid decision date" do
