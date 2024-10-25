@@ -49,23 +49,23 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[0].click
       page.all(".cf-form-checkbox")[1].click
-      find('.cf-btn-link', text: 'Return to queue').click
-      expect(page).to have_selector('#submit-correspondence-intake-modal', visible: true)
+      find(".cf-btn-link", text: "Return to queue").click
+      expect(page).to have_selector("#submit-correspondence-intake-modal", visible: true)
       expect(page).to have_content("Return to queue")
       within("#submit-correspondence-intake-modal") do
-        click_button 'Confirm'
+        click_button "Confirm"
       end
-      expect(current_path).to eq('/queue/correspondence/team')
+      expect(current_path).to eq("/queue/correspondence")
     end
 
     it "validate return to queue modal cancel" do
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[0].click
       page.all(".cf-form-checkbox")[1].click
-      find('.cf-btn-link', text: 'Return to queue').click
+      find(".cf-btn-link", text: "Return to queue").click
       expect(page).to have_selector('#submit-correspondence-intake-modal', visible: true)
       within("#submit-correspondence-intake-modal") do
-        click_button 'Cancel'
+        click_button "Cancel"
       end
       expect(page).not_to have_selector("#submit-correspondence-intake-modal", visible: false)
     end
