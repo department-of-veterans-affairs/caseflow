@@ -439,9 +439,7 @@ class QueueTableUnConnected extends React.PureComponent {
       });
     }
 
-    console.log(filters);
-
-    return filters;
+    return _.omit(filters, 'undefined');
   };
 
   defaultRowClassNames = () => '';

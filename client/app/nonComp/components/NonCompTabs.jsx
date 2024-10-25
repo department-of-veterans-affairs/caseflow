@@ -53,7 +53,9 @@ const NonCompTabsUnconnected = (props) => {
   const buildCompletedTabDescriptionFromFilter = (filters) => {
     const completedDateFilter = filters.find((value) => value.includes('col=completedDateColumn'));
 
-    if (completedDateFilter) {
+    if (!isVhaBusinessLine) {
+      return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
+    } else if (completedDateFilter) {
       const match = completedDateFilter.match(/val=([^&]*)/);
 
       if (match) {
@@ -79,11 +81,9 @@ const NonCompTabsUnconnected = (props) => {
           completedDateFilterModeHandlers[mode]);
       }
 
-    } else if (!isVhaBusinessLine) {
-      return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
     }
 
-    return COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
+    return COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
 
   };
 

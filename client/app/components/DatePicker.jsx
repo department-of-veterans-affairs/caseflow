@@ -161,6 +161,13 @@ class DatePicker extends React.PureComponent {
   apply() {
     const { onChange } = this.props;
 
+    if (this.state.mode === 'all') {
+      this.clearFilter();
+      this.hideDropdown();
+
+      return true;
+    }
+
     if (onChange) {
       onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
     }
@@ -225,6 +232,8 @@ class DatePicker extends React.PureComponent {
       }
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
+    } else if (this.state.mode === 'all') {
+      disabled = false;
     }
 
     return disabled;
@@ -254,19 +263,22 @@ class DatePicker extends React.PureComponent {
   }
 
   updateMode = (mode) => {
+    const format = 'YYYY-MM-DD';
+
     this.setState({ mode });
     if (mode !== 'between') {
       this.setState({ endDate: '' });
     }
 
     if (mode === 'last7') {
-      this.setState({ startDate: moment().subtract(7, 'days') });
+      this.setState({ startDate: moment().subtract(7, 'days').
+        format(format) });
     } else if (mode === 'last30') {
-      this.setState({ startDate: moment().subtract(30, 'days') });
+      this.setState({ startDate: moment().subtract(30, 'days').
+        format(format) });
     } else if (mode === 'last365') {
-      this.setState({ startDate: moment().subtract(365, 'days') });
-    } else if (mode === 'all') {
-      this.setState({ startDate: moment().subtract(300, 'years') });
+      this.setState({ startDate: moment().subtract(365, 'days').
+        format(format) });
     }
   }
 
