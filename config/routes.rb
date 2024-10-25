@@ -100,6 +100,8 @@ Rails.application.routes.draw do
 
     namespace :events do
       namespace :v1 do
+        post '/person_updated', to: 'person_updated#person_updated'
+        post '/does_person_exist', to: 'person_updated#does_person_exist'
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
         post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'

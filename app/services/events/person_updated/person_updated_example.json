@@ -1,0 +1,20 @@
+{
+  "event_id": 214706,
+  "claim_id": 1234567,
+  "css_id": "BVADWISE101",
+  "detail_type": "HigherLevelReview",
+  "station": "101",
+  "person_updated": {
+    "first_name": "Fred",
+    "last_name": "Flintstone",
+    "middle_name": "J",
+    "name_suffix": "Sr.",
+    "participant_id": "23456",
+    "ssn": "234567890",
+    "date_of_birth": "1/1/1950",
+    "email_address": "fred@theflintstones.org",
+    "date_of_death": "1/1/2020",
+    "file_number": "45678",
+    "is_veteran": true
+  }
+}
