@@ -62,7 +62,6 @@ const CorrespondenceDetails = (props) => {
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [isReturnToQueue, setIsReturnToQueue] = useState(true);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -816,22 +815,19 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const handleModalClose = () => {
-    if(disableSubmitButton){
-      history.push('/queue/correspondence')
-    }else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
-      window.location.href = '/queue/correspondence/team';
-    } else if (props.isInboundOpsUser) {
-      window.location.href = '/queue/correspondence/team';
+    if (disableSubmitButton) {
+      const redirectPath = props.isInboundOpsSuperuser || props.isInboundOpsSupervisor || props.isInboundOpsUser ?
+        '/queue/correspondence/team' : '/queue';
+
+      window.location.href = redirectPath;
     } else {
-      window.location.href = '/queue';
-    }else{
       setShowModal(!showModal);
-    } 
+    }
   };
 
   const redirectToQueue = () => {
-    history.push('/queue/correspondence')
-  }
+    history.push('/queue/correspondence');
+  };
 
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
@@ -923,25 +919,25 @@ const CorrespondenceDetails = (props) => {
         { showModal &&
           <Modal
             title="Return to queue"
-            name='Show issue'
+            name="Show issue"
             id="submit-correspondence-intake-modal"
             closeHandler={onCancel}
             buttons = {
               [
-                  {
-                    classNames: ['cf-modal-link', 'cf-btn-link'],
-                    name: 'Cancel',
-                    onClick: handleModalClose
-                  },
-                  {
-                    classNames: ['usa-button', 'usa-button-primary'],
-                    name: 'Confirm',
-                    onClick: redirectToQueue
-                  }
-                ]
+                {
+                  classNames: ['cf-modal-link', 'cf-btn-link'],
+                  name: 'Cancel',
+                  onClick: handleModalClose
+                },
+                {
+                  classNames: ['usa-button', 'usa-button-primary'],
+                  name: 'Confirm',
+                  onClick: redirectToQueue
+                }
+              ]
             }
-           >
-            All unsaved changes made to this mail package record will be lost upon returning to your queue. 
+          >
+            All unsaved changes made to this mail package record will be lost upon returning to your queue.
           </Modal>
         }
         <div className="cf-push-left">
