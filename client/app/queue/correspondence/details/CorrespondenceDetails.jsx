@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { useHistory } from 'react-router';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -25,9 +26,11 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
+import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
@@ -57,6 +60,18 @@ const CorrespondenceDetails = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   // Initialize checkbox states
   useEffect(() => {
@@ -171,7 +186,7 @@ const CorrespondenceDetails = (props) => {
         setInitialSelectedAppeals(appealIds);
         sortAppeals(appealIds);
         setAppealTableKey((key) => key + 1);
-      }
+      };
 
       // Send POST request to create relations
       const patchResponse = await ApiUtil.patch(
@@ -181,7 +196,7 @@ const CorrespondenceDetails = (props) => {
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse)
+      updateAppeals(patchResponse);
       console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
@@ -406,14 +421,6 @@ const CorrespondenceDetails = (props) => {
 
   }, []);
 
-  const isTasksUnrelatedToAppealEmpty = () => {
-    if (props.tasksUnrelatedToAppealEmpty === true) {
-      return 'Completed';
-    }
-
-    return props.correspondence.status;
-  };
-
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
@@ -506,6 +513,26 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Task not related to an Appeal</h2>
+
+        {isAdminNotLoggedIn() ?
+          '' :
+          <Button
+            type="button"
+            onClick={handleOpenModal}
+            name="addTaskOpen"
+            classNames={['cf-left-side']}
+          >
+            + Add task
+          </Button>}
+
+        {/* Render the modal */}
+        <AddTaskModalCorrespondenceDetails
+          title="Add Task"
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          correspondence={props.correspondence}
+          setIsTasksUnrelatedSectionExpanded= {setIsTasksUnrelatedSectionExpanded}
+        />
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
@@ -524,7 +551,6 @@ const CorrespondenceDetails = (props) => {
           organizations={props.organizations}
           userCssId={props.userCssId}
           correspondence={props.correspondence}
-          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
         />
       </div>
     )}
@@ -785,10 +811,22 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
+  const handleModalClose = () => {
+    if (isReturnToQueue) {
+      setShowModal(!showModal);
+    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+      window.location.href = '/queue/correspondence/team';
+    } else if (props.isInboundOpsUser) {
+      window.location.href = '/queue/correspondence/team';
+    } else {
+      window.location.href = '/queue';
+    }
+  };
+
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -861,7 +899,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{isTasksUnrelatedToAppealEmpty()}</p>
+          <p className="last-item"><b>Record status: </b>{correspondenceInfo.status}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }
@@ -871,19 +909,28 @@ const CorrespondenceDetails = (props) => {
           tabs={tabList}
         />
       </AppSegment>
-      {
-        // eslint-disable-next-line max-len
-        (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div className="margin-top-for-add-task-view">
+      <div className="margin-top-for-add-task-view">
+        <div className="cf-push-left">
           <Button
-            type="button"
-            onClick={() => saveChanges()}
-            disabled={disableSubmitButton}
-            name="save-changes"
-            classNames={['cf-right-side']}>
-          Save changes
-          </Button>
+            name="Return to queue"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
-      }
+        {
+          // eslint-disable-next-line max-len
+          (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div>
+            <Button
+              type="button"
+              onClick={() => saveChanges()}
+              disabled={disableSubmitButton}
+              name="save-changes"
+              classNames={['cf-right-side']}>
+            Save changes
+            </Button>
+          </div>
+        }
+      </div>
     </>
   );
 };
