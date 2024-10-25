@@ -826,7 +826,7 @@ const CorrespondenceDetails = (props) => {
   };
 
   const redirectToQueue = () => {
-    history.push('/queue/correspondence');
+    window.location.href = '/queue/correspondence/team';
   };
 
   const saveChanges = () => {

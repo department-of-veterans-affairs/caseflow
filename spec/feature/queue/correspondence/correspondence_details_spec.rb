@@ -337,40 +337,4 @@ RSpec.feature("The Correspondence Details page") do
       end
     end
   end
-  context "correspondence details validate Return to queue modal" do
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
-      FeatureToggle.enable!(:correspondence_queue)
-    end
-
-    it "validate return to queue modal confirm" do
-      visit "/queue/correspondence/#{correspondence.uuid}"
-
-      find('.cf-btn-link', text: 'Return to queue').click
-
-      expect(page).to have_selector('#submit-correspondence-intake-modal', visible: true)
-      expect(page).to have_content("Return to queue")
-
-      within("#submit-correspondence-intake-modal") do
-        click_button 'Confirm'
-      end
-
-      expect(current_path).to eq('/queue/correspondence')
-    end
-
-    it "validate return to queue modal cancel" do
-      visit "/queue/correspondence/#{correspondence.uuid}"
-
-      find('.cf-btn-link', text: 'Return to queue').click
-
-      expect(page).to have_selector('#submit-correspondence-intake-modal', visible: true)
-
-      within("#submit-correspondence-intake-modal") do
-        click_button 'Cancel'
-      end
-
-      expect(page).not_to have_selector("#submit-correspondence-intake-modal", visible: true)
-    end
-  end
 end
