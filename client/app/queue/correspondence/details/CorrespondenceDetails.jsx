@@ -425,7 +425,7 @@ const CorrespondenceDetails = (props) => {
       }
       setSelectedAppeals([...selectedAppeals, appealId]);
 
-      // add appeal to redux store
+      // Create Linked Appeal in redux store
       createLinkedAppeal(appealId);
     } else {
       if (selectedAppeals?.includes(appealId)) {
@@ -434,6 +434,7 @@ const CorrespondenceDetails = (props) => {
         setSelectedAppeals(filtedAppeals);
       }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+      // Unlink Linked Appeal in redux store
       unlinkLinkedAppeal(appealId);
     }
   };

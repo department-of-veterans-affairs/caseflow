@@ -6,7 +6,6 @@ class WorkQueue::CorrespondenceDetailsAppealSerializer
   set_key_transform :camel_lower
 
   attribute :id
-  # attribute :correspondences_appeals_tasks
   attribute :external_id, &:uuid
   attribute :docket_name
   attribute :decision_date
