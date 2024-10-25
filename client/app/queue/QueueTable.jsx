@@ -423,7 +423,7 @@ export default class QueueTable extends React.PureComponent {
       });
     }
 
-    return filters;
+    return _.omit(filters, 'undefined');
   };
 
   defaultRowClassNames = () => '';
