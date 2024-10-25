@@ -58,12 +58,13 @@ export const WorkOrderDetails = ({ taskNumber }) => {
 
   const downloadFile = async (workOrderLink) => {
     try {
-      const response = await ApiUtil.get(`/hearings/transcription_files/fetch_file`, {
+      const response = await ApiUtil.get('/hearings/transcription_files/fetch_file', {
         query: { work_order_link: workOrderLink },
         responseType: 'blob'
       });
 
       const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+
       FileSaver.saveAs(blob, File.basename(workOrderLink));
     } catch (err) {
       console.error('Error downloading file:', err);
