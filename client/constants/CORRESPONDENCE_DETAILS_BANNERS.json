@@ -31,7 +31,7 @@
 
   "completeTaskNotRelatedBanner": {
     "title": "Success",
-    "message": "You have successfully created an %s task.",
+    "message": "You have successfully created a %s task.",
     "type": "success"
   },
 
