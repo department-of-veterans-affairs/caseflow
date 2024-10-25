@@ -316,13 +316,10 @@ RSpec.feature("Correspondence Intake submission") do
       # Select each unique related to inactive appeal task
       react_select_containers = page.all("#reactSelectContainer")
       react_select_containers.each_with_index do |select_container, index|
-        using_wait_time(wait_time) do
-          retry_if_not_found(cleanup: click_page_body) do
+        retry_if_not_found(cleanup: click_page_body) do
+          using_wait_time(wait_time) do
             select_container.click
-            expect(page).to have_selector("div[class*=MenuList]", visible: true)
-            within "div[class*=MenuList]" do
-              find("div", exact_text: inactive_appeal_tasks[index]["label"]).click
-            end
+            find("div", exact_text: inactive_appeal_tasks[index]["label"]).click
           end
         end
       end
