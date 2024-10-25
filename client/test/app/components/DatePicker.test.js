@@ -157,7 +157,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500,');
+    expect(handleChange).toHaveBeenCalledWith('last7,2024-01-10,');
   });
 
   it('quick select options can select last 30 days', async () => {
@@ -173,7 +173,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500,');
+    expect(handleChange).toHaveBeenCalledWith('last30,2023-12-18,');
   });
 
   it('quick select options can select last 365 days', async () => {
@@ -189,7 +189,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500,');
+    expect(handleChange).toHaveBeenCalledWith('last365,2023-01-17,');
   });
 
   it('disables Apply Filter button if between is selected and the start date is after the end date', () => {
