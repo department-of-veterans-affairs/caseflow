@@ -3,22 +3,20 @@
 describe SavedSearchesController, :postgres, type: :controller do
   let(:user) { create(:user, :vha_admin_user, :with_saved_search_reports) }
   let(:saved_search) { create(:saved_search, user: user) }
-  let(:non_comp_org) { VhaBusinessLine.singleton }
 
   let(:default_user) { create(:user) }
   let(:vha_business_line) { VhaBusinessLine.singleton }
-  let(:options) { { format: :json, decision_review_business_line_slug: non_comp_org.url } }
-  let(:delete_param) { { id: user.saved_searches.first.id, decision_review_business_line_slug: non_comp_org.url } }
+  let(:options) { { format: :json, decision_review_business_line_slug: vha_business_line.url } }
+  let(:delete_param) { { id: user.saved_searches.first.id, decision_review_business_line_slug: vha_business_line.url } }
 
   before do
     User.stub = user
-    non_comp_org.add_user(user)
   end
 
   describe "#create" do
     let(:valid_params) do
       {
-        decision_review_business_line_slug: non_comp_org.url,
+        decision_review_business_line_slug: vha_business_line.url,
         search: {
           name: Faker::Name.name,
           description: Faker::Lorem.sentence,
@@ -39,7 +37,7 @@ describe SavedSearchesController, :postgres, type: :controller do
       }
     end
 
-    context "VHA user creating saved search" do
+    context "VHA admin user creating saved search" do
       it "should create search" do
         expect { post :create, params: valid_params }
           .to change(SavedSearch, :count).by(1)
@@ -58,9 +56,9 @@ describe SavedSearchesController, :postgres, type: :controller do
       end
     end
 
-    context "VHA user saved search not exists" do
+    context "VHA admin user saved search not exists" do
       it "retunrs a not found error" do
-        delete :destroy, params: { id: 0, decision_review_business_line_slug: non_comp_org.url }
+        delete :destroy, params: { id: 0, decision_review_business_line_slug: vha_business_line.url }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -122,7 +120,7 @@ describe SavedSearchesController, :postgres, type: :controller do
 
       subject do
         get :show,
-            params: { id: saved_search.id, format: :json, decision_review_business_line_slug: non_comp_org.url }
+            params: { id: saved_search.id, format: :json, decision_review_business_line_slug: vha_business_line.url }
       end
 
       it "returns specific saved search" do

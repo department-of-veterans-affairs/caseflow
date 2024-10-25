@@ -7,13 +7,13 @@ class SavedSearchSerializer
   attribute :description
   attribute :savedSearch, &:saved_search
   attribute :createdAt, &:created_at
-  attribute :userCssId do |object|
-    object.user.css_id
-  end
-  attribute :userFullName do |object|
-    object.user.full_name
-  end
-  attribute :userId do |object|
-    object.user.id
+
+  attribute :user do |object|
+    user = object.try(:user)
+    {
+      css_id: user.try(:css_id),
+      full_name: user.try(:full_name),
+      id: user.id
+    }
   end
 end

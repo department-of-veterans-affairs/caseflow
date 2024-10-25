@@ -308,7 +308,7 @@ Rails.application.routes.draw do
   get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
-    resources :saved_searches, only: [:index, :create, :destroy, :show]
+    resources :searches, controller: :saved_searches, only: [:index, :create, :destroy, :show]
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :history

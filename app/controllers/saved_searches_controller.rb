@@ -10,11 +10,11 @@ class SavedSearchesController < ApplicationController
   ].freeze
 
   def index
-    searches = organization.users.map(&:saved_searches).flatten
-    my_search = SavedSearch.for_user(current_user)
     respond_to do |format|
       format.html { render "index" }
       format.json do
+        searches = organization.users.includes(:saved_searches).map(&:saved_searches).flatten
+        my_search = SavedSearch.for_user(current_user)
         render json:
          { all_searches: SavedSearchSerializer.new(searches).serializable_hash[:data],
            user_searches: SavedSearchSerializer.new(my_search).serializable_hash[:data] }
@@ -24,9 +24,10 @@ class SavedSearchesController < ApplicationController
 
   def show
     @search = SavedSearch.find_by_id(params[:id])
+    @search_json = SavedSearchSerializer.new(@search).serializable_hash[:data]
     respond_to do |format|
       format.html { render "show" }
-      format.json { render json: SavedSearchSerializer.new(@search).serializable_hash[:data] }
+      format.json { render json:  @search_json }
     end
   end
 
@@ -48,10 +49,12 @@ class SavedSearchesController < ApplicationController
     end
   end
 
+  helper_method :organization
+
   private
 
   def organization
-    @organization ||= BusinessLine.find_by(url: params[:decision_review_business_line_slug])
+    @organization ||= Organization.find_by(url: params[:decision_review_business_line_slug])
   end
 
   def save_search_create_params

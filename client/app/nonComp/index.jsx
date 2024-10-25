@@ -59,7 +59,7 @@ class NonComp extends React.PureComponent {
                 />
                 <PageRoute
                   exact
-                  path="/:businessLineSlug/report/searches"
+                  path="/:businessLineSlug/searches"
                   title={`${appName} Saved Searches | Caseflow`}
                   component={SavedSearches}
                 />

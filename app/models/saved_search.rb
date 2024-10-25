@@ -7,7 +7,6 @@ class SavedSearch < CaseflowRecord
   validates :description, presence: true, length: { maximum: 1000 }
   validate :saved_search_limit
 
-  # Ex:- scope :active, -> {where(:active => true)}
   scope :for_user, ->(user) { where(user: user).order(created_at: :desc) }
 
   private
