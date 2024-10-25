@@ -35,7 +35,6 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   const isVisibleRef = useRef(null);
 
   isVisibleRef.current = usePageVisibility(canvasRef);
-  const viewportRef = useRef(null);
   const wrapperRef = useRef(null);
   const renderTaskRef = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
@@ -44,8 +43,8 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   const [isLoading, setIsLoading] = useState(false);
 
   const scaleFraction = scale / 100;
+  const viewportRef = useRef(page.getViewport({ scale: scaleFraction }));
 
-  viewportRef.current = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewportRef.current.height;
   const scaledWidth = viewportRef.current.width;
   let rotatedHeight = scaledHeight;
@@ -82,13 +81,12 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
       if (renderTaskRef.current) {
         // try to let an existing render task to finish
         try {
-          await renderTaskRef.current.promise;
+          await renderTaskRef.current.cancel();
         } catch {
           // no op when an existing render task fails
         }
       }
 
-      renderTaskRef.current = null;
       renderTaskRef.current = page.render({
         canvasContext: canvasRef.current.getContext('2d', { alpha: false }),
         viewport: viewportRef.current,
@@ -111,7 +109,8 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
         setIsLoading(false);
         hasRenderedRef.current = true;
       } catch {
-        // no op when current render task fails
+        // retry when current render task fails
+        // render();
       }
     }
   };
@@ -119,7 +118,7 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   // render when scale changes, the canvas is ready, we haven't rendered, or the page becomes visible
   useEffect(() => {
     render();
-  }, [scale, previousScale, canvasRef.current, hasRenderedRef.current, isVisibleRef.current]);
+  }, [canvasRef.current, hasRenderedRef.current, isVisibleRef.current, viewportRef.current]);
 
   // cancel any existing render tasks if still running when we unmount
   useEffect(() => {
@@ -135,13 +134,14 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   if (previousScale !== scale) {
     setPreviousScale(scale);
     hasRenderedRef.current = false;
+    viewportRef.current = page.getViewport({ scale: scale / 100 });
     renderTaskRef.current?.cancel();
 
     return;
   }
 
   const showCanvas = !isLoading;
-  const loadingIconSize = 50 * scaleFraction;
+  const loadingIconSize = 50;
 
   return (
     <div
