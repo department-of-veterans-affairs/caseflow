@@ -27,6 +27,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
+import Modal from 'app/components/Modal';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -61,7 +62,7 @@ const CorrespondenceDetails = (props) => {
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
+  const [isReturnToQueue, setIsReturnToQueue] = useState(true);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -273,6 +274,10 @@ const CorrespondenceDetails = (props) => {
 
     return returnSort;
   });
+
+  const onCancel = () => {
+    setShowModal(false);
+  };
 
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
@@ -811,16 +816,22 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const handleModalClose = () => {
-    if (isReturnToQueue) {
-      setShowModal(!showModal);
-    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+    if(disableSubmitButton){
+      history.push('/queue/correspondence')
+    }else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
       window.location.href = '/queue/correspondence/team';
     } else if (props.isInboundOpsUser) {
       window.location.href = '/queue/correspondence/team';
     } else {
       window.location.href = '/queue';
-    }
+    }else{
+      setShowModal(!showModal);
+    } 
   };
+
+  const redirectToQueue = () => {
+    history.push('/queue/correspondence')
+  }
 
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
@@ -909,6 +920,30 @@ const CorrespondenceDetails = (props) => {
         />
       </AppSegment>
       <div className="margin-top-for-add-task-view">
+        { showModal &&
+          <Modal
+            title="Return to queue"
+            name='Show issue'
+            id="submit-correspondence-intake-modal"
+            closeHandler={onCancel}
+            buttons = {
+              [
+                  {
+                    classNames: ['cf-modal-link', 'cf-btn-link'],
+                    name: 'Cancel',
+                    onClick: handleModalClose
+                  },
+                  {
+                    classNames: ['usa-button', 'usa-button-primary'],
+                    name: 'Confirm',
+                    onClick: redirectToQueue
+                  }
+                ]
+            }
+           >
+            All unsaved changes made to this mail package record will be lost upon returning to your queue. 
+          </Modal>
+        }
         <div className="cf-push-left">
           <Button
             name="Return to queue"
