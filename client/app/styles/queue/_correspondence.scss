@@ -1621,6 +1621,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .task-added-header {
   font-weight: bold;
+  font-size: 15px;
 }
 
 .number-of-issues-header {
@@ -1649,9 +1650,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     text-transform: capitalize;
   }
 }
+.corr-tasks-added-col:not(:last-child) .task-added-value{
+  border-right: 2px solid #ccc;
+  margin-right: 3%;
+}
 
 .first-row {
-  padding-right: 3%;
+  //padding-right: 3%;
   flex-wrap: nowrap;
   min-width: fit-content;
 }

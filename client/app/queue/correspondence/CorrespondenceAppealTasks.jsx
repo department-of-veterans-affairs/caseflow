@@ -83,40 +83,42 @@ const CorrespondenceAppealTasks = (props) => {
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
               <p className="task-added-header">DOCKET NUMBER</p>
-              <span className="case-details-badge">
-                <DocketTypeBadge name={props.task_added.appealType} />
-                <CaseDetailsLink
-                  appeal={{ externalId: props.task_added.appealUuid }}
-                  getLinkText={() => props.task_added.docketNumber}
-                  task={props.task_added}
+              <div className="task-added-value">
+                <span className="case-details-badge">
+                  <DocketTypeBadge name={props.task_added.appealType} />
+                  <CaseDetailsLink
+                    appeal={{ externalId: props.task_added.appealUuid }}
+                    getLinkText={() => props.task_added.docketNumber}
+                    task={props.task_added}
 
-                  linkOpensInNewTab
-                />
-              </span>
+                    linkOpensInNewTab
+                  />
+                </span>
+              </div>
 
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPELLANT NAME</p>
-              <p>{veteranFullName}</p>
+              <p className="task-added-value">{veteranFullName}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPEAL STREAM TYPE</p>
-              <p className="stream-type">{renderLegacyAppealType({
+              <p className="stream-type task-added-value">{renderLegacyAppealType({
                 aod: props.task_added.appeal.data.attributes.aod,
                 type: props.task_added.streamType
               })}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">NUMBER OF ISSUES</p>
-              <p>{props.task_added.numberOfIssues}</p>
+              <p className="task-added-value">{props.task_added.numberOfIssues}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">STATUS</p>
-              <p>{props.task_added.status}</p>
+              <p className="task-added-value">{props.task_added.status}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">ASSIGNED TO</p>
-              <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
+              <p className="task-added-value">{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
             </div>
 
           </div>
