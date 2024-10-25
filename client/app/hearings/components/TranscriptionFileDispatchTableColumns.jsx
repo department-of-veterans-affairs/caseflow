@@ -268,9 +268,12 @@ export const workOrderColumn = () => {
     valueFunction: (row) => (
       <div>
         <Link
-          to={`/transcription_work_order/display_wo_summary/?taskNumber=${row.workOrder}`}
+          to={`/transcription_work_order/display_wo_summary/?taskNumber=${
+            row.workOrder
+          }`}
           target="_blank"
           style={styles.workOrderLink}
+          onClick={() => console.log("workOrder:", row.workOrder)} // Debugging statement
         >
           #{row.workOrder}
           <span style={styles.workOrderLinkIcon}>
