@@ -3,7 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import { CSVLink } from 'react-csv';
+import FileSaver from 'file-saver';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -56,6 +56,20 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     }
   };
 
+  const downloadFile = async (workOrderLink) => {
+    try {
+      const response = await ApiUtil.get(`/hearings/transcription_files/fetch_file`, {
+        query: { work_order_link: workOrderLink },
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      FileSaver.saveAs(blob, File.basename(workOrderLink));
+    } catch (err) {
+      console.error('Error downloading file:', err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [taskNumber]);
@@ -90,19 +104,15 @@ export const WorkOrderDetails = ({ taskNumber }) => {
           </div>
         </div>
         <div style={{ float: 'right', width: '50%', position: 'relative' }}>
-
           { workOrderStatus.currentStatus &&
-          <CSVLink
-            className="csv-link"
-            data={workOrderLink}
-            target="_blank"
-            filename={`HearingSchedule ${workOrder}.xls`}>
-            <button className={['usa-button-secondary']}
-              aria-label="Download return work order"
-              style= {{ position: 'absolute', bottom: '0', right: '0' }}>
-              Download return work order
-            </button>
-          </CSVLink>
+          <button
+            className={['usa-button-secondary']}
+            aria-label="Download return work order"
+            style={{ position: 'absolute', bottom: '0', right: '0' }}
+            onClick={() => downloadFile(workOrderLink)}
+          >
+            Download return work order
+          </button>
           }
         </div>
       </div>
