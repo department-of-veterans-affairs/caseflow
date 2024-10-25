@@ -19,7 +19,7 @@ describe SavedSearchSerializer, :postgres do
       serializable_hash = {
         name: "my_first_search",
         description: "my first search",
-        saved_search: "{report_type: 'event_type_action'}",
+        savedSearch: "{report_type: 'event_type_action'}",
         createdAt: saved_search.created_at,
         userCssId: user.css_id,
         userFullName: user.full_name,

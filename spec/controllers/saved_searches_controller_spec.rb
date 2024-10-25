@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 describe SavedSearchesController, :postgres, type: :controller do
-  let(:user) { create(:user, :vha_admin_user, :with_saved_search_reports) }
+  let(:user) { create(:user, :vha_admin_user, :with_saved_search_reports, ) }
   let(:saved_search) { create(:saved_search, user: user) }
+  let(:non_comp_org) { VhaBusinessLine.singleton }
 
   let(:default_user) { create(:user) }
   let(:vha_business_line) { VhaBusinessLine.singleton }
-  let(:options) { { format: :json } }
+  let(:options) { { format: :json,  decision_review_business_line_slug: non_comp_org.url } }
 
   before do
     User.stub = user
+    non_comp_org.add_user(user)
   end
 
   describe "#create" do
     let(:valid_params) do
       {
+        decision_review_business_line_slug: non_comp_org.url,
         search: {
           name: Faker::Name.name,
           description: Faker::Lorem.sentence,
@@ -29,7 +32,7 @@ describe SavedSearchesController, :postgres, type: :controller do
             decision_review_type: {
               "0": "HigherLevelReview", "1": "SupplementalClaim"
             },
-            business_line_slug: "vha"
+            decision_review_business_line_slug: "vha"
           }
         }
       }
@@ -48,7 +51,7 @@ describe SavedSearchesController, :postgres, type: :controller do
   describe "#destory /saved_searches/:id" do
     context "VHA user saved search exists" do
       it "should delete search" do
-        delete :destroy, params: { id: user.saved_searches.first.id }
+        delete :destroy, params: { id: user.saved_searches.first.id,  decision_review_business_line_slug: non_comp_org.url }
 
         expect(response).to have_http_status(:ok)
       end
@@ -56,7 +59,7 @@ describe SavedSearchesController, :postgres, type: :controller do
 
     context "VHA user saved search not exists" do
       it "retunrs a not found error" do
-        delete :destroy, params: { id: 0 }
+        delete :destroy, params: { id: 0, decision_review_business_line_slug: non_comp_org.url }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -95,7 +98,7 @@ describe SavedSearchesController, :postgres, type: :controller do
           subject
 
           expect(response.status).to eq 200
-          expect(JSON.parse(response.body)["all_searches"].count).to eq(16)
+          expect(JSON.parse(response.body)["all_searches"].count).to eq(6)
           expect(JSON.parse(response.body)["user_searches"].count).to eq(5)
         end
       end
@@ -118,7 +121,7 @@ describe SavedSearchesController, :postgres, type: :controller do
 
       subject do
         get :show,
-            params: { id: saved_search.id, format: :json }
+            params: { id: saved_search.id, format: :json, decision_review_business_line_slug: non_comp_org.url }
       end
 
       it "returns specific saved search" do

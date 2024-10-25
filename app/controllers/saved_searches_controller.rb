@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class SavedSearchesController < ApplicationController
-
   before_action :react_routed, :verify_access
 
   PERMITTED_PARAMS = [
@@ -11,7 +10,9 @@ class SavedSearchesController < ApplicationController
   ].freeze
 
   def index
-    searches = organization.users.map(&:saved_search).order(created_at: :desc)
+    # binding.pry
+
+    searches = organization.users.map(&:saved_searches).flatten
     my_search = SavedSearch.for_user(current_user)
     respond_to do |format|
       format.html { render "index" }
@@ -44,15 +45,15 @@ class SavedSearchesController < ApplicationController
       @search = current_user.saved_searches.find(params[:id])
       @search.destroy!
       render json: { status: :ok }
-    rescue ActiveRecord::RecordNotFound => e
-      render json: { error: e.to_s }, status: :not_found
+    rescue ActiveRecord::RecordNotFound => error
+      render json: { error: error.to_s }, status: :not_found
     end
   end
 
   private
 
   def organization
-    @organization ||= BusinessLine.find_by(url: params[:business_line_slug])
+    @organization ||= BusinessLine.find_by(url: params[:decision_review_business_line_slug])
   end
 
   def save_search_create_params
