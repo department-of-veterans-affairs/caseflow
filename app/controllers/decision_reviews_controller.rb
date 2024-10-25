@@ -173,10 +173,6 @@ class DecisionReviewsController < ApplicationController
   def decision_date
     return unless task.instance_of? DecisionReviewTask
 
-    if business_line_slug == "vha"
-      verify_decision_date
-    end
-
     Date.parse(allowed_params.require("decision_date")).to_datetime
   end
 
@@ -250,13 +246,6 @@ class DecisionReviewsController < ApplicationController
   def verify_task
     unless task&.is_a?(DecisionReviewTask)
       render json: { error: "Task #{task_id} not found" }, status: :not_found
-    end
-  end
-
-  def verify_decision_date
-    dd = params["decision_date"].to_datetime
-    unless dd <= Time.zone.now && dd >= task.appeal.receipt_date.to_datetime
-      render json: { error: "Invalid decision date" }, status: :unprocessable_entity
     end
   end
 

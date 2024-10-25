@@ -27,6 +27,7 @@ class DecisionReviewTask < Task
 
   def complete_with_payload!(decision_issue_params, decision_date, user)
     return false unless validate_task(decision_issue_params)
+    return false unless validate_decision_date(decision_date)
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
@@ -59,5 +60,11 @@ class DecisionReviewTask < Task
     appeal.request_issues.active.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
       decision_issue_param[:request_issue_id].to_i
     end.sort
+  end
+
+  def validate_decision_date(decision_date)
+    return unless appeal.benefit_type == "vha"
+
+    decision_date <= Time.zone.now && decision_date >= appeal.receipt_date
   end
 end
