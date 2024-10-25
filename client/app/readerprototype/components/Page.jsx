@@ -87,7 +87,7 @@ const Page = memo(({
       if (renderTaskRef.current) {
         // try to let an existing render task to finish
         try {
-          await renderTaskRef.current.promise;
+          await renderTaskRef.current.cancel();
         } catch {
           // no op when an existing render task fails
         }
@@ -115,7 +115,8 @@ const Page = memo(({
         setIsLoading(false);
         hasRenderedRef.current = true;
       } catch {
-        // no op when current render task fails
+        // retry when current render task fails
+        // render();
       }
     }
   };
