@@ -8,12 +8,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
   context 'when appeals have been staged' do
     it 'refreshes the view and returns the proper appeals', bypass_cleaner: true do
-      # AMA
-      binding.pry
 
+      #AMA
       FactoryBot.create(:appeal, :with_schedule_hearing_tasks)
       FactoryBot.create(:appeal)
 
+      #LEGACY
       case1 = FactoryBot.create(:case, bfkey: "700230001041", bfcorlid: "100000101011")
       case2 = FactoryBot.create(:case, bfkey: "700230002041", bfcorlid: "100000102021")
 
