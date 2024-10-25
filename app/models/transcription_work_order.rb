@@ -91,7 +91,8 @@ class TranscriptionWorkOrder
   end
 
   def self.fetch_wo_info(task_number)
-    wo_info = TranscriptionPackage.joins(:contractor).select('transcription_packages.expected_return_date,
+    wo_info = TranscriptionPackage.joins(:contractor).select('transcription_packages.id,
+      transcription_packages.expected_return_date,
                transcription_packages.task_number,
                transcription_packages.aws_link_zip,
                transcription_contractors.name')
@@ -123,6 +124,7 @@ class TranscriptionWorkOrder
   end
 
   def self.find_transcription_with_files(task_number)
+    byebug
     ::Transcription.includes(
       transcription_files: { hearing: [:hearing_day, :appeal, :judge] }
     ).find_by(task_number: task_number)
