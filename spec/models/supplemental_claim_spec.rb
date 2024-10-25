@@ -25,6 +25,17 @@ describe SupplementalClaim, :postgres do
     )
   end
 
+  let(:remand) do
+    Remand.new(
+      veteran_file_number: veteran_file_number,
+      receipt_date: receipt_date,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      decision_review_remanded: decision_review_remanded
+    )
+  end
+
   let!(:intake) do
     create(:intake, user: current_user, detail: supplemental_claim, veteran_file_number: veteran_file_number)
   end
@@ -43,6 +54,11 @@ describe SupplementalClaim, :postgres do
         let(:benefit_type) { "compensation" }
         let(:legacy_opt_in_approved) { false }
         let(:receipt_date) { 1.day.ago }
+
+        it "sets the type column correctly" do
+          expect(supplemental_claim.type).to eq(SupplementalClaim.name)
+          expect(remand.type).to eq(Remand.name)
+        end
 
         it "is valid" do
           is_expected.to be true
@@ -120,6 +136,17 @@ describe SupplementalClaim, :postgres do
   end
 
   context "create_remand_issues!" do
+    let(:classifier) { Remand }
+    let(:supplemental_claim) do
+      classifier.new(
+        veteran_file_number: veteran_file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type,
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        decision_review_remanded: decision_review_remanded
+      )
+    end
     subject { supplemental_claim.create_remand_issues! }
 
     let(:decision_review_remanded) { create(:appeal) }
@@ -182,20 +209,41 @@ describe SupplementalClaim, :postgres do
         benefit_type: benefit_type
       )
 
-      expect(RequestIssue.find_by(
-               decision_review: supplemental_claim,
-               contested_decision_issue_id: already_contested_remanded_di.id,
-               contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
-               contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
-               contested_issue_description: already_contested_remanded_di.description,
-               benefit_type: benefit_type
-             )).to be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: supplemental_claim,
+          contested_decision_issue_id: already_contested_remanded_di.id,
+          contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
+          contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
+          contested_issue_description: already_contested_remanded_di.description,
+          benefit_type: benefit_type
+        )
+      ).to be_nil
     end
 
     it "doesn't create duplicate remand issues" do
       supplemental_claim.create_remand_issues!
 
       expect { subject }.to_not change(supplemental_claim.request_issues, :count)
+    end
+
+    context "with invalid descriptions" do
+      let!(:decision_issue_invalid_character) do
+        create(
+          :decision_issue,
+          disposition: "remanded",
+          benefit_type: benefit_type,
+          decision_review: decision_review_remanded,
+          rating_issue_reference_id: "1234",
+          description: "Invalid: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}"
+        )
+      end
+
+      it "sanitizes invalid characters" do
+        supplemental_claim.create_remand_issues!
+
+        expect(supplemental_claim.request_issues.last.valid?).to be true
+      end
     end
   end
 

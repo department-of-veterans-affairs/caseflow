@@ -4,7 +4,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -19,10 +18,7 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import OrganizationPermissions from './OrganizationPermissions';
-
-const listStyle = css({
-  listStyle: 'none'
-});
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -242,37 +238,55 @@ getFilteredUsers = () => {
     const dvcTeam = this.state.dvcTeam;
     const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
+      const { conferenceSelectionVisibility } = this.props;
 
-      return <React.Fragment key={user.id}>
-        <div className={['team-member-container']}>
-          <div className={['team-member-info']}>
-            <div key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
+      return (
+        <React.Fragment key={user.id}>
+          <li key={user.id} className="user-list-item">
+            <div className="title-buttons">
+              { this.formatName(user) }
               { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
               { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
               { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
               { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+
+              {
+                (judgeTeam || dvcTeam) && admin ?
+                  null :
+                  <div>
+                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                    { this.removeUserButton(user) }
+                  </div>
+              }
+
             </div>
-            { (judgeTeam || dvcTeam) && admin ?
-              <div className={['top-user-border']}></div> :
-              <div>
-                <div className={['team-member-buttons-container']}>
-                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-                  { this.removeUserButton(user) }
+            {this.state.organizationName === 'Hearings Management' &&
+                    conferenceSelectionVisibility && (
+              <div className="button-style">
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
                 </div>
               </div>
-
-            }
-          </div>
-          {(this.state.organizationPermissions?.length > 0) && <div className={['team-member-permission-toggles-container']}>
-            <OrganizationPermissions
-              organization={this.props.organization}
-              permissions={this.state.organizationPermissions}
-              user={user}
-              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
-              organizationUserPermissions={this.state.organizationUserPermissions} />
-          </div>}
-        </div>
-      </React.Fragment>;
+            )}
+            {(this.state.organizationPermissions?.length > 0) && <div className={['team-member-permission-toggles-container']}>
+              <OrganizationPermissions
+                organization={this.props.organization}
+                permissions={this.state.organizationPermissions}
+                user={user}
+                orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+                organizationUserPermissions={this.state.organizationUserPermissions} />
+            </div>}
+          </li>
+        </React.Fragment>
+      );
     });
 
     const handleSearchChange = (value) => {
@@ -289,26 +303,27 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
+      <div className="add-dropdown">
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
+          <ul className="instruction-list">
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
@@ -331,7 +346,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul>{listOfUsers}</ul>
+          <ul className="user-list">{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
@@ -339,7 +354,6 @@ getFilteredUsers = () => {
           </>
         )
         }
-
       </div>
     </React.Fragment>;
   }
@@ -411,5 +425,6 @@ getFilteredUsers = () => {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  conferenceSelectionVisibility: PropTypes.bool
 };

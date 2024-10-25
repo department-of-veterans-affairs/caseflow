@@ -39,6 +39,9 @@ class ExternalApi::BGSService
       ) do
         response = client.security.find_person_scrty_log_by_ptcpnt_id(participant_id)
 
+        # guard clause for no response
+        return 0 if response.blank?
+
         response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
       rescue BGS::ShareError
         0
@@ -65,7 +68,7 @@ class ExternalApi::BGSService
         # guard clause for no response
         return 0 if response.blank?
 
-        response&.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
+        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
       rescue BGS::ShareError
         0
       end
