@@ -1056,7 +1056,7 @@ feature "NonComp Reviews Queue", :postgres do
       # expect(page).to have_content("Viewing 1-2 of 2 total")
 
       # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content("Cases completed:")
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       expect(page).to_not have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
 
@@ -1102,7 +1102,9 @@ feature "NonComp Reviews Queue", :postgres do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
       click_on "Completed Tasks"
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      # Add this back in once the last 7 days pre filter is added again
+      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       click_button "Download completed tasks"
 
       # Check the csv to make sure it returns the two task rows within the last week and the header row
