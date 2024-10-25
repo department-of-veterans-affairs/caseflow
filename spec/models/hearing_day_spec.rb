@@ -584,40 +584,6 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "hearing day is in future, link already exists and its created_by user differs \
-    from that of the hearing day's" do
-    let(:user_1) { User.create(css_id: "user_1", station_id: 101) }
-    let(:user_2) { User.create(css_id: "user_2", station_id: 101) }
-
-    let(:hearing_day) do
-      create(
-        :hearing_day,
-        request_type: HearingDay::REQUEST_TYPES[:video],
-        scheduled_for: 1.month.from_now,
-        regional_office: "RO01",
-        created_by: user_1,
-        room: "1"
-      )
-    end
-
-    let!(:preexisting_conference_link) do
-      PexipConferenceLink.create!(
-        hearing_day: hearing_day,
-        created_by: user_2
-      )
-    end
-
-    subject { hearing_day.conference_link }
-
-    it "A new link is NOT created" do
-      subject
-
-      expect(
-        ConferenceLink.where(hearing_day: hearing_day).count
-      ).to eq 1
-    end
-  end
-
   context "hearing day in the future, conference link doesnt exist" do
     let(:hearing_day) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)

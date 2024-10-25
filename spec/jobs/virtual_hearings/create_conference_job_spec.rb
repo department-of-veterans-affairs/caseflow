@@ -262,10 +262,7 @@ describe VirtualHearings::CreateConferenceJob do
           repkey: appeal.vacols_id
         )
       end
-      let(:hearing) do
-        RequestStore[:current_user] = current_user
-        create(:legacy_hearing, appeal: appeal)
-      end
+      let(:hearing) { create(:legacy_hearing, appeal: appeal) }
 
       context "when representative is different in VACOLS and VBMS" do
         it "uses the representative in VBMS" do
