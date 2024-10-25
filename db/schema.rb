@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2024_10_21_145753) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -2527,7 +2528,7 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
           END AS appeal_stream,
       f_vacols_folder.tinum AS docket_number
      FROM (((legacy_appeals
-       JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
+       JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
        JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));

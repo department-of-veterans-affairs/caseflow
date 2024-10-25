@@ -36,7 +36,7 @@ SELECT
     END AS appeal_stream,
     f_vacols_folder.tinum AS docket_number
 FROM legacy_appeals
-JOIN tasks ON tasks.appeal_type = 'Appeal' and tasks.appeal_id = legacy_appeals.id
+JOIN tasks ON tasks.appeal_type = 'LegacyAppeal' and tasks.appeal_id = legacy_appeals.id
 JOIN f_vacols_brieff ON (legacy_appeals.vacols_id = f_vacols_brieff.bfkey)
 JOIN f_vacols_folder ON (f_vacols_brieff.bfkey = f_vacols_folder.ticknum)
 WHERE tasks.type = 'ScheduleHearingTask'

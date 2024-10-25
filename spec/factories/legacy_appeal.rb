@@ -12,7 +12,7 @@ FactoryBot.define do
       appellant_address { nil }
     end
 
-    vacols_id { vacols_case&.bfkey || "123456" }
+    vacols_id { vacols_case&.bfkey || rand(6 ** 6).to_s.rjust(6,'0') }
     vbms_id { vacols_case&.bfcorlid }
 
     after(:create) do |appeal, evaluator|
