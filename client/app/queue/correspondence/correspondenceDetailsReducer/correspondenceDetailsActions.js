@@ -325,14 +325,77 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
   });
 };
 
-export const updateCorrespondenceInfo = (correspondence) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.CORRESPONDENCE_INFO,
-    payload: {
-      correspondence
-    }
-  });
+// Add task not related to appeal
+export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch) => {
+  const patchData = {
+    tasks_not_related_to_appeal: [{
+      klass: taskData.klass,
+      assigned_to: taskData.assigned_to,
+      content: taskData.content,
+      label: taskData.label,
+      assignedOn: taskData.assignedOn,
+      instructions: taskData.instructions
+    }]
+  };
+
+  // Return a promise so that the caller can await the result
+  return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, { data: patchData }).
+    then((response) => {
+      // Fetch the updated correspondence information from the response
+      const updatedCorrespondence = response.body.correspondence;
+
+      // Dispatch action to update correspondence info in the Redux store
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence: updatedCorrespondence
+        }
+      });
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.message, taskData.label),
+            type: CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.type
+          }
+        }
+      });
+
+      // Return the response for any further handling
+      return response;
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message, errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
+          }
+        }
+      });
+
+      // Reject the promise to handle the error in the component
+      return Promise.reject(error);
+    });
 };
+
+export const updateCorrespondenceInfo = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CORRESPONDENCE_INFO,
+      payload: {
+        correspondence
+      }
+    });
+  };
 
 export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch) => {
   return ApiUtil.patch(`/queue/correspondence/${uuid}/edit_general_information`, payload).

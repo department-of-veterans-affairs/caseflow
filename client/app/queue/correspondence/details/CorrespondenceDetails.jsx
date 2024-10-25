@@ -27,6 +27,7 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
+import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -63,6 +64,16 @@ const CorrespondenceDetails = (props) => {
   const [appealTaskKey, setAppealTaskKey] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   // Initialize checkbox states
   useEffect(() => {
@@ -471,14 +482,6 @@ const CorrespondenceDetails = (props) => {
 
   }, []);
 
-  const isTasksUnrelatedToAppealEmpty = () => {
-    if (props.tasksUnrelatedToAppealEmpty === true) {
-      return 'Completed';
-    }
-
-    return props.correspondence.status;
-  };
-
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
@@ -574,6 +577,26 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
+
+        {isAdminNotLoggedIn() ?
+          '' :
+          <Button
+            type="button"
+            onClick={handleOpenModal}
+            name="addTaskOpen"
+            classNames={['cf-left-side']}
+          >
+            + Add task
+          </Button>}
+
+        {/* Render the modal */}
+        <AddTaskModalCorrespondenceDetails
+          title="Add Task"
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          correspondence={props.correspondence}
+          setIsTasksUnrelatedSectionExpanded= {setIsTasksUnrelatedSectionExpanded}
+        />
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
@@ -592,7 +615,6 @@ const CorrespondenceDetails = (props) => {
           organizations={props.organizations}
           userCssId={props.userCssId}
           correspondence={props.correspondence}
-          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
         />
       </div>
     )}
@@ -856,14 +878,12 @@ const CorrespondenceDetails = (props) => {
   const handleModalClose = () => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
+    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+      window.location.href = '/queue/correspondence/team';
+    } else if (props.isInboundOpsUser) {
+      window.location.href = '/queue/correspondence/team';
     } else {
-      if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
-        window.location.href = '/queue/correspondence/team';
-      } else if (props.isInboundOpsUser) {
-        window.location.href = '/queue/correspondence/team';
-      } else {
-        window.location.href = '/queue';
-      }
+      window.location.href = '/queue';
     }
   };
 
@@ -955,7 +975,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{isTasksUnrelatedToAppealEmpty()}</p>
+          <p className="last-item"><b>Record status: </b>{correspondenceInfo.status}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }
@@ -967,11 +987,11 @@ const CorrespondenceDetails = (props) => {
       </AppSegment>
       <div className="margin-top-for-add-task-view">
         <div className="cf-push-left">
-              <Button
-                name="Return to queue"
-                classNames={['cf-btn-link']}
-                onClick={handleModalClose}
-              />
+          <Button
+            name="Return to queue"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
         {
           // eslint-disable-next-line max-len

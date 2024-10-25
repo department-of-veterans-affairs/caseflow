@@ -289,4 +289,52 @@ RSpec.feature("The Correspondence Details page") do
       ')
     end
   end
+
+  context "Adding a new task not related to appeal" do
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+    let(:correspondences) do
+      (0..1).map do |i|
+        create(
+          :correspondence,
+          :related_correspondence,
+          :pending,
+          veteran: veteran,
+          va_date_of_receipt: i == 0 ? "Tue, 23 Jul 2024 00:00:00 EDT -04:00" : "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
+          nod: false,
+          notes: i == 0 ? "Note Test" : "Related Correspondence Test"
+        )
+      end
+    end
+    let(:correspondence) { correspondences[0] }
+    let(:related_correspondence) { correspondences[1] }
+
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      correspondence_spec_user_access
+      FeatureToggle.enable!(:correspondence_queue)
+
+      # Create the relation between correspondence and related_correspondence
+      CorrespondenceRelation.create!(
+        correspondence_id: correspondence.id,
+        related_correspondence_id: related_correspondence.id
+      )
+    end
+
+    it "Adds a new task not related to appeal on Correspondence Details page" do
+      visit "/queue/correspondence/#{correspondence.uuid}"
+      all(".plus-symbol")[1].click
+      click_button("+ Add task")
+      expect(page).to have_selector("h1", text: "Add New Task")
+      expect(page).to have_selector(".add-task-modal-container")
+      expect(page).to have_field("content")
+      find(".add-task-dropdown-style").click
+      find(".react-select__option", text: "Congressional Interest").click
+      fill_in "content", with: "Test"
+      click_button "Next"
+      using_wait_time(10) do
+        expect(page).to have_content("Congressional Interest")
+      end
+    end
+  end
 end
