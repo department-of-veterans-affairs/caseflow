@@ -62,6 +62,7 @@ disabled_flags = %w[
   cc_vacatur_visibility
   acd_disable_legacy_lock_ready_appeals
   justification_reason
+  disable_legacy_distribution_stats
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
