@@ -21,9 +21,11 @@ describe SavedSearchSerializer, :postgres do
         description: "my first search",
         savedSearch: "{report_type: 'event_type_action'}",
         createdAt: saved_search.created_at,
-        userCssId: user.css_id,
-        userFullName: user.full_name,
-        userId: user.id
+        user: {
+          cssId: user.css_id,
+          fullName: user.full_name,
+          id: user.id
+        }
       }
       expect(subject.serializable_hash[:data][:attributes]).to eq(serializable_hash)
     end

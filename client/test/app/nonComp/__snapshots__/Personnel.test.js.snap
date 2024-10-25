@@ -15,7 +15,7 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
           </h1>
           <a
             class="usa-button-secondary"
-            href="/vha/report/searches"
+            href="/vha/searches"
             type="button"
           >
             View saved searches

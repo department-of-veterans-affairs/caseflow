@@ -11,8 +11,8 @@ class SavedSearchSerializer
   attribute :user do |object|
     user = object.try(:user)
     {
-      css_id: user.try(:css_id),
-      full_name: user.try(:full_name),
+      cssId: user.try(:css_id),
+      fullName: user.try(:full_name),
       id: user.id
     }
   end

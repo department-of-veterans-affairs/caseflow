@@ -3,7 +3,7 @@
 feature "Saved Searches", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
-  let(:vha_saved_searches_url) { "/decision_reviews/vha/report/searches" }
+  let(:vha_saved_searches_url) { "/decision_reviews/vha/searches" }
 
   before do
     User.stub = user
