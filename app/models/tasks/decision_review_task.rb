@@ -63,8 +63,9 @@ class DecisionReviewTask < Task
   end
 
   def validate_decision_date(decision_date)
-    return unless appeal.benefit_type == "vha"
+    return true unless appeal.benefit_type == "vha"
 
-    decision_date <= Time.zone.now && decision_date >= appeal.receipt_date
+    dd = decision_date.to_datetime
+    dd <= Time.zone.now && dd >= appeal.receipt_date
   end
 end
