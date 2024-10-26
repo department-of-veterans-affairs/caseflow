@@ -147,6 +147,7 @@ class DatePicker extends React.PureComponent {
     const position = (props.settings && props.settings.position) || 'left';
     const buttons = (props.settings && props.settings.buttons) || false;
     const selected = (props.selected && props.selected) || false;
+    const noFutureDates = (props.settings && props.settings.noFutureDates) || false;
 
     this.state = {
       open: false,
@@ -155,7 +156,8 @@ class DatePicker extends React.PureComponent {
       endDate: '',
       position,
       buttons,
-      selected
+      selected,
+      noFutureDates
     };
   }
 
@@ -219,11 +221,22 @@ class DatePicker extends React.PureComponent {
     return this.state.open || this.state.selected;
   }
 
+  isDateInFuture = (date) => {
+    if (!date) {
+      return false;
+    }
+
+    return Boolean(Date.parse(date) > new Date());
+  }
+
   buttonDisabled = () => {
     let disabled = true;
 
     if (this.state.mode === 'between') {
       if (this.state.startDate === '' || this.state.endDate === '') {
+        disabled = true;
+      } else if (this.state.noFutureDates &&
+        (this.isDateInFuture(this.state.startDate) || this.isDateInFuture(this.state.endDate))) {
         disabled = true;
       } else {
         const startDate = moment(`${this.state.startDate} 00:00:00`).valueOf();
@@ -231,6 +244,9 @@ class DatePicker extends React.PureComponent {
 
         disabled = startDate >= endDate;
       }
+
+    } else if (this.state.noFutureDates && this.isDateInFuture(this.state.startDate)) {
+      disabled = true;
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
     } else if (this.state.mode === 'all') {
@@ -304,8 +320,7 @@ class DatePicker extends React.PureComponent {
   };
 
   startDateErrorMessage = () => {
-    if (this.props.settings?.noFutureDates && this.state.startDate &&
-      Boolean(Date.parse(this.state.startDate) > new Date())) {
+    if (this.state.noFutureDates && this.state.startDate && this.isDateInFuture(this.state.startDate)) {
       return 'Date cannot be in the future.';
     }
 
@@ -313,8 +328,7 @@ class DatePicker extends React.PureComponent {
   }
 
   endDateErrorMessage = () => {
-    if (this.props.settings?.noFutureDates && this.state.endDate &&
-      Boolean(Date.parse(this.state.endDate) > new Date())) {
+    if (this.state.noFutureDates && this.state.endDate && this.isDateInFuture(this.state.endDate)) {
       return 'Date cannot be in the future.';
     }
 
@@ -371,7 +385,7 @@ class DatePicker extends React.PureComponent {
                   label={this.state.mode === 'between' ? COPY.DATE_PICKER_FROM : COPY.DATE_PICKER_DATE}
                   name="start-date"
                   id="start-date"
-                  noFutureDates
+                  noFutureDates={this.state.noFutureDates}
                   defaultValue={this.state.startDate}
                   errorMessage={this.startDateErrorMessage()}
                   onChange={(value) => this.setState({ startDate: value })}
@@ -383,19 +397,11 @@ class DatePicker extends React.PureComponent {
 
             {this.state.mode === 'between' &&
               <div className="input-wrapper">
-                {/* <label aria-label="end-date" htmlFor="end-date">{COPY.DATE_PICKER_TO}</label>
-                <input
-                  id="end-date"
-                  name="end-date"
-                  defaultValue={this.state.endDate}
-                  type="date"
-                  onChange={(event) => this.setState({ endDate: event.target.value })}
-                /> */}
                 <DateSelector
                   label={COPY.DATE_PICKER_TO}
                   name="end-date"
                   id="end-date"
-                  noFutureDates
+                  noFutureDates={this.state.noFutureDates}
                   defaultValue={this.state.endDate}
                   errorMessage={this.endDateErrorMessage()}
                   onChange={(value) => this.setState({ endDate: value })}
