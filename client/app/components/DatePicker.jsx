@@ -6,6 +6,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import COPY from '../../COPY';
 import moment from 'moment-timezone';
+import DateSelector from './DateSelector';
 
 const datePickerStyle = css({
   paddingLeft: '0.95rem',
@@ -302,7 +303,35 @@ class DatePicker extends React.PureComponent {
     return defaultOptions;
   };
 
+  startDateErrorMessage = () => {
+    if (this.props.settings?.noFutureDates && this.state.startDate &&
+      Boolean(Date.parse(this.state.startDate) > new Date())) {
+      return 'Date cannot be in the future.';
+    }
+
+    return '';
+  }
+
+  endDateErrorMessage = () => {
+    if (this.props.settings?.noFutureDates && this.state.endDate &&
+      Boolean(Date.parse(this.state.endDate) > new Date())) {
+      return 'Date cannot be in the future.';
+    }
+
+    if (this.state.mode === 'between' && this.state.startDate !== '' && this.state.endDate !== '') {
+      const startDate = moment(`${this.state.startDate} 00:00:00`).valueOf();
+      const endDate = moment(`${this.state.endDate} 23:59:59`).valueOf();
+
+      if (startDate >= endDate) {
+        return '"To" date cannot occur before the "From" date';
+      }
+    }
+
+    return '';
+  }
+
   render() {
+
     return <span {...datePickerStyle} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
@@ -338,28 +367,39 @@ class DatePicker extends React.PureComponent {
             {additionalOptions.some((option) => option.value === this.state.mode) ?
               null :
               <div className="input-wrapper">
-                <label aria-label="start-date"
-                  htmlFor="start-date">
-                  {this.state.mode === 'between' ? COPY.DATE_PICKER_FROM : COPY.DATE_PICKER_DATE}</label>
-                <input
-                  id="start-date"
+                <DateSelector
+                  label={this.state.mode === 'between' ? COPY.DATE_PICKER_FROM : COPY.DATE_PICKER_DATE}
                   name="start-date"
+                  id="start-date"
+                  noFutureDates
                   defaultValue={this.state.startDate}
+                  errorMessage={this.startDateErrorMessage()}
+                  onChange={(value) => this.setState({ startDate: value })}
                   type="date"
-                  onChange={(event) => this.setState({ startDate: event.target.value })}
                 />
               </div>
+
             }
 
             {this.state.mode === 'between' &&
               <div className="input-wrapper">
-                <label aria-label="end-date" htmlFor="end-date">{COPY.DATE_PICKER_TO}</label>
+                {/* <label aria-label="end-date" htmlFor="end-date">{COPY.DATE_PICKER_TO}</label>
                 <input
                   id="end-date"
                   name="end-date"
                   defaultValue={this.state.endDate}
                   type="date"
                   onChange={(event) => this.setState({ endDate: event.target.value })}
+                /> */}
+                <DateSelector
+                  label={COPY.DATE_PICKER_TO}
+                  name="end-date"
+                  id="end-date"
+                  noFutureDates
+                  defaultValue={this.state.endDate}
+                  errorMessage={this.endDateErrorMessage()}
+                  onChange={(value) => this.setState({ endDate: value })}
+                  type="date"
                 />
               </div>
             }

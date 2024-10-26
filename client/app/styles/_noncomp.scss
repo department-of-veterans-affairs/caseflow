@@ -282,3 +282,13 @@ $validation-error-color: #cd2026;
     max-width: 65%;
   }
 }
+
+.date-picker {
+  .usa-input-error {
+    right: 0rem;
+    margin-top: 1rem;
+    .input-container {
+      width: 90%;
+    }
+  }
+}
