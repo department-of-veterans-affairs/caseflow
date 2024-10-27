@@ -31,7 +31,22 @@ class TranscriptionPackage < CaseflowRecord
 
   scope :filter_by_status, ->(values) { where(status: values) }
 
-  scope :search, ->(search) { where("LOWER(task_number) LIKE :query", query: "%#{search.downcase.strip}%") }
+  scope :search, lambda { |search|
+    # find transcription files that match the search
+    transcription_ids = Hearings::TranscriptionFile
+      .filterable_values.search(search).pluck(:transcription_id)
+    if transcription_ids.empty?
+      transcription_ids = [-1]
+    end
+
+    # find task numbers for those transcriptions
+    task_numbers = Transcription.where(id: transcription_ids).pluck(:task_number)
+    if task_numbers.empty?
+      task_numbers = [-1]
+    end
+
+    where(task_number: task_numbers)
+  }
 
   scope :order_by_field, ->(direction, field_name) { order(Arel.sql(field_name + " " + direction)) }
 
