@@ -131,7 +131,8 @@ class CorrespondenceDetailsController < CorrespondenceController
     if correspondence_intake_processor.update_correspondence(intake_processor_params)
       render json: {
         related_appeals: @correspondence.appeal_ids,
-        correspondence: serialized_correspondence
+        correspondence: serialized_correspondence,
+        correspondence_appeals: serialized_correspondence_appeals
       }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
@@ -218,6 +219,15 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
 
     { appeals_information: serialized_appeals }
+  end
+
+  def serialized_correspondence_appeals
+    appeals = []
+    correspondence.correspondence_appeals.map do |appeal|
+      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+
+    appeals
   end
 
   def create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
