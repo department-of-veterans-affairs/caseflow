@@ -43,7 +43,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     before(:each) do
       Appeal.find_by(
         id: ama_with_sched_task.id
-      ).update(original_hearing_request_type: 'central_office')
+      ).update(original_hearing_request_type: "central_office")
 
       ScheduleHearingTask.find_by(
         appeal_id: ama_with_completed_status.id,
@@ -55,17 +55,17 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         appeal_type: "LegacyAppeal"
       ).update(status: "completed")
 
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfhr: '1')
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfhr: '2')
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfhr: '3')
+      VACOLS::Case.find_by_bfkey("700230001041").update!(bfhr: "1")
+      VACOLS::Case.find_by_bfkey("700230002041").update!(bfhr: "2")
+      VACOLS::Case.find_by_bfkey("700230002042").update!(bfhr: "3")
 
       VACOLS::Case.find_by_bfkey("700230001041").update!(bfd19: 1.day.ago)
       VACOLS::Case.find_by_bfkey("700230002041").update!(bfd19: 2.days.ago)
       VACOLS::Case.find_by_bfkey("700230002042").update!(bfd19: 3.days.ago)
 
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfac: '1')
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfac: '5')
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfac: '9')
+      VACOLS::Case.find_by_bfkey("700230001041").update!(bfac: "1")
+      VACOLS::Case.find_by_bfkey("700230002041").update!(bfac: "5")
+      VACOLS::Case.find_by_bfkey("700230002042").update!(bfac: "9")
     end
 
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
