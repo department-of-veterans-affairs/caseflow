@@ -313,6 +313,9 @@ RSpec.feature("The Correspondence Details page") do
       User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
       correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
+      require Rails.root.join("db/seeds/base.rb").to_s
+      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+      Seeds::Correspondence.new.create_auto_text_data
 
       # Create the relation between correspondence and related_correspondence
       CorrespondenceRelation.create!(
@@ -325,16 +328,20 @@ RSpec.feature("The Correspondence Details page") do
       visit "/queue/correspondence/#{correspondence.uuid}"
       all(".plus-symbol")[1].click
       click_button("+ Add task")
-      expect(page).to have_selector("h1", text: "Add New Task")
+      expect(page).to have_selector("h1", text: "Add task to correspondence")
       expect(page).to have_selector(".add-task-modal-container")
       expect(page).to have_field("content")
       find(".add-task-dropdown-style").click
       find(".react-select__option", text: "Congressional Interest").click
       fill_in "content", with: "Test"
       click_button "Next"
+      find('label', text: 'Address updated in VACOLS').click
+      click_button "Submit"
       using_wait_time(10) do
         expect(page).to have_content("Congressional Interest")
       end
+      click_button "View task instructions"
+      expect(page).to have_content("Address updated in VACOLS")
     end
   end
 end
