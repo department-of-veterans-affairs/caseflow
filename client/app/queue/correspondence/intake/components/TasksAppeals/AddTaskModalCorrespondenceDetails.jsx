@@ -17,7 +17,8 @@ const AddTaskModalCorrespondenceDetails = ({
   task,
   displayRemoveCheck,
   removeTask,
-  setIsTasksUnrelatedSectionExpanded
+  setIsTasksUnrelatedSectionExpanded,
+  autoTexts
 }) => {
   const dispatch = useDispatch();
 
@@ -39,7 +40,7 @@ const AddTaskModalCorrespondenceDetails = ({
   const [autoTextSelections, setAutoTextSelections] = useState([]);
 
   // Generic auto-text options for second page checkboxes
-  const checkboxData = ['AutoText 1', 'AutoText 2', 'AutoText 3'];
+  const checkboxData = autoTexts;
 
   // Task type options filtered by unrelated tasks
   const getFilteredTaskTypeOptions = () => {
@@ -109,6 +110,7 @@ const AddTaskModalCorrespondenceDetails = ({
       setSelectedTaskType(null);
       setIsTasksUnrelatedSectionExpanded(true);
       setIsSecondPage(false);
+      setAutoTextSelections([]);
       handleClose();
     } catch (error) {
       console.error('Error while adding task:', error);
@@ -185,7 +187,7 @@ const AddTaskModalCorrespondenceDetails = ({
 
           <TextareaField
             name="content"
-            label="Provide context and instruction on this task"
+            label="Provide context and instructions on this task"
             value={taskContent}
             onChange={updateTaskContent}
             classNames={['task-selection-dropdown-box']}
@@ -216,6 +218,7 @@ AddTaskModalCorrespondenceDetails.propTypes = {
   displayRemoveCheck: PropTypes.bool.isRequired,
   removeTask: PropTypes.func.isRequired,
   setIsTasksUnrelatedSectionExpanded: PropTypes.func.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default AddTaskModalCorrespondenceDetails;
