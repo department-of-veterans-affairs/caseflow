@@ -138,6 +138,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
         task_number: file_info[:work_order_name],
         expected_return_date: file_info[:return_date],
         hearing_id: hearing[:hearing_id],
+        hearing_type: hearing[:hearing_type],
         sent_to_transcriber_date: Time.current,
         transcriber: file_info[:contractor_name],
         transcription_contractor_id: transcription_package.contractor_id,
