@@ -344,13 +344,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def create_legacy_issue_backfill(request_issue)
-    li = LegacyIssue.create!(
-      request_issue_id: request_issue.id,
-      vacols_id: request_issue.vacols_id,
-      vacols_sequence_id: request_issue.vacols_sequence_id
-    )
+    legacy_issue = LegacyIssueBuilder.new(request_issue).create_legacy_issue
     add_event_record(li, "A", nil)
-    li
+    legacy_issue
   end
 
   def create_legacy_optin_backfill(request_issue, legacy_issue)
