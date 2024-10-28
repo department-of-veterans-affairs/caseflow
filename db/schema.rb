@@ -2501,7 +2501,7 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-      (appeals.receipt_date)::text AS receipt_date,
+      replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
       (appeals.uuid)::text AS external_id,
       (appeals.stream_type)::text AS appeal_stream,
       (appeals.stream_docket_number)::text AS docket_number

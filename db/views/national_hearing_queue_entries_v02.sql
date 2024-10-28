@@ -5,7 +5,7 @@ SELECT
     'Appeal' AS appeal_type,
     -- COALESCE selects the first non-null value
     COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-    CAST(appeals.receipt_date AS TEXT) AS receipt_date,
+    REPLACE(CAST(appeals.receipt_date AS TEXT), '-', '') AS receipt_date,
     CAST(appeals.uuid AS TEXT) AS external_id,
     CAST(appeals.stream_type AS TEXT) AS appeal_stream,
     CAST(appeals.stream_docket_number AS TEXT) AS docket_number
