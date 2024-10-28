@@ -45,7 +45,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const fetchData = async () => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_work_order/display_wo_summary', {
-        query: { taskNumber: taskNumber },
+        query: { taskNumber },
       });
 
       setData(response.body.data);
@@ -56,16 +56,16 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     }
   };
 
-  const downloadFile = async (workOrderLink) => {
+  const downloadFile = async (docketNumber) => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_files/fetch_file', {
-        query: { work_order_link: workOrderLink },
+        query: { docket_number: docketNumber },
         responseType: 'blob'
       });
 
       const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
 
-      FileSaver.saveAs(blob, File.basename(workOrderLink));
+      FileSaver.saveAs(blob, `${docketNumber}.xls`);
     } catch (err) {
       console.error('Error downloading file:', err);
     }
@@ -87,7 +87,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     return <div>No data found</div>;
   }
 
-  const { workOrder, returnDate, contractorName, woFileInfo, workOrderStatus, workOrderLink } = data;
+  const { workOrder, returnDate, contractorName, woFileInfo, workOrderStatus } = data;
 
   return (
     <div className="cf-app-segment cf-app-segment--alt">
@@ -110,7 +110,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
             className={['usa-button-secondary']}
             aria-label="Download return work order"
             style={{ position: 'absolute', bottom: '0', right: '0' }}
-            onClick={() => downloadFile(workOrderLink)}
+            onClick={() => downloadFile(woFileInfo[0].docket_number)}
           >
             Download return work order
           </button>
