@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-file-saver@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
-  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
+"file-saver@^2.0.5":
+  "integrity" "sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA=="
+  "resolved" "https://registry.npmjs.org/file-saver/-/file-saver-2.0.5.tgz"
+  "version" "2.0.5"
 
-node-bin-setup@^1.0.0:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/node-bin-setup/-/node-bin-setup-1.1.3.tgz"
-  integrity sha512-opgw9iSCAzT2+6wJOETCpeRYAQxSopqQ2z+N6BXwIMsQQ7Zj5M8MaafQY8JMlolRR6R1UXg2WmhKp0p9lSOivg==
+"node-bin-setup@^1.0.0":
+  "integrity" "sha512-opgw9iSCAzT2+6wJOETCpeRYAQxSopqQ2z+N6BXwIMsQQ7Zj5M8MaafQY8JMlolRR6R1UXg2WmhKp0p9lSOivg=="
+  "resolved" "https://registry.npmjs.org/node-bin-setup/-/node-bin-setup-1.1.3.tgz"
+  "version" "1.1.3"
 
-node@16.16.0:
-  version "16.16.0"
-  resolved "https://registry.npmjs.org/node/-/node-16.16.0.tgz"
-  integrity sha512-I0NJaiQZ443wBqHUfIOx/EjdAO3uP1frg96pLEvrTv9tMyVDgSURYX1x69lNTLaJAF4pCifRwCHEFubN3/K/iQ==
+"node@16.16.0":
+  "integrity" "sha512-I0NJaiQZ443wBqHUfIOx/EjdAO3uP1frg96pLEvrTv9tMyVDgSURYX1x69lNTLaJAF4pCifRwCHEFubN3/K/iQ=="
+  "resolved" "https://registry.npmjs.org/node/-/node-16.16.0.tgz"
+  "version" "16.16.0"
   dependencies:
-    node-bin-setup "^1.0.0"
+    "node-bin-setup" "^1.0.0"
