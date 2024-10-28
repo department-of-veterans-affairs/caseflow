@@ -35,8 +35,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
                                                   :with_veteran,
                                                   vacols_case: case3)
 
-      ScheduleHearingTask.find_by(appeal_id: legacy_appeal_completed.id, appeal_type: "LegacyAppeal")
-                         .update(status: "completed")
+      ScheduleHearingTask.find_by(
+        appeal_id: legacy_appeal_completed.id,
+        appeal_type: "LegacyAppeal"
+      ).update(status: "completed")
 
       expect(NationalHearingQueueEntry.count).to eq 0
       NationalHearingQueueEntry.refresh
