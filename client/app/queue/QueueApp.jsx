@@ -748,6 +748,7 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceDetails = (props) => (
     <CorrespondenceDetails {...props.match.params}
       {...this.props}
+      autoTexts={this.props.autoTexts}
       correspondenceResponseLetters={this.props.correspondenceResponseLetters}
       correspondenceTypes={this.props.correspondenceTypes}
     />
