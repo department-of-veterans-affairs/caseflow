@@ -516,7 +516,7 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
     expect(screen.getByText('Associated Prior Mail')).toBeInTheDocument();
     expect(screen.getByText('View all correspondence')).toBeInTheDocument();
-    expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
+    expect(screen.getByText('Task not related to an Appeal')).toBeInTheDocument();
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
@@ -529,7 +529,7 @@ describe('CorrespondenceDetails', () => {
     expect(document.getElementsByClassName('plus-symbol').length).toBe(4);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
-    expect(screen.getByText('Existing appeals')).toBeInTheDocument();
+    expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
     expect(screen.getByText('Appellant Name')).toBeInTheDocument();
     expect(screen.getByText('Appeal Status')).toBeInTheDocument();
     expect(screen.getByText('Appeal Type')).toBeInTheDocument();
