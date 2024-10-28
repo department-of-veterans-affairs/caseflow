@@ -81,7 +81,7 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
       if (renderTaskRef.current) {
         // try to let an existing render task to finish
         try {
-          await renderTaskRef.current.cancel();
+          await renderTaskRef.current.promise;
         } catch {
           // no op when an existing render task fails
         }
