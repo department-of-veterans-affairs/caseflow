@@ -16,9 +16,9 @@ module Seeds
         create_legacy_cases
         create_aoj_legacy_cases
         create_previous_distribtions
-
-        IneligibleJudgesJob.perform_now
       end
+
+      IneligibleJudgesJob.perform_now
     end
 
     private
@@ -40,7 +40,7 @@ module Seeds
       @judge_no_push_cases ||= (
         user = User.find_by(css_id: "NOPUSHJUDGE1") ||
           create(:user, :judge, :with_vacols_judge_record,
-            css_id: "NOPUSHJUDGE1", full_name: "PushJudge NotAcceptingCases")
+                 css_id: "NOPUSHJUDGE1", full_name: "PushJudge NotAcceptingCases")
 
         JudgeTeam.for_judge(user).update!(accepts_priority_pushed_cases: false)
         user
@@ -278,31 +278,45 @@ module Seeds
     def create_legacy_priority_not_genpop_cases
       tied_or_affinity_judges.each do |judge|
         # hearing held type original AOD tied
+        create(:case, :type_original, :tied_to_judge, :ready_for_distribution, tied_judge: judge)
         # hearing before decision CAVC tied
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff)
         # hearing after decision CAVC tied
+        c = create(:legacy_cavc_appeal, judge: other_judge.vacols_staff, attorney: attorney.vacols_staff)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
         # hearing before decision CAVC AOD tied
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, aod: true)
         # hearing after decision CAVC AOD tied
+        c = create(:legacy_cavc_appeal, judge: other_judge.vacols_staff, attorney: attorney.vacols_staff, aod: true)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
         # hearing before decision different deciding judge CAVC affinity in window
+        c = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, affinity_start_date: 3.days.ago)
+        c.update!(bfmemid: other_judge.vacols_attorney_id)
         # hearing before decision different deciding judge CAVC AOD affinity in window
+        c = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, affinity_start_date: 3.days.ago, aod: true)
+        c.update!(bfmemid: other_judge.vacols_attorney_id)
         # no hearings CAVC affinity in window
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, tied_to: false, affinity_start_date: 3.days.ago)
         # no hearings CAVC AOD affinity in window
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, tied_to: false, affinity_start_date: 3.days.ago, aod: true)
       end
     end
 
-    # no hearings aod and cavc out of window
     def create_legacy_priority_genpop_cases
       # no hearing type original AOD
-      # hearing held AOD tied to ineligible
-      # hearing before decision CAVC tied to ineligible
-      # hearing after decision CAVC tied to ineligible
-      # hearing before decision CAVC AOD tied to ineligible
-      # hearing after decision CAVC AOD tied to ineligible
+      create(:case, :type_original, :ready_for_distribution)
 
       tied_or_affinity_judges.each do |judge|
         # hearing before decision different deciding judge CAVC affinity out of window
+        c = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, affinity_start_date: 2.months.ago)
+        c.update!(bfmemid: other_judge.vacols_attorney_id)
         # hearing before decision different deciding judge CAVC AOD affinity out of window
+        c = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, affinity_start_date: 2.months.ago, aod: true)
+        c.update!(bfmemid: other_judge.vacols_attorney_id)
         # no hearings CAVC affinity out of window
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, tied_to: false, affinity_start_date: 2.months.ago)
         # no hearings CAVC AOD affinity out of window
+        create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, tied_to: false, affinity_start_date: 2.months.ago, aod: true)
       end
     end
 
@@ -310,8 +324,8 @@ module Seeds
       create(:case, :aod, :video_hearing_requested, :type_original)
 
       tied_or_affinity_judges.each do |judge|
-        original = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney, appeal_affinity: false)
-        cavc = VACOLS::Case.find_by(original.bfkey.to_i + 1).update!(bfcurloc: '57')
+        original = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff, appeal_affinity: false)
+        VACOLS::Case.find_by(bfkey: original.bfkey.to_i + 1).update!(bfcurloc: '57')
       end
     end
 
