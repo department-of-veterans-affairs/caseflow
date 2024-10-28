@@ -63,6 +63,9 @@ up:  ## Start the docker containers
 up-m1:  ## Start the docker containers on a M1 Mac
 	docker-compose -f docker-compose-m1.yml up -d
 
+up-docker:  ## Start the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml up -d
+
 down:	## Stop the docker containers
 	docker-compose down
 
