@@ -3,6 +3,7 @@
 class SavedSearchSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :id
   attribute :name
   attribute :description
   attribute :savedSearch, &:saved_search
