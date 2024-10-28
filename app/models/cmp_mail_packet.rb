@@ -10,4 +10,6 @@ class CmpMailPacket < ApplicationRecord
             :veteran_last_name,
             :veteran_middle_initial,
             presence: true
+
+  has_many :cmp_documents, inverse_of: :cmp_mail_packet
 end
