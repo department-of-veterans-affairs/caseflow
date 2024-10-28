@@ -2501,10 +2501,10 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-      (appeals.receipt_date)::character(1) AS receipt_date,
-      (appeals.uuid)::character(1) AS external_id,
-      (appeals.stream_type)::character(1) AS appeal_stream,
-      (appeals.stream_docket_number)::character(1) AS docket_number
+      (appeals.receipt_date)::text AS receipt_date,
+      (appeals.uuid)::text AS external_id,
+      (appeals.stream_type)::text AS appeal_stream,
+      (appeals.stream_docket_number)::text AS docket_number
      FROM (appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
@@ -2512,7 +2512,7 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
    SELECT legacy_appeals.id AS appeal_id,
       'LegacyAppeal'::text AS appeal_type,
       f_vacols_brieff.bfhr AS hearing_request_type,
-      replace(((f_vacols_brieff.bfd19)::character(1))::text, '-'::text, ''::text) AS receipt_date,
+      replace((f_vacols_brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
       f_vacols_brieff.bfkey AS external_id,
           CASE
               WHEN ((f_vacols_brieff.bfac)::text = '1'::text) THEN 'Original'::text

@@ -5,10 +5,10 @@ SELECT
     'Appeal' AS appeal_type,
     -- COALESCE selects the first non-null value
     COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-    CAST(appeals.receipt_date AS CHAR) AS receipt_date,
-    CAST(appeals.uuid AS CHAR) AS external_id,
-    CAST(appeals.stream_type AS CHAR) AS appeal_stream,
-    CAST(appeals.stream_docket_number AS CHAR) AS docket_number
+    CAST(appeals.receipt_date AS TEXT) AS receipt_date,
+    CAST(appeals.uuid AS TEXT) AS external_id,
+    CAST(appeals.stream_type AS TEXT) AS appeal_stream,
+    CAST(appeals.stream_docket_number AS TEXT) AS docket_number
 FROM appeals
 JOIN tasks ON tasks.appeal_type = 'Appeal' and tasks.appeal_id = appeals.id
 WHERE tasks.type = 'ScheduleHearingTask'
@@ -21,7 +21,7 @@ SELECT
     legacy_appeals.id AS appeal_id,
     'LegacyAppeal' AS appeal_type,
     f_vacols_brieff.bfhr AS hearing_request_type,
-    REPLACE(CAST(f_vacols_brieff.bfd19 AS CHAR), '-', '') AS receipt_date,
+    REPLACE(CAST(f_vacols_brieff.bfd19 AS TEXT), '-', '') AS receipt_date,
     f_vacols_brieff.bfkey AS external_id,
     CASE
       WHEN f_vacols_brieff.bfac = '1' THEN 'Original'
