@@ -251,7 +251,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
       context "VHA business line" do
         let(:vha_org) { VhaBusinessLine.singleton }
-        let(:task) { create(:higher_level_review_task, :in_progress, assigned_to: VhaBusinessLine.singleton) }
+        let(:task) { create(:higher_level_review_task, :in_progress, assigned_to: vha_org) }
         let!(:request_issues) do
           [
             create(:request_issue, :rating, decision_review: task.appeal, benefit_type: vha_org.url),
