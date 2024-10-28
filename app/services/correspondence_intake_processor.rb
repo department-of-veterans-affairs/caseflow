@@ -47,6 +47,7 @@ class CorrespondenceIntakeProcessor
   def find_correspondence(uuid)
     correspondence = Correspondence.find_by(uuid: uuid)
     fail "Correspondence not found" if correspondence.blank?
+
     correspondence
   end
 
