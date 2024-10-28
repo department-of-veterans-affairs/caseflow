@@ -1,32 +1,58 @@
-version: '3'
-services:
-  appeals-redis:
-    container_name: appeals-redis
-    image: redis:6.2.6
-    ports:
-      - "6379:6379"
+version: "3.9"
 
-  appeals-postgres:
+services:
+  # PostgreSQL Database
+  appeals-db:
     image: postgres:14.8
     container_name: appeals-db
     ports:
       - "5432:5432"
     volumes:
-      - "postgresdata:/var/lib/postgresql/data"
+      - postgresdata:/var/lib/postgresql/data
     environment:
-     - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgres
 
+  # Redis Cache
+  appeals-redis:
+    image: redis:6.2.6
+    container_name: appeals-redis
+    ports:
+      - "6379:6379"
+
+  # Rails Application
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "bundle exec rails s -p 3000 -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/caseflow
+    depends_on:
+      - appeals-db
+      - appeals-redis
+      - appeals-localstack-aws
+    env_file:
+      - .env
+    networks:
+      - ls
+
+  # Localstack for AWS Services
   appeals-localstack-aws:
     platform: linux/amd64
-    container_name: localstack
     image: localstack/localstack:0.14.5
+    container_name: localstack
     ports:
       - "4566:4566"
     environment:
       - SERVICES=sqs,dynamodb,kms
     volumes:
       - ./local/sqs/conf:/conf
+    networks:
+      - ls
 
+  # Metabase Analytics
   appeals-metabase:
     platform: linux/amd64
     container_name: metabase
@@ -34,6 +60,14 @@ services:
       context: metabase
     ports:
       - "3002:3000"
+    networks:
+      - ls
 
 volumes:
-  postgresdata:
+  postgresdata: {}
+
+networks:
+  ls:
+    ipam:
+      config:
+        - subnet: "10.0.2.0/24"

@@ -1,84 +1,53 @@
-FROM ruby:2.7.3-slim
-MAINTAINER Development and Operations team @ Department of Veterans Affairs
+ARG RUBY_VERSION=2.7.3
+FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim
 
-# Build variables
-ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
-ENV CASEFLOW git yarn
-
-# Environment (system) variables
-ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
-    ORACLE_HOME="/opt/oracle/instantclient_12_2" \
-    LANG="AMERICAN_AMERICA.US7ASCII" \
+# Set up environment variables
+ENV BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git" \
+    NVM_DIR="/usr/local/nvm" \
+    NODE_VERSION="16.16.0" \
+    PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
-    PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" \
-    NODE_OPTIONS="--max-old-space-size=8192" \
-    SSL_CERT_FILE="/etc/ssl/certs/cacert.pem"
-# install oracle deps
-WORKDIR /opt/oracle/instantclient_12_2/
-COPY docker-bin/oracle_libs/* ./
-RUN ln -s libclntsh.so.12.1 libclntsh.so
+    LANG="C.UTF-8"
+
+# Copy all files from docker-bin into /usr/bin/ in the container
+COPY docker-bin/. /usr/bin/
+
+# Copy the contents of the instantclient_23_3 folder to the Oracle directory
+COPY docker-bin/instantclient_23_3 /usr/lib/oracle/instantclient_23_3
+
+# Set environment variables for Oracle libraries
+ENV ORACLE_HOME="/usr/lib/oracle/instantclient_23_3"
+ENV LD_LIBRARY_PATH="/usr/lib/oracle/instantclient_23_3:$LD_LIBRARY_PATH"
+
+# Install Oracle dependencies and create symbolic links
+WORKDIR /usr/lib/oracle/instantclient_23_3/
+RUN ln -s libclntsh.so libclntsh.so.23.1
 
 WORKDIR /caseflow
 
-# Copy all the files
-COPY . .
+# Install base dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends $BUILD && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pwd && ls -lsa
+# Set up NVM and Node
+RUN mkdir -p $NVM_DIR && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
+    . "$NVM_DIR/nvm.sh" && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION
 
-# Install VA Trusted Certificates
-RUN mkdir -p /usr/local/share/ca-certificates/va
-COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
-#COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
-RUN update-ca-certificates
-COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
-
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
-RUN apt -y update && \
-    apt -y upgrade && \
-    mkdir -p /usr/share/man/man1 && \
-    mkdir /usr/share/man/man7 && \
-    apt install -y ${BUILD} && \
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt -y update
-
-# Install node
-RUN mkdir /usr/local/nvm
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 16.16.0
-ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
-RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-   && nvm install $NODE_VERSION \
-   && nvm alias default $NODE_VERSION \
-   && nvm use default
-ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
-ENV PATH $NVM_INSTALL_PATH/bin:$PATH
-
-RUN apt install -y ${CASEFLOW} &&  \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get clean && apt-get autoclean && apt-get autoremove
+# Install compatible Bundler version and gems
+COPY Gemfile* .
+RUN gem install bundler -v 2.3.26 && \
+    bundle config build.ruby-oci8 --with-oci8-include=/usr/lib/oracle/instantclient_23_3 --with-oci8-lib=/usr/lib/oracle/instantclient_23_3 && \
+    bundle install
 
 
-# install jemalloc
-RUN apt install -y --no-install-recommends libjemalloc-dev
+# Expose the Rails port
+ARG DEFAULT_PORT=3000
+EXPOSE ${DEFAULT_PORT}
 
-RUN rm -rf /var/lib/apt/lists/*
-
-# Installing the version of bundler that corresponds to the Gemfile.lock
-# Rake 13.0.1 is already installed, so we're uninstalling it and letting bundler install rake later.
-RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i /usr/local/lib/ruby/gems/2.7.0 rake
-RUN bundle install && \
-    cd client && \
-    yarn install && \
-    yarn run build:demo && \
-    chmod +x /caseflow/docker-bin/startup.sh && \
-    rm -rf docker-bin
-
-# Run the app
-ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
-
-
+# Start the Rails application
+CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
