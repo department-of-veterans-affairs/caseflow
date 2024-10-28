@@ -1981,7 +1981,6 @@ GEM
     rswag-ui (2.13.0)
       actionpack (>= 3.1, < 7.2)
       railties (>= 3.1, < 7.2)
-    rtf (0.3.3)
     rubocop (0.83.0)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
@@ -2234,7 +2233,6 @@ DEPENDENCIES
   rswag-api
   rswag-specs
   rswag-ui
-  rtf
   rubocop (= 0.83)
   rubocop-performance
   rubocop-rails
@@ -2268,4 +2266,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.22
+   2.4.19

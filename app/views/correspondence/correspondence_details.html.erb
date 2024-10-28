@@ -1,0 +1,31 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Queue", props: {
+    userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    userRole: (current_user.vacols_roles.first || "").capitalize,
+    userCssId: current_user.css_id,
+    organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
+    caseSearchHomePage: case_search_home_page,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    correspondence: @correspondence_details[:correspondence],
+    correspondenceTypes: @correspondence_details[:correspondence_types],
+    flash: flash,
+    isInboundOpsUser: current_user.inbound_ops_team_user?,
+    isInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
+    isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
+    inboundOpsTeamUsers: @correspondence_details[:inbound_ops_team_users],
+    correspondenceAppeals: @correspondence_appeals,
+    responseType: @response_type,
+    responseHeader: @response_header,
+    responseMessage: @response_message,
+    organizations: @correspondence_details[:organizations],
+    correspondenceResponseLetters: @correspondence_response_letters,
+    correspondence_uuid: @correspondence_uuid,
+    addLetterCheck: true,
+    featureToggles: {
+      correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
+    }
+  }) %>
+<% end %>

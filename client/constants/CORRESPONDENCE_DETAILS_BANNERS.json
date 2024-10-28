@@ -1,0 +1,42 @@
+{
+  "cancelSuccessBanner": {
+    "title": "Success",
+    "message": "%s task has been cancelled. If you have made a mistake, please email %s for any changes.",
+    "type": "success"
+  },
+
+  "assignSuccessBanner": {
+    "title": "Assigned",
+    "message": "%s task has been assigned to %s.",
+    "type": "success"
+  },
+
+  "teamBanner": {
+    "title": "Success",
+    "message": "%s task has been assigned to %s.",
+    "type": "success"
+  },
+
+  "completeBanner": {
+    "title": "Complete",
+    "message": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
+    "type": "success"
+  },
+
+  "taskActionFailBanner": {
+    "title": "Error",
+    "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error message: %s).",
+    "type": "error"
+  },
+
+  "completeTaskNotRelatedBanner": {
+    "title": "Success",
+    "message": "You have successfully created an %s task.",
+    "type": "success"
+  },
+
+  "evidenceWindowBanner": {
+    "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task.",
+    "type": "success"
+  }
+}
