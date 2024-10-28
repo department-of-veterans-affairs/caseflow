@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyIssueBuilder
   def initialize(request_issue)
     @request_issue = request_issue
