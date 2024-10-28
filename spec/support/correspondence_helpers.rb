@@ -197,9 +197,9 @@ module CorrespondenceHelpers
     attempts ||= 0
     begin
       yield
-    rescue Capybara::ElementNotFound => e
+    rescue Capybara::ElementNotFound => error
       attempts += 1
-      Rails.logger.warn("#{e} caught. Retry attempt: #{attempts}")
+      Rails.logger.warn("#{error} caught. Retry attempt: #{attempts}")
       cleanup&.call
       retry if attempts < max_attempts
     end
