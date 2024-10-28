@@ -208,9 +208,22 @@ const CorrespondenceDetails = (props) => {
           );
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          const corAppealTasks = [];
+
           correspondenceAppeals.map((corAppeal) => {
             dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+            corAppeal?.taskAddedData?.data.map((taskData) => {
+              corAppealTasks.push(taskData);
+            });
           });
+
+          // load appeal tasks into the store
+          const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+          dispatch(onReceiveTasks({
+            amaTasks: preparedTasks
+          }));
 
           sortAppeals(appealIds);
 
@@ -925,9 +938,22 @@ const CorrespondenceDetails = (props) => {
           );
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          const corAppealTasks = [];
+
           correspondenceAppeals.map((corAppeal) => {
             dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+            corAppeal?.taskAddedData?.data.map((taskData) => {
+              corAppealTasks.push(taskData);
+            });
           });
+
+          // load appeal tasks into the store
+          const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+          dispatch(onReceiveTasks({
+            amaTasks: preparedTasks
+          }));
 
           sortAppeals(appealIds);
           window.scrollTo({
