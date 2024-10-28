@@ -278,7 +278,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
                                     description: "a nonrating note"
                                   }
                                 ],
-                                decision_date: 500.years.ago }
+                                 decision_date: 500.years.ago }
 
           response_body = JSON.parse(response.body)
 
