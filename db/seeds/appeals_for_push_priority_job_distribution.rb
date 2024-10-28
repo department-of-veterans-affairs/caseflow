@@ -16,6 +16,8 @@ module Seeds
         create_legacy_cases
         create_aoj_legacy_cases
         create_previous_distribtions
+
+        IneligibleJudgesJob.perform_now
       end
     end
 
@@ -34,8 +36,8 @@ module Seeds
     end
 
     # this judge's JudgeTeam should not receive any cases during the push priority job run
-    def judge_does_not_accept_priority_push_cases
-      @judge_does_not_accept_priority_push_cases ||= (
+    def judge_no_push_cases
+      @judge_no_push_cases ||= (
         user = User.find_by(css_id: "NOPUSHJUDGE1") ||
           create(:user, :judge, :with_vacols_judge_record,
             css_id: "NOPUSHJUDGE1", full_name: "PushJudge NotAcceptingCases")
@@ -90,20 +92,46 @@ module Seeds
                css_id: "PUSHJUDGE5", full_name: "PushJudge ManyTiedCases")
     end
 
+    def other_judge
+      @other_judge ||= User.find_by(css_id: "OTHER_JUDGE") ||
+      create(:user, :judge, :with_vacols_judge_record,
+             css_id: "OTHER_JUDGE", full_name: "OtherJudge ForAffinityCases")
+    end
+
+    def attorney
+      @attorney ||= User.find_by(css_id: "PUSH_ATTY") ||
+        create(:user, :with_vacols_attorney_record,
+               css_id: "PUSH_ATTY", full_name: "AttorneyDrafted LotsOfCases")
+    end
+
+    def excluded_judge
+      @excluded_judge ||= User.find_by(css_id: "EXCL_JUDGE") ||
+        create(:user, :judge_with_appeals_excluded_from_affinity, :with_vacols_judge_record,
+                      css_id: "EXCL_JUDGE", full_name: "Affinity ExcludedJudge")
+    end
+
+    def ineligible_judge
+      @ineligible_judge ||= User.find_by(css_id: "INEL_JUDGE") ||
+        create(:user, :judge, :with_inactive_vacols_judge_record,
+               css_id: "INEL_JUDGE", full_name: "Vacols IneligibleJudge")
+    end
+
     def instantiate_judges
+      judge_no_tied_affinity_cases_1
+      judge_no_tied_affinity_cases_2
       judge_1
       judge_2
       judge_3
       judge_4
-      judge_no_tied_affinity_cases_1
-      judge_no_tied_affinity_cases_2
-      judge_does_not_accept_priority_push_cases
+      judge_no_push_cases
       judge_many_previous_distributions
       judge_one_large_previous_distribution
+      excluded_judge
+      ineligible_judge
     end
 
     def tied_or_affinity_judges
-      [judge_1, judge_2, judge_3, judge_4]
+      [judge_1, judge_2, judge_3, judge_4, judge_no_push_cases, excluded_judge, ineligible_judge]
     end
 
     def create_direct_review_cases
@@ -247,10 +275,53 @@ module Seeds
     def create_hearing_priority_not_ready_cases; end
     def create_hearing_nonpriority_ready_cases; end
 
-    def create_legacy_priority_not_genpop_cases; end
-    def create_legacy_priority_genpop_cases; end
-    def create_legacy_priority_not_ready_cases; end
-    def create_legacy_nonpriority_ready_cases; end
+    def create_legacy_priority_not_genpop_cases
+      tied_or_affinity_judges.each do |judge|
+        # hearing held type original AOD tied
+        # hearing before decision CAVC tied
+        # hearing after decision CAVC tied
+        # hearing before decision CAVC AOD tied
+        # hearing after decision CAVC AOD tied
+        # hearing before decision different deciding judge CAVC affinity in window
+        # hearing before decision different deciding judge CAVC AOD affinity in window
+        # no hearings CAVC affinity in window
+        # no hearings CAVC AOD affinity in window
+      end
+    end
+
+    # no hearings aod and cavc out of window
+    def create_legacy_priority_genpop_cases
+      # no hearing type original AOD
+      # hearing held AOD tied to ineligible
+      # hearing before decision CAVC tied to ineligible
+      # hearing after decision CAVC tied to ineligible
+      # hearing before decision CAVC AOD tied to ineligible
+      # hearing after decision CAVC AOD tied to ineligible
+
+      tied_or_affinity_judges.each do |judge|
+        # hearing before decision different deciding judge CAVC affinity out of window
+        # hearing before decision different deciding judge CAVC AOD affinity out of window
+        # no hearings CAVC affinity out of window
+        # no hearings CAVC AOD affinity out of window
+      end
+    end
+
+    def create_legacy_priority_not_ready_cases
+      create(:case, :aod, :video_hearing_requested, :type_original)
+
+      tied_or_affinity_judges.each do |judge|
+        original = create(:legacy_cavc_appeal, judge: judge.vacols_staff, attorney: attorney, appeal_affinity: false)
+        cavc = VACOLS::Case.find_by(original.bfkey.to_i + 1).update!(bfcurloc: '57')
+      end
+    end
+
+    def create_legacy_nonpriority_ready_cases
+      create(:case, :type_original, :ready_for_distribution)
+
+      tied_or_affinity_judges.each do |judge|
+        create(:case, :type_original, :tied_to_judge, :ready_for_distribution, tied_judge: judge)
+      end
+    end
 
     def create_aoj_legacy_priority_not_genpop_cases; end
     def create_aoj_legacy_priority_genpop_cases; end

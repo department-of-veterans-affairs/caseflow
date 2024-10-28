@@ -1238,14 +1238,14 @@ describe VACOLS::CaseDocket, :all_dbs do
         let!(:aod_cavc_case_7) do
           create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
         end
-        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for requesting judge)
+        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for requesting judge unless omit)
         let!(:cavc_case_8) do
           create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         end
         let!(:aod_cavc_case_8) do
           create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
         end
-        # appeals w/ no hearing, active prev deciding judge, affinity start date and value > lever days ago (genpop)
+        # appeals w/ no hearing, active prev deciding judge, affinity start date and value > lever days ago (genpop unless lever infinite)
         let!(:cavc_case_9) do
           create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago)
         end
