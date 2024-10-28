@@ -22,9 +22,11 @@ ENV LD_LIBRARY_PATH="/usr/lib/oracle/instantclient_23_3:$LD_LIBRARY_PATH"
 
 # Install Oracle dependencies and create symbolic links
 WORKDIR /usr/lib/oracle/instantclient_23_3/
-RUN ln -s libclntsh.so libclntsh.so.23.1
+RUN test -e libclntsh.so.23.1 || ln -s libclntsh.so libclntsh.so.23.1
 
 WORKDIR /caseflow
+
+COPY . .
 
 # Install base dependencies
 RUN apt-get update && \
@@ -40,7 +42,7 @@ RUN mkdir -p $NVM_DIR && \
 
 # Install compatible Bundler version and gems
 COPY Gemfile* .
-RUN gem install bundler -v 2.3.26 && \
+RUN gem install bundler -v 2.4.19 && \
     bundle config build.ruby-oci8 --with-oci8-include=/usr/lib/oracle/instantclient_23_3 --with-oci8-lib=/usr/lib/oracle/instantclient_23_3 && \
     bundle install
 
