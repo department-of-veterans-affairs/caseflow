@@ -55,7 +55,7 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       within("#submit-correspondence-intake-modal") do
         click_button "Confirm"
       end
-      expect(current_path).to eq("/queue/correspondence")
+      expect(current_path).to eq("/queue/correspondence/team")
     end
 
     it "validate return to queue modal cancel" do
