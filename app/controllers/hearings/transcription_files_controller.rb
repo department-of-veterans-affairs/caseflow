@@ -99,9 +99,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
     file_path = Hearings::TranscriptionFile.fetch_file_by_docket_and_type(docket_number)
 
     if file_path
-      send_file file_path, filename: File.basename(file_path), type: 'application/vnd.ms-excel'
+      send_file file_path, filename: File.basename(file_path), type: "application/vnd.ms-excel"
     else
-      render json: { error: 'File not found' }, status: :not_found
+      render json: { error: "File not found" }, status: :not_found
     end
   end
 
