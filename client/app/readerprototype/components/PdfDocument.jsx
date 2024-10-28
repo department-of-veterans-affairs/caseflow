@@ -12,6 +12,7 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import ProgressBar from './ProgressBar';
 
 const PdfDocument = ({
   currentPage,
@@ -35,6 +36,11 @@ const PdfDocument = ({
   const minimumInitialWait = 1000;
   // significantAdditionalWait time in seconds
   const significantAdditionalWait = 3;
+  const [progressData, setProgressData] = useState({
+    progressPercentage: 0,
+    loadedBytes: 0,
+    totalBytes: 0,
+  });
 
   const containerStyle = {
     width: '100%',
@@ -160,6 +166,12 @@ const PdfDocument = ({
               );
             }
           }
+          setProgressData({
+            progressPercentage: percentage,
+            loadedBytes: loaded,
+            totalBytes: doc.file_size,
+          });
+          console.log(`### Downloaded ${percentage}%\n`);
 
         },
         cancellableRequest: ({ request }) => {
@@ -234,9 +246,16 @@ const PdfDocument = ({
   return (
     <div id="pdfContainer" style={containerStyle}>
       {showProgressBar && (
-        <button onClick={handleCancelRequest}>
-        Big Cancel Button
-        </button>)}
+        <div>
+          <ProgressBar
+            progressPercentage={progressData.progressPercentage}
+            loadedBytes={progressData.loadedBytes}
+            totalBytes={progressData.totalBytes}/>
+          <button onClick={handleCancelRequest}>
+          Big Cancel Button
+          </button>
+        </div>
+      )}
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
