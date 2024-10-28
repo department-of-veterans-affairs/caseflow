@@ -84,6 +84,7 @@ gem "request_store"
 gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
+gem "rtf"
 gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", branch: "current-user-mgmt"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
