@@ -60,7 +60,9 @@ describe "BusinessLineReporter" do
       context "with filtering" do
         let(:filters) { { my_filters: { test1: :test2 } } }
         it "should use the business line model completed tasks method for filtering" do
-          expect(mocked_business_line).to receive(:completed_tasks).with({ filters: filters })
+          expect(mocked_business_line).to receive(:completed_tasks).with({ filters: filters,
+                                                                           sort_by: :id,
+                                                                           sort_order: :asc })
           BusinessLineReporter.new(mocked_business_line, filters).tasks
         end
       end

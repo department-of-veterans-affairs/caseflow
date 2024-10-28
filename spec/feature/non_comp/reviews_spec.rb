@@ -1194,6 +1194,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Non-Comp Org")
         click_on "Completed Tasks"
         expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+        expect(page).to have_content("2 total")
         click_button "Download completed tasks"
 
         # Check the csv to make sure return all completed task rows and the header row
