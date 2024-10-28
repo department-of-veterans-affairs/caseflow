@@ -30,6 +30,11 @@ const PdfDocument = ({
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
   const requestRef = useRef(null);
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  // Inital wait time in milliseconds
+  const minimumInitialWait = 1000;
+  // significantAdditionalWait time in seconds
+  const significantAdditionalWait = 3;
 
   const containerStyle = {
     width: '100%',
@@ -123,12 +128,38 @@ const PdfDocument = ({
         responseType: 'arraybuffer',
         onProgress: ({ loaded }) => {
           let percentage = 0;
+          let downloadSpeed = 0;
+          let enlapsedTime = 0;
 
           if (doc.file_size > 0) {
-            percentage = (loaded / doc.file_size) * 100;
+            percentage = ((loaded / doc.file_size) * 100).toFixed(0);
           }
 
-          console.log(`### Downloaded ${percentage.toFixed(0)}%\n`);
+          if (!showProgressBar && percentage < 100) {
+            enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
+
+            downloadSpeed = (loaded / (enlapsedTime / 1000)).toFixed(0);
+
+            if (enlapsedTime > minimumInitialWait) {
+              let projectedEndTime = (doc.file_size - loaded) / downloadSpeed;
+
+              if (projectedEndTime > significantAdditionalWait) {
+                setShowProgressBar(true);
+              }
+              let barGraphic = Math.min(Math.round(percentage / 10), 10);
+
+              console.log(
+                `### Downloaded ${percentage}%\n`,
+                `${'*'.repeat(barGraphic)}`,
+                `${'_'.repeat(10 - barGraphic)}\n`,
+                `File Size: ${doc.file_size} bytes\n`,
+                `Loaded: ${loaded} bytes\n`,
+                `Elapsed Time :${enlapsedTime / 1000} seconds\n`,
+                `At ${downloadSpeed / 125000} Mbits/second\n`,
+                `Finish in ${projectedEndTime.toFixed(0)} seconds`
+              );
+            }
+          }
 
         },
         cancellableRequest: ({ request }) => {
@@ -139,6 +170,7 @@ const PdfDocument = ({
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         requestRef.current = null;
+        setShowProgressBar(false);
 
         return response.body;
       });
@@ -201,6 +233,10 @@ const PdfDocument = ({
 
   return (
     <div id="pdfContainer" style={containerStyle}>
+      {showProgressBar && (
+        <button onClick={handleCancelRequest}>
+        Big Cancel Button
+        </button>)}
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
