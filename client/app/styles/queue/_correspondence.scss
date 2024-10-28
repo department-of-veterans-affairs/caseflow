@@ -1602,6 +1602,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-details-alert-banner {
   padding-right: 30px;
 }
+.correspondence-details-alert-banner-inner {
+
+  .usa-alert-text {
+    line-height: 0.8 !important
+  }
+
+}
 
 .tasks-added-container {
   border: 1px solid $color-cream;
@@ -1681,7 +1688,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .grayLineStyling {
   width: 5px;
-  background: $color-gray;
+  background: $color-gray-lighter;
   margin: auto;
   position: absolute;
   top: 30px;
