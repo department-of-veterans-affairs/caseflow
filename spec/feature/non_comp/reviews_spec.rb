@@ -1108,7 +1108,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_button "Download completed tasks"
 
       # Check the csv to make sure it returns the two task rows within the last week and the header row
-      completed_tasks_csv_file(3)
+      completed_tasks_csv_file(4)
 
       # Filter by Camp Lejune Family Member
       find("[aria-label='Filter by issue type']").click
@@ -1121,9 +1121,9 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Clear the filters and the csv should contain all completed tasks
       find(".cf-clear-filters-link").click
-      expect(page).to have_content("2 total")
+      expect(page).to have_content("3 total")
       click_button "Download completed tasks"
-      completed_tasks_csv_file(3)
+      completed_tasks_csv_file(4)
     end
   end
 
@@ -1132,7 +1132,7 @@ feature "NonComp Reviews Queue", :postgres do
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
 
     scenario "displays tasks page for non VHA" do
-      visit "/decision_reviews/nco"
+      visit "/decision_reviews/#{non_comp_org.url}"
 
       # The generate task report button does not display for non-vha users
       expect(page).to_not have_content("Generate task report")
@@ -1189,8 +1189,8 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     context "Download Completed Tasks csv" do
-      scenario "it should use the filters from the page for the csv response" do
-        visit "/decision_reviews/nco"
+      scenario "it should not use the filters from the page for the csv response" do
+        visit "/decision_reviews/#{non_comp_org.url}"
         expect(page).to have_content("Non-Comp Org")
         click_on "Completed Tasks"
         expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)

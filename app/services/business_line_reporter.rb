@@ -9,7 +9,7 @@ class BusinessLineReporter
 
   def initialize(business_line, filters = nil)
     @business_line = business_line
-    @filters = { filters: filters }
+    @filters = { filters: filters, sort_by: :id, sort_order: :asc }
   end
 
   def tasks
