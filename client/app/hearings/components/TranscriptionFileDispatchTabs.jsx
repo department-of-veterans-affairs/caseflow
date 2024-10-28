@@ -84,7 +84,8 @@ export const assignedColumns = (columns) => {
  * @returns An object for configuring the table
  */
 export const completedColumns = (columns) => {
-  const { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE,
+    RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
 
   return { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER };
 };
@@ -111,7 +112,9 @@ const TranscriptionSettingsLink = () => (
 );
 
 // This maps the component to render for each tab
-export const tabConfig = (openModal, selectFilesForPackage, files) => [
+export const tabConfig = (
+  openModal, selectFilesForPackage, files, search
+) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
@@ -138,15 +141,20 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Unassigned']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -166,16 +174,21 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Assigned']}
           selectFilesForPackage={selectFilesForPackage}
           openModal={openModal}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -195,15 +208,20 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={completedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Completed']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -223,15 +241,20 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={allColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['All']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={search.value}
         />
       </div>
     </>

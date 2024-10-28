@@ -58,7 +58,8 @@ RSpec.describe Hearings::TranscriptionFilesController do
       create(
         :transcription_file,
         hearing: legacy_hearing_1,
-        file_status: file_status_uploaded
+        file_status: file_status_uploaded,
+        docket_number: "search-test"
       )
     end
     let!(:transcription_file_4) { create(:transcription_file, hearing: hearing_3, file_status: file_status_retrieval) }
@@ -363,6 +364,22 @@ RSpec.describe Hearings::TranscriptionFilesController do
         },
         tasks_per_page: 15,
         total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by search query" do
+      get :transcription_file_tasks, params: { search: "search-test" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_3]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
       }.to_json
 
       expect(response.status).to eq(200)

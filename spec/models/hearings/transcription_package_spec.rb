@@ -99,6 +99,20 @@ RSpec.describe TranscriptionPackage, type: :model do
     expect(transcription_packages).to eq([transcription_package_2])
   end
 
+  it "can filter by search on work order" do
+    transcription_packages = TranscriptionPackage.search("BVA2024003")
+    expect(transcription_packages).to eq(
+      [transcription_package_3]
+    )
+  end
+
+  it "can handle missing search records" do
+    transcription_packages = TranscriptionPackage.search("BVA39293499")
+    expect(transcription_packages).to eq(
+      []
+    )
+  end
+
   it "can order by field" do
     transcription_packages = TranscriptionPackage.joins(:contractor)
       .order_by_field("asc", "transcription_contractors.name")
