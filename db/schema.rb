@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_12_181521) do
+ActiveRecord::Schema.define(version: 2024_10_21_145753) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -2500,12 +2501,36 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-      appeals.receipt_date,
-      appeals.uuid AS external_id,
-      appeals.stream_type AS appeal_stream,
-      appeals.stream_docket_number AS docket_number
+      replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
+      (appeals.uuid)::text AS external_id,
+      (appeals.stream_type)::text AS appeal_stream,
+      (appeals.stream_docket_number)::text AS docket_number
      FROM (appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
+    WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
+  UNION
+   SELECT legacy_appeals.id AS appeal_id,
+      'LegacyAppeal'::text AS appeal_type,
+      f_vacols_brieff.bfhr AS hearing_request_type,
+      replace((f_vacols_brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
+      f_vacols_brieff.bfkey AS external_id,
+          CASE
+              WHEN ((f_vacols_brieff.bfac)::text = '1'::text) THEN 'Original'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '2'::text) THEN 'Supplemental'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '3'::text) THEN 'Post Remand'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '4'::text) THEN 'Reconsideration'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '5'::text) THEN 'Vacate'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakeable Error'::text
+              ELSE NULL::text
+          END AS appeal_stream,
+      f_vacols_folder.tinum AS docket_number
+     FROM (((legacy_appeals
+       JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
+       JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
+       JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
 end
