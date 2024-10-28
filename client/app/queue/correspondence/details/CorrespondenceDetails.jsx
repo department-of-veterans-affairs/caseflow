@@ -890,16 +890,16 @@ const CorrespondenceDetails = (props) => {
       <AppSegment filledBackground extraClassNames="app-segment-cd-details correspondence-details-page">
         <div className="correspondence-details-header">
           <h1> {correspondence?.veteranFullName} </h1>
-          <div className="copy-id">
+          <div className="copy-id unwrap-text">
             <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
               label="copy-id"
               text={props.correspondence.veteranFileNumber}
             />
           </div>
-          <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
+          <p className="unwrap-text"><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{correspondenceInfo.status}</p>
+          <p className="last-item unwrap-text"><b>Record status: </b>{correspondenceInfo.status}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }

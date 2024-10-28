@@ -1476,6 +1476,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .last-item {
     margin-left: auto;
   }
+
+  .unwrap-text {
+    min-width: 215px;
+  }
 }
 
 .correspondence-case-timeline-container {
