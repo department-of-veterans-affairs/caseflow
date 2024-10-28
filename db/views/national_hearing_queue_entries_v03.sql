@@ -14,8 +14,9 @@ SELECT
   CAST(appeals.stream_docket_number AS TEXT) AS docket_number,
   CASE
     WHEN appeals.aod_based_on_age = TRUE
-    OR advance_on_docket_motions.granted = TRUE
-    OR people.date_of_birth >= CURRENT_DATE - INTERVAL '75 years' THEN TRUE
+      OR advance_on_docket_motions.granted = TRUE
+      OR people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
+    THEN TRUE
     ELSE FALSE
   END AS aod_indicator,
   tasks.id as task_id
@@ -54,9 +55,9 @@ SELECT
   CASE
     WHEN (
       f_vacols_corres.sspare2 IS NULL
-      AND f_vacols_corres.sdob >= CURRENT_DATE - INTERVAL '75 years'
+      AND f_vacols_corres.sdob <= (CURRENT_DATE - INTERVAL '75 years')
     )
-    OR people.date_of_birth >= CURRENT_DATE - INTERVAL '75 years' THEN TRUE
+    OR people.date_of_birth <= (CURRENT_DATE - INTERVAL '75 years') THEN TRUE
     WHEN f_vacols_assign.tskactcd IN ('B', 'B1', 'B2') THEN TRUE
     ELSE FALSE
   END AS aod_indicator,
