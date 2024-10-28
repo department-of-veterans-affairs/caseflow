@@ -267,17 +267,17 @@ describe DecisionReviewsController, :postgres, type: :controller do
         it "returns 400 when the decision date is invalid" do
           put :update, params: { decision_review_business_line_slug: "vha", task_id: task.id,
                                  decision_issues: [
-                                  {
-                                    request_issue_id: request_issues.first.id,
-                                    disposition: "Granted",
-                                    description: "a rating note"
-                                  },
-                                  {
-                                    request_issue_id: request_issues.second.id,
-                                    disposition: "Denied",
-                                    description: "a nonrating note"
-                                  }
-                                ],
+                                   {
+                                     request_issue_id: request_issues.first.id,
+                                     disposition: "Granted",
+                                     description: "a rating note"
+                                   },
+                                   {
+                                     request_issue_id: request_issues.second.id,
+                                     disposition: "Denied",
+                                     description: "a nonrating note"
+                                   }
+                                 ],
                                  decision_date: 500.years.ago }
 
           response_body = JSON.parse(response.body)
