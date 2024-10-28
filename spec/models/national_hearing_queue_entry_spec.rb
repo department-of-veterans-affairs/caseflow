@@ -91,22 +91,22 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       ).to match_array [
         [
           ama_with_sched_task.id,
-          'Appeal',
+          "Appeal",
           Appeal.find_by(
             id: ama_with_sched_task.id
           ).original_hearing_request_type,
-          1.day.ago.strftime('%Y%m%d'),
+          1.day.ago.strftime("%Y%m%d"),
           ama_with_sched_task.uuid,
           ama_with_sched_task.stream_type,
           ama_with_sched_task.stream_docket_number
         ],
         [
           legacy_with_sched_task.id,
-          'LegacyAppeal',
+          "LegacyAppeal",
           VACOLS::Case.find_by_bfkey("700230001041").bfhr,
-          1.day.ago.strftime('%Y%m%d'),
+          1.day.ago.strftime("%Y%m%d"),
           VACOLS::Case.find_by_bfkey("700230001041").bfkey,
-          'Original',
+          "Original",
           VACOLS::Folder.find_by_ticknum("700230001041").tinum
         ]
       ]
