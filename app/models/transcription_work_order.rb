@@ -29,6 +29,7 @@ class TranscriptionWorkOrder
   def self.get_banner_messages(task_number)
     transcription_package = ::TranscriptionPackage.find_by(task_number: task_number)
     return {} unless transcription_package
+
     contractor_name = transcription_package.contractor.name
     {
       hearing_message: COPY::HEARING_BANNER_MESSAGE,
@@ -113,13 +114,15 @@ class TranscriptionWorkOrder
   def self.fetch_wo_file_info(task_number)
     transcription = find_transcription_with_files(task_number)
     return {} unless transcription
-    { woFileInfo: transcription.transcription_files.map { |file| build_file_info(file) } ,
-    workOrderStatus: fetch_wo_file_status(task_number) }
+
+    { woFileInfo: transcription.transcription_files.map { |file| build_file_info(file) },
+      workOrderStatus: fetch_wo_file_status(task_number) }
   end
 
   def self.fetch_wo_file_status(task_number)
     transcription = find_transcription_with_files(task_number)
     return {} unless transcription
+
     { currentStatus: check_status_file(transcription.transcription_files) }
   end
 
@@ -137,7 +140,7 @@ class TranscriptionWorkOrder
         status_complete = false
       end
     end
-    return status_complete
+    status_complete
   end
 
   def self.build_file_info(file)

@@ -110,10 +110,11 @@ class Hearings::TranscriptionFile < CaseflowRecord
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 
   def self.fetch_file_by_docket_and_type(docket_number)
-    file = where(docket_number: docket_number, file_type: 'xls')
-           .where.not(date_returned_box: nil)
-           .first
+    file = where(docket_number: docket_number, file_type: "xls")
+      .where.not(date_returned_box: nil)
+      .first
     return nil unless file
+
     file.aws_link # Return the local file path for testing
   end
 
@@ -129,13 +130,6 @@ class Hearings::TranscriptionFile < CaseflowRecord
   # Returns: string, folder path
   def local_test_file_path
     File.join(Rails.root, "app", "models", "hearings", "test_file.xls")
-  end
-
-  # Purpose: Location of temporary file in tmp/transcription_files/<file_type> folder
-  #
-  # Returns: string, folder path
-  def tmp_location
-    File.join(Rails.root, "tmp", "transcription_files", file_type, file_name)
   end
 
   # Purpose: Uploads transcription file to its corresponding location in S3

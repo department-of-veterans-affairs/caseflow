@@ -6,11 +6,11 @@ class Hearings::TranscriptionFilesController < ApplicationController
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
   before_action :verify_transcription_user, only: [:transcription_file_tasks]
 
-  def download_transcription_file
-    tmp_location = file.fetch_file_from_s3!
-    File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
-    file.clean_up_tmp_location
-  end
+  # def download_transcription_file
+  #   tmp_location = file.fetch_file_from_s3!
+  #   File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
+  #   file.clean_up_tmp_location
+  # end
 
   def transcription_file_tasks
     @transcription_files = Hearings::TranscriptionFile.filterable_values
@@ -92,6 +92,17 @@ class Hearings::TranscriptionFilesController < ApplicationController
       }
     end
     render json: files
+  end
+
+  def fetch_file
+    docket_number = params[:docket_number]
+    file_path = Hearings::TranscriptionFile.fetch_file_by_docket_and_type(docket_number)
+
+    if file_path
+      send_file file_path, filename: File.basename(file_path), type: 'application/vnd.ms-excel'
+    else
+      render json: { error: 'File not found' }, status: :not_found
+    end
   end
 
   private
