@@ -835,11 +835,16 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids) && genpop != "not_genpop"
 
       if case_affinity_days_lever_value_is_selected?(cavc_affinity_lever_value)
-        next if appeal["prev_deciding_judge"] == judge_sattyid
+        if appeal["prev_deciding_judge"] == judge_sattyid
+          if genpop == "not_genpop"
+            next !reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+          elsif genpop != "not_genpop"
+            next
+          end
+        end
 
         genpop == "not_genpop" || reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next true if appeal["vlj"] != judge_sattyid && genpop == "not_genpop"
         next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
@@ -868,11 +873,16 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids) && genpop != "not_genpop"
 
       if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_lever_value)
-        next if appeal["prev_deciding_judge"] == judge_sattyid
+        if appeal["prev_deciding_judge"] == judge_sattyid
+          if genpop == "not_genpop"
+            next !reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+          elsif genpop != "not_genpop"
+            next
+          end
+        end
 
         genpop == "not_genpop" || reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next true if appeal["vlj"] != judge_sattyid && genpop == "not_genpop"
         next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid

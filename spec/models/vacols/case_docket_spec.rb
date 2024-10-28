@@ -1026,11 +1026,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       context "for cases where a hearing has been held after the original decision date" do
-        def create_case_hearing(original_case, hearing_judge)
-          create(:case_hearing, :disposition_held, folder_nr: (original_case.bfkey.to_i + 1).to_s,
-                                                   hearing_date: Time.zone.today, user: hearing_judge)
-        end
-
         let(:new_hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
 
         # original hearing held by tied_judge, decided by tied_judge, new hearing held by new_hearing_judge
@@ -1180,6 +1175,121 @@ describe VACOLS::CaseDocket, :all_dbs do
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end
+
+      context "when the genpop value is 'not_genpop'" do
+        # appeals with no hearing and no previous deciding judge (genpop)
+        let!(:aod_case_1) { create(:case, :aod, :type_original, :ready_for_distribution) }
+        let!(:cavc_case_1) do
+          c = create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, tied_to: false)
+          c.update!(bfmemid: nil)
+          c
+        end
+        let!(:aod_cavc_case_1) do
+          c = create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, aod: true, tied_to: false)
+          c.update!(bfmemid: nil)
+          c
+        end
+        # appeals where hearing held by original deciding judge (not genpop)
+        let!(:aod_case_2) do
+          create(:case, :aod, :type_original, :tied_to_judge, :ready_for_distribution, tied_judge: judge)
+        end
+        let!(:cavc_case_2) { create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney) }
+        let!(:aod_cavc_case_2) { create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true) }
+        # appeals where hearing held by different judge than original deciding judge before the decision and within affinity window (not genpop)
+        let!(:cavc_case_3) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+          c.update!(bfmemid: aff_judge.sattyid)
+          c
+        end
+        let!(:aod_cavc_case_3) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+          c.update!(bfmemid: vacols_judge.sattyid)
+          c
+        end
+        # appeals where hearing held by requesting judge after original decision w/ different original judge (not genpop)
+        let!(:cavc_case_4) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, other_judge_caseflow)
+          c
+        end
+        let!(:aod_cavc_case_4) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true, aod: true)
+          create_case_hearing(c, judge)
+          c
+        end
+        # appeals where prev deciding judge ineligible and hearing before decision (genpop)
+        let!(:cavc_case_5) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney) }
+        let!(:aod_cavc_case_5) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true) }
+        # appeals where prev deciding judge excluded and is not the hearing vlj and hearing before decision (genpop)
+        let!(:cavc_case_6) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney)
+          c.update!(bfmemid: excl_judge.sattyid)
+          c
+        end
+        let!(:aod_cavc_case_6) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true)
+          c.update!(bfmemid: excl_judge.sattyid)
+          c
+        end
+        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for other judge)
+        let!(:cavc_case_7) do
+          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
+        end
+        let!(:aod_cavc_case_7) do
+          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
+        end
+        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for requesting judge)
+        let!(:cavc_case_8) do
+          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
+        end
+        let!(:aod_cavc_case_8) do
+          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
+        end
+        # appeals w/ no hearing, active prev deciding judge, affinity start date and value > lever days ago (genpop)
+        let!(:cavc_case_9) do
+          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago)
+        end
+        let!(:aod_cavc_case_9) do
+          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 2.months.ago)
+        end
+
+        it "only distributes non-genpop appeals", :aggregate_failures do
+          IneligibleJudgesJob.perform_now
+
+          # with levers set to a value
+          judge_cases =
+            VACOLS::CaseDocket.distribute_priority_appeals(judge, "not_genpop", 100, true)
+
+          expect(judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              cavc_case_2, aod_cavc_case_3, aod_cavc_case_4, cavc_case_8, aod_cavc_case_8
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.push(aod_case_2.bfkey).sort)
+
+          # For case distribution levers set to infinite
+          CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "infinite")
+          CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "infinite")
+
+          judge_cases =
+            VACOLS::CaseDocket.distribute_priority_appeals(judge, "not_genpop", 100, true)
+
+          expect(judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              cavc_case_2, aod_cavc_case_3, aod_cavc_case_4, cavc_case_8, aod_cavc_case_8, cavc_case_9, aod_cavc_case_9
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.push(aod_case_2.bfkey).sort)
+
+          # For case distribution levers set to omit
+          CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "omit")
+          CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "omit")
+
+          judge_cases =
+            VACOLS::CaseDocket.distribute_priority_appeals(judge, "not_genpop", 100, true)
+
+          expect(judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              cavc_case_2, aod_cavc_case_4
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.push(aod_case_2.bfkey).sort)
+        end
+      end
     end
   end
 
@@ -1244,5 +1354,10 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       end
     end
+  end
+
+  def create_case_hearing(original_case, hearing_judge)
+    create(:case_hearing, :disposition_held, folder_nr: (original_case.bfkey.to_i + 1).to_s,
+                                             hearing_date: Time.zone.today, user: hearing_judge)
   end
 end
