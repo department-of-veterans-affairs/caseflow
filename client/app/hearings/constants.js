@@ -91,14 +91,6 @@ export const ACTIONS = {
   HANDLE_CONFERENCE_LINK_ERROR: 'HANDLE_CONFERENCE_LINK_ERROR'
 };
 
-// Labels for guest link
-export const GUEST_LINK_LABELS = {
-  COPY_GUEST_LINK: 'Copy Guest Link',
-  GUEST_LINK_SECTION_LABEL: 'Guest links for non-virtual hearings',
-  GUEST_CONFERENCE_ROOM: 'Conference Room',
-  GUEST_PIN: 'PIN',
-}
-
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {
     value: 'RoSchedulePeriod',

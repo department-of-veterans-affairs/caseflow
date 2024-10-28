@@ -83,7 +83,8 @@ export const COMMON_TIMEZONES = [
 export const REGIONAL_OFFICE_ZONE_ALIASES = {
   'America/Anchorage': 'America/Juneau',
   'America/Boise': 'America/Denver',
-  'America/Kentucky/Louisville': 'America/New_York'
+  'America/Kentucky/Louisville': 'America/New_York',
+  'America/Indiana/Indianapolis': 'America/New_York'
 };
 
 // https://faq.usps.com/s/article/What-are-the-USPS-abbreviations-for-U-S-states-and-territories
