@@ -817,7 +817,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-  def self.cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids, genpop)
+  def self.cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids, genpop = "any")
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid, genpop)
 
@@ -849,7 +849,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
-  def self.cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids, genpop)
+  def self.cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids, genpop = "any")
     appeals.reject! do |appeal|
       # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
       next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid, genpop)
