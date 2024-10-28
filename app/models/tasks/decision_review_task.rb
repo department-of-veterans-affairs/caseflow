@@ -51,7 +51,7 @@ class DecisionReviewTask < Task
     elsif !validate_decision_issue_per_request_issue(decision_issue_params)
       @error_code = :invalid_decision_issue_per_request_issue
     elsif !validate_decision_date(decision_date)
-      @error_code = "invalid decision date"
+      @error_code = :invalid_decision_date
     end
 
     !@error_code
@@ -64,7 +64,7 @@ class DecisionReviewTask < Task
   end
 
   def validate_decision_date(decision_date)
-    return true unless assigned_to == VhaBusinessLine.singleton
+    return true unless assigned_to.is_a?(VhaBusinessLine)
 
     dd = decision_date.to_datetime
     dd <= Time.zone.now && dd >= appeal.receipt_date

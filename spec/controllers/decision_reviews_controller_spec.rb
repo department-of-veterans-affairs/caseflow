@@ -248,6 +248,31 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         expect(response.status).to eq(400)
       end
+
+      context "VHA business line" do
+        let(:vha_org) { VhaBusinessLine.singleton }
+        let(:task) { create(:higher_level_review_task, :in_progress, assigned_to: VhaBusinessLine.singleton) }
+        let!(:request_issue) { create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: "vha") }
+
+        before do
+          vha_org.add_user(user)
+          OrganizationsUser.make_user_admin(user, vha_org)
+        end
+
+        it "returns 400 when the decision date is invalid" do
+          put :update, params: { decision_review_business_line_slug: "vha", task_id: task.id,
+                                 decision_issues: [
+                                  {
+                                    request_issue_id: request_issue.id,
+                                    disposition: "Granted",
+                                    description: "a nonrating note"
+                                  }
+                                 ],
+                                decision_date: 500.years.ago }
+
+          expect(response.status).to eq(400)
+        end
+      end
     end
   end
 
