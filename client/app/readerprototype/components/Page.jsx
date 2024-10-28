@@ -30,11 +30,12 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
+const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics, setCurrentPage }) => {
   const canvasRef = useRef(null);
   const isVisibleRef = useRef(null);
 
-  isVisibleRef.current = usePageVisibility(canvasRef);
+  isVisibleRef.current = usePageVisibility(canvasRef, 0);
+  const isPageVisible = usePageVisibility(canvasRef, 0.25);
   const wrapperRef = useRef(null);
   const renderTaskRef = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
@@ -127,6 +128,14 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
     };
   }, []);
 
+  useEffect(() => {
+    if (isPageVisible) {
+      setCurrentPage(page.pageNumber);
+    }
+
+  }, [isPageVisible]);
+
+
   // previousScale keeps track of the previous value of scale. if scale changes, that will trigger a component
   // rerender. before that happens, we'd normally try to finish the current component render.
   // since we are about to rerender the whole component anyway, short-circuit the current one to improve
@@ -192,6 +201,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
+  setCurrentPage: PropTypes.func,
   setRenderingMetrics: PropTypes.func
 };
 

@@ -18,6 +18,7 @@ const PdfDocument = ({
   doc,
   isDocumentLoadError,
   rotateDeg,
+  setCurrentPage,
   setIsDocumentLoadError,
   setNumPages,
   zoomLevel }) => {
@@ -188,6 +189,7 @@ const PdfDocument = ({
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
             </Layer>
           )}
+          setCurrentPage={setCurrentPage}
           setRenderingMetrics={handleRenderingMetrics}
         />
       ))}
@@ -205,6 +207,7 @@ PdfDocument.propTypes = {
   }),
   isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
+  setCurrentPage: PropTypes.func,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
