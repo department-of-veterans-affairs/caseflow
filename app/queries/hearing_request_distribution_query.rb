@@ -24,18 +24,6 @@ class HearingRequestDistributionQuery
       # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
       return only_genpop_appeals
     end
-
-    # We are returning an array of arrays in order to process the
-    # "not_genpop_appeals" separately from the "only_genpop_appeals" in
-    # HearingRequestCaseDistributor in order to accurately populate the `genpop`
-    # field in the `DistributedCase`. The last step in the automatic case
-    # distribution process is to create `DistributedCase`s for the Distribution.
-    # For the Hearing Docket, a DistributedCase validates the presence of the
-    # genpop attribute. This is used for reporting purposes and so we can
-    # verify that the algorithm is correct. For example, if we found a
-    # DistributedCase with `genpop_query` set to "not_genpop", but its `genpop`
-    # field was set to `true`, that would indicate a bug.
-    [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
   end
 
   def self.ineligible_judges_id_cache
