@@ -20,6 +20,7 @@ const PdfDocument = ({
   rotateDeg,
   setIsDocumentLoadError,
   setNumPages,
+  setCurrentPage,
   zoomLevel }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -178,6 +179,7 @@ const PdfDocument = ({
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
+          setCurrentPage={setCurrentPage}
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
@@ -207,6 +209,7 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
+  setCurrentPage: PropTypes.func,
   zoomLevel: PropTypes.number,
 };
 

@@ -8,7 +8,7 @@ exports[`renders 1`] = `
     style="height: 792px; width: 612px; position: relative; background-color: white;"
   >
     <canvas
-      class="prototype-canvas cf-pdf-page-hidden"
+      class="prototype-canvas "
       height="792"
       id="canvas-1"
       style="position: relative; top: 0px;"

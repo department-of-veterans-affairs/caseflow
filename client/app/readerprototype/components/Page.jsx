@@ -30,11 +30,22 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
+const Page = memo(({
+  page,
+  rotation = ROTATION_DEGREES.ZERO,
+  renderItem,
+  scale,
+  setRenderingMetrics,
+  setCurrentPage
+}) => {
+  const scaleFraction = scale / 100;
+  const currentPageFraction = 0.5 / Math.pow(scaleFraction, 2);
   const canvasRef = useRef(null);
   const isVisibleRef = useRef(null);
 
   isVisibleRef.current = usePageVisibility(canvasRef);
+  const shouldSetCurrentPage = usePageVisibility(canvasRef, currentPageFraction);
+
   const wrapperRef = useRef(null);
   const renderTaskRef = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
@@ -42,7 +53,6 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   const reportedStatsRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const scaleFraction = scale / 100;
   const viewportRef = useRef(page.getViewport({ scale: scaleFraction }));
 
   const scaledHeight = viewportRef.current.height;
@@ -109,8 +119,7 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
         setIsLoading(false);
         hasRenderedRef.current = true;
       } catch {
-        // retry when current render task fails
-        // render();
+        // no op when current render task fails
       }
     }
   };
@@ -126,6 +135,13 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
       renderTaskRef.current?.cancel();
     };
   }, []);
+
+  useEffect(() => {
+    if (shouldSetCurrentPage) {
+      setCurrentPage(page.pageNumber);
+    }
+
+  }, [shouldSetCurrentPage, scale]);
 
   // previousScale keeps track of the previous value of scale. if scale changes, that will trigger a component
   // rerender. before that happens, we'd normally try to finish the current component render.
@@ -192,7 +208,8 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
-  setRenderingMetrics: PropTypes.func
+  setRenderingMetrics: PropTypes.func,
+  setCurrentPage: PropTypes.func
 };
 
 export default Page;
