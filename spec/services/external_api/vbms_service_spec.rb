@@ -477,7 +477,6 @@ describe ExternalApi::VBMSService do
               error_uuid: "1234"
             }
           )
-        expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).with(nil).and_return([])
 
         response = described.fetch_documents_for(appeal)
         expect(response).to eq(
@@ -512,7 +511,6 @@ describe ExternalApi::VBMSService do
               error_uuid: "1234"
             }
           )
-        expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).with(nil).and_return([])
 
         response = described.fetch_documents_for(appeal)
         expect(response).to eq(
