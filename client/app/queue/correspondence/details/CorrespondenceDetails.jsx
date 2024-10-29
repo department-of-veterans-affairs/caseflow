@@ -8,13 +8,12 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo,
+import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
   updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
-import { onReceiveTasks, onReceiveAppealDetails, deleteAppeal } from '../../QueueActions';
+import { deleteAppeal, fetchAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -208,22 +207,10 @@ const CorrespondenceDetails = (props) => {
           );
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
-          const corAppealTasks = [];
-
           correspondenceAppeals.map((corAppeal) => {
-            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
-
-            corAppeal?.taskAddedData?.data.map((taskData) => {
-              corAppealTasks.push(taskData);
-            });
+            dispatch(fetchAppealDetails(corAppeal.appealUuid));
           });
-
-          // load appeal tasks into the store
-          const preparedTasks = prepareTasksForStore(corAppealTasks);
-
-          dispatch(onReceiveTasks({
-            amaTasks: preparedTasks
-          }));
+          dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
           sortAppeals(appealIds);
 
@@ -468,14 +455,11 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(isButtonDisabled());
   }, [selectedAppeals, initialSelectedAppeals]);
 
-  useEffect(() => {
-    sortAppeals(initialSelectedAppeals);
-  }, []);
 
   useEffect(() => {
     dispatch(updateCorrespondenceInfo(correspondence));
+    sortAppeals(initialSelectedAppeals);
     // load appeals related to the correspondence into the store
-    const corAppealTasks = [];
 
     // return if appeals already loaded into store
     if (Object.keys(props.appealsFromStore).length > 0) {
@@ -483,19 +467,10 @@ const CorrespondenceDetails = (props) => {
     }
 
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
-
-      corAppeal?.taskAddedData?.data.map((taskData) => {
-        corAppealTasks.push(taskData);
-      });
+      dispatch(fetchAppealDetails(corAppeal.appealUuid));
     });
 
-    // // load appeal tasks into the store
-    const preparedTasks = prepareTasksForStore(corAppealTasks);
-
-    dispatch(onReceiveTasks({
-      amaTasks: preparedTasks
-    }));
+    dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
   }, []);
 
@@ -576,7 +551,7 @@ const CorrespondenceDetails = (props) => {
                   correspondence={props.correspondence}
                   organizations={props.organizations}
                   userCssId={props.userCssId}
-                  appeal={taskAdded.appeal.data.attributes}
+                  appealUuid={taskAdded.appealUuid}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                 />
@@ -945,22 +920,12 @@ const CorrespondenceDetails = (props) => {
           );
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
-          const corAppealTasks = [];
 
           correspondenceAppeals.map((corAppeal) => {
-            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
-
-            corAppeal?.taskAddedData?.data.map((taskData) => {
-              corAppealTasks.push(taskData);
-            });
+            dispatch(fetchAppealDetails(corAppeal.appealUuid));
           });
 
-          // load appeal tasks into the store
-          const preparedTasks = prepareTasksForStore(corAppealTasks);
-
-          dispatch(onReceiveTasks({
-            amaTasks: preparedTasks
-          }));
+          dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
           sortAppeals(appealIds);
           window.scrollTo({
@@ -1100,7 +1065,7 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     updateCorrespondenceInfo,
     deleteAppeal,
-    updateExpandedLinkedAppeals
+    updateExpandedLinkedAppeals,
   }, dispatch)
 );
 
