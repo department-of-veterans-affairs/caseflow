@@ -1985,6 +1985,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_203026) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The user who created the transcription record"
     t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
+    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
     t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
     t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
     t.string "docket_number", null: false, comment: "Docket number of associated hearing"
