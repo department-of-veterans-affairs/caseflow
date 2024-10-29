@@ -7,6 +7,8 @@ describe VirtualHearings::CreateConferenceJob do
   URL_PATH = "/sample"
   PIN_KEY = "mysecretkey"
 
+  include_context "Enable both conference services"
+
   context ".perform" do
     let(:current_user) { create(:user, roles: ["Build HearSched"]) }
     let(:hearing) { create(:hearing, regional_office: "RO06") }
@@ -19,7 +21,10 @@ describe VirtualHearings::CreateConferenceJob do
     end
     let(:pexip_url) { "fake.va.gov" }
     before do
-      stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
+      stub_const("ENV", ENV.to_hash.merge("PEXIP_CLIENT_HOST" => pexip_url))
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:fetch).and_call_original
+
       User.authenticate!(user: current_user)
     end
 
@@ -85,49 +90,100 @@ describe VirtualHearings::CreateConferenceJob do
       end
     end
 
-    shared_examples "conference created" do
-      it "creates a conference", :aggregate_failures do
+    it "creates a conference", :aggregate_failures do
+      allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return "0000001"
+
+      subject.perform_now
+
+      virtual_hearing.reload
+      expect(virtual_hearing.status).to eq(:active)
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{URL_HOST}")
+      expect(virtual_hearing.host_pin.to_s.length).to eq(7)
+      expect(virtual_hearing.guest_pin.to_s.length).to eq(10)
+    end
+
+    describe "for webex" do
+      let(:virtual_hearing) do
+        create(:virtual_hearing, hearing: hearing).tap do |virtual_hearing|
+          virtual_hearing.meeting_type.update(service_name: "webex")
+        end
+      end
+      let(:base_url) { "https://instant-usgov.webex.com/visit/" }
+
+      it "creates a webex conference" do
         subject.perform_now
 
         virtual_hearing.reload
-        expect(virtual_hearing.conference_id).to eq(9001)
-        expect(virtual_hearing.status).to eq(:active)
-        expect(virtual_hearing.alias).to eq("0000001")
-        expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
-        expect(virtual_hearing.host_pin.to_s.length).to eq(8)
-        expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
-      end
-    end
-
-    context "conference creation" do
-      context "when all emails present" do
-        include_examples "conference created"
+        expect(virtual_hearing.host_hearing_link).to include(base_url)
+        expect(virtual_hearing.guest_hearing_link).to include(base_url)
       end
 
-      context "when appealant email is missing" do
+      it "logs success to metrics service" do
+        expect(MetricsService).to receive(:increment_counter).with(
+          hash_including(
+            metric_name: "created_conference.successful",
+            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+            attrs: { hearing_id: hearing.id }
+          )
+        )
+
+        subject.perform_now
+      end
+
+      context "conference creation fails" do
+        let(:fake_webex) { Fakes::WebexService.new(status_code: 400) }
+
         before do
-          virtual_hearing.update!(appellant_email: nil)
+          allow(WebexService).to receive(:new).and_return(fake_webex)
         end
 
-        include_examples "conference created"
+        after do
+          clear_enqueued_jobs
+        end
+
+        it "job goes back on queue and logs if error", :aggregate_failures do
+          expect(Rails.logger).to receive(:error).exactly(3).times
+
+          expect do
+            perform_enqueued_jobs do
+              VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
+            end
+          end.to(
+            have_performed_job(VirtualHearings::CreateConferenceJob)
+              .exactly(5)
+              .times
+          )
+
+          virtual_hearing.establishment.reload
+          expect(virtual_hearing.establishment.error.nil?).to eq(false)
+          expect(virtual_hearing.establishment.attempted?).to eq(true)
+          expect(virtual_hearing.establishment.processed?).to eq(false)
+        end
+
+        it "logs failure to metrics service" do
+          expect(MetricsService).to receive(:increment_counter).with(
+            hash_including(
+              metric_name: "created_conference.failed",
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+              attrs: { hearing_id: hearing.id }
+            )
+          )
+
+          subject.perform_now
+        end
+
+        it "does not create sent email events" do
+          subject.perform_now
+
+          virtual_hearing.reload
+          expect(virtual_hearing.hearing.email_events.count).to eq(0)
+        end
       end
     end
 
     include_examples "confirmation emails are sent"
 
     include_examples "sent email event objects are created"
-
-    it "logs success to datadog" do
-      expect(MetricsService).to receive(:increment_counter).with(
-        hash_including(
-          metric_name: "created_conference.successful",
-          metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-          attrs: { hearing_id: hearing.id }
-        )
-      )
-
-      subject.perform_now
-    end
 
     context "appellant email fails to send" do
       before do
@@ -156,56 +212,6 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       include_examples "job is retried"
-    end
-
-    context "conference creation fails" do
-      let(:fake_pexip) { Fakes::PexipService.new(status_code: 400) }
-
-      before do
-        allow(PexipService).to receive(:new).and_return(fake_pexip)
-      end
-
-      after do
-        clear_enqueued_jobs
-      end
-
-      it "job goes back on queue and logs if error", :aggregate_failures do
-        expect(Rails.logger).to receive(:error).exactly(6).times
-
-        expect do
-          perform_enqueued_jobs do
-            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
-          end
-        end.to(
-          have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(5)
-            .times
-        )
-
-        virtual_hearing.establishment.reload
-        expect(virtual_hearing.establishment.error.nil?).to eq(false)
-        expect(virtual_hearing.establishment.attempted?).to eq(true)
-        expect(virtual_hearing.establishment.processed?).to eq(false)
-      end
-
-      it "logs failure to datadog" do
-        expect(MetricsService).to receive(:increment_counter).with(
-          hash_including(
-            metric_name: "created_conference.failed",
-            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-            attrs: { hearing_id: hearing.id }
-          )
-        )
-
-        subject.perform_now
-      end
-
-      it "does not create sent email events" do
-        subject.perform_now
-
-        virtual_hearing.reload
-        expect(virtual_hearing.hearing.email_events.count).to eq(0)
-      end
     end
 
     context "when the virtual hearing is not immediately available" do
@@ -256,7 +262,10 @@ describe VirtualHearings::CreateConferenceJob do
           repkey: appeal.vacols_id
         )
       end
-      let(:hearing) { create(:legacy_hearing, appeal: appeal) }
+      let(:hearing) do
+        RequestStore[:current_user] = current_user
+        create(:legacy_hearing, appeal: appeal)
+      end
 
       context "when representative is different in VACOLS and VBMS" do
         it "uses the representative in VBMS" do
@@ -299,9 +308,6 @@ describe VirtualHearings::CreateConferenceJob do
         let(:expected_conference_id) { "0000001" }
 
         before do
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
           allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return expected_conference_id
         end
 
@@ -333,6 +339,8 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       context "when all required env variables are not set" do
+        before { allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return nil }
+
         include_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingLinkGenerationFailed
         include_examples "does not retry job"
       end
