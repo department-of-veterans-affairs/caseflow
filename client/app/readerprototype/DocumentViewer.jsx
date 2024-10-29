@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
 import ReaderFooter from './components/ReaderFooter';
@@ -10,12 +10,12 @@ import ReaderToolbar from './components/ReaderToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
+import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
-import { getRotationDeg } from './util/documentUtil';
-import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 import { showSideBarSelector } from './selectors';
-import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { getRotationDeg } from './util/documentUtil';
+import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,20 +61,27 @@ const DocumentViewer = (props) => {
     return () => window.removeEventListener('keydown', keyHandler);
   }, []);
 
-  const getPageNumFromScrollTop = (event) => {
-    const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate =
-      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY ?
-        clientHeight :
-        scrollHeight / numPages;
-    const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
+  let vals = [];
 
-    if (pageNumber > numPages) {
-      setCurrentPage(numPages);
-    } else {
-      setCurrentPage(pageNumber);
-    }
-  };
+  const setCurrentPageOnScroll = useCallback((pageNum) => {
+    let timeout;
+
+    vals.push(pageNum);
+
+    const delayed = () => {
+      if (vals.length) {
+        const lowestPage = Math.min(...vals);
+
+        setCurrentPage(lowestPage);
+        vals = [];
+        vals = vals.filter((page) => page !== lowestPage);
+        clearTimeout(timeout);
+      }
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(delayed, 50);
+  });
 
   const handleZoomIn = () => {
     const newZoomLevel = props.zoomLevel + ZOOM_INCREMENT;
@@ -122,12 +129,13 @@ const DocumentViewer = (props) => {
             zoomLevel={props.zoomLevel}
           />
           {showSearchBar && <ReaderSearchBar />}
-          <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
+          <div className="cf-pdf-scroll-view">
             <PdfDocument
               currentPage={currentPage}
               doc={doc}
               isDocumentLoadError={isDocumentLoadError}
               rotateDeg={rotateDeg}
+              setCurrentPage={setCurrentPageOnScroll}
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
@@ -138,7 +146,7 @@ const DocumentViewer = (props) => {
             docId={doc.id}
             isDocumentLoadError={isDocumentLoadError}
             numPages={numPages}
-            setCurrentPage={() => setCurrentPage()}
+            setCurrentPage={setCurrentPage}
             showPdf={props.showPdf}
           />
         </div>
