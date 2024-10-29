@@ -8,85 +8,86 @@ import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
-import { maxWidthFormInput } from '../../../../../hearings/components/details/style';
+import { maxWidthFormInput, ninetySixWidthFormInput } from '../../../../../hearings/components/details/style';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
   handleClose,
   correspondence,
-  task,
-  displayRemoveCheck,
-  removeTask,
   setIsTasksUnrelatedSectionExpanded,
   autoTexts
 }) => {
   const dispatch = useDispatch();
 
-  // Redux state for unrelatedTaskList
+  // Redux state for unrelatedTaskList, needed to filter task options
   // eslint-disable-next-line max-len
   const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal);
-  // Track current page
+
+  // Track if user is on the second page of the modal (auto-text selection)
   const [isSecondPage, setIsSecondPage] = useState(false);
   const [taskTypeOptions, setTaskTypeOptions] = useState([]);
-  // Combined task content from both pages
+
+  // Main task content for the first page
   const [taskContent, setTaskContent] = useState('');
-  // Second page content
+  // Additional content generated from selected auto-texts on the second page
   const [additionalContent, setAdditionalContent] = useState('');
   const [selectedTaskType, setSelectedTaskType] = useState(null);
-  // Controls Submit button state
+
+  // Controls Submit button state based on task fields
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  // Tracks selected checkboxes on the second page
+
+  // Tracks selected checkboxes for auto-text selections on the second page
   const [autoTextSelections, setAutoTextSelections] = useState([]);
 
-  // Generic auto-text options for second page checkboxes
+  // Options for checkboxes on the second page derived from the `autoTexts` prop
   const checkboxData = autoTexts;
 
-  // Task type options filtered by unrelated tasks
+  // Filters task type options based on unrelated tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
     return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
-      // eslint-disable-next-line max-len
       filter((option) => !unrelatedTaskList.some((existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase())).
       map((option) => ({ value: option.value, label: option.label }));
   };
 
+  // Set task type options initially based on unrelated tasks
   useEffect(() => {
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [unrelatedTaskList]);
 
-  // Update submit button enabled state based on input availability
+  // Updates the "Submit" button state based on user input and loading state
   useEffect(() => {
     setIsSubmitDisabled(!(taskContent || additionalContent) || !selectedTaskType || isLoading);
   }, [taskContent, additionalContent, selectedTaskType, isLoading]);
 
-  // Handle task type selection
+  // Handle task type selection, stores the selected task type
   const updateTaskType = (newType) => setSelectedTaskType(newType.value);
 
-  // Update task content (first page text area)
+  // Updates main task content on first page
   const updateTaskContent = (newContent) => setTaskContent(newContent);
 
-  // Update additional content (second page text area)
+  // Updates additional content on the second page
   const updateAdditionalContent = (newContent) => setAdditionalContent(newContent);
 
-  // Toggle checkboxes for auto-text selections and append checked text to additional content
+  // Handles toggling of auto-text checkboxes
   const handleToggleCheckbox = (checkboxText) => {
     setAutoTextSelections((prevSelections) => {
+      // Adds/removes selected text from autoTextSelections array
       const newSelections = prevSelections.includes(checkboxText) ?
         prevSelections.filter((item) => item !== checkboxText) :
         [...prevSelections, checkboxText];
 
-      // Update additional content with selected texts
-      setAdditionalContent(newSelections.join('\n'));
+      // Updates additional content to comma-separated string
+      setAdditionalContent(newSelections.join(', \n'));
 
       return newSelections;
     });
-
   };
 
-  // Handle the "Next" button click to navigate to the second page
+  // Navigate to the second page when "Next" is clicked
   const handleNext = () => setIsSecondPage(true);
 
-  // Handle Submit functionality on the second page
+  // Handles form submission when "Submit" is clicked on the second page
   const handleSubmit = async () => {
     const combinedContent = taskContent ? `${taskContent}\n${additionalContent}` : additionalContent;
 
@@ -102,9 +103,9 @@ const AddTaskModalCorrespondenceDetails = ({
     setIsLoading(true);
 
     try {
-      // Dispatch action to add task and wait for completion
       await dispatch(addTaskNotRelatedToAppeal(correspondence, newTask));
-      // Reset content fields
+
+      // Resets fields and state after submission
       setTaskContent('');
       setAdditionalContent('');
       setSelectedTaskType(null);
@@ -122,57 +123,65 @@ const AddTaskModalCorrespondenceDetails = ({
   // Navigate back to the first page
   const handleBack = () => setIsSecondPage(false);
 
+  // Prevent rendering of modal if not open
   if (!isOpen) {
     return null;
   }
 
   return (
     <Modal
-      title="Add task to correspondence"
+      // Dynamic title for each page
+      title={isSecondPage ? 'Add autotext to task' : 'Add task to correspondence'}
       closeHandler={handleClose}
       confirmButton={
         <Button
-          // "Submit" on second page, "Next" on first
+          // "Submit" on second page, "Next" on first page
           onClick={isSecondPage ? handleSubmit : handleNext}
-          // "Next" always enabled, "Submit" conditionally
           disabled={isSecondPage ? isSubmitDisabled : false}
         >
           {isLoading ? 'Loading...' : isSecondPage ? 'Submit' : 'Next'}
         </Button>
       }
       cancelButton={
-        <Button linkStyling onClick={handleClose} disabled={isLoading}>
-          Cancel
-        </Button>
+        isSecondPage ? (
+          <div className="action-buttons">
+            <Button linkStyling onClick={handleClose} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button classNames={['usa-button-secondary', 'back-button']} onClick={handleBack} disabled={isLoading}>
+              Back
+            </Button>
+          </div>
+        ) : (
+          <Button linkStyling onClick={handleClose} disabled={isLoading}>
+            Cancel
+          </Button>
+        )
       }
     >
-      {isSecondPage ? (
-        // Second page content with Checkbox selections and additional TextareaField
-        <div className="add-task-modal-container">
-          <div className="checkbox-modal-size">
+      <div className={`add-task-modal-container ${isSecondPage ? 'scrollable-content' : ''}`}>
+        {isSecondPage ? (
+          // Second page with checkboxes and additional TextareaField
+          <div className="checkbox-modal-size-corr-details">
             {checkboxData.map((checkboxText) => (
               <Checkbox
                 key={checkboxText}
                 name={checkboxText}
                 onChange={() => handleToggleCheckbox(checkboxText)}
                 value={autoTextSelections.includes(checkboxText)}
-
               />
             ))}
+            <TextareaField
+              name="selectedAutotext"
+              label="Selected autotext"
+              value={additionalContent}
+              onChange={updateAdditionalContent}
+              classNames={['task-selection-dropdown-box-corr-details']}
+              styling={ninetySixWidthFormInput}
+            />
           </div>
-          <TextareaField
-            name="additionalContent"
-            label="Additional Instructions"
-            value={additionalContent}
-            onChange={updateAdditionalContent}
-            classNames={['task-selection-dropdown-box']}
-            styling={maxWidthFormInput}
-          />
-          <Button onClick={handleBack}>Back</Button>
-        </div>
-      ) : (
-        // First page content with task selection and main TextareaField
-        <div className="add-task-modal-container">
+        ) : (
+          // First page with task selection and main TextareaField
           <div className="task-selection-dropdown-box">
             <label className="task-selection-title">Task</label>
             <Select
@@ -183,28 +192,17 @@ const AddTaskModalCorrespondenceDetails = ({
               onChange={updateTaskType}
               value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
             />
+            <TextareaField
+              name="content"
+              label="Provide context and instructions on this task"
+              value={taskContent}
+              onChange={updateTaskContent}
+              classNames={['task-selection-dropdown-box']}
+              styling={maxWidthFormInput}
+            />
           </div>
-
-          <TextareaField
-            name="content"
-            label="Provide context and instructions on this task"
-            value={taskContent}
-            onChange={updateTaskContent}
-            classNames={['task-selection-dropdown-box']}
-            styling={maxWidthFormInput}
-          />
-
-          {displayRemoveCheck && (
-            <Button
-              name="Remove"
-              onClick={() => removeTask(task.id)}
-              classNames={['cf-btn-link', 'cf-right-side', 'remove-task-button']}
-            >
-              <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
-            </Button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </Modal>
   );
 };
@@ -213,10 +211,6 @@ AddTaskModalCorrespondenceDetails.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   correspondence: PropTypes.object.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  task: PropTypes.object.isRequired,
-  displayRemoveCheck: PropTypes.bool.isRequired,
-  removeTask: PropTypes.func.isRequired,
   setIsTasksUnrelatedSectionExpanded: PropTypes.func.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
