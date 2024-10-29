@@ -1,4 +1,22 @@
 [
+  {"scenario": "hearingsShow",
+    "targetType": [{
+      "value": "hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {"scenario": "intake",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "tasksJSON",
+    "targetType": [{
+      "value": "user",
+      "label": "User"
+    }],
+    "targetId": "User id"
+  },
   {"scenario": "hearingDayJSON",
     "targetType": [],
     "targetId": ""

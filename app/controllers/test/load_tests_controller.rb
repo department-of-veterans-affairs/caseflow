@@ -6,6 +6,7 @@ require "securerandom"
 require "base64"
 class Test::LoadTestsController < ApplicationController
   before_action :check_environment
+  skip_before_action :verify_authenticity_token
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
@@ -98,6 +99,9 @@ class Test::LoadTestsController < ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "User"
+      target_data_type = User
+      target_data_column = "id"
     end
 
     target_id = get_target_data_id(params[:target_id], target_data_type, target_data_column)
