@@ -236,7 +236,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
       end
 
-      ri = .new(parser_issues, @epe.id, @review).build
+      ri = RequestIssueBuilder.new(parser_issues, @epe.id, @review).build
       add_event_record(ri, "A", nil)
       newly_created_issues.push(ri)
 

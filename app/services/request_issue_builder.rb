@@ -7,6 +7,7 @@ class RequestIssueBuilder
     @decision_review = decision_review
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def build
     RequestIssue.create!(
       reference_id: @parser_issue.ri_reference_id,
@@ -40,4 +41,5 @@ class RequestIssueBuilder
       decision_review: @decision_review
     )
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
