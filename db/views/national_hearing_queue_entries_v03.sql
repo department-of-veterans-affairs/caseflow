@@ -15,7 +15,9 @@ SELECT
   CASE
     WHEN appeals.aod_based_on_age = TRUE
       OR advance_on_docket_motions.granted = TRUE
-      OR people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
+      OR veteran_person.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
+      OR aod_based_on_age_recognized_claimants.quantity > 0
+      OR aod_based_on_age_unrecognized_claimants.quantity > 0
     THEN TRUE
     ELSE FALSE
   END AS aod_indicator,
@@ -25,8 +27,26 @@ FROM
   JOIN tasks ON tasks.appeal_type = 'Appeal'
   AND tasks.appeal_id = appeals.id
   LEFT JOIN advance_on_docket_motions ON advance_on_docket_motions.appeal_id = appeals.id
-  JOIN veterans on appeals.veteran_file_number = veterans.file_number
-  LEFT JOIN people on people.participant_id = veterans.participant_id
+  JOIN veterans ON appeals.veteran_file_number = veterans.file_number
+  LEFT JOIN people veteran_person ON veteran_person.participant_id = veterans.participant_id
+  LEFT JOIN LATERAL (
+    SELECT count(*) as quantity
+    FROM claimants
+    JOIN people ON claimants.participant_id = people.participant_id
+    WHERE claimants.decision_review_id = appeals.id
+      AND claimants.decision_review_type = 'Appeal'
+      AND people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
+  ) aod_based_on_age_recognized_claimants ON TRUE
+  LEFT JOIN LATERAL (
+    SELECT count(*) as quantity
+    FROM claimants
+    JOIN unrecognized_appellants ON unrecognized_appellants.claimant_id = claimants.id
+    JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id =
+      unrecognized_party_details.id
+    WHERE claimants.decision_review_id = appeals.id
+      AND claimants.decision_review_type = 'Appeal'
+      AND unrecognized_party_details.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
+  ) aod_based_on_age_unrecognized_claimants ON TRUE
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
