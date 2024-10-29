@@ -1195,18 +1195,20 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
         let!(:cavc_case_2) { create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney) }
         let!(:aod_cavc_case_2) { create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true) }
-        # appeals where hearing held by different judge than original deciding judge before the decision and within affinity window (not genpop)
+        # appeals where hearing held by different judge than original deciding judge
+        # before the decision and within affinity window (not genpop)
         let!(:cavc_case_3) do
           c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago)
           c.update!(bfmemid: aff_judge.sattyid)
           c
         end
         let!(:aod_cavc_case_3) do
-          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+          c = create(:legacy_cavc_appeal,
+                     judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
           c.update!(bfmemid: vacols_judge.sattyid)
           c
         end
-        # appeals where hearing held by requesting judge after original decision w/ different original judge (not genpop)
+        # appeals where hearing held by judge after original decision w/ different original judge (not genpop)
         let!(:cavc_case_4) do
           c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
           create_case_hearing(c, other_judge_caseflow)
@@ -1231,26 +1233,35 @@ describe VACOLS::CaseDocket, :all_dbs do
           c.update!(bfmemid: excl_judge.sattyid)
           c
         end
-        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for other judge)
+        # appeals w/ no held hearings, active prev deciding judge,
+        # affinity start date and value < lever days ago (not genpop for other judge)
         let!(:cavc_case_7) do
-          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
+          create(:legacy_cavc_appeal,
+                 judge: other_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         end
         let!(:aod_cavc_case_7) do
-          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
+          create(:legacy_cavc_appeal,
+                 judge: other_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
         end
-        # appeals w/ no hearing, active prev deciding judge, affinity start date and value < lever days ago (not genpop for requesting judge unless omit)
+        # appeals w/ no held hearings, active prev deciding judge,
+        # affinity start date and value < lever days ago (not genpop for requesting judge unless omit)
         let!(:cavc_case_8) do
-          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
+          create(:legacy_cavc_appeal,
+                 judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         end
         let!(:aod_cavc_case_8) do
-          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
+          create(:legacy_cavc_appeal,
+                 judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 3.days.ago)
         end
-        # appeals w/ no hearing, active prev deciding judge, affinity start date and value > lever days ago (genpop unless lever infinite)
+        # appeals w/ no held hearings, active prev deciding judge,
+        # affinity start date and value > lever days ago (genpop unless lever infinite)
         let!(:cavc_case_9) do
-          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago)
+          create(:legacy_cavc_appeal,
+                 judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago)
         end
         let!(:aod_cavc_case_9) do
-          create(:legacy_cavc_appeal, judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 2.months.ago)
+          create(:legacy_cavc_appeal,
+                 judge: vacols_judge, attorney: attorney, tied_to: false, aod: true, affinity_start_date: 2.months.ago)
         end
 
         it "only distributes non-genpop appeals", :aggregate_failures do
