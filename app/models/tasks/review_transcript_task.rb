@@ -20,7 +20,7 @@ class ReviewTranscriptTask < Task
   end
 
   def default_instructions
-    COPY::REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS
+    [COPY::REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   def set_assignee
