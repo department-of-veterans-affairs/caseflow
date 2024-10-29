@@ -53,7 +53,7 @@ const receiptDateFilterStates = {
 
 // This is temporarily here. Will be moved to a utility file.
 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-const mbpsToBps = (mbps) => mbps * 125000; // 1 Mbps = 125000 Bytes per second
+const mbpsToBps = (mbps) => mbps * 125000;
 const speedInBps = connection ? mbpsToBps(connection.downlink) : null;
 
 export const getRowObjects = (documents, annotationsPerDocument) => {

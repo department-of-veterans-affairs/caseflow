@@ -5,7 +5,7 @@ import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 import { ICON_SIZES } from '../constants/AppConstants';
 
 const DocSizeIndicator = (props) => {
-  const downloadTime = props.docSize / props.browserSpeedInBytes
+  const downloadTime = props.docSize / props.browserSpeedInBytes;
 
   return (
     <span>{filesize(props.docSize)} {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}</span>
