@@ -33,6 +33,7 @@ const styles = css({
   },
 });
 
+
 export const WorkOrderDetails = ({ taskNumber }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
