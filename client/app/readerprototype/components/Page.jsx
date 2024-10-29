@@ -115,8 +115,7 @@ const Page = memo(({
         setIsLoading(false);
         hasRenderedRef.current = true;
       } catch {
-        // retry when current render task fails
-        // render();
+        // no op when current render task fails
       }
     }
   };
