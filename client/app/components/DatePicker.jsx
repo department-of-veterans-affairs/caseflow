@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import FilterIcon from './icons/FilterIcon';
@@ -159,21 +159,6 @@ class DatePicker extends React.PureComponent {
     };
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const defaultMode = props.settings?.defaultMode || '';
-    const startDate = defaultMode ? moment().subtract(7, 'days') : '';
-
-    if (state.first) {
-      console.log('getDerivedStateFromProps, first: ', state.first)
-      if (defaultMode !== '') {
-        return {
-          mode: defaultMode,
-          startDate
-        };
-      }
-    }
-  }
-
   apply() {
     const { onChange } = this.props;
 
@@ -207,16 +192,6 @@ class DatePicker extends React.PureComponent {
 
   componentDidMount() {
     document.addEventListener('click', this.onGlobalClick, true);
-
-    this.setState({ first: false });
-
-    // if (this.state.first === false) {
-      // console.log('componentDidMount, first: ', this.state.first);
-    // }
-
-    // if (this.state.mode === this.props.settings.defaultMode) {
-    //   this.apply();
-    // }
   }
 
   componentWillUnmount() {

@@ -8,6 +8,7 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_veteran_record_access, only: [:show]
   before_action :verify_business_line, only: [:index, :generate_report]
   before_action :verify_task, only: [:show, :history, :update]
+  before_action :ensure_date_completed, only: [:index]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -164,6 +165,16 @@ class DecisionReviewsController < ApplicationController
     update_poa_information(appeal)
   rescue StandardError => error
     render_error(error)
+  end
+
+  def ensure_date_completed
+    return unless allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym] == "completed"
+
+    unless params[:filter]&.any? { |s| s.include?("completedDateColumn") }
+      last7 = "col=completedDateColumn&val=last7,#{Time.zone.now - 7.days},"
+      filter_arr = params[:filter] || []
+      redirect_to url_for(params.permit!.to_h.merge(filter: filter_arr + [last7]))
+    end
   end
 
   helper_method :task_filter_details, :business_line, :task, :business_line_config_options

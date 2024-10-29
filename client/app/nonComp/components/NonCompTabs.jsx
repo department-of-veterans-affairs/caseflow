@@ -10,6 +10,7 @@ import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
+import moment from 'moment-timezone';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -30,6 +31,11 @@ const NonCompTabsUnconnected = (props) => {
   const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
   // Read from the url get params and the local filter. The get params should override the local filter.
   const filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+
+  if (currentTabName === 'completed' && !filter.some((f) => f.includes('completedDateColumn'))) {
+    filter.push(`col=completedDateColumn&val=last7,${moment().subtract(7, 'days')},`);
+  }
+
   const tabPaginationOptions = {
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
