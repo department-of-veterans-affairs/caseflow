@@ -9,6 +9,7 @@ SCHEDULED_JOBS = {
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
+    "delete_conference_link_job" => VirtualHearings::DeleteConferenceLinkJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
@@ -49,5 +50,7 @@ SCHEDULED_JOBS = {
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
+    "fetch_webex_rooms_list_job" => Hearings::FetchWebexRoomsListJob,
+    "refresh_webex_access_token_job" => Hearings::RefreshWebexAccessTokenJob,
     "ineligible_judges_job" => IneligibleJudgesJob
 }.freeze

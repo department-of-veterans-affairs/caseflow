@@ -104,6 +104,8 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+        post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
+        post '/decision_review_updated_error', to: 'decision_review_updated#decision_review_updated_error'
       end
     end
 
@@ -242,27 +244,28 @@ Rails.application.routes.draw do
       get "/:hearing_day_id/filled_hearing_slots", to: "filled_hearing_slots#index"
     end
   end
-  get "/hearings/dockets", to: redirect("/hearings/schedule")
-  get "hearings/schedule", to: "hearings/hearing_day#index"
-  get "hearings/schedule/add_hearing_day", to: "hearings/hearing_day#index"
-  get "hearings/:hearing_id/details", to: "hearings_application#show_hearing_details_index"
-  get "hearings/:hearing_id/worksheet", to: "hearings_application#show_hearing_worksheet_index"
-  get "hearings/:id/virtual_hearing_job_status", to: "hearings#virtual_hearing_job_status"
-  get "hearings/schedule/docket/:id", to: "hearings/hearing_day#index"
-  get "hearings/schedule/docket/:id/edit", to: "hearings/hearing_day#index"
-  get "hearings/schedule/docket/:id/print", to: "hearings/hearing_day_print#index"
-  get "hearings/schedule/build", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/build/upload", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/build/upload/:schedule_period_id", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/assign", to: "hearings_application#index"
-  get "hearings/worksheet/print", to: "hearings/worksheets_print#index"
-  post "hearings/hearing_day", to: "hearings/hearing_day#create"
-  get "hearings/schedule/:schedule_period_id/download", to: "hearings/schedule_periods#download"
-  get "hearings/schedule/assign/hearing_days", to: "hearings/hearing_day#index_with_hearings"
-  get "hearings/queue/appeals/:vacols_id", to: "queue#index"
-  get "hearings/find_closest_hearing_locations", to: "hearings#find_closest_hearing_locations"
+  get '/hearings/dockets', to: redirect("/hearings/schedule")
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_details_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_worksheet_index"
+  get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
+  get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
+  get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearings_application#index"
+  get 'hearings/worksheet/print', to: "hearings/worksheets_print#index"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
+  get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
+  get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
+  get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
+  get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
-  post "hearings/hearing_view/:id", to: "hearings/hearing_view#create"
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
 
