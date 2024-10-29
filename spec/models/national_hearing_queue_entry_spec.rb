@@ -14,9 +14,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let!(:ama_with_sched_task) { FactoryBot.create(:appeal, :with_schedule_hearing_tasks) }
     let!(:ama_with_completed_status) { FactoryBot.create(:appeal, :with_schedule_hearing_tasks) }
 
-    let!(:case1) { FactoryBot.create(:case, bfkey: "700230001041", bfcorlid: "100000101011") }
-    let!(:case2) { FactoryBot.create(:case, bfkey: "700230002041", bfcorlid: "100000102021") }
-    let!(:case3) { FactoryBot.create(:case, bfkey: "700230002042", bfcorlid: "100000102022") }
+    let!(:case1) { FactoryBot.create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:case2) { FactoryBot.create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
+    let!(:case3) { FactoryBot.create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
 
     let!(:legacy_with_sched_task) do
       FactoryBot.create(:legacy_appeal,
@@ -54,22 +54,11 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         appeal_id: legacy_appeal_completed.id,
         appeal_type: "LegacyAppeal"
       ).update(status: "completed")
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfhr: "1")
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfhr: "2")
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfhr: "3")
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfd19: 1.day.ago)
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfd19: 2.days.ago)
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfd19: 3.days.ago)
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfac: "1")
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfac: "5")
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfac: "9")
     end
 
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
+
       NationalHearingQueueEntry.refresh
 
       expect(
@@ -84,6 +73,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     it "adds the columns to the view in the proper format", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
+
       NationalHearingQueueEntry.refresh
 
       expect(
