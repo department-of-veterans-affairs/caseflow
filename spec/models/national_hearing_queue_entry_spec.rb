@@ -29,19 +29,19 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
 
     let!(:legacy_with_sched_task) do
-      FactoryBot.create(:legacy_appeal,
-                        :with_schedule_hearing_tasks,
-                        :with_veteran,
-                        vacols_case: case1)
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case1)
     end
 
     let!(:legacy_appeal_completed) do
-      FactoryBot.create(:legacy_appeal,
-                        :with_schedule_hearing_tasks,
-                        :with_veteran,
-                        vacols_case: case3).tap do |legacy_appeal|
-                          ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
-                        end
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case3).tap do |legacy_appeal|
+        ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
+      end
     end
 
     let!(:appeal_normal) { create(:appeal) }
@@ -101,6 +101,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
   end
 
   context "aod_indicator" do
+    subject do
+      NationalHearingQueueEntry.refresh
+
+      NationalHearingQueueEntry.find_by(appeal: appeal).aod_indicator
+    end
+
     context "For AMA appeals" do
       let!(:appeal) do
         create(
@@ -109,12 +115,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           original_hearing_request_type: "central",
           aod_based_on_age: aod_based_on_age
         )
-      end
-
-      subject do
-        NationalHearingQueueEntry.refresh
-
-        NationalHearingQueueEntry.find_by(appeal: appeal).aod_indicator
       end
 
       context "aod_based_on_age" do
@@ -297,33 +297,93 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
 
     context "For legacy appeals" do
+      let(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+      let!(:appeal) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case)
+      end
+
       context "AOD motion" do
         context "Has been granted" do
+          let!(:assign) do
+            create(
+              :diary,
+              tsktknm: vacols_case.bfkey,
+              tskactcd: "B"
+            )
+          end
 
+          it "aod_indicator is true", bypass_cleaner: true do
+            is_expected.to be true
+          end
         end
 
         context "Has not been granted" do
-
+          it "aod_indicator is false", bypass_cleaner: true do
+            is_expected.to be false
+          end
         end
       end
 
       context "Claimant is a Veteran" do
-        context "Claimant is 75+ years old" do
+        let(:ssn) { Faker::IDNumber.ssn_valid.tr("-", "") }
+        let(:claimant) do
+          vacols_case.correspondent.tap do |corres|
+            corres.update!(ssn: ssn, sspare2: nil)
+          end
+        end
+        let!(:person) { Person.find_or_create_by_ssn(ssn) }
 
+        context "Claimant is 75+ years old" do
+          let(:claimant_dob) { 76.years.ago }
+
+          it "aod_indicator is true", bypass_cleaner: true do
+            claimant.update!(sdob: claimant_dob)
+
+            is_expected.to be true
+          end
         end
 
         context "Claimant is not 75 years old" do
+          let(:claimant_dob) { 18.years.ago }
 
+          it "aod_indicator is false", bypass_cleaner: true do
+            claimant.update!(sdob: claimant_dob)
+
+            is_expected.to be false
+          end
         end
       end
 
       context "Claimant is not a Veteran" do
-        context "Claimant is 75+ years old" do
+        let(:ssn) { Faker::IDNumber.ssn_valid.tr("-", "") }
+        let(:claimant) do
+          vacols_case.correspondent.tap do |corres|
+            corres.update!(ssn: ssn, sspare2: "Test")
+          end
+        end
+        let!(:person) do
+          create(:person, ssn: ssn, date_of_birth: claimant_dob)
+        end
 
+        before { claimant.save! }
+
+        context "Claimant is 75+ years old" do
+          let(:claimant_dob) { 80.years.ago }
+
+          it "aod_indicator is true", bypass_cleaner: true do
+            is_expected.to be true
+          end
         end
 
         context "Claimant is not 75 years old" do
+          let(:claimant_dob) { 25.years.ago }
 
+          it "aod_indicator is false", bypass_cleaner: true do
+            is_expected.to be false
+          end
         end
       end
     end
