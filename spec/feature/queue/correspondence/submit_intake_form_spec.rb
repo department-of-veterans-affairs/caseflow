@@ -2,6 +2,7 @@
 
 RSpec.feature("Correspondence Intake submission") do
   include CorrespondenceHelpers
+  include RetryHelper
   let(:wait_time) { 30 }
 
   context "user associates correspondence with prior mail" do
@@ -316,8 +317,9 @@ RSpec.feature("Correspondence Intake submission") do
       # Select each unique related to inactive appeal task
       react_select_containers = page.all("#reactSelectContainer")
       react_select_containers.each_with_index do |select_container, index|
-        retry_if_not_found(cleanup: click_page_body) do
+        retry_when Capybara::ElementNotFound do
           using_wait_time(wait_time) do
+            click_page_body
             select_container.click
             find("div", exact_text: inactive_appeal_tasks[index]["label"]).click
           end
