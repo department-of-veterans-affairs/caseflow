@@ -32,3 +32,5 @@ export const modalInfoSelector = (state) => ({
   deleteAnnotationModalIsOpenFor: state.annotationLayer.deleteAnnotationModalIsOpenFor,
   shareAnnotationModalIsOpenFor: state.annotationLayer.shareAnnotationModalIsOpenFor,
 });
+
+export const showSideBarSelector = (state) => !state.pdfViewer.hidePdfSidebar;

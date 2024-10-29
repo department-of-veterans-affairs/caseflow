@@ -1979,23 +1979,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
-  create_table "transcription_contractors", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
-    t.datetime "deleted_at"
-    t.string "directory", null: false, comment: "The qat contract house box.com folder full path"
-    t.string "email", comment: "The qat contract house contact email address"
-    t.boolean "inactive", default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
-    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a qat is available or not to take work"
-    t.string "name", null: false, comment: "The qat contract house name"
-    t.string "phone", comment: "The qat contract house contact phone number"
-    t.string "poc", comment: "The qat contract house poc name"
-    t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
-    t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
-  end
-
   create_table "transcription_files", force: :cascade do |t|
     t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
     t.datetime "created_at", null: false
@@ -2170,46 +2153,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
