@@ -34,8 +34,10 @@ describe Test::LoadTestsController, :postgres, type: :controller do
     context "#target" do
       context "providing target_id" do
         let(:appeal_with_uuid) do
-          Appeal.new(veteran_file_number: "1234",
-                      uuid: "79166847-1e99-4921-a084-62963d0fc63e")
+          Appeal.new(
+            veteran_file_number: "1234",
+            uuid: "79166847-1e99-4921-a084-62963d0fc63e"
+          )
         end
         let(:legacy_appeal_with_vacols_id) { LegacyAppeal.new(vacols_id: "123") }
 
