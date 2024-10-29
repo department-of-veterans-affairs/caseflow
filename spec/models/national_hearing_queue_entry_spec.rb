@@ -11,12 +11,23 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
   end
 
   context "when appeals have been staged" do
-    let!(:ama_with_sched_task) { FactoryBot.create(:appeal, :with_schedule_hearing_tasks) }
-    let!(:ama_with_completed_status) { FactoryBot.create(:appeal, :with_schedule_hearing_tasks) }
+    let!(:ama_with_sched_task) do
+      FactoryBot.create(
+        :appeal,
+        :with_schedule_hearing_tasks,
+        original_hearing_request_type: "central"
+      )
+    end
 
-    let!(:case1) { FactoryBot.create(:case, bfkey: "700230001041", bfcorlid: "100000101011") }
-    let!(:case2) { FactoryBot.create(:case, bfkey: "700230002041", bfcorlid: "100000102021") }
-    let!(:case3) { FactoryBot.create(:case, bfkey: "700230002042", bfcorlid: "100000102022") }
+    let!(:ama_with_completed_status) do
+      create(:appeal, :with_schedule_hearing_tasks).tap do |appeal|
+        ScheduleHearingTask.find_by(appeal: appeal).completed!
+      end
+    end
+
+    let!(:case1) { FactoryBot.create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:case2) { FactoryBot.create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
+    let!(:case3) { FactoryBot.create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
 
     let!(:legacy_with_sched_task) do
       FactoryBot.create(:legacy_appeal,
@@ -24,15 +35,20 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
                         :with_veteran,
                         vacols_case: case1)
     end
+
     let!(:legacy_appeal_completed) do
       FactoryBot.create(:legacy_appeal,
                         :with_schedule_hearing_tasks,
                         :with_veteran,
-                        vacols_case: case3)
+                        vacols_case: case3).tap do |legacy_appeal|
+                          ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
+                        end
     end
+
     let!(:appeal_normal) do
       FactoryBot.create(:appeal)
     end
+
     let!(:legacy_appeal_normal) do
       FactoryBot.create(:legacy_appeal,
                         :with_root_task,
@@ -40,36 +56,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
                         vacols_case: case2)
     end
 
-    before(:each) do
-      Appeal.find_by(
-        id: ama_with_sched_task.id
-      ).update(original_hearing_request_type: "central_office")
-
-      ScheduleHearingTask.find_by(
-        appeal_id: ama_with_completed_status.id,
-        appeal_type: "Appeal"
-      ).update(status: "completed")
-
-      ScheduleHearingTask.find_by(
-        appeal_id: legacy_appeal_completed.id,
-        appeal_type: "LegacyAppeal"
-      ).update(status: "completed")
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfhr: "1")
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfhr: "2")
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfhr: "3")
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfd19: 1.day.ago)
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfd19: 2.days.ago)
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfd19: 3.days.ago)
-
-      VACOLS::Case.find_by_bfkey("700230001041").update!(bfac: "1")
-      VACOLS::Case.find_by_bfkey("700230002041").update!(bfac: "5")
-      VACOLS::Case.find_by_bfkey("700230002042").update!(bfac: "9")
-    end
-
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
+
       NationalHearingQueueEntry.refresh
 
       expect(
@@ -82,19 +71,22 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       clean_up_after_threads
     end
 
-    it "adds the columns to the view in the proper format", bypass_cleaner: true do
+    it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
+
       NationalHearingQueueEntry.refresh
 
       expect(
-        NationalHearingQueueEntry.pluck
+        NationalHearingQueueEntry.pluck(
+          :appeal_id, :appeal_type,
+          :hearing_request_type, :receipt_date, :external_id,
+          :appeal_stream, :docket_number
+        )
       ).to match_array [
         [
           ama_with_sched_task.id,
           "Appeal",
-          Appeal.find_by(
-            id: ama_with_sched_task.id
-          ).original_hearing_request_type,
+          ama_with_sched_task.original_hearing_request_type,
           1.day.ago.strftime("%Y%m%d"),
           ama_with_sched_task.uuid,
           ama_with_sched_task.stream_type,
@@ -103,11 +95,11 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         [
           legacy_with_sched_task.id,
           "LegacyAppeal",
-          VACOLS::Case.find_by_bfkey("700230001041").bfhr,
+          case1.bfhr,
           1.day.ago.strftime("%Y%m%d"),
-          VACOLS::Case.find_by_bfkey("700230001041").bfkey,
+          case1.bfkey,
           "Original",
-          VACOLS::Folder.find_by_ticknum("700230001041").tinum
+          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum
         ]
       ]
 

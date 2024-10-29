@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_21_145753) do
+ActiveRecord::Schema.define(version: 2024_10_28_203026) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1980,12 +1980,30 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
+  create_table "transcription_contractors", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.datetime "deleted_at"
+    t.string "directory", null: false, comment: "The contract house box.com folder full path"
+    t.string "email", null: false, comment: "The contract house contact email address"
+    t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
+    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
+    t.string "name", null: false, comment: "The contract house name"
+    t.string "phone", null: false, comment: "The contract house contact phone number"
+    t.string "poc", null: false, comment: "The contract house poc name"
+    t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
+    t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
+  end
+
   create_table "transcription_files", force: :cascade do |t|
     t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The user who created the transcription record"
     t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
-    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_receipt_recording", comment: "Timestamp when file was added to webex"
+    t.datetime "date_returned_box", comment: "Timestamp when file was added to the Box.com return folder by a QAT contractor. Used for performance metrics."
     t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
     t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
     t.string "docket_number", null: false, comment: "Docket number of associated hearing"
@@ -1994,6 +2012,11 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
     t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
     t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
     t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.datetime "locked_at", comment: "Locked record timeout field"
+    t.bigint "locked_by_id", comment: "ID of user who locked the record"
+    t.string "recording_task_number", comment: "Number associated with recording, is the created id from the recording system"
+    t.string "recording_transcriber", comment: "Contractor who created the closed caption transcription for the recording; i.e, 'Webex'"
+    t.bigint "transcription_id", comment: "ID of the associated transcription record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
     t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
@@ -2002,21 +2025,59 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
     t.index ["file_type"], name: "index_transcription_files_on_file_type"
     t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
+    t.index ["locked_by_id", "locked_at"], name: "index_transcription_files_locked_by_id_locked_at"
+    t.index ["transcription_id"], name: "index_transcription_files_on_transcription_id"
+  end
+
+  create_table "transcription_package_hearings", force: :cascade do |t|
+    t.bigint "hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_package_legacy_hearings", force: :cascade do |t|
+    t.bigint "legacy_hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_packages", force: :cascade do |t|
+    t.string "aws_link_work_order", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.string "aws_link_zip", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.bigint "contractor_id", comment: "FK to transcription_contractors table"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_upload_aws", comment: "Date of successful upload of master transcription zip file to AWS"
+    t.datetime "date_upload_box", comment: "Date of successful delivery to box.com contractor endpoint"
+    t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
+    t.datetime "returned_at", comment: "When the Contractor returns their completed Work Order excel file"
+    t.string "status", comment: "Status of the package, could be one of nil, 'Successful Upload (AWS), Successful Upload (BOX), Failed Upload (BOX), Successful Retrieval (BOX), Failed Retrieval (BOX)'"
+    t.string "task_number", comment: "Number associated with transcription, use as FK to transcriptions"
+    t.datetime "updated_at"
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["task_number"], name: "index_transcription_packages_on_task_number"
   end
 
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
+    t.bigint "created_by_id"
+    t.datetime "deleted_at", comment: "acts_as_paranoid in the model"
     t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
     t.bigint "hearing_id", comment: "Hearing ID; use as FK to hearings"
     t.date "problem_notice_sent_date", comment: "Date when notice of problem with recording was sent to appellant"
     t.string "problem_type", comment: "Any problem with hearing recording; could be one of: 'No audio', 'Poor Audio Quality', 'Incomplete Hearing' or 'Other (see notes)'"
     t.string "requested_remedy", comment: "Any remedy requested by the apellant for the recording problem; could be one of: 'Proceed without transcript', 'Proceed with partial transcript' or 'New hearing'"
+    t.date "return_date", comment: "Date when the contractor returned their work product, box.com upload date"
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
+    t.bigint "task_id"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
+    t.bigint "transcription_contractor_id"
+    t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
+    t.bigint "updated_by_id"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
+    t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
+    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
@@ -2474,7 +2535,16 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
+  add_foreign_key "transcription_files", "users", column: "locked_by_id"
+  add_foreign_key "transcription_package_hearings", "hearings"
+  add_foreign_key "transcription_package_hearings", "transcription_packages"
+  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
+  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
+  add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "hearings"
+  add_foreign_key "transcriptions", "transcription_contractors"
+  add_foreign_key "transcriptions", "users", column: "created_by_id"
+  add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
@@ -2497,6 +2567,29 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 
+  create_view "remands", sql_definition: <<-SQL
+      SELECT supplemental_claims.id,
+      supplemental_claims.benefit_type,
+      supplemental_claims.created_at,
+      supplemental_claims.decision_review_remanded_id,
+      supplemental_claims.decision_review_remanded_type,
+      supplemental_claims.establishment_attempted_at,
+      supplemental_claims.establishment_canceled_at,
+      supplemental_claims.establishment_error,
+      supplemental_claims.establishment_last_submitted_at,
+      supplemental_claims.establishment_processed_at,
+      supplemental_claims.establishment_submitted_at,
+      supplemental_claims.filed_by_va_gov,
+      supplemental_claims.legacy_opt_in_approved,
+      supplemental_claims.receipt_date,
+      supplemental_claims.updated_at,
+      supplemental_claims.uuid,
+      supplemental_claims.veteran_file_number,
+      supplemental_claims.veteran_is_not_claimant,
+      supplemental_claims.type
+     FROM supplemental_claims
+    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
+  SQL
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
@@ -2504,9 +2597,21 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
       replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
       (appeals.uuid)::text AS external_id,
       (appeals.stream_type)::text AS appeal_stream,
-      (appeals.stream_docket_number)::text AS docket_number
-     FROM (appeals
+      (appeals.stream_docket_number)::text AS docket_number,
+          CASE
+              WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
+              ELSE false
+          END AS aod_indicator,
+      tasks.id AS task_id
+     FROM (((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
+       LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
+       JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
+       LEFT JOIN people veteran_person ON (((veteran_person.participant_id)::text = (veterans.participant_id)::text)))
+       LEFT JOIN LATERAL ( SELECT count(*) AS quantity
+             FROM (claimants
+               JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
+            WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
@@ -2523,14 +2628,23 @@ ActiveRecord::Schema.define(version: 2024_10_21_145753) do
               WHEN ((f_vacols_brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
               WHEN ((f_vacols_brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
               WHEN ((f_vacols_brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakeable Error'::text
+              WHEN ((f_vacols_brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakable Error'::text
               ELSE NULL::text
           END AS appeal_stream,
-      f_vacols_folder.tinum AS docket_number
-     FROM (((legacy_appeals
+      f_vacols_folder.tinum AS docket_number,
+          CASE
+              WHEN (((f_vacols_corres.sspare2 IS NULL) AND (f_vacols_corres.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
+              WHEN ((f_vacols_assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
+              ELSE false
+          END AS aod_indicator,
+      tasks.id AS task_id
+     FROM ((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
        JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
+       LEFT JOIN f_vacols_assign ON (((f_vacols_assign.tsktknm)::text = (f_vacols_brieff.bfkey)::text)))
+       LEFT JOIN f_vacols_corres ON (((f_vacols_brieff.bfcorkey)::text = (f_vacols_corres.stafkey)::text)))
+       LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
 end
