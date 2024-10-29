@@ -6,6 +6,7 @@ import ApiUtil from 'app/util/ApiUtil';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('app/util/ApiUtil');
+jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
 describe('WorkOrderDetails', () => {
   const mockTaskNumber = '12345';
@@ -56,17 +57,18 @@ describe('WorkOrderDetails', () => {
       woFileInfo: [
         { docket_number: '67890', first_name: 'Jane', last_name: 'Smith', types: 'Type A', hearing_date: '2024-11-01', regional_office: 'RO1', judge_name: 'Judge Judy', case_type: 'Appeal' },
         { docket_number: '67891', first_name: 'John', last_name: 'Doe', types: 'Type B', hearing_date: '2024-11-02', regional_office: 'RO2', judge_name: 'Judge Judy', case_type: 'Appeal' }
-      ]
+      ],
+      workOrderStatus: { currentStatus: true }
     };
 
     ApiUtil.get.mockResolvedValue({ body: { data: mockData } });
-    
+
     render(
       <MemoryRouter>
         <WorkOrderDetails taskNumber={mockTaskNumber} />
       </MemoryRouter>
     );
-    
+
     await waitFor(() => {
       expect(screen.getByText(/Work order summary #12345/i)).toBeInTheDocument();
       expect(screen.getByText(/Return date:/i)).toBeInTheDocument();
@@ -75,6 +77,42 @@ describe('WorkOrderDetails', () => {
       expect(screen.getByText(/Contractor:/i)).toBeInTheDocument();
       expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
       expect(screen.getByText('Number of files: 2')).toBeInTheDocument();
+    });
+  });
+
+  test('should call downloadFile when download button is clicked', async () => {
+    const mockData = {
+      workOrder: '12345',
+      returnDate: '2024-09-01',
+      contractorName: 'John Doe',
+      woFileInfo: [
+        { docket_number: '67890', first_name: 'Jane', last_name: 'Smith', types: 'Type A', hearing_date: '2024-11-01', regional_office: 'RO1', judge_name: 'Judge Judy', case_type: 'Appeal' }
+      ],
+      workOrderStatus: { currentStatus: true }
+    };
+
+    ApiUtil.get.mockResolvedValue({ body: { data: mockData } });
+
+    render(
+      <MemoryRouter>
+        <WorkOrderDetails taskNumber={mockTaskNumber} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Work order summary #12345/i)).toBeInTheDocument();
+    });
+
+    const downloadButton = screen.getByLabelText('Download return work order');
+    expect(downloadButton).toBeInTheDocument();
+
+    downloadButton.click();
+
+    await waitFor(() => {
+      expect(ApiUtil.get).toHaveBeenCalledWith('/hearings/transcription_files/fetch_file', {
+        query: { docket_number: '67890' },
+        responseType: 'blob'
+      });
     });
   });
 });

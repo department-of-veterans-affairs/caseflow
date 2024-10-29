@@ -3,6 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import FileSaver from 'file-saver';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -17,6 +18,9 @@ const columns = [
 
 // CSS styles
 const styles = css({
+  '& .information': {
+    display: 'flex'
+  },
   '& div *': {
     outline: 'none',
   },
@@ -42,7 +46,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const fetchData = async () => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_work_order/display_wo_summary', {
-        query: { task_number: taskNumber },
+        query: { taskNumber },
       });
 
       setData(response.body.data);
@@ -50,6 +54,21 @@ export const WorkOrderDetails = ({ taskNumber }) => {
       setError(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadFile = async (docketNumber) => {
+    try {
+      const response = await ApiUtil.get('/hearings/transcription_files/fetch_file', {
+        query: { docket_number: docketNumber },
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+
+      FileSaver.saveAs(blob, `${docketNumber}.xls`);
+    } catch (err) {
+      console.error('Error downloading file:', err);
     }
   };
 
@@ -69,33 +88,49 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     return <div>No data found</div>;
   }
 
-  const { workOrder, returnDate, contractorName, woFileInfo } = data;
+  const { workOrder, returnDate, contractorName, woFileInfo, workOrderStatus } = data;
 
   return (
     <div className="cf-app-segment cf-app-segment--alt">
-      <div>
-        <h1>Work order summary #{workOrder}</h1>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Work order:</strong> #{workOrder}
+      <div className="information" style={{ display: 'flex' }}>
+        <div style={{ float: 'left', width: '50%' }}>
+          <h1>Work order summary #{workOrder}</h1>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Work order:</strong> #{workOrder}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Return date:</strong> {returnDate}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Contractor:</strong> {contractorName}
+          </div>
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Return date:</strong> {returnDate}
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Contractor:</strong> {contractorName}
+        <div style={{ float: 'right', width: '50%', position: 'relative' }}>
+          { workOrderStatus.currentStatus &&
+          <button
+            className={['usa-button-secondary']}
+            aria-label="Download return work order"
+            style={{ position: 'absolute', bottom: '0', right: '0' }}
+            onClick={() => downloadFile(woFileInfo[0].docket_number)}
+          >
+            Download return work order
+          </button>
+          }
         </div>
       </div>
-      <hr style={{ margin: '35px 0' }} />
-      <div>
-        <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-        <div {...styles}>
-          <QueueTable
-            columns={columns}
-            rowObjects={woFileInfo}
-            summary="Individual claim history"
-            slowReRendersAreOk
-            className="bold-first-cell"
-          />
+      <div className="woTableInfo">
+        <hr style={{ margin: '35px 0' }} />
+        <div>
+          <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
+          <div {...styles}>
+            <QueueTable
+              columns={columns}
+              rowObjects={woFileInfo}
+              summary="Individual claim history"
+              slowReRendersAreOk
+              className="bold-first-cell"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -105,3 +140,6 @@ export const WorkOrderDetails = ({ taskNumber }) => {
 WorkOrderDetails.propTypes = {
   taskNumber: PropTypes.string.isRequired,
 };
+
+// # test file path for testing
+// app / models / hearings / test_file.xls;
