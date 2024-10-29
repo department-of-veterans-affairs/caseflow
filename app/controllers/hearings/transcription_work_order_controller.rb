@@ -46,7 +46,7 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
   private
 
   def set_task_number
-    @task_number = params[:taskNumber]
+    @task_number = params[:task_number]
   end
 
   def render_error(message, status)
