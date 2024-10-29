@@ -17,7 +17,6 @@ SELECT
       OR advance_on_docket_motions.granted = TRUE
       OR veteran_person.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
       OR aod_based_on_age_recognized_claimants.quantity > 0
-      OR aod_based_on_age_unrecognized_claimants.quantity > 0
     THEN TRUE
     ELSE FALSE
   END AS aod_indicator,
@@ -37,16 +36,6 @@ FROM
       AND claimants.decision_review_type = 'Appeal'
       AND people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
   ) aod_based_on_age_recognized_claimants ON TRUE
-  LEFT JOIN LATERAL (
-    SELECT count(*) as quantity
-    FROM claimants
-    JOIN unrecognized_appellants ON unrecognized_appellants.claimant_id = claimants.id
-    JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id =
-      unrecognized_party_details.id
-    WHERE claimants.decision_review_id = appeals.id
-      AND claimants.decision_review_type = 'Appeal'
-      AND unrecognized_party_details.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
-  ) aod_based_on_age_unrecognized_claimants ON TRUE
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
