@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import QueueTable from '../../queue/QueueTable';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import QueueTable from "../../queue/QueueTable";
 import {
   selectColumn,
   docketNumberColumn,
@@ -16,53 +16,53 @@ import {
   statusColumn,
   unassignColumn,
   returnDateColumn,
-  uploadDateColumn
-} from './TranscriptionFileDispatchTableColumns';
-import { css } from 'glamor';
-import { encodeQueryParams } from '../../util/QueryParamsUtil';
-import ApiUtil from '../../util/ApiUtil';
-import WorkOrderUnassignModal from './transcriptionProcessing/WorkOrderUnassignModal';
+  uploadDateColumn,
+} from "./TranscriptionFileDispatchTableColumns";
+import { css } from "glamor";
+import { encodeQueryParams } from "../../util/QueryParamsUtil";
+import ApiUtil from "../../util/ApiUtil";
+import WorkOrderUnassignModal from "./transcriptionProcessing/WorkOrderUnassignModal";
 
 const styles = css({
-  '& div *': {
-    outline: 'none',
+  "& div *": {
+    outline: "none",
   },
-  '& table': {
-    marginTop: '0',
-    position: 'relative',
-    top: '-1em',
+  "& table": {
+    marginTop: "0",
+    position: "relative",
+    top: "-1em",
   },
-  '& thead': {
-    margin: '-2em 0 0 0',
+  "& thead": {
+    margin: "-2em 0 0 0",
   },
-  '& .cf-form-textinput': {
-    position: 'relative',
-    top: '0.1em',
-    marginLeft: '-0.01em',
-    border: 'none',
-    width: '44px',
+  "& .cf-form-textinput": {
+    position: "relative",
+    top: "0.1em",
+    marginLeft: "-0.01em",
+    border: "none",
+    width: "44px",
   },
-  '& thead > :first-child': {
-    position: 'relative',
-    top: '1em',
+  "& thead > :first-child": {
+    position: "relative",
+    top: "1em",
   },
-  '& svg': {
-    marginTop: '0.3em',
+  "& svg": {
+    marginTop: "0.3em",
   },
-  '& .cf-pagination-summary': {
-    position: 'relative',
-    top: '0.4em',
-    margin: '0',
+  "& .cf-pagination-summary": {
+    position: "relative",
+    top: "0.4em",
+    margin: "0",
   },
-  '& .cf-pagination-pages': {
-    margin: '0',
+  "& .cf-pagination-pages": {
+    margin: "0",
   },
-  '& th:last-child .cf-dropdown-filter': {
-    left: '-231px',
+  "& th:last-child .cf-dropdown-filter": {
+    left: "-231px",
   },
-  '& .cf-table-wrapper': {
-    minHeight: '620px',
-    overflow: 'unset',
+  "& .cf-table-wrapper": {
+    minHeight: "620px",
+    overflow: "unset",
   },
 });
 
@@ -114,7 +114,7 @@ export const TranscriptionFileDispatchTable = ({
    * including files locked by other users
    */
   const getFileStatuses = () => {
-    ApiUtil.get('/hearings/transcription_files/locked').then((response) => {
+    ApiUtil.get("/hearings/transcription_files/locked").then((response) => {
       if (!selectingFile) {
         setSelectedFiles(response.body);
         selectFilesForPackage(response.body);
@@ -126,7 +126,7 @@ export const TranscriptionFileDispatchTable = ({
    * Get the list of transcription contractors for use in the filter
    */
   const getContractors = () => {
-    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors').then(
+    ApiUtil.get("/hearings/find_by_contractor/filterable_contractors").then(
       (response) =>
         // eslint-disable-next-line camelcase
         setContractors(response.body?.transcription_contractors)
@@ -137,19 +137,28 @@ export const TranscriptionFileDispatchTable = ({
    * Adds custom url params to the params used for pagination
    * @returns The url params needed to handle pagination
    */
-  const qs = encodeQueryParams(searchValue ? {
-    tab: statusFilter[0],
-    search: searchValue
-  } : { tab: statusFilter[0] });
+  const qs = encodeQueryParams(
+    searchValue
+      ? {
+          tab: statusFilter[0],
+          search: searchValue,
+        }
+      : { tab: statusFilter[0] }
+  );
 
   /**
    * Sets the correct API endpoint based on the tab we're in
    * @returns The url string
    */
   const apiEndpoint = () => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
+    if (
+      !statusFilter ||
+      statusFilter[0] === "Unassigned" ||
+      statusFilter[0] === "Completed" ||
+      statusFilter[0] === "All"
+    ) {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
-    } else if (statusFilter[0] === 'Assigned') {
+    } else if (statusFilter[0] === "Assigned") {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
     }
   };
@@ -165,7 +174,7 @@ export const TranscriptionFileDispatchTable = ({
 
     if (value) {
       newlySelectedFiles = selectedFiles.concat(
-        ids.map((id) => ({ id, status: 'selected' }))
+        ids.map((id) => ({ id, status: "selected" }))
       );
     } else {
       newlySelectedFiles = selectedFiles.filter(
@@ -182,7 +191,7 @@ export const TranscriptionFileDispatchTable = ({
     };
 
     // send lock requests and return actual list of locks to refresh the view
-    ApiUtil.post('/hearings/transcription_files/lock', { data }).then(
+    ApiUtil.post("/hearings/transcription_files/lock", { data }).then(
       (response) => {
         setSelectingFile(false);
         setSelectedFiles(response.body);
@@ -197,12 +206,12 @@ export const TranscriptionFileDispatchTable = ({
    * @param {string} value - Selecting or unselecting
    */
   const selectAllFiles = (value) => {
-    const lockedFileIds = selectedFiles.
-      filter((file) => file.status === 'locked').
-      map((file) => file.id);
-    const ids = tableData.
-      filter((file) => !lockedFileIds.includes(file.id)).
-      map((file) => file.id);
+    const lockedFileIds = selectedFiles
+      .filter((file) => file.status === "locked")
+      .map((file) => file.id);
+    const ids = tableData
+      .filter((file) => !lockedFileIds.includes(file.id))
+      .map((file) => file.id);
 
     selectFiles(ids, value);
   };
@@ -256,10 +265,12 @@ export const TranscriptionFileDispatchTable = ({
     Array.from(new URLSearchParams(query)).reduce(
       (pValue, [kValue, vValue]) =>
         Object.assign({}, pValue, {
-          [kValue]: pValue[kValue] ?
-            (Array.isArray(pValue[kValue]) ?
-              pValue[kValue] :
-              [pValue[kValue]]).concat(vValue) : vValue,
+          [kValue]: pValue[kValue]
+            ? (Array.isArray(pValue[kValue])
+                ? pValue[kValue]
+                : [pValue[kValue]]
+              ).concat(vValue)
+            : vValue,
         }),
       {}
     );
@@ -268,14 +279,14 @@ export const TranscriptionFileDispatchTable = ({
    * Call for initial selection statuses and set interval to keep refreshing them
    */
   useEffect(() => {
-    if (statusFilter[0] === 'Unassigned') {
+    if (statusFilter[0] === "Unassigned") {
       getFileStatuses();
       const interval = setInterval(() => {
         getFileStatuses();
       }, 3000);
 
       return () => clearInterval(interval);
-    } else if (statusFilter[0] === 'Assigned') {
+    } else if (statusFilter[0] === "Assigned") {
       getContractors();
     }
   }, []);
@@ -316,5 +327,5 @@ TranscriptionFileDispatchTable.propTypes = {
   selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func,
   openModal: PropTypes.func,
-  searchValue: PropTypes.string
+  searchValue: PropTypes.string,
 };
