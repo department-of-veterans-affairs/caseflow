@@ -81,4 +81,56 @@ describe Hearings::TranscriptionFile do
       expect(file.lockable?(2)).to be_falsy
     end
   end
+
+  describe "search" do
+    let!(:t_1) { create(:transcription, task_number: "BVA2024001") }
+    let!(:t_2) { create(:transcription, task_number: "BVA2024002") }
+    let!(:t_3) { create(:transcription, task_number: "BVA2024003") }
+    let!(:t_4) { create(:transcription, task_number: "BVA2024004") }
+
+    let!(:tf_1) { create(:transcription_file, transcription: t_1) }
+    let!(:tf_2) { create(:transcription_file, transcription: t_2) }
+    let!(:tf_3) { create(:transcription_file, transcription: t_3) }
+    let!(:tf_4) { create(:transcription_file, transcription: t_4) }
+
+    it "searches on docket number" do
+      query = tf_1.docket_number
+      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+
+      expect(@transcription_files.length).to be(1)
+      expect(@transcription_files[0].id).to eq(tf_1.id)
+    end
+
+    it "searches on people first and last name" do
+      query = tf_2.hearing.appeal.claimant.person.first_name + " " + tf_2.hearing.appeal.claimant.person.last_name
+      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+
+      expect(@transcription_files.length).to be(1)
+      expect(@transcription_files[0].id).to eq(tf_2.id)
+    end
+
+    it "searches on veterans first and last name" do
+      query = tf_3.hearing.appeal.veteran.first_name + " " + tf_3.hearing.appeal.veteran.last_name
+      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+
+      expect(@transcription_files.length).to be(1)
+      expect(@transcription_files[0].id).to eq(tf_3.id)
+    end
+
+    it "searches on veterans file number" do
+      query = tf_4.hearing.appeal.veteran.file_number
+      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+
+      expect(@transcription_files.length).to be(1)
+      expect(@transcription_files[0].id).to eq(tf_4.id)
+    end
+
+    it "searches on task_number" do
+      query = "BVA2024002"
+      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+
+      expect(@transcription_files.length).to be(1)
+      expect(@transcription_files[0].id).to eq(tf_2.id)
+    end
+  end
 end
