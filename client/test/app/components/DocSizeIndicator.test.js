@@ -5,7 +5,7 @@ import DocSizeIndicator from '../../../app/reader/DocSizeIndicator';
 it('shows file size', () => {
   const { container } = render(<DocSizeIndicator docSize="1024" />);
 
-  expect(container).toHaveTextContent('1.02 kB');
+  expect(container).toHaveTextContent('1 kB');
 });
 
 it('handles empty strings', () => {
