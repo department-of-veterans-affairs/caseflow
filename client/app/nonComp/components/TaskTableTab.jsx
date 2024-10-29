@@ -23,6 +23,7 @@ import {
 } from '../util/index';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
+import { LoadingIcon } from '../../components/icons/LoadingIcon';
 
 class TaskTableTabUnconnected extends React.PureComponent {
   constructor(props) {
@@ -102,7 +103,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
   render = () => {
     this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.searchValue;
 
-    return <React.Fragment>
+    return this.props.taskFilterDetailsLoading ? <LoadingIcon /> : <React.Fragment>
       <div className="search-and-description-container">
         <div className="cf-noncomp-queue-completed-task noncomp-tab-description">{this.props.description}</div>
         <div className="cf-search-ahead-parent cf-noncomp-search">
@@ -148,7 +149,7 @@ TaskTableTabUnconnected.propTypes = {
   tabPaginationOptions: PropTypes.shape({
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
-    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: PropTypes.string,
     onPageLoaded: PropTypes.func
@@ -156,12 +157,14 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  taskFilterDetailsLoading: PropTypes.bool,
 };
 
 const TaskTableTab = connect(
   (state) => ({
-    featureToggles: state.nonComp.featureToggles
+    featureToggles: state.nonComp.featureToggles,
+    taskFilterDetailsLoading: state.nonComp.taskFilterDetailsLoading
   }),
 )(TaskTableTabUnconnected);
 

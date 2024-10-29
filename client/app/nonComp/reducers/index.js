@@ -5,6 +5,7 @@ import orgUserReducer from '../actions/usersSlice';
 import changeHistoryReducer from '../actions/changeHistorySlice';
 import savedSearchReducer from '../actions/savedSearchSlice';
 import { timeFunction } from '../../util/PerfDebug';
+import ApiUtil from '../../util/ApiUtil';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
@@ -14,6 +15,7 @@ export const mapDataToInitialState = function(props = {}) {
   state.nonComp = serverNonComp;
   state.nonComp.selectedTask = null;
   state.nonComp.decisionIssuesStatus = {};
+  state.nonComp.taskFilterDetailsLoading = {};
 
   return state;
 };
@@ -92,8 +94,33 @@ export const nonCompReducer = (state = mapDataToInitialState, action) => {
         powerOfAttorney: { $set: action.payload.powerOfAttorney }
       }
     });
+  case ACTIONS.FETCH_TASK_FILTER_DETAILS_START:
+    return update(state, { taskFilterDetailsLoading: { $set: true } });
+  case ACTIONS.FETCH_TASK_FILTER_DETAILS_SUCCEED:
+    return update(state, {
+      taskFilterDetails: { $set: action.payload },
+      taskFilterDetailsLoading: { $set: false }
+    });
+  case ACTIONS.FETCH_TASK_FILTER_DETAILS_FAIL:
+    return update(state, { taskFilterDetailsLoading: { $set: false } });
   default:
     return state;
+  }
+};
+
+export const fetchTaskFilterDetails = (businessLineUrl) => async (dispatch) => {
+  dispatch({ type: ACTIONS.FETCH_TASK_FILTER_DETAILS_START });
+
+  try {
+    const response = await ApiUtil.get(`/decision_reviews/${businessLineUrl}/taskFilters`);
+
+    dispatch({
+      type: ACTIONS.FETCH_TASK_FILTER_DETAILS_SUCCEED,
+      payload: response.body,
+    });
+  } catch (error) {
+    console.error('Failed to retrieve task details: ', error);
+    dispatch({ type: ACTIONS.FETCH_TASK_FILTER_DETAILS_FAIL, text: 'Task filter details retrieval failed' });
   }
 };
 

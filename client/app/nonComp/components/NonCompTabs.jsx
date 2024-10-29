@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import TabWindow from '../../components/TabWindow';
@@ -8,9 +8,11 @@ import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
+import { fetchTaskFilterDetails } from '../reducers';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
+  const dispatch = useDispatch();
 
   // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
   const onHistoryUpdate = (urlString) => {
@@ -20,6 +22,16 @@ const NonCompTabsUnconnected = (props) => {
 
     setFilter(filterParams);
   };
+
+  useEffect(() => {
+    // console.log('in my useEffect hook');
+    // Check if `taskFilterDetails` is missing and dispatch the action if so
+    if (!props.taskFilterDetails) {
+      // fetchTaskFilterDetails();
+      dispatch(fetchTaskFilterDetails(props.businessLineUrl));
+    }
+  // }, [props.taskFilterDetails, taskFilterDetailsLoading, fetchTaskFilterDetails]);
+  }, []);
 
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
   const queryParams = new URLSearchParams(window.location.search);
@@ -55,8 +67,8 @@ const NonCompTabsUnconnected = (props) => {
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=incomplete`}
         tabPaginationOptions={tabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
-        filterableTaskTypes={props.taskFilterDetails.incomplete}
-        filterableTaskIssueTypes={props.taskFilterDetails.incomplete_issue_types}
+        filterableTaskTypes={props.taskFilterDetails?.incomplete}
+        filterableTaskIssueTypes={props.taskFilterDetails?.incompleteIssueTypes}
         description={COPY.VHA_INCOMPLETE_TAB_DESCRIPTION}
         tabName="incomplete"
         predefinedColumns={{ includeDaysWaiting: true }} />
@@ -72,20 +84,20 @@ const NonCompTabsUnconnected = (props) => {
           COPY.VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION :
           COPY.VHA_PENDING_REQUESTS_TAB_DESCRIPTION}
         tabName="pending"
-        filterableTaskTypes={props.taskFilterDetails.pending}
-        filterableTaskIssueTypes={props.taskFilterDetails.pending_issue_types}
+        filterableTaskTypes={props.taskFilterDetails?.pending}
+        filterableTaskIssueTypes={props.taskFilterDetails?.pendingIssueTypes}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     },
     in_progress: {
-      label: `In Progress Tasks (${taskCounts.in_progress})`,
+      label: `In Progress Tasks (${taskCounts.inProgress})`,
       page: <TaskTableTab {...props}
         key="inprogress"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
         tabPaginationOptions={tabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
-        filterableTaskTypes={props.taskFilterDetails.in_progress}
-        filterableTaskIssueTypes={props.taskFilterDetails.in_progress_issue_types}
+        filterableTaskTypes={props.taskFilterDetails?.inProgress}
+        filterableTaskIssueTypes={props.taskFilterDetails?.inProgressIssueTypes}
         predefinedColumns={{ includeDaysWaiting: true }} />
     },
     completed: {
@@ -95,8 +107,8 @@ const NonCompTabsUnconnected = (props) => {
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={tabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
-        filterableTaskTypes={props.taskFilterDetails.completed}
-        filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
+        filterableTaskTypes={props.taskFilterDetails?.completed}
+        filterableTaskIssueTypes={props.taskFilterDetails?.completedIssueTypes}
         description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true }} />
     }
@@ -128,13 +140,13 @@ NonCompTabsUnconnected.propTypes = {
   baseTasksUrl: PropTypes.string,
   taskFilterDetails: PropTypes.shape({
     incomplete: PropTypes.object,
-    incomplete_issue_types: PropTypes.object,
+    incompleteIssueTypes: PropTypes.object,
     pending: PropTypes.object,
-    pending_issue_types: PropTypes.object,
-    in_progress: PropTypes.object,
-    in_progress_issue_types: PropTypes.object,
+    pendingIssueTypes: PropTypes.object,
+    inProgress: PropTypes.object,
+    inProgressIssueTypes: PropTypes.object,
     completed: PropTypes.object,
-    completed_issue_types: PropTypes.object,
+    completedIssueTypes: PropTypes.object,
   }),
   isBusinessLineAdmin: PropTypes.bool,
   businessLineUrl: PropTypes.string,
@@ -146,6 +158,7 @@ const NonCompTabs = connect(
     currentTab: state.nonComp.currentTab,
     baseTasksUrl: state.nonComp.baseTasksUrl,
     taskFilterDetails: state.nonComp.taskFilterDetails,
+    taskFilterDetailsLoading: state.nonComp.taskFilterDetailsLoading,
     isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
     businessLineUrl: state.nonComp.businessLineUrl,
     businessLineConfig: state.nonComp.businessLineConfig,
