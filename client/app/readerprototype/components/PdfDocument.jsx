@@ -246,15 +246,12 @@ const PdfDocument = ({
   return (
     <div id="pdfContainer" style={containerStyle}>
       {showProgressBar && (
-        <div>
-          <ProgressBar
-            progressPercentage={progressData.progressPercentage}
-            loadedBytes={progressData.loadedBytes}
-            totalBytes={progressData.totalBytes}/>
-          <button onClick={handleCancelRequest}>
-          Big Cancel Button
-          </button>
-        </div>
+        <ProgressBar
+          progressPercentage={progressData.progressPercentage}
+          loadedBytes={progressData.loadedBytes}
+          totalBytes={progressData.totalBytes}
+          handleCancelRequest={handleCancelRequest}
+        />
       )}
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
