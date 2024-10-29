@@ -304,7 +304,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def mapped_attributes(parser_issue)
     {
       ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -338,5 +339,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       veteran_participant_id: parser_issue.ri_veteran_participant_id
     }
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
