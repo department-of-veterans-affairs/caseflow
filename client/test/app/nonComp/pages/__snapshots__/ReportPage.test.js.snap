@@ -15,7 +15,7 @@ exports[`ReportPage renders correctly renders correctly 1`] = `
           </h1>
           <a
             class="usa-button-secondary"
-            href="/undefined/report/searches"
+            href="/undefined/searches"
             type="button"
           >
             View saved searches
