@@ -3,7 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import FileSaver from 'file-saver';
+// import FileSaver from 'file-saver';
 
 const columns = [
   {
@@ -83,25 +83,25 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     }
   };
 
-  const downloadFile = async (docketNumber) => {
-    try {
-      const response = await ApiUtil.get(
-        '/hearings/transcription_files/fetch_file',
-        {
-          query: { docket_number: docketNumber },
-          responseType: 'blob',
-        }
-      );
+  // const downloadFile = async (docketNumber) => {
+  //   try {
+  //     const response = await ApiUtil.get(
+  //       '/hearings/transcription_files/fetch_file',
+  //       {
+  //         query: { docket_number: docketNumber },
+  //         responseType: 'blob',
+  //       }
+  //     );
 
-      const blob = new Blob([response.data], {
-        type: 'application/vnd.ms-excel',
-      });
+  //     const blob = new Blob([response.data], {
+  //       type: 'application/vnd.ms-excel',
+  //     });
 
-      FileSaver.saveAs(blob, `${docketNumber}.xls`);
-    } catch (err) {
-      console.error('Error downloading file:', err);
-    }
-  };
+  //     FileSaver.saveAs(blob, `${docketNumber}.xls`);
+  //   } catch (err) {
+  //     console.error('Error downloading file:', err);
+  //   }
+  // };
 
   useEffect(() => {
     fetchData();
@@ -148,7 +148,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
               className={['usa-button-secondary']}
               aria-label="Download return work order"
               style={{ position: 'absolute', bottom: '0', right: '0' }}
-              onClick={() => downloadFile(woFileInfo[0].docket_number)}
+              // onClick={() => downloadFile(woFileInfo[0].docket_number)}
             >
               Download return work order
             </button>
