@@ -1,3 +1,11 @@
+# Note: There is an open question as to whether this file is actually necessary.
+#
+# See: https://github.com/department-of-veterans-affairs/caseflow/issues/7947
+#   > We've had some questions about whether VACOLS connection warmup, introduced in #813, is necessary.
+#   > See department-of-veterans-affairs/appeals-deployment#156 (comment) for some context.
+#   > At some point, we may want to try a deploy without a VACOLS connection warmup and observe if new traffic is slowed
+#     down by connection throttling.
+
 # VACOLS throttles the rate of new connections, create up front to prevent
 # blocking as pool grows under load
 
@@ -34,25 +42,16 @@ ActiveSupport.on_load(:active_record_vacols) do
 end
 
 def warmup_pool(pool, initial_pool_size)
-  threads = []
-  latch = Concurrent::CountDownLatch.new(initial_pool_size)
-
-  initial_pool_size.times do |i|
-    threads << Thread.new do
-      conn = pool.connection
-      Rails.logger.info("taking connection #{i}; db pool size: #{pool.connections.size}")
-
-      latch.count_down
-
-      # don't return the connection to the pool until all other threads have taken a connection;
-      # otherwise could take/putback the same connection initial_pool_size times
-      latch.wait()
-      Rails.logger.info("returning connection #{i}")
-      conn.close
-    end
+  begin
+    connections = []
+    Rails.logger.info("checking out vacols DB connections...")
+    initial_pool_size.times { connections << pool.checkout }
+    Rails.logger.info("vacols DB connections checked out: #{pool.connections.select(&:in_use?).size}")
+  ensure
+    Rails.logger.info("checking in vacols DB connections...")
+    connections.compact.each { |conn| pool.checkin(conn) }
+    Rails.logger.info("vacols DB connections checked out: #{pool.connections.select(&:in_use?).size}")
   end
-
-  threads.each(&:join)
 
   # Warmup active record too, by querying for index & columns
   conn = VACOLS::Record.connection
