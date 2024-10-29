@@ -548,7 +548,8 @@
     "label": "No errors found: Upload transcript to VBMS"
   },
   "TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED": {
-    "label": "Errors found and corrected: Upload transcript to VBMS"
+    "label": "Errors found and corrected: Upload transcript to VBMS",
+    "value": "modal/errors_found_and_corrected"
   },
   "CANCEL_REVIEW_TRANSCRIPT_TASK": {
     "label": "Cancel task"
