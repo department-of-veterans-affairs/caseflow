@@ -47,6 +47,10 @@ class Hearings::TranscriptionFile < CaseflowRecord
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
   scope :completed, lambda {
+    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Completed Overdue"])
+  }
+
+  scope :completed, lambda {
     where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
   }
 
@@ -105,11 +109,27 @@ class Hearings::TranscriptionFile < CaseflowRecord
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 
+  def self.fetch_file_by_docket_and_type(docket_number)
+    file = where(docket_number: docket_number, file_type: "xls")
+      .where.not(date_returned_box: nil)
+      .first
+    return nil unless file
+
+    file.aws_link # Return the local file path for testing
+  end
+
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
     S3Service.fetch_file(aws_link, tmp_location)
     tmp_location
+  end
+
+  # Purpose: Location of local test file
+  #
+  # Returns: string, folder path
+  def local_test_file_path
+    File.join(Rails.root, "app", "models", "hearings", "test_file.xls")
   end
 
   # Purpose: Uploads transcription file to its corresponding location in S3
