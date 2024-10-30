@@ -17,8 +17,7 @@ const ProgressBar = ({ progressPercentage, loadedBytes, totalBytes, handleCancel
         top: 0,
         left: 0,
         zIndex: 1000,
-      }}
-    >
+      }}>
       <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Downloading document...</span>
       <div style={{ marginLeft: '10px', textAlign: 'center' }}>
         <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{`${progressPercentage}% downloaded`}</span>
@@ -48,7 +47,7 @@ const ProgressBar = ({ progressPercentage, loadedBytes, totalBytes, handleCancel
           }}
         />
       </div>
-      <div style= {{ marginBottom: '10px' }}>
+      <div style= {{ display: 'flex', alignItems: 'center' }}>
         <button
           style={{
             backgroundColor: '#0071bc',
