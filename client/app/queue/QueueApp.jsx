@@ -65,6 +65,7 @@ import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
+import UploadTranscriptionVBMSNoErrorModal from './UploadTranscriptionVBMSNoErrorModal';
 import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
@@ -546,6 +547,10 @@ class QueueApp extends React.PureComponent {
 
   routedChangeTaskTypeModal = (props) => (
     <ChangeTaskTypeModal {...props.match.params} />
+  );
+
+  routedUploadTranscriptionVBMSModal = (props) => (
+    <UploadTranscriptionVBMSNoErrorModal {...props.match.params} />
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
@@ -1420,6 +1425,12 @@ class QueueApp extends React.PureComponent {
                   hearingType: 'Central',
                 })
               }
+            />
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/tasks/:taskId/modal/upload_transcription_vbms"
+              title={`${PAGE_TITLES.UPLOAD_TRANSCRIPTION_VBMS} | Caseflow`}
+              render={this.routedUploadTranscriptionVBMSModal}
             />
 
             <Route

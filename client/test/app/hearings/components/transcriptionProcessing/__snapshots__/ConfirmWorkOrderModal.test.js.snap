@@ -138,3 +138,157 @@ exports[`ConfirmWorkOrderModal matches snapshot 1`] = `
   </div>
 </div>
 `;
+
+exports[`ConfirmWorkOrderModal matches snapshot 2`] = `
+<div>
+  <div
+    data-css-1k03ilb=""
+    style="border: 2px solid; border-color: #d6d7d9; margin: 3rem;"
+  >
+    <h1>
+      Confirm work order summary
+    </h1>
+    <ul
+      style="list-style-type: none; margin-top: -3rem;"
+    >
+      <li>
+        <p
+          style="font-weight: bold;"
+        >
+          Work Order:
+        </p>
+        <p>
+          BVA-2024-0001
+        </p>
+      </li>
+      <li>
+        <p
+          style="font-weight: bold;"
+        >
+          Return date:
+        </p>
+        <p>
+          08/27/2024
+        </p>
+      </li>
+      <li>
+        <p
+          style="font-weight: bold;"
+        >
+          Contractor:
+        </p>
+        <p>
+          Real Contractor
+        </p>
+      </li>
+    </ul>
+    <div
+      style="display: inline-block; border-top: 1px solid; margin-top: 3rem; width: 95%; margin-left: 3rem; border-bottom: 1px solid; border-color: #d6d7d9; padding: 2rem 0px;"
+    >
+      <h2
+        style="margin-left: 0rem;"
+      >
+        Number of files: 
+        1
+      </h2>
+      <table
+        style="width: 100%; margin-top: -2rem;"
+      >
+        <tr>
+          <th />
+          <th>
+            Docket Number
+          </th>
+          <th>
+            First Name
+          </th>
+          <th>
+            Last Name
+          </th>
+          <th>
+            Types
+          </th>
+          <th>
+            Hearing date
+          </th>
+          <th>
+            RO
+          </th>
+          <th>
+            VLJ
+          </th>
+          <th>
+            Appeal Type
+          </th>
+        </tr>
+        <tr>
+          <td>
+            1
+            .
+          </td>
+          <td
+            style="font-weight: bold;"
+          >
+            H1234-5678
+          </td>
+          <td>
+            John
+          </td>
+          <td>
+            Smith
+          </td>
+          <td>
+            <span
+              style="color: rgb(227, 28, 61);"
+            >
+              AOD
+            </span>
+            ,
+             
+            Original
+          </td>
+          <td>
+            06/04/2024
+          </td>
+          <td>
+            Waco
+          </td>
+          <td>
+            Judy
+          </td>
+          <td>
+            AMA
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div
+      style="display: flex; justify-content: space-between; margin-right: 3rem; padding-top: 3rem;"
+    >
+      <a
+        href=""
+      >
+        Cancel
+      </a>
+      <div>
+        <span>
+          <button
+            class="usa-button usa-button-secondary usa-button"
+            type="button"
+          >
+            Modify work order
+          </button>
+        </span>
+        <span>
+          <button
+            class="cf-submit usa-button"
+            type="button"
+          >
+            Dispatch work order
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
