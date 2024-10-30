@@ -26,7 +26,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
         found_record_ids << event_record.evented_record_id
       end
     end
-    require 'pry';binding.pry
     # wrap with rescue block
     DuplicatePersonRemediationService.new(found_record_ids).remediate
   end
