@@ -249,6 +249,17 @@ RSpec.feature("The Correspondence Details page") do
         )
       end
     end
+    let(:completed_correspondence) do
+      create(
+        :correspondence,
+        :related_correspondence,
+        :completed,
+        veteran: veteran,
+        va_date_of_receipt: "Tue, 20 Jul 2024 00:00:00 EDT -04:00",
+        nod: false,
+        notes: "Note Test"
+      )
+    end
     let(:correspondence) { correspondences[0] }
     let(:related_correspondence) { correspondences[1] }
 
@@ -299,9 +310,9 @@ RSpec.feature("The Correspondence Details page") do
       end
 
       it "Adds a new task not related to appeal on Correspondence Details page" do
-        visit "/queue/correspondence/#{correspondence.uuid}"
+        visit "/queue/correspondence/#{completed_correspondence.uuid}"
+        expect(page).to have_content("Record status: Completed")
         all(".plus-symbol")[1].click
-        expect(page).to have_selector("button", text: "+ Add task")
         click_button("+ Add task")
         expect(page).to have_selector("h1", text: "Add task to correspondence")
         expect(page).to have_selector(".add-task-modal-container")
@@ -310,11 +321,19 @@ RSpec.feature("The Correspondence Details page") do
         find(".react-select__option", text: "Congressional Interest").click
         fill_in "content", with: "Test"
         click_button "Next"
+
+        # Test textarea autotext based on radio selection
         find("label", text: "Address updated in VACOLS").click
+        find("label", text: "C&P exam report").click
+        expect(page).to have_content("Address updated in VACOLS, \nC&P exam report")
+
         click_button "Submit"
         using_wait_time(10) do
           expect(page).to have_content("Congressional Interest")
         end
+
+        # Test status change from completed to pending
+        expect(page).to have_content("Record status: Pending")
         click_button "View task instructions"
         expect(page).to have_content("Address updated in VACOLS")
       end
