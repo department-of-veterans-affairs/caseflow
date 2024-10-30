@@ -545,10 +545,13 @@
     "func": "cancel_task_and_return_to_sct_action"
   },
   "TRANSCRIPT_NO_ERRORS_FOUND": {
-    "label": "No errors found: Upload transcript to VBMS"
+    "label": "No errors found: Upload transcript to VBMS",
+    "value": "modal/upload_transcription_vbms",
+    "func": "change_task_type_data"
   },
   "TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED": {
-    "label": "Errors found and corrected: Upload transcript to VBMS"
+    "label": "Errors found and corrected: Upload transcript to VBMS",
+    "value": "modal/errors_found_and_corrected"
   },
   "CANCEL_REVIEW_TRANSCRIPT_TASK": {
     "label": "Cancel task"
