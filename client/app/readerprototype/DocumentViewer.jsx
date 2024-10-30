@@ -74,7 +74,6 @@ const DocumentViewer = (props) => {
 
         setCurrentPage(lowestPage);
         vals = [];
-        // vals = vals.filter((page) => page !== lowestPage);
         clearTimeout(timeout);
       }
     };
