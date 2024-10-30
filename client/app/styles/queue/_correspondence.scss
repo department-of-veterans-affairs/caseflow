@@ -1335,6 +1335,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.cf-modal-body {
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
 .new-letter-container {
   display: inline-block;
   padding: 2rem;
