@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "file-saver": "^2.0.5",
     "node": "16.16.0"
   }
 }
