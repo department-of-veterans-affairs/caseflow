@@ -105,6 +105,41 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
       clean_up_after_threads
     end
+
+    it "is schedulable when its a legacy appeal", bypass_cleaner: true do
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by_appeal_type("LegacyAppeal").schedulable
+      expect(schedulable).to eq(true)
+
+      clean_up_after_threads
+    end
+
+    it "is schedulable when AMA appeal is court remand", bypass_cleaner: true do
+      ama_with_sched_task.update!(stream_type: "court_remand")
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by_appeal_type("Appeal").schedulable
+      expect(schedulable).to eq(true)
+
+      clean_up_after_threads
+    end
+
+    it "is schedulable when AMA appeal is AOD", bypass_cleaner: true do
+      ama_with_sched_task.update!(aod_based_on_age: true)
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by_appeal_type("Appeal").schedulable
+      expect(schedulable).to eq(true)
+
+      clean_up_after_threads
+    end
+
+    it "is schedulable when AMA appeal receipt date is before 2020", bypass_cleaner: true do
+      ama_with_sched_task.update!(receipt_date: Date.new(2019, 12, 31))
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by_appeal_type("Appeal").schedulable
+      expect(schedulable).to eq(true)
+
+      clean_up_after_threads
+    end
   end
 
   def clean_up_after_threads
