@@ -65,7 +65,9 @@ const CorrespondenceDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const [priorMailDisabled, setPriorMailDisabled] = useState(null);
+  const [appealsDisabled, setAppealsDisabled] = useState(null);
+  
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -134,7 +136,9 @@ const CorrespondenceDetails = (props) => {
         (key) => newState[key] !== originalStates[key]
       );
 
-      setDisableSubmitButton(!isAnyChanged);
+      let valueToButton = !isAnyChanged && appealsDisabled
+      setDisableSubmitButton(valueToButton);
+      setPriorMailDisabled(valueToButton)
 
       return newState;
     });
@@ -722,7 +726,10 @@ const CorrespondenceDetails = (props) => {
     setSelectedPriorMail(selectedCheckboxes);
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
-    setDisableSubmitButton(!isAnyCheckboxSelected);
+     let valueToButton = !isAnyCheckboxSelected && appealsDisabled
+
+    setDisableSubmitButton(valueToButton);
+    setPriorMailDisabled(valueToButton)
   };
 
   const getDocumentColumns = (correspondenceRow) => {
