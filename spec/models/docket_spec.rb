@@ -156,7 +156,7 @@ describe Docket, :all_dbs do
       end
 
       context "when looking for only priority and ready appeals" do
-        subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
+        subject { DirectReviewDocket.new.appeals(priority: true, ready: true, not_affinity: true) }
         it "returns priority/ready appeals" do
           expect(subject).to_not include appeal
           expect(subject).to_not include denied_aod_motion_appeal
@@ -220,7 +220,7 @@ describe Docket, :all_dbs do
       end
 
       context "when only looking for appeals that are ready for distribution" do
-        subject { DirectReviewDocket.new.appeals(ready: true) }
+        subject { DirectReviewDocket.new.appeals(ready: true, not_affinity: true) }
 
         it "only returns active appeals that meet both of these conditions:
             it has at least one Distribution Task with status assigned
@@ -409,12 +409,12 @@ describe Docket, :all_dbs do
       end
 
       it "returns an empty array when the lever value is true and priority is true" do
-        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "true"))
+        CaseDistributionLever.find_by(item: "disable_ama_non_priority_direct_review").update!(value: "true")
         expect(docket.ready_priority_nonpriority_appeals(ready: true)).to eq([])
       end
 
       it "returns the correct appeals when the lever value is false and priority is true" do
-        expected_appeals = docket.appeals(priority: true)
+        expected_appeals = docket.appeals(priority: true, ready: true)
         result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
         expect(result).to match_array(expected_appeals)
       end
@@ -426,7 +426,7 @@ describe Docket, :all_dbs do
         end
 
         it "returns the correct appeals" do
-          expected_appeals = docket.appeals(priority: true)
+          expected_appeals = docket.appeals(priority: true, ready: true)
           result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
           expect(result).to match_array(expected_appeals)
         end

@@ -64,7 +64,7 @@ class Docket
     # `count` on `appeals` will return a hash. To get the number of appeals, we
     # can pluck the ids and ask for the size of the resulting array.
     # See the docs for ActiveRecord::Calculations
-    appeals(priority: priority, ready: ready).ids.size
+    appeals(priority: priority, ready: ready, not_affinity: true).ids.size
   end
 
   # currently this is used for reporting needs
@@ -117,7 +117,7 @@ class Docket
   end
 
   def ready_priority_appeal_ids
-    appeals(priority: true, ready: true).pluck(:uuid)
+    appeals(priority: true, ready: true, not_affinity: true).pluck(:uuid)
   end
 
   def tied_to_vljs(judge_ids)
