@@ -12,8 +12,8 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   def perform
     setup_job
-    find_and_update_veteran_records
     find_and_remediate_duplicate_people
+    find_and_update_veteran_records
   end
 
   def find_and_remediate_duplicate_people
@@ -26,6 +26,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
         found_record_ids << event_record.evented_record_id
       end
     end
+    require 'pry';binding.pry
     # wrap with rescue block
     DuplicatePersonRemediationService.new(found_record_ids).remediate
   end
