@@ -24,7 +24,7 @@ const NonCompTabsUnconnected = (props) => {
   };
 
   useEffect(() => {
-    // If the task details are missing then populate them  it is then populate it by asking the server
+    // If the task details are missing then populate them from the api
     if (!props.taskFilterDetails && !props.taskFilterDetailsLoading) {
       dispatch(fetchTaskFilterDetails(props.businessLineUrl));
     }
