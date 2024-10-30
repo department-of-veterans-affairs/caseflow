@@ -24,14 +24,11 @@ const NonCompTabsUnconnected = (props) => {
   };
 
   useEffect(() => {
-    // console.log('in my useEffect hook');
-    // Check if `taskFilterDetails` is missing and dispatch the action if so
-    if (!props.taskFilterDetails) {
-      // fetchTaskFilterDetails();
+    // If the task details are missing then populate them  it is then populate it by asking the server
+    if (!props.taskFilterDetails && !props.taskFilterDetailsLoading) {
       dispatch(fetchTaskFilterDetails(props.businessLineUrl));
     }
-  // }, [props.taskFilterDetails, taskFilterDetailsLoading, fetchTaskFilterDetails]);
-  }, []);
+  }, [props.taskFilterDetails, props.taskFilterDetailsLoading, dispatch]);
 
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
   const queryParams = new URLSearchParams(window.location.search);
@@ -148,6 +145,7 @@ NonCompTabsUnconnected.propTypes = {
     completed: PropTypes.object,
     completedIssueTypes: PropTypes.object,
   }),
+  taskFilterDetailsLoading: PropTypes.bool,
   isBusinessLineAdmin: PropTypes.bool,
   businessLineUrl: PropTypes.string,
   businessLineConfig: PropTypes.shape({ tabs: PropTypes.array })

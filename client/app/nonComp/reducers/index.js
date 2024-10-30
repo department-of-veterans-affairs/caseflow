@@ -15,7 +15,8 @@ export const mapDataToInitialState = function(props = {}) {
   state.nonComp = serverNonComp;
   state.nonComp.selectedTask = null;
   state.nonComp.decisionIssuesStatus = {};
-  state.nonComp.taskFilterDetailsLoading = {};
+  state.nonComp.taskFilterDetailsLoading = false;
+  state.nonComp.businessLineInfoLoading = false;
 
   return state;
 };
@@ -102,14 +103,25 @@ export const nonCompReducer = (state = mapDataToInitialState, action) => {
       taskFilterDetailsLoading: { $set: false }
     });
   case ACTIONS.FETCH_TASK_FILTER_DETAILS_FAIL:
+    return update(state, { businessLineInfoLoading: { $set: false } });
+  case ACTIONS.FETCH_BUSINESSLINE_INFO_START:
+    return update(state, { businessLineInfoLoading: { $set: true } });
+  case ACTIONS.FETCH_BUSINESSLINE_INFO_SUCCEED:
+    return update(state, {
+      $merge: action.payload,
+      businessLineInfoLoading: { $set: false }
+    });
+  case ACTIONS.FETCH_BUSINESSLINE_INFO_FAIL:
     return update(state, { taskFilterDetailsLoading: { $set: false } });
   default:
     return state;
   }
 };
 
+const analytics = true;
+
 export const fetchTaskFilterDetails = (businessLineUrl) => async (dispatch) => {
-  dispatch({ type: ACTIONS.FETCH_TASK_FILTER_DETAILS_START });
+  dispatch({ type: ACTIONS.FETCH_TASK_FILTER_DETAILS_START, meta: { analytics } });
 
   try {
     const response = await ApiUtil.get(`/decision_reviews/${businessLineUrl}/taskFilters`);
@@ -117,10 +129,28 @@ export const fetchTaskFilterDetails = (businessLineUrl) => async (dispatch) => {
     dispatch({
       type: ACTIONS.FETCH_TASK_FILTER_DETAILS_SUCCEED,
       payload: response.body,
+      meta: { analytics }
     });
   } catch (error) {
     console.error('Failed to retrieve task details: ', error);
     dispatch({ type: ACTIONS.FETCH_TASK_FILTER_DETAILS_FAIL, text: 'Task filter details retrieval failed' });
+  }
+};
+
+export const fetchBusinessLineInformation = (businessLineUrl) => async (dispatch) => {
+  dispatch({ type: ACTIONS.FETCH_BUSINESSLINE_INFO_START, meta: { analytics } });
+
+  try {
+    const response = await ApiUtil.get(`/decision_reviews/${businessLineUrl}/businessLineInfo`);
+
+    dispatch({
+      type: ACTIONS.FETCH_BUSINESSLINE_INFO_SUCCEED,
+      payload: response.body,
+      meta: { analytics }
+    });
+  } catch (error) {
+    console.error('Failed to retrieve Business Line info: ', error);
+    dispatch({ type: ACTIONS.FETCH_BUSINESSLINE_INFO_FAIL, text: 'Business Line info retrieval failed' });
   }
 };
 

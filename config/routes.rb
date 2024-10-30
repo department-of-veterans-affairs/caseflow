@@ -317,6 +317,7 @@ Rails.application.routes.draw do
       end
     end
     get "taskFilters", to: "decision_reviews#task_filters"
+    get "businessLineInfo", to: "decision_reviews#business_line_info"
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
     get "/(*all)", to: "decision_reviews#index"
 

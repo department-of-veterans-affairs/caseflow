@@ -156,6 +156,26 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def business_line_info
+    respond_to do |format|
+      format.json do
+        render json: {
+          businessLineConfig: business_line_config_options,
+          businessLine: business_line.name,
+          businessLineUrl: business_line.url,
+          baseTasksUrl: business_line.tasks_url,
+          isBusinessLineAdmin: business_line.user_is_admin?(current_user),
+          currentUserCssId: current_user.css_id,
+          featureToggles: {
+            decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
+            poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh, user: current_user),
+            metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+          }
+        }
+      end
+    end
+  end
+
   def business_line_config_options
     {
       tabs: included_tabs,

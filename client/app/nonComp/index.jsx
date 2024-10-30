@@ -14,6 +14,7 @@ import ReportPage from './pages/ReportPage';
 import SavedSearches from './pages/SavedSearches';
 import ClaimHistoryPage from './pages/ClaimHistoryPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
+import BusinessLineReduxInitializer from './components/BusinessLineReduxInitializer';
 
 class NonComp extends React.PureComponent {
   render() {
@@ -24,55 +25,57 @@ class NonComp extends React.PureComponent {
     return (
       <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer}>
         <Router basename="/decision_reviews" {...this.props.routerTestProps}>
-          <div>
-            <NavigationBar
-              appName={appName}
-              logoProps={{
-                accentColor: LOGO_COLORS.INTAKE.ACCENT,
-                overlapColor: LOGO_COLORS.INTAKE.OVERLAP
-              }}
-              userDisplayName={this.props.userDisplayName}
-              dropdownUrls={this.props.dropdownUrls}
-              applicationUrls={this.props.applicationUrls}
-              topMessage={null}
-              defaultUrl={`/${this.props.serverNonComp.businessLineUrl}`}
-            >
-              <AppFrame>
-                {this.props.flash && <FlashAlerts flash={this.props.flash} />}
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug/tasks/:taskId/history"
-                  title={`${appName} Individual Claim History | Caseflow`}
-                  component={ClaimHistoryPage}
-                />
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug/tasks/:taskId"
-                  title={`${appName} Dispositions | Caseflow`}
-                  component={TaskPage}
-                />
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug/report"
-                  title={`${appName} Generate Task Report | Caseflow`}
-                  component={ReportPage}
-                />
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug/searches"
-                  title={`${appName} Saved Searches | Caseflow`}
-                  component={SavedSearches}
-                />
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug"
-                  title={`${appName} Reviews | Caseflow`}
-                  component={ReviewPage}
-                />
-              </AppFrame>
-            </NavigationBar>
-            <Footer appName={appName} feedbackUrl={this.props.feedbackUrl} buildDate={this.props.buildDate} />
-          </div>
+          <BusinessLineReduxInitializer>
+            <div>
+              <NavigationBar
+                appName={appName}
+                logoProps={{
+                  accentColor: LOGO_COLORS.INTAKE.ACCENT,
+                  overlapColor: LOGO_COLORS.INTAKE.OVERLAP
+                }}
+                userDisplayName={this.props.userDisplayName}
+                dropdownUrls={this.props.dropdownUrls}
+                applicationUrls={this.props.applicationUrls}
+                topMessage={null}
+                defaultUrl={`/${this.props.serverNonComp.businessLineUrl}`}
+              >
+                <AppFrame>
+                  {this.props.flash && <FlashAlerts flash={this.props.flash} />}
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug/tasks/:taskId/history"
+                    title={`${appName} Individual Claim History | Caseflow`}
+                    component={ClaimHistoryPage}
+                  />
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug/tasks/:taskId"
+                    title={`${appName} Dispositions | Caseflow`}
+                    component={TaskPage}
+                  />
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug/report"
+                    title={`${appName} Generate Task Report | Caseflow`}
+                    component={ReportPage}
+                  />
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug/searches"
+                    title={`${appName} Saved Searches | Caseflow`}
+                    component={SavedSearches}
+                  />
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug"
+                    title={`${appName} Reviews | Caseflow`}
+                    component={ReviewPage}
+                  />
+                </AppFrame>
+              </NavigationBar>
+              <Footer appName={appName} feedbackUrl={this.props.feedbackUrl} buildDate={this.props.buildDate} />
+            </div>
+          </BusinessLineReduxInitializer>
         </Router>
       </ReduxBase>
     );
