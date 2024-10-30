@@ -192,7 +192,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def find_request_issue(parser_issue)
     request_issue = find_by_reference_id(parser_issue) ||
                     find_and_update_original_issue(parser_issue) ||
@@ -208,7 +207,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     request_issue
   end
-  # rubocop:enable Metrics/MethodLength
 
   def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
@@ -223,7 +221,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # iterate through the array of issues and create backfill object from each one
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def create_request_issue_backfill
     request_issues = @parser.added_issues
     newly_created_issues = []
@@ -252,7 +250,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
     newly_created_issues
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   private
 
