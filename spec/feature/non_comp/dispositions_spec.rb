@@ -510,17 +510,12 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_remand_task.id}" }
 
-      it "should display Remand specific text" do
-        visit dispositions_url
-
-        expect(page).to have_content(COPY::DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE)
-      end
-
       it "should disable the request issue modification button" do
         visit dispositions_url
 
         expect(page).to have_css(".usa-button-disabled", text: "Request issue modification")
         expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
+        expect(page).to have_content(COPY::DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE)
       end
 
       it "should disable the edit issues button" do

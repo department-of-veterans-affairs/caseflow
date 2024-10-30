@@ -75,7 +75,7 @@ class WorkQueue::DecisionReviewTaskSerializer
       activeOrDecidedRequestIssues:
         skip_acquiring_request_issues || request_issues(object).active_or_decided.map(&:serialize),
       appellant_type: decision_review(object).claimant&.type,
-      type: decision_review(object).type
+      type: decision_review(object).try(:type)
     }
   end
 
