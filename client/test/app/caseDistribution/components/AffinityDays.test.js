@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, screen, fireEvent} from '@testing-library/react';
+import { render, waitFor} from '@testing-library/react';
 import AffinityDays from 'app/caseDistribution/components/AffinityDays';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -7,6 +7,7 @@ import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import { mockAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+import { mount } from 'enzyme';
 
 describe('Affinity Days Lever', () => {
 
@@ -67,39 +68,45 @@ describe('Affinity Days Lever', () => {
     store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    const {container} = render(
+    let wrapper = mount(
       <Provider store={store}>
         <AffinityDays />
       </Provider>
     );
 
-    let radioOption = container.querySelector('input[id="ama_hearing_case_affinity_days-value"]');
-    let radioOption2 = container.querySelector('input[id="ama_hearing_case_affinity_days-infinite"]');
-    let radioOption3 = container.querySelector('input[id="ama_hearing_case_affinity_days-omit"]');
+    let radioOption = wrapper.find('input[id="ama_hearing_case_affinity_days-value"]');
+    let radioOption2 = wrapper.find('input[id="ama_hearing_case_affinity_days-infinite"]');
+    let radioOption3 = wrapper.find('input[id="ama_hearing_case_affinity_days-omit"]');
 
     // Sets radioOption input of value to "true"
-    fireEvent.click(radioOption);
+    radioOption.getDOMNode().checked = true;
+    radioOption2.getDOMNode().checked = false;
+    radioOption3.getDOMNode().checked = false;
 
     // Ensure that all Radio Options are correctly set
-    expect(radioOption.checked).toEqual(true);
-    expect(radioOption2.checked).toEqual(false);
-    expect(radioOption3.checked).toEqual(false);
+    expect(radioOption.getDOMNode().checked).toEqual(true);
+    expect(radioOption2.getDOMNode().checked).toEqual(false);
+    expect(radioOption3.getDOMNode().checked).toEqual(false);
 
-    let inputField = container.querySelector('input[id="ama_hearing_case_affinity_days-0-input"]');
+    let inputField = wrapper.find('input[id="ama_hearing_case_affinity_days-0-input"]');
 
     // Calls simulate change to set value outside of min/max range
-    fireEvent.change(inputField, eventForError);
+    waitFor(() => inputField.simulate('change', eventForError));
 
-    waitFor(() => expect(inputField.value).toBe(eventForError.target.value));
-    waitFor(() =>expect(screen.getByText(new RegExp(`Please enter a value greater than or equal to ${lever.min_value}`))).
-    toBeInTheDocument());
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForError.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').
+      toBe(`Please enter a value greater than or equal to ${ lever.min_value }`)));
 
     // Calls simulate change to set value within min/max range
-    fireEvent.change(inputField, eventForValid);
+    waitFor(() => inputField.simulate('change', eventForValid));
 
-    waitFor(() => expect(inputField.value).toBe(eventForValid.target.value));
-    waitFor(() =>expect(screen.getByText(new RegExp(`Please enter a value greater than or equal to ${lever.min_value}`))).
-    not.toBeInTheDocument());
+    wrapper.update();
+
+    waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
+    waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 
   it('should display the input text when radio option selected', () => {
@@ -110,25 +117,27 @@ describe('Affinity Days Lever', () => {
     store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    const { container } = render(
+    let wrapper = mount(
       <Provider store={store}>
         <AffinityDays />
       </Provider>
     );
 
-    const radioOption = container.querySelector('input[id="ama_hearing_case_aod_affinity_days-value"]');
+    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-value"]');
 
     // Sets radioOption input of value to "true"
-    fireEvent.click(radioOption);
-    expect(radioOption.checked).toEqual(true);
+    radioOption.getDOMNode().checked = true;
+    expect(radioOption.getDOMNode().checked).toEqual(true);
 
-    const inputField = container.querySelector('input[id="ama_hearing_case_aod_affinity_days-test-input"]');
+    let inputField = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-0-input"]');
 
     // Calls simulate change to set value outside of min/max range
-    fireEvent.change(inputField, inputData);
+    waitFor(() => inputField.simulate('change', inputData));
+
+    wrapper.update();
 
     waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
-    waitFor(() => expect(inputField.value).toBe(inputData.target.value));
+    waitFor(() => expect(inputField.prop('value').toBe(inputData.target.value)));
   });
 
   it('dynamically renders * in the lever label', () => {
@@ -139,12 +148,12 @@ describe('Affinity Days Lever', () => {
     store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    render(
+    let wrapper = mount(
       <Provider store={store}>
         <AffinityDays />
       </Provider>
     );
 
-    expect(screen.getByText(lever.title + '*')).toBeInTheDocument();
+    expect(wrapper.text()).toContain(lever.title + '*');
   });
 });

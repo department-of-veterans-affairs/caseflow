@@ -1,8 +1,13 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
-import { render, screen } from '@testing-library/react';
+import { mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import {
+  HearingTypeConversionForm,
+} from 'app/hearings/components/HearingTypeConversionForm';
 import { legacyAppealForTravelBoard } from 'test/data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
 import { HearingTypeConversion } from 'app/hearings/components/HearingTypeConversion';
@@ -11,10 +16,6 @@ import {
 } from 'app/hearings/contexts/HearingTypeConversionContext';
 import { virtualAppeal, scheduleHearingTask } from 'test/data';
 import ApiUtil from 'app/util/ApiUtil';
-
-const Wrapper = ({ children }) => {
-  return queueWrapper({ children });
-};
 
 let patchSpy;
 
@@ -29,7 +30,7 @@ afterEach(() => {
 
 describe('HearingTypeConversion', () => {
   test('Matches snapshot with default props', () => {
-    const { asFragment } = render(
+    const hearingTypeConversion = mount(
       <HearingTypeConversionProvider>
         <HearingTypeConversion
           appeal={legacyAppealForTravelBoard}
@@ -37,14 +38,12 @@ describe('HearingTypeConversion', () => {
         />
       </HearingTypeConversionProvider>,
       {
-        wrapper: Wrapper,
+        wrappingComponent: queueWrapper,
       }
     );
 
-    const convertToVirtual = screen.getByRole('heading', {name: /Convert Hearing To Virtual/i});
-    expect(convertToVirtual).toBeInTheDocument();
-
-    expect(asFragment()).toMatchSnapshot();
+    expect(hearingTypeConversion.exists(HearingTypeConversionForm)).toBeTruthy();
+    expect(hearingTypeConversion).toMatchSnapshot();
   });
 
   const renderHearingTypeConversionForm = (userIsVsoEmployee) => {

@@ -1,51 +1,42 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { WrappingComponent } from "../establishClaim/WrappingComponent";
-import EstablishClaimContainer from "../../../app/containers/EstablishClaimPage/EstablishClaimContainer";
+import React from 'react';
+import { mount } from 'enzyme';
 
-describe("EstablishClaimContainer", () => {
-  const setup = () => {
-    return render(<EstablishClaimContainer page="TestPage" otherProp="foo" />, {
-      wrapper: WrappingComponent,
-    });
-  };
+import { WrappingComponent } from '../establishClaim/WrappingComponent';
+import EstablishClaimContainer from '../../../app/containers/EstablishClaimPage/EstablishClaimContainer';
 
-  describe("sub-page", () => {
-    it("renders", () => {
-      setup();
-      expect(screen.getByText("Test Page")).toBeInTheDocument();
-      const subPageElement = document.querySelector('.sub-page');
-      expect(subPageElement).toBeInTheDocument();
+describe('EstablishClaimContainer', () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = mount(<EstablishClaimContainer page="TestPage" otherProp="foo" />, {
+      wrappingComponent: WrappingComponent
     });
   });
 
-  describe("renders alerts", () => {
-    it("hides alert if none in state", () => {
-      setup();
-      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  describe('sub-page', () => {
+    it('renders', () => {
+      expect(wrapper.find('.sub-page')).toHaveLength(1);
+    });
+  });
+
+  describe('renders alerts', () => {
+    it('hides alert if none in state', () => {
+      expect(wrapper.state().alert).toBeNull();
+      expect(wrapper.find('.usa-alert')).toHaveLength(0);
     });
 
-    it("shows alert if alert in state", () => {
-      const {container} = setup();
-
-      const alert = screen.queryByRole("alert");
-      const handleAlert = container.querySelector('.handleAlert');
-
-      fireEvent.click(handleAlert);
-      expect(alert).not.toBeInTheDocument();
-      expect(screen.getByRole("alert")).toBeInTheDocument();
+    it('shows alert if alert in state', () => {
+      expect(wrapper.state().alert).toBeNull();
+      wrapper.find('.handleAlert').simulate('click');
+      expect(wrapper.state().alert).not.toBeNull();
+      expect(wrapper.find('.usa-alert')).toHaveLength(1);
     });
 
-    it("clears alert when triggered", () => {
-      const { container } =  setup();
-      const handleAlert = container.querySelector('.handleAlert');
-      const handleAlertClear = container.querySelector('.handleAlertClear');
-
-      fireEvent.click(handleAlert);
-      expect(screen.getByRole("alert")).toBeInTheDocument();
-
-      fireEvent.click(handleAlertClear);
-      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    it('clears alert when triggered', () => {
+      wrapper.find('.handleAlert').simulate('click');
+      expect(wrapper.state().alert).not.toBeNull();
+      wrapper.find('.handleAlertClear').simulate('click');
+      expect(wrapper.state().alert).toBeNull();
     });
   });
 });

@@ -83,7 +83,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""
@@ -108,8 +108,25 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      option Name not listed, selected.
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -154,7 +171,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                     >
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__clear-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -174,7 +191,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -253,7 +270,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </fieldset>
         <br />
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -281,7 +298,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -314,7 +331,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -347,7 +364,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-iGgWBj iCKUYU"
+          class="sc-jSgupP gGfCIZ"
         >
           <div
             class="cf-form-textinput   "
@@ -381,7 +398,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </div>
         <div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -409,7 +426,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -442,7 +459,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-aXZVg dVbwak"
+            class="sc-bdfBwQ eMrOcK"
           >
             <div
               class="cf-form-textinput   "
@@ -573,7 +590,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gEvEer fqA-dSf"
+            class="sc-gsTCUz fPDxqp"
           >
             <div
               class="cf-form-textinput   "
@@ -630,7 +647,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-dcJsrY yoDvq"
+            class="sc-eCssSg jjCqxh"
           >
             <div
               class="cf-form-textinput   "
@@ -663,7 +680,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gsFSXq fBYfCs"
+            class="sc-gKsewC ePBGgm"
           >
             <div
               class="cf-form-textinput   "
@@ -820,7 +837,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""
@@ -845,8 +862,25 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      option Name not listed, selected.
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -891,7 +925,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                     >
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__clear-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -911,7 +945,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -990,7 +1024,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </fieldset>
         <br />
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -1019,7 +1053,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </div>
         <div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -1047,7 +1081,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -1080,7 +1114,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-eqUAAy ebsmsB"
+            class="sc-dlfnbm hCRMHW"
           >
             <div
               class="cf-form-textinput   "
@@ -1113,7 +1147,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-aXZVg dVbwak"
+            class="sc-bdfBwQ eMrOcK"
           >
             <div
               class="cf-form-textinput   "
@@ -1244,7 +1278,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gEvEer fqA-dSf"
+            class="sc-gsTCUz fPDxqp"
           >
             <div
               class="cf-form-textinput   "
@@ -1301,7 +1335,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-dcJsrY yoDvq"
+            class="sc-eCssSg jjCqxh"
           >
             <div
               class="cf-form-textinput   "
@@ -1334,7 +1368,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gsFSXq fBYfCs"
+            class="sc-gKsewC ePBGgm"
           >
             <div
               class="cf-form-textinput   "
@@ -1491,7 +1525,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""
@@ -1516,8 +1550,25 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      option Name not listed, selected.
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -1562,7 +1613,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                     >
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__clear-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -1582,7 +1633,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -1661,7 +1712,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </fieldset>
         <br />
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -1689,7 +1740,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -1722,7 +1773,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -1750,7 +1801,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-iGgWBj iCKUYU"
+          class="sc-jSgupP gGfCIZ"
         >
           <div
             class="cf-form-textinput   "
@@ -1784,7 +1835,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </div>
         <div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -1817,7 +1868,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -1850,7 +1901,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-aXZVg dVbwak"
+            class="sc-bdfBwQ eMrOcK"
           >
             <div
               class="cf-form-textinput   "
@@ -1986,7 +2037,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gEvEer fqA-dSf"
+            class="sc-gsTCUz fPDxqp"
           >
             <div
               class="cf-form-textinput   "
@@ -2048,7 +2099,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-dcJsrY yoDvq"
+            class="sc-eCssSg jjCqxh"
           >
             <div
               class="cf-form-textinput   "
@@ -2081,7 +2132,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gsFSXq fBYfCs"
+            class="sc-gKsewC ePBGgm"
           >
             <div
               class="cf-form-textinput   "
@@ -2238,7 +2289,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""
@@ -2263,8 +2314,25 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      option Name not listed, selected.
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -2309,7 +2377,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                     >
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__clear-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -2329,7 +2397,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -2408,7 +2476,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </fieldset>
         <br />
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -2436,7 +2504,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -2469,7 +2537,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class="cf-form-textinput   "
@@ -2497,7 +2565,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
           </div>
         </div>
         <div
-          class="sc-iGgWBj iCKUYU"
+          class="sc-jSgupP gGfCIZ"
         >
           <div
             class="cf-form-textinput   "
@@ -2531,7 +2599,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
         </div>
         <div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -2564,7 +2632,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-fqkvVR iuMLlt"
+            class="sc-hKgILt lgVycS"
           >
             <div
               class="cf-form-textinput   "
@@ -2597,7 +2665,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-aXZVg dVbwak"
+            class="sc-bdfBwQ eMrOcK"
           >
             <div
               class="cf-form-textinput   "
@@ -2733,7 +2801,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gEvEer fqA-dSf"
+            class="sc-gsTCUz fPDxqp"
           >
             <div
               class="cf-form-textinput   "
@@ -2795,7 +2863,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-dcJsrY yoDvq"
+            class="sc-eCssSg jjCqxh"
           >
             <div
               class="cf-form-textinput   "
@@ -2828,7 +2896,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             </div>
           </div>
           <div
-            class="sc-gsFSXq fBYfCs"
+            class="sc-gKsewC ePBGgm"
           >
             <div
               class="cf-form-textinput   "
@@ -2984,7 +3052,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""
@@ -3009,8 +3077,25 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      option John Attorney, selected.
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -3055,7 +3140,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
                     >
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__clear-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -3075,7 +3160,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -3104,7 +3189,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
         </div>
         <div>
           <div
-            class="sc-kAyceB hkspcQ"
+            class="sc-iBPRYJ jkKZsh"
           >
             <strong>
               Representative's address
@@ -3142,6 +3227,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
                    
                   94103
                    
+                  
                 </span>
               </span>
             </span>
@@ -3271,7 +3357,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
           Representative
         </h2>
         <div
-          class="sc-dcJsrY yoDvq"
+          class="sc-eCssSg jjCqxh"
         >
           <div
             class=""

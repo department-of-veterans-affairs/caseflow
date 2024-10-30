@@ -52,7 +52,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def eligible_and_moved_appeals
-    appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs + AojLegacyDocket.new.appeals_tied_to_non_ssc_avljs
+    appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
     moved_appeals = move_qualifying_appeals(appeals)
     [appeals, moved_appeals]
   end

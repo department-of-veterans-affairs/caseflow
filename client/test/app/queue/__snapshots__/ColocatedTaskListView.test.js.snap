@@ -29,9 +29,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 Assigned (2)
               </span>
+              
             </span>
           </div>
         </button>
@@ -46,9 +48,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 On hold (2)
               </span>
+              
             </span>
           </div>
         </button>
@@ -63,9 +67,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 Completed
               </span>
+              
             </span>
           </div>
         </button>
@@ -86,7 +92,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           </p>
           <div
             class="cf-table-wrapper"
-            data-testid="queue-table-data-testid"
           >
             <div
               class="cf-pagination"
@@ -158,7 +163,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -171,7 +175,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -227,7 +230,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -240,7 +242,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -258,7 +259,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by task"
@@ -335,7 +335,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -348,7 +347,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -366,7 +364,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by type"
@@ -443,7 +440,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -456,7 +452,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -474,7 +469,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by docket name"
@@ -555,7 +549,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -568,7 +561,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -587,7 +579,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-1cfshsl=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -773,7 +764,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-1yt9kq0=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -982,7 +972,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-10zywkz=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1187,9 +1176,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 Assigned (2)
               </span>
+              
             </span>
           </div>
         </button>
@@ -1204,9 +1195,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 On hold (2)
               </span>
+              
             </span>
           </div>
         </button>
@@ -1221,9 +1214,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
+              
               <span>
                 Completed
               </span>
+              
             </span>
           </div>
         </button>
@@ -1250,7 +1245,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           </p>
           <div
             class="cf-table-wrapper"
-            data-testid="queue-table-data-testid"
           >
             <div
               class="cf-pagination"
@@ -1322,7 +1316,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -1335,7 +1328,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -1391,7 +1383,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -1404,7 +1395,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -1422,7 +1412,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by task"
@@ -1499,7 +1488,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -1512,7 +1500,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -1530,7 +1517,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by type"
@@ -1607,7 +1593,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -1620,7 +1605,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -1638,7 +1622,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                       <span
                         data-css-ilmt4b=""
-                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by docket name"
@@ -1719,7 +1702,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                               fill-rule="nonzero"
                             >
                               <g
-                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -1732,7 +1714,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                                 </g>
                               </g>
                               <g
-                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -1751,7 +1732,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-1cfshsl=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -1937,7 +1917,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-1i1fgeu=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2140,7 +2119,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                     <span
                       data-css-7nsseu=""
-                      data-testid="tooltip-testid"
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

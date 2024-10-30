@@ -120,6 +120,7 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                 class=""
               >
                 <span>
+                  
                    
                 </span>
               </legend>

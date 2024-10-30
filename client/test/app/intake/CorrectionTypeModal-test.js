@@ -1,78 +1,58 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { mount } from 'enzyme';
 
 import CorrectionTypeModal from '../../../app/intake/components/CorrectionTypeModal';
 import { sample1 } from './testData';
-import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 
 describe('CorrectionTypeModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
 
-  const defaultProps = {
-    formType: formType,
-    intakeData: intakeData,
-    onSkip: () => null,
-  };
-
-  const setup = (props) => {
-    return render(
-      <CorrectionTypeModal
-        {...defaultProps} {...props}
-      />
-    );
-  }
-
   describe('renders', () => {
     it('renders button text', () => {
-      setup();
-      expect(screen.getByText('Cancel')).toBeInTheDocument();
-      expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
-      expect(screen.getByText('Next')).toBeInTheDocument();
-    });
+      const wrapper = mount(<CorrectionTypeModal formType={formType} intakeData={intakeData} onSkip={() => null} />);
 
-    it('renders with new props', async () => {
-      testRenderingWithNewProps(setup);
+      const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
+      const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
+      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+
+      expect(cancelBtn.text()).toBe('Cancel');
+      expect(skipBtn.text()).toBe('None of these match, see more options');
+      expect(submitBtn.text()).toBe('Next');
+
+      wrapper.setProps({
+        cancelText: 'cancel',
+        skipText: 'skip',
+        submitText: 'submit'
+      });
+
+      expect(cancelBtn.text()).toBe('cancel');
+      expect(skipBtn.text()).toBe('skip');
+      expect(submitBtn.text()).toBe('submit');
     });
 
     it('skip button only with onSkip prop', () => {
-      const {container, rerender}=render(<CorrectionTypeModal
-        formType={formType}
-        intakeData={intakeData}
-        />);
+      const wrapper = mount(<CorrectionTypeModal formType={formType} intakeData={intakeData} />);
 
-      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
+      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
 
-      rerender(<CorrectionTypeModal
-        formType={formType}
-        intakeData={intakeData}
-        onSkip={() => null}
-        />);
-
-      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).toBeInTheDocument();
+      wrapper.setProps({ onSkip: () => null });
+      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
     });
 
     it('disables button when nothing selected', () => {
-      const { rerender } = render(<CorrectionTypeModal
-         formType={formType}
-         intakeData={intakeData}
-         />);
+      const wrapper = mount(<CorrectionTypeModal formType={formType} intakeData={intakeData} />);
 
-      let submitBtn = screen.getByRole('button', { name: /Next/i });
+      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 
-      expect(submitBtn).toBeDisabled();
+      expect(submitBtn.prop('disabled')).toBe(true);
 
-      rerender(<CorrectionTypeModal
-        formType={formType}
-        intakeData={intakeData}
-        correctionType={'control'}
-        />);
+      wrapper.setState({
+        correctionType: 'control'
+      });
 
-        submitBtn = screen.getByRole('button', { name: /Next/i });
-        const controlRadioButton = screen.getByRole('radio', { name: 'Control' });
-        userEvent.click(controlRadioButton);
-        expect(submitBtn).not.toBeDisabled();
+      // We need to find element again, or it won't appear updated
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
   });
 });

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { flushSync } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { css } from 'glamor';
@@ -391,10 +390,10 @@ const AssignToAttorneyWidgetContainer = (props) => {
       setSelectedAssigneeSecondary={(val) => dispatch(setSelectedAssigneeSecondary(val))}
       showErrorMessage={(val) => dispatch(showErrorMessage(val))}
       resetErrorMessages={(val) => dispatch(resetErrorMessages(val))}
-      showSuccessMessage={(val) => flushSync(() => dispatch(showSuccessMessage(val)))}
+      showSuccessMessage={(val) => dispatch(showSuccessMessage(val))}
       resetSuccessMessages={(val) => dispatch(resetSuccessMessages(val))}
       resetAssignees={() => dispatch(resetAssignees())}
-      saveFailure={() => flushSync(() => dispatch({ type: ACTIONS.SAVE_FAILURE }))}
+      saveFailure={() => dispatch({ type: ACTIONS.SAVE_FAILURE })}
       {...props}
     />
   );

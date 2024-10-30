@@ -14,8 +14,11 @@ const VirtualHearingLink = ({
   label
 }) => {
   return (
-    <Link href={link} target={newWindow ? '_blank' : '_self'}>
-      <strong data-testid="strong-element-test-id">{label}</strong>
+    <Link
+      href={link}
+      target={newWindow ? '_blank' : '_self'}
+    >
+      <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
         <ExternalLinkIcon color={COLORS.PRIMARY} />

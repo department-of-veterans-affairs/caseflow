@@ -83,11 +83,6 @@ export class PdfFile extends React.PureComponent {
    */
 
   getDocument = (requestOptions) => {
-    const { file } = this.props;
-
-    if (!file) {
-      return;
-    }
     const logId = uuid.v4();
 
     this.metricsIdentifier = uuid.v4();
@@ -720,11 +715,11 @@ const mapStateToProps = (state, props) => {
     searchText: getSearchTerm(state, props),
     ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
-    loadError: state.pdf?.documentErrors[props.file],
-    pdfDocument: state.pdf?.pdfDocuments[props.file],
-    windowingOverscan: state.pdfViewer?.windowingOverscan,
+    loadError: state.pdf.documentErrors[props.file],
+    pdfDocument: state.pdf.pdfDocuments[props.file],
+    windowingOverscan: state.pdfViewer.windowingOverscan,
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
-    renderStartTime: state.pdf?.renderStartTime
+    renderStartTime: state.pdf.renderStartTime
   };
 };
 

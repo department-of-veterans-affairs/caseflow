@@ -218,9 +218,9 @@ RSpec.feature "Convert hearing request type" do
 
       step "Confirm success message" do
         expect(page).to have_content(
-          "You have successfully converted #{appellant_name}'s hearing to virtual", wait: 30
+          "You have successfully converted #{appellant_name}'s hearing to virtual"
         )
-        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL, wait: 30)
+        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
 
         # We only display hearing types for AMA hearings
         if hearing.is_a?(Hearing)

@@ -33,7 +33,7 @@ export const sample1 = {
     ],
     claimant: '826209',
     veteranIsNotClaimant: false,
-    receiptDate: '2019-07-18',
+    receiptDate: '2019/07/18',
     legacyOptInApproved: false,
     legacyAppeals: [
       {

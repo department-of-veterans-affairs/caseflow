@@ -149,24 +149,10 @@ class LegacyDocket < Docket
   end
   # rubocop:enable Metrics/ParameterLists
 
-  def priority_appeals_affinity_date_count(in_window)
-    LegacyAppeal.repository.priority_appeals_affinity_date_count(in_window).size
-  end
-
-  def non_priority_appeals_affinity_date_count(_in_window)
-    "N/A for legacy appeals which are nonpriority and non-AOJ"
-  end
-
   # used for distribution_stats
-  # in_window refers to all cases with an appeal affinity still in their affinity window
-  # Out-of-window (in_window == false) refers to all other cases including cases that are
-  # out of their affinity window, tied_to, or genpop.
-  def affinity_date_count(in_window, priority)
-    if priority
-      priority_appeals_affinity_date_count(in_window)
-    else
-      non_priority_appeals_affinity_date_count(in_window)
-    end
+  # change parameters to in_window, priority once implemented
+  def affinity_date_count(*)
+    "not implemented"
   end
 
   private

@@ -1,8 +1,7 @@
 import React from 'react';
-import { logRoles, render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
+import { mount } from 'enzyme';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import TIMEZONES from 'constants/TIMEZONES';
@@ -16,105 +15,78 @@ describe('HearingTime', () => {
   jest.spyOn(console, 'error').mockReturnValue();
 
   test('Matches snapshot with default props when passed in', () => {
-    const {asFragment} = render(<HearingTime />);
+    const form = mount(<HearingTime hearingDayDate={hearingDayDate} />);
 
-    expect(asFragment()).toMatchSnapshot();
+    expect(form).toMatchSnapshot();
 
-    const checkedRadio = screen.getByRole('radio', { name: 'Other'})
+    const checkedRadio = form.find('input').find({ checked: true });
 
     // A single input is checked by default, and it's the "Other" radio
-    expect(checkedRadio).toBeInTheDocument();
-    expect(checkedRadio.value).toBe('Other');
-    expect(checkedRadio).toBeChecked();
+    expect(checkedRadio.exists()).toBe(true);
+    expect(checkedRadio.exists({ value: 'Other' })).toBe(true);
 
-    const dropdown = screen.getByRole('combobox');
+    const dropdown = form.find('Select');
 
     // The select field is not disabled by default (meaning the "Other")
     // radio is checked
-    expect(dropdown).toBeInTheDocument();
-    expect(dropdown).not.toBeDisabled();
+    expect(dropdown.exists()).toBe(true);
+    expect(dropdown.exists({ disabled: false })).toBe(true);
 
     // Expect the naming of forms to match expected
-    const radios = screen.getAllByRole('radio');
-    expect(radios).toHaveLength(3);
+    expect(form.exists({ name: 'hearingTime0' })).toBe(true);
+    expect(form.exists({ name: 'optionalHearingTime0' })).toBe(true);
   });
 
-  test('Matches snapshot when enableZone is true', async () => {
+  test('Matches snapshot when enableZone is true', () => {
     // Run the test
-    const {asFragment} = render(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
+    const hearingTime = mount(
+      <HearingTime
+        enableZone
+        value={HEARING_TIME_OPTIONS[0].value}
+        hearingDayDate={hearingDayDate}
+      />);
 
     // Assertions
-    expect(asFragment()).toMatchSnapshot();
-
-    const textToMatch = timezoneLabel;
-    const regexPattern = textToMatch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(regexPattern, 'i');
-
-    await waitFor(() => {
-      const elements = screen.getAllByText(regex);
-      expect(elements.length).toBeGreaterThan(0); // Ensure we have found at least one element
-    });
-
-    const founcElements = screen.getAllByText(regex);
-    founcElements.forEach(element => {
-      expect(element).toBeInTheDocument();
-    });
+    expect(hearingTime).toMatchSnapshot();
+    expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);
   });
 
   test('Matches snapshot when other time is not selected', () => {
-    const {asFragment} = render(
-    <HearingTime
-      enableZone
-      value="12:30 PM Eastern Time (US & Canada)"
-      hearingDayDate={hearingDayDate}
-    />);
+    const form = mount(
+      <HearingTime
+        enableZone
+        value="12:30 PM Eastern Time (US & Canada)"
+        hearingDayDate={hearingDayDate}
+      />);
 
-    expect(asFragment()).toMatchSnapshot();
+    expect(form).toMatchSnapshot();
 
-    const radios = screen.getAllByRole('radio');
-    const radioValues = radios.map(radio => radio.value);
-    expect(radios).toHaveLength(3);
-    expect(radioValues).toContain('12:30 PM Eastern Time (US & Canada)');
-    expect(radioValues).toContain('8:30 AM Eastern Time (US & Canada)');
-    expect(radioValues).toContain('Other');
-
-    const checkedRadio = screen.getByRole('radio', { name: '12:30 PM Eastern Time (US & Canada)'});
-    expect(checkedRadio).toBeChecked();
-
+    expect(form.find('input').exists({ checked: true, value: '12:30 PM Eastern Time (US & Canada)' })).toBe(
+      true
+    );
   });
 
-  test('Matches snapshot when other time is selected', async () => {
+  test('Matches snapshot when other time is selected', () => {
     const selectedTime = '1:45 PM Eastern Time (US & Canada)';
     const option = HEARING_TIME_OPTIONS.find(({ value }) => value === selectedTime);
 
-    const {asFragment} = render(<HearingTime value={selectedTime} />);
+    const form = mount(<HearingTime value={selectedTime} hearingDayDate={hearingDayDate} />);
 
-    expect(asFragment()).toMatchSnapshot();
+    expect(form).toMatchSnapshot();
 
     // Expect "Other" radio to be checked
-    const checkedRadio = screen.getByRole('radio', { name: 'Other'});
-    expect(checkedRadio).toBeChecked();
+    expect(form.find('input').exists({ checked: true, value: 'Other' })).toBe(true);
 
     // Expect dropdown to be populated with correct time
-    const dropdown = screen.getByRole('combobox');
-    expect(dropdown).toBeInTheDocument();
-
-    userEvent.type(dropdown, ' ');
-
-    // Wait for the options to appear and get them
-    const listbox = await screen.findByRole('listbox');
-    const options = within(listbox).getAllByRole('option');
-    const isPresent = options.some(opt => opt.textContent === option.label);
-    expect(isPresent).toBe(true);
+    expect(form.exists('SearchableDropdown')).toBe(true);
+    expect(form.find('Select').exists({ value: option })).toBe(true);
   });
 
   test('Matches snapshot when readonly prop is set', () => {
-    const {asFragment} = render(<HearingTime readOnly={true}/>);
+    const form = mount(<HearingTime hearingDayDate={hearingDayDate} />);
 
-    expect(asFragment()).toMatchSnapshot();
+    expect(form).toMatchSnapshot();
 
-    // Check if all select elements are disabled
-    const select = screen.queryByRole('combobox');
-    expect(select).toBeNull();
+    expect(form.find('select').every({ disabled: true })).toBe(true);
   });
 });

@@ -10,9 +10,7 @@ Object {
           href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
           target="_blank"
         >
-          <strong
-            data-testid="strong-element-test-id"
-          >
+          <strong>
             Virtual Hearing Link
           </strong>
           <span
@@ -62,9 +60,7 @@ Object {
         href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
         target="_blank"
       >
-        <strong
-          data-testid="strong-element-test-id"
-        >
+        <strong>
           Virtual Hearing Link
         </strong>
         <span
@@ -171,9 +167,7 @@ Object {
           href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host"
           target="_blank"
         >
-          <strong
-            data-testid="strong-element-test-id"
-          >
+          <strong>
             VLJ Virtual Hearing Link
           </strong>
           <span
@@ -223,9 +217,7 @@ Object {
         href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host"
         target="_blank"
       >
-        <strong
-          data-testid="strong-element-test-id"
-        >
+        <strong>
           VLJ Virtual Hearing Link
         </strong>
         <span
@@ -329,9 +321,7 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
       href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
       target="_blank"
     >
-      <strong
-        data-testid="strong-element-test-id"
-      >
+      <strong>
         Virtual Hearing Link
       </strong>
       <span

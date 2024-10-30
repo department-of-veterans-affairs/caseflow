@@ -21,12 +21,11 @@ export const MotionToVacateFlowContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
-  // const steps = useMemo(() => getSteps(appeal), [appeal.type, appeal.vacateType]);
-  const steps = useMemo(() => getSteps(appeal), [appeal?.type, appeal?.vacateType]);
+  const steps = useMemo(() => getSteps(appeal), [appeal.type, appeal.vacateType]);
 
   const initialState = {
     // cloning the individual issues
-    decisionIssues: appeal?.decisionIssues.map((issue) => ({ ...issue })),
+    decisionIssues: appeal.decisionIssues.map((issue) => ({ ...issue })),
     steps,
     getNextUrl: (current) => (getNextStep(current, steps) ? `${basePath}/${getNextStep(current, steps)}` : null),
     getPrevUrl: (current) => (getPrevStep(current, steps) ? `${basePath}/${getPrevStep(current, steps)}` : null)

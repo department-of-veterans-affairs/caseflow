@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, screen, fireEvent} from '@testing-library/react';
+import { render, waitFor} from '@testing-library/react';
 import BatchSize from 'app/caseDistribution/components/BatchSize';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -7,6 +7,7 @@ import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import { mockBatchLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
+import { mount } from 'enzyme';
 
 describe('Batch Size Lever', () => {
 
@@ -62,13 +63,14 @@ describe('Batch Size Lever', () => {
     store.dispatch(loadLevers(leversWithTestingBatchLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    render(
+    const wrapper = mount(
       <Provider store={store}>
         <BatchSize />
       </Provider>
     );
 
-      expect(screen.getByRole('textbox', { name: /Test Title Lever\*/i })).toBeInTheDocument();
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('Test Title Lever*');
   });
 
   it('sets input to invalid for error and sets input to valid to remove error', () => {
@@ -80,27 +82,30 @@ describe('Batch Size Lever', () => {
     store.dispatch(loadLevers(leversWithTestingBatchLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    render(
+    let wrapper = mount(
       <Provider store={store}>
         <BatchSize />
       </Provider>
     );
 
-    let inputField = screen.getByRole('textbox', { name: /Test Title Lever\*/i });
+    let inputField = wrapper.find('input[name="test-lever"]');
 
     // Calls simulate change to set value outside of min/max range
-    fireEvent.change(inputField, eventForError);
+    waitFor(() => inputField.simulate('change', eventForError));
 
-    waitFor(() => expect(inputField.value).toBe(eventForError.target.value));
-    waitFor(() =>expect(screen.getByText(new RegExp(`Please enter a value greater than or equal to ${lever.min_value}`))).
-    toBeInTheDocument());
+    wrapper.update();
 
-    // // Calls simulate change to set value within min/max range
-    fireEvent.change(inputField, eventForValid);
+    waitFor(() => expect(inputField.prop('value').toBe(eventForError.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').
+      toBe(`Please enter a value greater than or equal to ${ lever.min_value }`)));
 
-    waitFor(() => expect(inputField.value).toBe(eventForValid.target.value));
-    waitFor(() =>expect(screen.getByText(new RegExp(`Please enter a value greater than or equal to ${lever.min_value}`))).
-    not.toBeInTheDocument());
+    // Calls simulate change to set value within min/max range
+    waitFor(() => inputField.simulate('change', eventForValid));
+
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 
   it('dynamically renders * in the lever label', () => {
@@ -111,12 +116,12 @@ describe('Batch Size Lever', () => {
     store.dispatch(loadLevers(leversWithTestingBatchLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    render(
+    let wrapper = mount(
       <Provider store={store}>
         <BatchSize />
       </Provider>
     );
 
-    expect(screen.getByText(lever.title + '*')).toBeInTheDocument();
+    expect(wrapper.text()).toContain(lever.title + '*');
   });
 });

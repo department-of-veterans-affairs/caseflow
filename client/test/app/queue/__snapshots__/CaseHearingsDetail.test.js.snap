@@ -13,6 +13,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
         data-css-l6c9n4=""
       >
         Unscheduled hearing
+        
         :
       </span>
       <ul
@@ -101,6 +102,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
       <li
         data-css-dxjmvv=""
       >
+        
          
         <div
           data-css-ix5cpv=""
@@ -109,6 +111,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
             data-css-l6c9n4=""
           >
             Hearing
+            
             :
           </span>
           <ul
@@ -143,6 +146,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
             <li
               data-css-1yjr6ry=""
             >
+              
                
               <a
                 href="/hearings/worksheet/print?keep_open=true&hearing_ids=29e88a5d-8f00-47ea-b178-95a01d912b96"
@@ -152,7 +156,6 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               </a>
               <span
                 data-css-gilpf6=""
-                data-testid="tooltip-testid"
               >
                 <div
                   class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -251,6 +254,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                 :
               </span>
                
+              
             </li>
             <li
               data-css-1yjr6ry=""
@@ -271,6 +275,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
             <li
               data-css-1yjr6ry=""
             >
+              
                
               <a
                 href="/hearings/29e88a5d-8f00-47ea-b178-95a01d912b96/details"

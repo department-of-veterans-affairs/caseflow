@@ -17,7 +17,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
-import { flushSync } from 'react-dom';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -193,10 +192,8 @@ export default class OrganizationUsers extends React.PureComponent {
     return ApiUtil.get(`/users?exclude_org=${this.props.organization}&css_id=${inputValue}`).then((response) => {
       const users = response.body.users.data;
 
-      flushSync(() => {
-        this.setState({
-          remainingUsers: users
-        });
+      this.setState({
+        remainingUsers: users
       });
 
       return this.dropdownOptions();

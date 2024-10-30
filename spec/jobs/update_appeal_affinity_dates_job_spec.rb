@@ -21,7 +21,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#latest_receipt_dates" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution_requested) { create(:distribution, :completed, judge: judge) }
@@ -197,23 +197,8 @@ describe UpdateAppealAffinityDatesJob do
     end
   end
 
-  context "#process_legacy_appeals_which_need_affinity_updates" do
-    let(:hashes_array) do
-      [{ docket: "hearing", priority: true, receipt_date: Time.zone.now },
-       { docket: "direct_review", priority: true, receipt_date: Time.zone.now },
-       { docket: "legacy", priority: true, receipt_date: Time.zone.now }]
-    end
-
-    subject { described_class.new.send(:process_legacy_appeals_which_need_affinity_updates, hashes_array) }
-
-    it "processes only legacy appeals" do
-      expect_any_instance_of(described_class).to receive(:create_or_update_appeal_affinities).exactly(1).times
-      subject
-    end
-  end
-
   context "#create_or_update_appeal_affinties" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
@@ -243,7 +228,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#legacy_appeals_with_no_appeal_affinities" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
@@ -295,7 +280,7 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     context "full run" do
-      before { Seeds::CaseDistributionLevers.new.seed! }
+      before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
       let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
       let!(:previous_distribution) { create(:distribution, :completed, :this_month, judge: judge) }

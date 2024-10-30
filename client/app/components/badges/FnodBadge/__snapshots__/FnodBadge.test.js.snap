@@ -1,136 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FnodBadge renders correctly 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-fnod-badge"
-  >
-    <span
-      aria-describedby="badge-fnod-1234"
-      aria-label="fnod status"
-      currentitem="false"
-      data-css-goms0=""
-      data-event="focus mouseenter"
-      data-event-off="mouseleave keydown"
-      data-for="badge-fnod-1234"
-      data-tip="true"
-      tabindex="0"
-    >
-      FNOD
-    </span>
-    <span
-      data-css-om26u0=""
-      data-testid="tooltip-testid"
-    >
-      <div
-        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-        data-id="tooltip"
-        id="badge-fnod-1234"
-        role="tooltip"
-      >
-        <style>
-          
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
     }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
+  }
+>
+  <FnodBadge
+    appeal={
+      Object {
+        "veteranAppellantDeceased": true,
+        "veteranDateOfDeath": "2019-03-17",
+      }
     }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-        </style>
-        <div>
-          <strong>
-            Date of Death Reported
-          </strong>
-          <ul
-            data-css-onwxdl=""
-          >
-            <li>
-              <strong>
-                Source:
-              </strong>
-               VBMS
-            </li>
-            <li>
-              <strong>
-                Date of Death:
-              </strong>
-               
-              <span>
-                03/17/19
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </span>
-  </div>
-</DocumentFragment>
+  />
+</Provider>
 `;

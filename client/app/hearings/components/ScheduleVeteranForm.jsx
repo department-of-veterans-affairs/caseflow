@@ -113,7 +113,7 @@ export const ScheduleVeteranForm = ({
   };
 
   return (
-    <div className="usa-width-one-whole schedule-veteran-details" data-testid="schedule-veteran-form" >
+    <div className="usa-width-one-whole schedule-veteran-details">
       <div className="usa-width-one-fourth schedule-veteran-appeal-info-container">
         <AppealInformation appeal={appeal} appellantTitle={appellantTitle} hearing={hearing} />
       </div>

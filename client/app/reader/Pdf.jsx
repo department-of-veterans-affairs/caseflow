@@ -116,8 +116,8 @@ const mapStateToProps = (state, props) => {
   return {
     ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
-    sidebarHidden: state.pdfViewer?.hidePdfSidebar,
-    isPlacingAnnotation: state.annotationLayer?.isPlacingAnnotation
+    sidebarHidden: state.pdfViewer.hidePdfSidebar,
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
   };
 };
 

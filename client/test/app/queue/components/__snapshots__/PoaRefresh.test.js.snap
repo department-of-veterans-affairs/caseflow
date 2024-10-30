@@ -1,39 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PoaRefresh feature toggles poa_last_synced_at hides PoaRefresh text when not toggled 1`] = `<DocumentFragment />`;
+exports[`PoaRefresh feature toggles poa_last_synced_at hides PoaRefresh text when not toggled 1`] = `
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
+`;
 
 exports[`PoaRefresh feature toggles poa_last_synced_at shows PoaRefresh text when toggled 1`] = `
-<DocumentFragment>
-  <div
-    data-css-1fubgbz=""
-  >
-    <em>
-      To retrieve the latest POA information, please click the "Refresh POA" button.
-    </em>
-    <div
-      data-css-15f53z=""
-    />
-    <div
-      data-css-1ur0233=""
-      data-css-l6c9n4=""
-    >
-      <em>
-        POA last refreshed on 06/25/2023
-      </em>
-      <div
-        data-css-dk279f=""
-      >
-        <span>
-          <button
-            class="usa-button-secondary cf-push-right usa-button"
-            id="button-Refresh-Poa"
-            type="button"
-          >
-            Refresh POA
-          </button>
-        </span>
-      </div>
-    </div>
-  </div>
-</DocumentFragment>
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
 `;

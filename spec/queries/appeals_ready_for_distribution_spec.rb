@@ -18,8 +18,6 @@ describe AppealsReadyForDistribution do
       create_realistic_cavc_case(Constants.AMA_DOCKETS.evidence_submission)
     end
     let!(:ama_cavc_hearing_appeal) { create_realistic_cavc_case(Constants.AMA_DOCKETS.hearing) }
-
-    # below legacy cases are selected by VACOLS::CaseDocket
     let!(:not_ready_legacy_original_appeal) do
       create(:case_with_form_9, :type_original, :travel_board_hearing_requested)
     end
@@ -38,17 +36,9 @@ describe AppealsReadyForDistribution do
       VACOLS::Case.find_by(bfcorlid: original.bfcorlid, bfmpro: "ACT")
     end
 
-    # below legacy cases are selected by VACOLS::AojCaseDocket
-    let!(:legacy_aoj_appeal_no_hearing) do
-      create(:legacy_aoj_appeal, judge: original_deciding_judge.vacols_staff, tied_to: false)
-    end
-    let!(:legacy_aoj_appeal_with_hearing) do
-      create(:legacy_aoj_appeal, judge: original_deciding_judge.vacols_staff)
-    end
-
     it "selects all ready to distribute appeals for all dockets and generates the CSV" do
       expect { described_class.process }.not_to raise_error
-      expect(described_class.ready_appeals.size).to eq 12
+      expect(described_class.ready_appeals.size).to eq 10
     end
   end
 

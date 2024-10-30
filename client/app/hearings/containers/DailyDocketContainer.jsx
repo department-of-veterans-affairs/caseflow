@@ -1,5 +1,4 @@
 import React from 'react';
-import { flushSync } from 'react-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -150,7 +149,7 @@ export class DailyDocketContainer extends React.Component {
       then((response) => {
         const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
-        flushSync(() => this.props.onReceiveSavedHearing(hearingResp));
+        this.props.onReceiveSavedHearing(hearingResp);
 
         return response;
       }, (err) => {

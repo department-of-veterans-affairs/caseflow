@@ -88,7 +88,7 @@ export const DetailsHeader = (
 
   return (
     <React.Fragment>
-      <div {...headerContainerStyling} data-testid="details-header">
+      <div {...headerContainerStyling}>
         <h1 className="cf-margin-bottom-0" {...headerStyling}>
           {`${veteranFirstName} ${veteranLastName}'s Hearing Details`}
         </h1>

@@ -79,7 +79,7 @@ export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 1,
+      currentPage: 1
     };
   }
 
@@ -224,12 +224,7 @@ export class PdfUI extends React.Component {
         right: '380px' }
     });
 
-    return <div
-      className={pdfUiClass}
-      {...pdfWrapper}
-      data-testid="pdf-ui"
-      cp-test={this.state.currentPage}
-      ftsz-test={this.state.fitToScreenZoom}>
+    return <div className={pdfUiClass} {...pdfWrapper}>
       <div className="cf-pdf-header cf-pdf-toolbar">
         <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
           { this.props.showClaimsFolderNavigation && <Link

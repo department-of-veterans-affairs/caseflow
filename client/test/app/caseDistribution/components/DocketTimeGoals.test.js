@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, screen, fireEvent } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import DocketTimeGoals from 'app/caseDistribution/components/DocketTimeGoals';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -10,6 +10,7 @@ import {
   mockDocketTimeGoalsLevers
 } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+import { mount } from 'enzyme';
 import { sectionTitles } from '../../../../app/caseDistribution/constants';
 
 describe('Docket Time Goals Lever', () => {
@@ -47,30 +48,28 @@ describe('Docket Time Goals Lever', () => {
       toHaveTextContent(testTimeGoalLever.is_toggle_active ? 'On' : 'Off');
   });
 
-  it('renders Docket Time Goals Levers for Admin Users', async () => {
+  it('renders Docket Time Goals Levers for Admin Users', () => {
     const store = getStore();
 
     store.dispatch(loadLevers(levers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    const {container} = render(
+    const wrapper = mount(
       <Provider store={store}>
         <DocketTimeGoals />
       </Provider>);
 
-    const leverTimeGoal = container.querySelector('input[name="ama_hearing_docket_time_goals"]');
-    const leverDistPrior = container.querySelector('input[name="toggle-ama_hearing_start_distribution_prior_to_goals"]');
+    let leverTimeGoal = wrapper.find('input[name="ama_hearing_docket_time_goals"]');
+    let leverDistPrior = wrapper.find('input[name="ama_hearing_start_distribution_prior_to_goals"]');
 
-    // Use waitFor for asynchronous expectations if necessary
-    await waitFor(() => {
-      expect(leverTimeGoal).toHaveValue(testTimeGoalLever.value.toString());
-      expect(leverDistPrior).toHaveValue(testDistPriorLever.value.toString());
-    });
+    waitFor(() => expect(leverTimeGoal).toHaveTextContent(testTimeGoalLever.value));
+    waitFor(() => expect(leverDistPrior).toHaveTextContent(testDistPriorLever.value));
 
-    expect(container.querySelector('div[aria-label="AMA Hearings Docket Time Goals"]')).toBeInTheDocument();
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('AMA Hearings Docket Time Goals');
   });
 
-  it('sets input of Time Goal Lever to invalid for error and sets input to valid to remove error', async () => {
+  it('sets input of Time Goal Lever to invalid for error and sets input to valid to remove error', () => {
     const eventForError = { target: { value: 1234 } };
     const eventForValid = { target: { value: 30 } };
 
@@ -79,25 +78,30 @@ describe('Docket Time Goals Lever', () => {
     store.dispatch(loadLevers(levers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    const { container } = render(
+    let wrapper = mount(
       <Provider store={store}>
         <DocketTimeGoals />
       </Provider>
     );
 
-    const leverTimeGoal = container.querySelector('input[name="ama_hearing_docket_time_goals"]');
+    let inputField = wrapper.find('input[name="ama_hearings_docket_time_goals"]');
 
     // Calls simulate change to set value outside of min/max range
-    await waitFor(() => fireEvent.change(leverTimeGoal, eventForError));
+    waitFor(() => inputField.simulate('change', eventForError));
 
-    expect(screen.getByDisplayValue(eventForError.target.value.toString())).toBeInTheDocument();
-    expect(screen.getByText('Please enter a value from 0 to 888')).toBeInTheDocument();
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForError.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').
+      toBe('Please enter a value from 0 to 999')));
 
     // Calls simulate change to set value within min/max range
-    await waitFor(() => fireEvent.change(leverTimeGoal, eventForValid));
+    waitFor(() => inputField.simulate('change', eventForValid));
 
-    expect(screen.getByDisplayValue(eventForValid.target.value.toString())).toBeInTheDocument();
-    expect(screen.queryByText('Please enter a value from 0 to 888')).not.toBeInTheDocument();
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 
   it('dynamically renders * in the lever label', () => {
@@ -110,11 +114,11 @@ describe('Docket Time Goals Lever', () => {
     store.dispatch(loadLevers(levers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    render(
+    const wrapper = mount(
       <Provider store={store}>
         <DocketTimeGoals />
       </Provider>);
 
-      expect(screen.getByText(`${testTitle }*`)).toBeInTheDocument();
+    expect(wrapper.text()).toContain(`${testTitle }*`);
   });
 });
