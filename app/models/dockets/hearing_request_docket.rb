@@ -46,8 +46,6 @@ class HearingRequestDocket < Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "only_genpop", limit: 1, style: "push")
-    # setting genpop to "only_genpop" behind feature tog gle as this module only processes AMA.
-    genpop = "not_genpop"
     query_args = { priority: priority, genpop: genpop, ready: true, judge: distribution.judge }
     base_relation = ready_priority_nonpriority_appeals(query_args).limit(limit)
 
