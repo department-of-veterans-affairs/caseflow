@@ -14,7 +14,7 @@ describe Test::LoadTestsController, :postgres, type: :controller do
   context "Cannot access load testing page outside of prodtest" do
     it "index page" do
       get :index
-      expect(response).to redirect_to("http://test.host/unauthorized")
+      expect(response).to redirect_to("http://test.host/404")
       expect(response.status).to eq 302
     end
   end
