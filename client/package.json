@@ -180,6 +180,7 @@
     "prettier-eslint": "^9.0.1",
     "react-refresh": "^0.9.0",
     "react-select-event": "^4.1.4",
+    "sass": "^1.80.5",
     "sinon": "^2.1.0",
     "weak-napi": "^2.0.2",
     "webpack-bundle-analyzer": "^4.4.2",

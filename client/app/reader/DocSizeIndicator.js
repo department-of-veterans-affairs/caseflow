@@ -8,7 +8,10 @@ const DocSizeIndicator = (props) => {
   const downloadTime = props.docSize / props.browserSpeedInBytes;
 
   return (
-    <span>{filesize(props.docSize, { round: 1 })} {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}</span>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {filesize(props.docSize, { round: 1 })}&nbsp;
+      {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
+    </div>
   );
 };
 
