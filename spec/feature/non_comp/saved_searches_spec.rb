@@ -22,4 +22,12 @@ feature "Saved Searches", :postgres do
       expect(current_url).not_to include("searches")
     end
   end
+
+  it "When VHA admin user clicks on All Saved Searches should see all saved searches" do
+
+  end
+
+  it "When VHA admin user clicks on my Saved Searches should see their saved searches" do
+
+  end
 end

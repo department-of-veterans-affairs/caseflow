@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :saved_search do
-    association :user
+    association :user, :vha_admin_user
     name { Faker::Lorem.sentence(word_count: 3) }
     description { Faker::Lorem.paragraph }
     saved_search do

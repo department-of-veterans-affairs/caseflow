@@ -26,22 +26,22 @@ export const SearchTable = ({ eventRows }) => {
     },
     { name: 'searchName',
       header: 'Search Name',
-      getSortValue: (row) => row.name,
-      valueFunction: (row) => row.name,
+      getSortValue: (row) => row.attributes.name,
+      valueFunction: (row) => row.attributes.name,
     },
     { name: 'savedDate',
       header: 'Saved Date',
-      getSortValue: (row) => moment(row.createdAt).format('MM/DD/YYYY'),
-      valueFunction: (row) => moment(row.createdAt).format('MM/DD/YYYY'),
+      getSortValue: (row) => moment(row.attributes.createdAt).format('MM/DD/YYYY'),
+      valueFunction: (row) => moment(row.attributes.createdAt).format('MM/DD/YYYY'),
     },
     { name: 'admin',
       header: 'Admin',
-      getSortValue: (row) => `${row.userFullName} (${row.userCssId})`,
-      valueFunction: (row) => `${row.userFullName} (${row.userCssId})`,
+      getSortValue: (row) => `${row.attributes.user.fullName} (${row.attributes.user.cssId})`,
+      valueFunction: (row) => `${row.attributes.user.fullName} (${row.attributes.user.cssId})`,
     },
     { name: 'description',
       header: 'Description',
-      valueFunction: (row) => row.description
+      valueFunction: (row) => row.attributes.description
     }
   ];
 
