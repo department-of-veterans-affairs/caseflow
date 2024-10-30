@@ -613,6 +613,7 @@ const CorrespondenceDetails = (props) => {
           handleClose={handleCloseModal}
           correspondence={props.correspondence}
           setIsTasksUnrelatedSectionExpanded= {setIsTasksUnrelatedSectionExpanded}
+          autoTexts= {props.autoTexts}
         />
       </div>
       <div className="toggleButton-plus-or-minus">
@@ -1085,6 +1086,7 @@ CorrespondenceDetails.propTypes = {
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
   correspondence_uuid: PropTypes.string,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   appealsFromStore: PropTypes.object,
   deleteAppeal: PropTypes.func
 };
