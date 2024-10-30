@@ -2540,7 +2540,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_203026) do
           END AS appeal_stream,
       f_vacols_folder.tinum AS docket_number,
           CASE
-              WHEN (((f_vacols_corres.sspare2 IS NULL) AND (f_vacols_corres.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
+              WHEN (((f_vacols_corres.sspare2 IS NULL) AND (f_vacols_corres.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR ((f_vacols_corres.sadvage)::text = 'Y'::text) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
               WHEN ((f_vacols_assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
               ELSE false
           END AS aod_indicator,

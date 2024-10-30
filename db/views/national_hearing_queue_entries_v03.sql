@@ -66,6 +66,7 @@ SELECT
       f_vacols_corres.sspare2 IS NULL
         AND f_vacols_corres.sdob <= (CURRENT_DATE - INTERVAL '75 years')
     )
+      OR f_vacols_corres.sadvage = 'Y'
       -- This could be either the Veteran or a non-Veteran claimant
       OR people.date_of_birth <= (CURRENT_DATE - INTERVAL '75 years') THEN TRUE
     WHEN f_vacols_assign.tskactcd IN ('B', 'B1', 'B2') THEN TRUE
