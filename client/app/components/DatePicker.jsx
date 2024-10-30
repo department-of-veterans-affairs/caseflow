@@ -226,7 +226,7 @@ class DatePicker extends React.PureComponent {
       return false;
     }
 
-    return Boolean(Date.parse(date) > new Date());
+    return Boolean(Date.parse(date) > Date.now());
   }
 
   buttonDisabled = () => {
