@@ -8,12 +8,13 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { updateCorrespondenceInfo,
+  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
-import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { onReceiveTasks, onReceiveAppealDetails, deleteAppeal } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -27,12 +28,13 @@ import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
+import Modal from 'app/components/Modal';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
+  const expandedLinkedAppeals = props.expandedLinkedAppeals;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
@@ -61,7 +63,6 @@ const CorrespondenceDetails = (props) => {
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -192,7 +193,45 @@ const CorrespondenceDetails = (props) => {
       const patchResponse = await ApiUtil.patch(
       `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
       { data: postData }
-      );
+      ).
+        then((resp) => {
+          const appealIds = resp.body.related_appeals;
+          const correspondenceAppeals = resp.body.correspondence_appeals;
+
+          if (Object.keys(props.appealsFromStore).length < 1) {
+            return;
+          }
+
+          // Removes all entries in the queue.appeals redux store
+          Object.entries(props.appealsFromStore).forEach(
+            ([, value]) => dispatch(deleteAppeal((value.externalId)))
+          );
+
+          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          const corAppealTasks = [];
+
+          correspondenceAppeals.map((corAppeal) => {
+            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+            corAppeal?.taskAddedData?.data.map((taskData) => {
+              corAppealTasks.push(taskData);
+            });
+          });
+
+          // load appeal tasks into the store
+          const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+          dispatch(onReceiveTasks({
+            amaTasks: preparedTasks
+          }));
+
+          sortAppeals(appealIds);
+
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
@@ -274,6 +313,10 @@ const CorrespondenceDetails = (props) => {
     return returnSort;
   });
 
+  const onCancel = () => {
+    setShowModal(false);
+  };
+
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
 
@@ -333,6 +376,35 @@ const CorrespondenceDetails = (props) => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
 
+  const createLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals;
+    const cor = correspondenceInfo;
+
+    corAppeals.push(selectedAppeal);
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
+  };
+
+  const unlinkLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals.filter((appeal) => appeal.id !== selectedAppeal.id);
+    const cor = correspondenceInfo;
+
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    if (expandedLinkedAppeals.find((linkedAppealUuid) => linkedAppealUuid === selectedAppealUuid)) {
+      dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
+    }
+  };
+
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
       <div className="all-correspondences">
@@ -369,6 +441,9 @@ const CorrespondenceDetails = (props) => {
         setUnSelectedAppeals(filtedAppeals);
       }
       setSelectedAppeals([...selectedAppeals, appealId]);
+
+      // Create Linked Appeal in redux store
+      createLinkedAppeal(appealId);
     } else {
       if (selectedAppeals?.includes(appealId)) {
         const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
@@ -376,6 +451,8 @@ const CorrespondenceDetails = (props) => {
         setSelectedAppeals(filtedAppeals);
       }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+      // Unlink Linked Appeal in redux store
+      unlinkLinkedAppeal(appealId);
     }
   };
 
@@ -385,7 +462,7 @@ const CorrespondenceDetails = (props) => {
         return false;
       }
 
-      return initialSelectedAppeals.every((appeal) => selectedAppeals.includes(appeal));
+      return initialSelectedAppeals?.every((appeal) => selectedAppeals.includes(appeal));
     };
 
     setDisableSubmitButton(isButtonDisabled());
@@ -406,12 +483,13 @@ const CorrespondenceDetails = (props) => {
     }
 
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-      corAppeal.taskAddedData.data.map((taskData) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+      corAppeal?.taskAddedData?.data.map((taskData) => {
         corAppealTasks.push(taskData);
       });
-
     });
+
     // // load appeal tasks into the store
     const preparedTasks = prepareTasksForStore(corAppealTasks);
 
@@ -489,23 +567,27 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
-          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-            <CorrespondenceAppealTasks
-              key={appealTaskKey + taskAdded.id}
-              task_added={taskAdded}
-              correspondence={props.correspondence}
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              appeal={taskAdded.appeal.data.attributes}
-              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
-              correspondence_uuid={props.correspondence_uuid}
-            />
-          )
+          {(props.correspondenceInfo.correspondenceAppeals) && (
+            <div>
+              {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
+                <CorrespondenceAppealTasks
+                  key={appealTaskKey + taskAdded.id}
+                  task_added={taskAdded}
+                  correspondence={props.correspondence}
+                  organizations={props.organizations}
+                  userCssId={props.userCssId}
+                  appeal={taskAdded.appeal.data.attributes}
+                  waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                  correspondence_uuid={props.correspondence_uuid}
+                />
+              ))}
+            </div>
           )}
         </div>
       </React.Fragment>
     );
   };
+
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
@@ -812,15 +894,18 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const handleModalClose = () => {
-    if (isReturnToQueue) {
-      setShowModal(!showModal);
-    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
-      window.location.href = '/queue/correspondence/team';
-    } else if (props.isInboundOpsUser) {
-      window.location.href = '/queue/correspondence/team';
+    if (disableSubmitButton) {
+      const redirectPath = props.isInboundOpsSuperuser || props.isInboundOpsSupervisor || props.isInboundOpsUser ?
+        '/queue/correspondence/team' : '/queue';
+
+      window.location.href = redirectPath;
     } else {
-      window.location.href = '/queue';
+      setShowModal(!showModal);
     }
+  };
+
+  const redirectToQueue = () => {
+    window.location.href = '/queue/correspondence/team';
   };
 
   const saveChanges = () => {
@@ -844,16 +929,41 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
           const appealIds = resp.body.related_appeals;
+          const correspondenceAppeals = resp.body.correspondence_appeals;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
-          sortAppeals(appealIds);
           setAppealTableKey((key) => key + 1);
           props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
           setDisableSubmitButton(true);
+
+          // Removes all entries in the queue.appeals redux store
+          Object.entries(props.appealsFromStore).forEach(
+            ([, value]) => dispatch(deleteAppeal((value.externalId)))
+          );
+
+          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          const corAppealTasks = [];
+
+          correspondenceAppeals.map((corAppeal) => {
+            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+            corAppeal?.taskAddedData?.data.map((taskData) => {
+              corAppealTasks.push(taskData);
+            });
+          });
+
+          // load appeal tasks into the store
+          const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+          dispatch(onReceiveTasks({
+            amaTasks: preparedTasks
+          }));
+
+          sortAppeals(appealIds);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -910,6 +1020,30 @@ const CorrespondenceDetails = (props) => {
         />
       </AppSegment>
       <div className="margin-top-for-add-task-view">
+        { showModal &&
+          <Modal
+            title="Return to queue"
+            name="Show issue"
+            id="submit-correspondence-intake-modal"
+            closeHandler={onCancel}
+            buttons = {
+              [
+                {
+                  classNames: ['cf-modal-link', 'cf-btn-link'],
+                  name: 'Cancel',
+                  onClick: handleModalClose
+                },
+                {
+                  classNames: ['usa-button', 'usa-button-primary'],
+                  name: 'Confirm',
+                  onClick: redirectToQueue
+                }
+              ]
+            }
+          >
+            All unsaved changes made to this mail package record will be lost upon returning to your queue.
+          </Modal>
+        }
         <div className="cf-push-left">
           <Button
             name="Return to queue"
@@ -943,6 +1077,7 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
+  expandedLinkedAppeals: PropTypes.array,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
@@ -952,18 +1087,22 @@ CorrespondenceDetails.propTypes = {
   correspondenceTypes: PropTypes.array,
   correspondence_uuid: PropTypes.string,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  appealsFromStore: PropTypes.object
+  appealsFromStore: PropTypes.object,
+  deleteAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo
+    updateCorrespondenceInfo,
+    deleteAppeal,
+    updateExpandedLinkedAppeals
   }, dispatch)
 );
 
