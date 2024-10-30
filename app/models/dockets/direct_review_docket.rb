@@ -13,7 +13,7 @@ class DirectReviewDocket < Docket
                      .where("target_decision_date <= ?",
                             ama_direct_review_start_distribution_prior_to_goals.days.from_now)
                  else
-                   appeals(priority: false, ready: true,  not_affinity: true)
+                   appeals(priority: false, ready: true, not_affinity: true)
                  end
 
     Appeal.where(id: appeal_ids).count

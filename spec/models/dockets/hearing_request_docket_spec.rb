@@ -102,6 +102,8 @@ describe HearingRequestDocket, :postgres do
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
 
+        after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+
         subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
 
         it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
@@ -128,6 +130,8 @@ describe HearingRequestDocket, :postgres do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
+
+        after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
         subject do
           HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
@@ -169,6 +173,7 @@ describe HearingRequestDocket, :postgres do
       end
 
       before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+      after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
       subject { described_class.new }
 
