@@ -32,9 +32,6 @@ const AddTaskModalCorrespondenceDetails = ({
   // Additional content generated from selected auto-texts on the second page
   const [additionalContent, setAdditionalContent] = useState('');
   const [selectedTaskType, setSelectedTaskType] = useState(null);
-
-  // Controls Submit button state based on task fields
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   // Tracks selected checkboxes for auto-text selections on the second page
@@ -55,10 +52,8 @@ const AddTaskModalCorrespondenceDetails = ({
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [unrelatedTaskList]);
 
-  // Updates the "Submit" button state based on user input and loading state
-  useEffect(() => {
-    setIsSubmitDisabled(!(taskContent || additionalContent) || !selectedTaskType || isLoading);
-  }, [taskContent, additionalContent, selectedTaskType, isLoading]);
+  // Submit disabled if task type is not selected, the page is loading, or task content and additional are not filled out
+  const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
 
   // Handle task type selection, stores the selected task type
   const updateTaskType = (newType) => setSelectedTaskType(newType.value);
