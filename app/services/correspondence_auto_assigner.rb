@@ -84,7 +84,8 @@ class CorrespondenceAutoAssigner
     ReviewPackageTask
       .where(status: Constants.TASK_STATUSES.unassigned)
       .preload(:appeal, :assigned_by, :assigned_to, :parent)
-      .includes(correspondence: :veteran)
+      .includes(:correspondence, correspondence: :veteran)
+      .references(:correspondence, correspondence: :veteran)
       .order(va_date_of_receipt: :asc)
   end
 
