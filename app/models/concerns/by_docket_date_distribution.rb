@@ -52,10 +52,7 @@ module ByDocketDateDistribution
     @nonpriority_iterations += 1
     num_oldest_nonpriority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
-        args = { limit: number_of_appeals_to_distribute, priority: false, style: style }
-        args.merge!(genpop: "nont_genpop") if docket.to_s == "hearing"
-
-        dockets[docket].distribute_appeals(self, args)
+        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
     end
   end
