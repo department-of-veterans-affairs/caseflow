@@ -2017,14 +2017,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
-    t.bigint "transcription_contractor_id"
     t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
     t.bigint "updated_by_id"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
     t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
-    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
@@ -2443,7 +2441,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcriptions", "hearings"
-  add_foreign_key "transcriptions", "transcription_contractors"
   add_foreign_key "transcriptions", "users", column: "created_by_id"
   add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
