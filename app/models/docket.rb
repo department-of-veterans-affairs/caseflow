@@ -27,11 +27,11 @@ class Docket
       scope = scope.ready_for_distribution
 
       # adjust for non_genpop for distributing non_genpop appeals during the push priority job only
-      if genpop == "not_genpop" && judge.present?
-        scope = only_non_genpop_appeals_for_push_job(scope, judge)
-      else
-        scope = adjust_for_affinity(scope, not_affinity, judge)
-      end
+      scope = if genpop == "not_genpop" && judge.present?
+                only_non_genpop_appeals_for_push_job(scope, judge)
+              else
+                adjust_for_affinity(scope, not_affinity, judge)
+              end
     end
 
     return scoped_for_priority(scope) if priority == true
