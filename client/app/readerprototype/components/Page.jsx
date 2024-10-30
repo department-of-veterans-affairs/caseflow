@@ -39,7 +39,7 @@ const Page = memo(({
   setCurrentPage
 }) => {
   const scaleFraction = scale / 100;
-  const currentPageFraction = 0.5 / Math.pow(scaleFraction, 2);
+  const currentPageFraction = Math.min(0.5 / Math.pow(scaleFraction, 2), 1);
   const canvasRef = useRef(null);
   const isVisibleRef = useRef(null);
 
