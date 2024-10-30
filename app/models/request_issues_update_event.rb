@@ -221,7 +221,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # iterate through the array of issues and create backfill object from each one
-  # rubocop:disable Metrics/MethodLength
   def create_request_issue_backfill
     request_issues = @parser.added_issues
     newly_created_issues = []
@@ -250,7 +249,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
     newly_created_issues
   end
-  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -281,7 +279,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def create_legacy_issue_backfill(request_issue)
     legacy_issue = LegacyIssueBuilder.new(request_issue).create_legacy_issue
-    add_event_record(li, "A", nil)
+    add_event_record(legacy_issue, "A", nil)
     legacy_issue
   end
 
