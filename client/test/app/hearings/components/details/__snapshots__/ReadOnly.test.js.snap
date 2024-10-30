@@ -1,18 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ReadOnly Matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <div
-    data-css-1a5irm0=""
-    data-testid="read-only-testid"
-  >
-    <strong>
-      example
-    </strong>
-    <pre>
-      Something
+<div
+  data-css-1a5irm0=""
+>
+  <strong>
+    example
+  </strong>
+  <pre>
+    Something
 	Else
-    </pre>
-  </div>
-</DocumentFragment>
+  </pre>
+</div>
 `;

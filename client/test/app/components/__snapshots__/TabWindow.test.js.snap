@@ -1,262 +1,613 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TabWindow Does not render tab content when a tab is disabled and clicked 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-tab-navigation cf-tab-navigation-full-screen"
-    role="tablist"
+<TabWindow
+  alwaysShowTabs={false}
+  defaultPage={0}
+  fullPage={true}
+  mountOnEnter={true}
+  tabPanelClassName={null}
+  tabs={
+    Array [
+      Object {
+        "disable": false,
+        "label": "Tab 1",
+        "page": "Content",
+      },
+      Object {
+        "disable": true,
+        "label": "Tab 2",
+        "page": "Some other content",
+      },
+    ]
+  }
+  unmountOnExit={true}
+>
+  <Tabs
+    active="0"
+    fullWidth={true}
+    idPrefix="main"
+    mountOnEnter={true}
+    tabPanelClassName={null}
+    tabPanelTabIndex={null}
+    unmountOnExit={true}
   >
-    <button
-      aria-controls="main-tabpanel-0"
-      aria-selected="true"
-      class="cf-tab tab cf-active"
-      data-value="0"
-      id="main-tab-0"
-      role="tab"
-      tabindex="0"
+    <TabContainer
+      active="0"
+      idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
-      <div>
-        <span>
-          <span>
-            Tab 1
-          </span>
-        </span>
-      </div>
-    </button>
-    <button
-      aria-controls="main-tabpanel-1"
-      aria-selected="false"
-      class="cf-tab tab"
-      data-value="1"
-      disabled=""
-      id="main-tab-1"
-      role="tab"
-      tabindex="-1"
-    >
-      <div>
-        <span>
-          <span>
-            Tab 2
-          </span>
-        </span>
-      </div>
-    </button>
-  </div>
-  <div
-    class="cf-tab-window-body-full-screen tabContent"
-  >
-    <div
-      aria-hidden="false"
-      class="tabPanel active"
-      id="main-tabpanel-0"
-      role="tabpanel"
-    >
-      Content
-    </div>
-    <div
-      aria-hidden="true"
-      class="tabPanel"
-      id="main-tabpanel-1"
-      role="tabpanel"
-    />
-  </div>
-</DocumentFragment>
+      <TabContextProvider
+        idPrefix="main"
+        mountOnEnter={true}
+        onSelect={[Function]}
+        unmountOnExit={true}
+        value="0"
+      >
+        <TabList
+          fullWidth={true}
+          keyNav={true}
+        >
+          <div
+            className="cf-tab-navigation cf-tab-navigation-full-screen"
+            onKeyDown={[Function]}
+            role="tablist"
+          >
+            <TabItem
+              disabled={false}
+              key="0"
+              value={0}
+            >
+              <button
+                aria-controls="main-tabpanel-0"
+                aria-selected={true}
+                className="cf-tab tab cf-active"
+                data-value={0}
+                disabled={false}
+                id="main-tab-0"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={0}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 1
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+            <TabItem
+              disabled={true}
+              key="1"
+              value={1}
+            >
+              <button
+                aria-controls="main-tabpanel-1"
+                aria-selected={false}
+                className="cf-tab tab"
+                data-value={1}
+                disabled={true}
+                id="main-tab-1"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={-1}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 2
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+          </div>
+        </TabList>
+        <TabContent>
+          <div
+            className="cf-tab-window-body-full-screen tabContent"
+          >
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="0"
+              tabPanelTabIndex={null}
+              value={0}
+            >
+              <div
+                aria-hidden={false}
+                className="tabPanel active"
+                id="main-tabpanel-0"
+                role="tabpanel"
+                tabIndex={[Function]}
+              >
+                Content
+              </div>
+            </TabPanel>
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="1"
+              tabPanelTabIndex={null}
+              value={1}
+            >
+              <div
+                aria-hidden={true}
+                className="tabPanel"
+                id="main-tabpanel-1"
+                role="tabpanel"
+                tabIndex={[Function]}
+              />
+            </TabPanel>
+          </div>
+        </TabContent>
+      </TabContextProvider>
+    </TabContainer>
+  </Tabs>
+</TabWindow>
 `;
 
 exports[`TabWindow Matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-tab-navigation"
-    role="tablist"
+<TabWindow
+  alwaysShowTabs={false}
+  defaultPage={0}
+  fullPage={false}
+  mountOnEnter={true}
+  tabPanelClassName={null}
+  tabs={
+    Array [
+      Object {
+        "disable": false,
+        "label": "Tab 1",
+        "page": "Content",
+      },
+      Object {
+        "disable": false,
+        "label": "Tab 2",
+        "page": "Some other content",
+      },
+    ]
+  }
+  unmountOnExit={true}
+>
+  <Tabs
+    active="0"
+    fullWidth={false}
+    idPrefix="main"
+    mountOnEnter={true}
+    tabPanelClassName={null}
+    tabPanelTabIndex={null}
+    unmountOnExit={true}
   >
-    <button
-      aria-controls="main-tabpanel-0"
-      aria-selected="true"
-      class="cf-tab tab cf-active"
-      data-value="0"
-      id="main-tab-0"
-      role="tab"
-      tabindex="0"
+    <TabContainer
+      active="0"
+      idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
-      <div>
-        <span>
-          <span>
-            Tab 1
-          </span>
-        </span>
-      </div>
-    </button>
-    <button
-      aria-controls="main-tabpanel-1"
-      aria-selected="false"
-      class="cf-tab tab"
-      data-value="1"
-      id="main-tab-1"
-      role="tab"
-      tabindex="-1"
-    >
-      <div>
-        <span>
-          <span>
-            Tab 2
-          </span>
-        </span>
-      </div>
-    </button>
-  </div>
-  <div
-    class="cf-tab-window-body-full-screen tabContent"
-  >
-    <div
-      aria-hidden="false"
-      class="tabPanel active"
-      id="main-tabpanel-0"
-      role="tabpanel"
-    >
-      Content
-    </div>
-    <div
-      aria-hidden="true"
-      class="tabPanel"
-      id="main-tabpanel-1"
-      role="tabpanel"
-    />
-  </div>
-</DocumentFragment>
+      <TabContextProvider
+        idPrefix="main"
+        mountOnEnter={true}
+        onSelect={[Function]}
+        unmountOnExit={true}
+        value="0"
+      >
+        <TabList
+          fullWidth={false}
+          keyNav={true}
+        >
+          <div
+            className="cf-tab-navigation"
+            onKeyDown={[Function]}
+            role="tablist"
+          >
+            <TabItem
+              disabled={false}
+              key="0"
+              value={0}
+            >
+              <button
+                aria-controls="main-tabpanel-0"
+                aria-selected={true}
+                className="cf-tab tab cf-active"
+                data-value={0}
+                disabled={false}
+                id="main-tab-0"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={0}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 1
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+            <TabItem
+              disabled={false}
+              key="1"
+              value={1}
+            >
+              <button
+                aria-controls="main-tabpanel-1"
+                aria-selected={false}
+                className="cf-tab tab"
+                data-value={1}
+                disabled={false}
+                id="main-tab-1"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={-1}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 2
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+          </div>
+        </TabList>
+        <TabContent>
+          <div
+            className="cf-tab-window-body-full-screen tabContent"
+          >
+            <TabPanel
+              className={null}
+              fullWidth={false}
+              key="0"
+              tabPanelTabIndex={null}
+              value={0}
+            >
+              <div
+                aria-hidden={false}
+                className="tabPanel active"
+                id="main-tabpanel-0"
+                role="tabpanel"
+                tabIndex={[Function]}
+              >
+                Content
+              </div>
+            </TabPanel>
+            <TabPanel
+              className={null}
+              fullWidth={false}
+              key="1"
+              tabPanelTabIndex={null}
+              value={1}
+            >
+              <div
+                aria-hidden={true}
+                className="tabPanel"
+                id="main-tabpanel-1"
+                role="tabpanel"
+                tabIndex={[Function]}
+              />
+            </TabPanel>
+          </div>
+        </TabContent>
+      </TabContextProvider>
+    </TabContainer>
+  </Tabs>
+</TabWindow>
 `;
 
 exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-tab-navigation"
-    role="tablist"
-  />
-  <div
-    class="cf-tab-window-body-full-screen tabContent"
-  />
-</DocumentFragment>
+<Tabs
+  active="0"
+  fullWidth={false}
+  idPrefix="main"
+  mountOnEnter={true}
+  tabPanelClassName={null}
+  tabPanelTabIndex={null}
+  unmountOnExit={true}
+/>
 `;
 
 exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-tab-navigation cf-tab-navigation-full-screen"
-    role="tablist"
+<TabWindow
+  alwaysShowTabs={false}
+  defaultPage={0}
+  fullPage={true}
+  mountOnEnter={true}
+  tabPanelClassName={null}
+  tabs={
+    Array [
+      Object {
+        "disable": false,
+        "label": "Tab 1",
+        "page": "Content",
+      },
+      Object {
+        "disable": false,
+        "label": "Tab 2",
+        "page": "Some other content",
+      },
+    ]
+  }
+  unmountOnExit={true}
+>
+  <Tabs
+    active="0"
+    fullWidth={true}
+    idPrefix="main"
+    mountOnEnter={true}
+    tabPanelClassName={null}
+    tabPanelTabIndex={null}
+    unmountOnExit={true}
   >
-    <button
-      aria-controls="main-tabpanel-0"
-      aria-selected="true"
-      class="cf-tab tab cf-active"
-      data-value="0"
-      id="main-tab-0"
-      role="tab"
-      tabindex="0"
+    <TabContainer
+      active="0"
+      idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
-      <div>
-        <span>
-          <span>
-            Tab 1
-          </span>
-        </span>
-      </div>
-    </button>
-    <button
-      aria-controls="main-tabpanel-1"
-      aria-selected="false"
-      class="cf-tab tab"
-      data-value="1"
-      id="main-tab-1"
-      role="tab"
-      tabindex="-1"
-    >
-      <div>
-        <span>
-          <span>
-            Tab 2
-          </span>
-        </span>
-      </div>
-    </button>
-  </div>
-  <div
-    class="cf-tab-window-body-full-screen tabContent"
-  >
-    <div
-      aria-hidden="false"
-      class="tabPanel active"
-      id="main-tabpanel-0"
-      role="tabpanel"
-    >
-      Content
-    </div>
-    <div
-      aria-hidden="true"
-      class="tabPanel"
-      id="main-tabpanel-1"
-      role="tabpanel"
-    />
-  </div>
-</DocumentFragment>
+      <TabContextProvider
+        idPrefix="main"
+        mountOnEnter={true}
+        onSelect={[Function]}
+        unmountOnExit={true}
+        value="0"
+      >
+        <TabList
+          fullWidth={true}
+          keyNav={true}
+        >
+          <div
+            className="cf-tab-navigation cf-tab-navigation-full-screen"
+            onKeyDown={[Function]}
+            role="tablist"
+          >
+            <TabItem
+              disabled={false}
+              key="0"
+              value={0}
+            >
+              <button
+                aria-controls="main-tabpanel-0"
+                aria-selected={true}
+                className="cf-tab tab cf-active"
+                data-value={0}
+                disabled={false}
+                id="main-tab-0"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={0}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 1
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+            <TabItem
+              disabled={false}
+              key="1"
+              value={1}
+            >
+              <button
+                aria-controls="main-tabpanel-1"
+                aria-selected={false}
+                className="cf-tab tab"
+                data-value={1}
+                disabled={false}
+                id="main-tab-1"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={-1}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 2
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+          </div>
+        </TabList>
+        <TabContent>
+          <div
+            className="cf-tab-window-body-full-screen tabContent"
+          >
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="0"
+              tabPanelTabIndex={null}
+              value={0}
+            >
+              <div
+                aria-hidden={false}
+                className="tabPanel active"
+                id="main-tabpanel-0"
+                role="tabpanel"
+                tabIndex={[Function]}
+              >
+                Content
+              </div>
+            </TabPanel>
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="1"
+              tabPanelTabIndex={null}
+              value={1}
+            >
+              <div
+                aria-hidden={true}
+                className="tabPanel"
+                id="main-tabpanel-1"
+                role="tabpanel"
+                tabIndex={[Function]}
+              />
+            </TabPanel>
+          </div>
+        </TabContent>
+      </TabContextProvider>
+    </TabContainer>
+  </Tabs>
+</TabWindow>
 `;
 
 exports[`TabWindow Renders tab content when a tab is selected 1`] = `
-<DocumentFragment>
-  <div
-    class="cf-tab-navigation cf-tab-navigation-full-screen"
-    role="tablist"
+<TabWindow
+  alwaysShowTabs={false}
+  defaultPage={0}
+  fullPage={true}
+  mountOnEnter={true}
+  tabPanelClassName={null}
+  tabs={
+    Array [
+      Object {
+        "disable": false,
+        "label": "Tab 1",
+        "page": "Content",
+      },
+      Object {
+        "disable": false,
+        "label": "Tab 2",
+        "page": "Some other content",
+      },
+    ]
+  }
+  unmountOnExit={true}
+>
+  <Tabs
+    active="0"
+    fullWidth={true}
+    idPrefix="main"
+    mountOnEnter={true}
+    tabPanelClassName={null}
+    tabPanelTabIndex={null}
+    unmountOnExit={true}
   >
-    <button
-      aria-controls="main-tabpanel-0"
-      aria-selected="false"
-      class="cf-tab tab"
-      data-value="0"
-      id="main-tab-0"
-      role="tab"
-      tabindex="-1"
+    <TabContainer
+      active="0"
+      idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
-      <div>
-        <span>
-          <span>
-            Tab 1
-          </span>
-        </span>
-      </div>
-    </button>
-    <button
-      aria-controls="main-tabpanel-1"
-      aria-selected="true"
-      class="cf-tab tab cf-active"
-      data-value="1"
-      id="main-tab-1"
-      role="tab"
-      tabindex="0"
-    >
-      <div>
-        <span>
-          <span>
-            Tab 2
-          </span>
-        </span>
-      </div>
-    </button>
-  </div>
-  <div
-    class="cf-tab-window-body-full-screen tabContent"
-  >
-    <div
-      aria-hidden="true"
-      class="tabPanel"
-      id="main-tabpanel-0"
-      role="tabpanel"
-    />
-    <div
-      aria-hidden="false"
-      class="tabPanel active"
-      id="main-tabpanel-1"
-      role="tabpanel"
-    >
-      Some other content
-    </div>
-  </div>
-</DocumentFragment>
+      <TabContextProvider
+        idPrefix="main"
+        mountOnEnter={true}
+        onSelect={[Function]}
+        unmountOnExit={true}
+        value="1"
+      >
+        <TabList
+          fullWidth={true}
+          keyNav={true}
+        >
+          <div
+            className="cf-tab-navigation cf-tab-navigation-full-screen"
+            onKeyDown={[Function]}
+            role="tablist"
+          >
+            <TabItem
+              disabled={false}
+              key="0"
+              value={0}
+            >
+              <button
+                aria-controls="main-tabpanel-0"
+                aria-selected={false}
+                className="cf-tab tab"
+                data-value={0}
+                disabled={false}
+                id="main-tab-0"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={-1}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 1
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+            <TabItem
+              disabled={false}
+              key="1"
+              value={1}
+            >
+              <button
+                aria-controls="main-tabpanel-1"
+                aria-selected={true}
+                className="cf-tab tab cf-active"
+                data-value={1}
+                disabled={false}
+                id="main-tab-1"
+                onClick={[Function]}
+                role="tab"
+                tabIndex={0}
+              >
+                <div>
+                  <span>
+                    <span>
+                      Tab 2
+                    </span>
+                  </span>
+                </div>
+              </button>
+            </TabItem>
+          </div>
+        </TabList>
+        <TabContent>
+          <div
+            className="cf-tab-window-body-full-screen tabContent"
+          >
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="0"
+              tabPanelTabIndex={null}
+              value={0}
+            >
+              <div
+                aria-hidden={true}
+                className="tabPanel"
+                id="main-tabpanel-0"
+                role="tabpanel"
+                tabIndex={[Function]}
+              />
+            </TabPanel>
+            <TabPanel
+              className={null}
+              fullWidth={true}
+              key="1"
+              tabPanelTabIndex={null}
+              value={1}
+            >
+              <div
+                aria-hidden={false}
+                className="tabPanel active"
+                id="main-tabpanel-1"
+                role="tabpanel"
+                tabIndex={[Function]}
+              >
+                Some other content
+              </div>
+            </TabPanel>
+          </div>
+        </TabContent>
+      </TabContextProvider>
+    </TabContainer>
+  </Tabs>
+</TabWindow>
 `;

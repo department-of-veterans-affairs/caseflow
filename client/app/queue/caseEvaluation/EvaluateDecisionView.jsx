@@ -319,15 +319,12 @@ const mapStateToProps = (state, ownProps) => {
     if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTask });
-    } else if (judgeDecisionReviewTask && judgeDecisionReviewTask.uniqueId) {
+    } else {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId
       });
-    } else {
-      console.error('Judge Decision Review Task or uniqueId is undefined');
-      attorneyChildrenTasks = [];
     }
   }
 

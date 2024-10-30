@@ -3,10 +3,11 @@ import {
   render,
   fireEvent,
   screen,
-  waitFor
+  wait,
+  waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderHook} from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 
 import { axe } from 'jest-axe';
 
@@ -141,28 +142,28 @@ describe('Tabs', () => {
     // Go left!
     fireEvent.keyDown(headers[1], { key: 'ArrowLeft' });
 
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[0]).toBe(document.activeElement);
     });
 
     // Can't go further left
     fireEvent.keyDown(headers[0], { key: 'ArrowLeft' });
 
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[0]).toBe(document.activeElement);
     });
 
     // Go back right!
     fireEvent.keyDown(headers[0], { key: 'ArrowRight' });
 
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
 
     // Can't go further right
     fireEvent.keyDown(headers[1], { key: 'ArrowRight' });
 
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
   });
@@ -189,7 +190,7 @@ describe('Tabs', () => {
     fireEvent.keyDown(headers[1], { key: 'ArrowLeft' });
 
     // Focus should not have moved
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
 
@@ -197,7 +198,7 @@ describe('Tabs', () => {
     fireEvent.keyDown(headers[0], { key: 'ArrowRight' });
 
     // Focus should not have moved
-    await waitFor(() => {
+    await wait(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
   });
@@ -238,7 +239,7 @@ describe('Tabs', () => {
   });
 
   it('should correctly honor mountOnEnter', async () => {
-    render(
+    await render(
       <Tabs idPrefix={idPrefix} mountOnEnter>
         <Tab title="Tab 1" value="1">
           <p>Tab contents 1</p>
@@ -255,7 +256,7 @@ describe('Tabs', () => {
     expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
 
     // Switch to tab 2
-    fireEvent.click(headers[1]);
+    userEvent.click(headers[1]);
 
     // Now both should be present
     await waitFor(() => {
@@ -282,7 +283,7 @@ describe('Tabs', () => {
     expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
 
     // Switch to tab 2
-    fireEvent.click(headers[1]);
+    userEvent.click(headers[1]);
 
     await waitFor(() => {
       // Now only the newly active tab should be rendered
@@ -293,14 +294,9 @@ describe('Tabs', () => {
 });
 
 describe('useUniquePrefix hook', () => {
-  function TestComponent() {
-    const uniquePrefix = useUniquePrefix();
-    return <div data-testid="uniquePrefix">{uniquePrefix}</div>;
-  }
-  it('returns unique value with proper prefix', async () => {
-    render(<TestComponent />);
+  it('returns unique value with proper prefix', () => {
+    const { result } = renderHook(() => useUniquePrefix());
 
-    const displayedValue = screen.getByTestId('uniquePrefix');
-    expect(displayedValue.textContent).toMatch(/cf-tabs-\d+/);
+    expect(result.current).toMatch(/cf-tabs-\d+/);
   });
 });

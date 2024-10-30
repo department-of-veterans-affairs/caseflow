@@ -1,29 +1,25 @@
 import React from 'react';
-import { render, screen} from '@testing-library/react';
+import { mount } from 'enzyme';
 
 import { virtualHearing, defaultHearing } from 'test/data/hearings';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { amaHearing } from 'test/data';
+import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
+import { AddressLine } from 'app/hearings/components/details/Address';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
+import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
+import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { getAppellantTitle } from 'app/hearings/utils';
+import TextField from 'app/components/TextField';
 
 const updateSpy = jest.fn();
 const hearingDayDate = '2025-01-01';
 
-const convertRegex = (str) => {
-  return new RegExp(str, 'i');
-}
-const cityStateZip = `${defaultHearing.representativeAddress.city}, ${defaultHearing.representativeAddress.state} ${defaultHearing.representativeAddress.zip}`;
-const emailTextbox = "POA/Representative Email (for these notifications only) Optional";
-const labelForEmail = /POA\/Representative Email \(for these notifications only\)/i;
-const timeZoneSearch = "POA/Representative Timezone Optional";
-const representative = defaultHearing.representative;
-const amaRepresentative = amaHearing.representativeName;
-
 describe('RepresentativeSection', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
-    const {asFragment} = render(
+    const representativeSection = mount(
       <RepresentativeSection
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
@@ -35,17 +31,15 @@ describe('RepresentativeSection', () => {
     );
 
     // Assertions
-    expect(screen.getByText(convertRegex(representative))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(
-      defaultHearing.representativeAddress.addressLine1))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(cityStateZip))).toBeInTheDocument();
-    expect(screen.getByLabelText(labelForEmail)).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: emailTextbox })).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    expect(representativeSection.find(AddressLine)).toHaveLength(1);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(TextField)).toHaveLength(1);
+    expect(representativeSection).toMatchSnapshot();
   });
 
   test('Does not allow editing emails when read-only', () => {
-    const {asFragment} = render(
+    // Run the test
+    const representativeSection = mount(
       <RepresentativeSection
         readOnly
         appellantTitle="Veteran"
@@ -57,14 +51,15 @@ describe('RepresentativeSection', () => {
       />
     );
 
-    // Assertions
-    expect(screen.queryByRole('textbox', { name: emailTextbox })).toBeNull();
-    expect(screen.getByText(/None/i)).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    // Ensure the emails are read-only
+    expect(representativeSection.find(TextField)).toHaveLength(0);
+    representativeSection.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
+    expect(representativeSection).toMatchSnapshot();
   });
 
   test('Displays timezone when showTimezoneField is passed as prop', () => {
-    const {asFragment} = render(
+    // Run the test
+    const representativeSection = mount(
       <RepresentativeSection
         showTimezoneField
         appellantTitle="Veteran"
@@ -76,13 +71,13 @@ describe('RepresentativeSection', () => {
       />
     );
 
-    // Assertions
-    expect(screen.getByRole('combobox', { name: timeZoneSearch })).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    // Ensure the emails are read-only
+    expect(representativeSection.find(Timezone)).toHaveLength(1);
+    expect(representativeSection).toMatchSnapshot();
   });
 
   test('Shows Representative not present message when no representative', () => {
-    const {asFragment} = render(
+    const representativeSection = mount(
       <RepresentativeSection
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
@@ -97,14 +92,18 @@ describe('RepresentativeSection', () => {
     );
 
     // Assertions
-    expect(screen.queryByText(convertRegex(cityStateZip))).toBeNull();
-    expect(screen.getByLabelText(labelForEmail)).toBeInTheDocument();
-    expect(screen.getByText(`The ${getAppellantTitle(amaHearing.appellantIsNotVeteran)} does not have a representative recorded in VBMS`)).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    expect(representativeSection.find(AddressLine)).toHaveLength(0);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(VirtualHearingSection).first().
+      find(ReadOnly).
+      prop('text')).toEqual(
+      `The ${getAppellantTitle(amaHearing.appellantIsNotVeteran)} does not have a representative recorded in VBMS`
+    );
+    expect(representativeSection).toMatchSnapshot();
   });
 
   test('Shows Representative name when representative address blank', () => {
-    const {asFragment} = render(
+    const representativeSection = mount(
       <RepresentativeSection
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
@@ -119,14 +118,15 @@ describe('RepresentativeSection', () => {
     );
 
     // Assertions
-    expect(screen.getByText(convertRegex(amaRepresentative))).toBeInTheDocument();
-    expect(screen.queryByText(convertRegex(defaultHearing.representativeAddress.addressLine1))).not.toBeInTheDocument();
-    expect(screen.queryByText(convertRegex(cityStateZip))).not.toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    expect(representativeSection.find(AddressLine)).toHaveLength(1);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
+    expect(representativeSection.find(AddressLine).first().
+      text()).toMatch(amaHearing.representativeName);
+    expect(representativeSection).toMatchSnapshot();
   });
 
   test('Does not display address when formFieldsOnly = true', () => {
-    const {asFragment} = render(
+    const representativeSection = mount(
       <RepresentativeSection
         formFieldsOnly
         appellantTitle="Appellant"
@@ -138,10 +138,9 @@ describe('RepresentativeSection', () => {
       />
     );
 
-    // Assertions
-    expect(screen.getByText(convertRegex(representative))).toBeInTheDocument();
-    expect(screen.queryByText(convertRegex(cityStateZip))).toBeNull();
-    expect(screen.getByLabelText(labelForEmail)).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+    expect(representativeSection.find(ReadOnly)).toHaveLength(1);
+    expect(representativeSection.find(AddressLine)).toHaveLength(0);
+    expect(representativeSection.find(HearingEmail)).toHaveLength(1);
+    expect(representativeSection).toMatchSnapshot();
   });
 });

@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { mount } from 'enzyme';
 
 import { CavcReviewExtensionRequestModalUnconnected } from 'app/queue/components/CavcReviewExtensionRequestModal';
+import { SearchableDropdown } from 'app/components/SearchableDropdown';
 
 import COPY from 'COPY';
 
@@ -12,7 +13,7 @@ describe('CavcReviewExtensionRequestModal', () => {
   const onCancel = jest.fn();
 
   const setup = (args = {}) => {
-    return render(
+    return mount(
       <CavcReviewExtensionRequestModalUnconnected
         onCancel={onCancel}
         onSubmit={onSubmit}
@@ -20,136 +21,128 @@ describe('CavcReviewExtensionRequestModal', () => {
       />
     );
   };
-  function clickGrant(screen) {
-    const grantRadio = screen.getByRole('radio', { name: 'Grant' });
-    fireEvent.click(grantRadio);
-  }
 
-  function clickDeny(screen) {
-    const denyRadio = screen.getByRole('radio', { name: 'Deny' });
-    fireEvent.click(denyRadio);
-  }
+  const clickSubmit = (modal) => modal.find('button#Review-extension-request-button-id-1').simulate('click');
+  const clickCancel = (modal) => modal.find('button#Review-extension-request-button-id-0').simulate('click');
+  const selectGrant = (modal) => modal.find('#decision_grant').simulate('change', { target: { value: 'grant' } });
+  const selectDeny = (modal) => modal.find('#decision_deny').simulate('change', { target: { value: 'deny' } });
+  const select15DayDuration = (modal) => {
+    const dropdown = modal.find(SearchableDropdown);
 
-  function clickConfirm(screen) {
-    const confirmButton = screen.getByRole('button', { name: 'Confirm' });
-    fireEvent.click(confirmButton);
-  }
+    // Select the first option ("15 days") and press enter
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+  };
+  const selectCustomDuration = (modal) => {
+    const dropdown = modal.find(SearchableDropdown);
 
-  function clickCancel(screen) {
-    const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-    fireEvent.click(cancelButton);
-  }
+    // Select the last option ("custom") and press enter
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowUp', keyCode: 38 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+  };
+  const populateCustomDuration = (modal, duration) => (
+    modal.find('#customDuration').simulate('change', { target: { value: duration } })
+  );
+  const populateInstructions = (modal, instructions) => (
+    modal.find('#instructions').simulate('change', { target: { value: instructions } })
+  );
 
-  function select15DayDuration(screen) {
-    const holdDurationDropdown = screen.getByRole('combobox', { name: 'Select number of days' });
-    fireEvent.keyDown(holdDurationDropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(holdDurationDropdown, { key: 'Enter' });
-    expect(screen.getByText('15 days')).toBeInTheDocument();
-  }
+  it('renders correctly', async () => {
+    const extensionModal = setup();
 
-  function selectCustomDuration(screen) {
-    const holdDurationDropdown = screen.getByRole('combobox', { name: 'Select number of days' });
-    fireEvent.keyDown(holdDurationDropdown, { key: 'ArrowUp' });
-    fireEvent.keyDown(holdDurationDropdown, { key: 'Enter' });
-    expect(screen.getByText('Custom')).toBeInTheDocument();
-    expect(screen.getByText(COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)).toBeInTheDocument();
-  }
-
-  function populateInstructions(screen, instructions) {
-    const instructionsField = screen.getByRole('textbox', { name: 'Provide instructions and context for this action' });
-    fireEvent.change(instructionsField, { target: { value: instructions } });
-  }
-
-  function populateCustomDuration(screen, duration) {
-    const customDurationField = screen.getByRole('spinbutton', { name: 'Enter a custom number of days for the hold' });
-    fireEvent.change(customDurationField, { target: { value: duration } });
-  }
-
-  it('renders correctly', () => {
-    const {asFragment} = setup();
-
-    expect(asFragment()).toMatchSnapshot();
+    expect(extensionModal).toMatchSnapshot();
   });
 
   it('shows hold duration selector only when decision is grant', () => {
-    const {container} = setup();
+    const extensionModal = setup();
 
-    expect(container.querySelector('input#duration')).toBeNull();
-    clickGrant(screen);
-    expect(container.querySelector('input#duration')).not.toBeNull();
-    clickDeny(screen);
-    expect(container.querySelector('input#duration')).toBeNull();
+    expect(extensionModal.find('input#duration').length).toBe(0);
+    selectGrant(extensionModal);
+    expect(extensionModal.find('input#duration').length).toBe(1);
+    selectDeny(extensionModal);
+    expect(extensionModal.find('input#duration').length).toBe(0);
   });
 
   it('shows custom hold duration selector when only decision is grant and duration is custom', () => {
-    const {container} = setup();
+    const extensionModal = setup();
 
-    expect(container.querySelector('input#customDuration')).toBeNull();
-    clickGrant(screen);
-    expect(container.querySelector('input#customDuration')).toBeNull();
-    select15DayDuration(screen);
-    expect(container.querySelector('input#customDuration')).toBeNull();
-    selectCustomDuration(screen);
-    expect(container.querySelector('input#customDuration')).not.toBeNull();
-    select15DayDuration(screen);
-    expect(container.querySelector('input#customDuration')).toBeNull();
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
+    selectGrant(extensionModal);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
+    select15DayDuration(extensionModal);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
+    selectCustomDuration(extensionModal);
+    expect(extensionModal.find('input#customDuration').length).toBe(1);
+    select15DayDuration(extensionModal);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
   });
 
   it('displays an error if provided', () => {
     const title = 'Error title';
     const detail = 'Error message';
-    const {container} = setup({ error: { title, detail } });
+    const extensionModal = setup({ error: { title, detail } });
 
-    expect(container.querySelector('.usa-alert-error')).toBeInTheDocument();
-    expect(screen.getByText(title)).toBeInTheDocument();
-    expect(screen.getByText(detail)).toBeInTheDocument();
+    expect(extensionModal.find('.usa-alert-error').length).toBe(1);
+    expect(extensionModal.find('.usa-alert-heading').props().children).toBe(title);
+    expect(extensionModal.find('.usa-alert-text').props().children).toBe(detail);
   });
 
   it('calls onSubmit with selected values when "Confirm" is pressed and form is valid', () => {
-    const {container} = setup();
+    const extensionModal = setup();
 
-    clickDeny(screen);
-    populateInstructions(screen, 'instructions');
-    clickConfirm(screen);
+    selectDeny(extensionModal);
+    populateInstructions(extensionModal, 'instructions');
+    clickSubmit(extensionModal);
+
     expect(onSubmit).toHaveBeenCalledWith('deny', 'instructions', null);
 
-    clickGrant(screen);
-    select15DayDuration(screen);
-    populateInstructions(screen, 'new instructions');
-    clickConfirm(screen);
+    selectGrant(extensionModal);
+    select15DayDuration(extensionModal);
+    populateInstructions(extensionModal, 'new instructions');
+    clickSubmit(extensionModal);
+
     expect(onSubmit).toHaveBeenCalledWith('grant', 'new instructions', 15);
 
-    selectCustomDuration(screen);
-    populateInstructions(screen, 'new new instructions');
-    populateCustomDuration(screen, 25);
+    selectCustomDuration(extensionModal);
+    populateInstructions(extensionModal, 'new new instructions');
+    populateCustomDuration(extensionModal, 25);
+    clickSubmit(extensionModal);
 
-    clickConfirm(screen);
     expect(onSubmit).toHaveBeenCalledWith('grant', 'new new instructions', 25);
   });
 
   it('calls onCancel ', () => {
-    setup();
+    const extensionModal = setup();
 
-    clickCancel(screen);
+    clickCancel(extensionModal);
+
     expect(onCancel).toHaveBeenCalled();
   });
 
   describe('form validations', () => {
+    const errorClass = '.usa-input-error-message';
+
+    const validationErrorShows = (modal, errorMessage) => {
+      clickSubmit(modal);
+
+      return modal.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
+    };
+
     describe('decision type validations', () => {
       const error = 'Choose one';
 
       it('shows error on no decision type selection', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickConfirm(screen);
-        expect(screen.getByText(error)).toBeInTheDocument();
+        expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
       it('does not show error on correctly selected decision type', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickDeny(screen);
-        expect(screen.queryByText(error)).not.toBeInTheDocument();
+        selectDeny(extensionModal);
+
+        expect(validationErrorShows(extensionModal, error)).toBeFalsy();
       });
     });
 
@@ -157,20 +150,20 @@ describe('CavcReviewExtensionRequestModal', () => {
       const error = 'Choose one';
 
       it('shows error on no selected on hold duration', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickGrant(screen);
-        clickConfirm(screen);
-        expect(screen.getByText(error)).toBeInTheDocument();
+        selectGrant(extensionModal);
+
+        expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
       it('does not show error on selected on hold duration', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickGrant(screen);
-        select15DayDuration(screen);
-        clickConfirm(screen);
-        expect(screen.queryByText(error)).not.toBeInTheDocument();
+        selectGrant(extensionModal);
+        select15DayDuration(extensionModal);
+
+        expect(validationErrorShows(extensionModal, error)).toBeFalsy();
       });
     });
 
@@ -178,32 +171,32 @@ describe('CavcReviewExtensionRequestModal', () => {
       const error = COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE;
 
       it('shows error on no selected custom hold duration', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickGrant(screen);
-        selectCustomDuration(screen);
-        clickConfirm(screen);
-        expect(screen.getByText(error)).toBeInTheDocument();
+        selectGrant(extensionModal);
+        selectCustomDuration(extensionModal);
+
+        expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
       it('shows error on selected duration less than 1', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickGrant(screen);
-        selectCustomDuration(screen);
-        populateCustomDuration(screen, -1);
-        clickConfirm(screen);
-        expect(screen.getByText(error)).toBeInTheDocument();
+        selectGrant(extensionModal);
+        selectCustomDuration(extensionModal);
+        populateCustomDuration(extensionModal, -1);
+
+        expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
       it('does not show error on valid custom hold duration', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickGrant(screen);
-        selectCustomDuration(screen);
-        populateCustomDuration(screen, 25);
-        clickConfirm(screen);
-        expect(screen.queryByText(error)).not.toBeInTheDocument();
+        selectGrant(extensionModal);
+        selectCustomDuration(extensionModal);
+        populateCustomDuration(extensionModal, 25);
+
+        expect(validationErrorShows(extensionModal, error)).toBeFalsy();
       });
     });
 
@@ -211,17 +204,17 @@ describe('CavcReviewExtensionRequestModal', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
       it('shows error on no provided instructions', () => {
-        setup();
+        const extensionModal = setup();
 
-        clickConfirm(screen);
-        expect(screen.getByText(error)).toBeInTheDocument();
+        expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
       it('does not show error on provided instructions', () => {
         const extensionModal = setup();
 
         populateInstructions(extensionModal, 'here are some instructions');
-        expect(screen.queryByText(error)).not.toBeInTheDocument();
+
+        expect(validationErrorShows(extensionModal, error)).toBeFalsy();
       });
     });
   });

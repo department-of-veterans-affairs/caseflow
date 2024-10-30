@@ -1,17 +1,18 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { mount } from 'enzyme';
+
 import BaseContainer from '../../../app/containers/BaseContainer';
 
 describe('BaseContainer', () => {
+  let wrapper;
+
   beforeEach(() => {
-    render(<BaseContainer page="TestPage" otherProp="foo" />);
+    wrapper = mount(<BaseContainer page="TestPage" otherProp="foo" />);
   });
 
   describe('sub-page', () => {
     it('renders', () => {
-      // Query for the element with the class 'sub-page' using container and querySelector
-      const subPageElement = document.querySelector('.sub-page');
-      expect(subPageElement).toBeInTheDocument();
+      expect(wrapper.find('.sub-page')).toHaveLength(1);
     });
   });
 });

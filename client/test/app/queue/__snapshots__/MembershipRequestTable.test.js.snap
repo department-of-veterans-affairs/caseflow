@@ -114,7 +114,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -127,7 +126,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -213,7 +211,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -226,7 +223,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -312,7 +308,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -325,7 +320,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -404,7 +398,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -417,7 +410,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -496,7 +488,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -509,7 +500,6 @@ exports[`MembershipRequestTable renders the default state with mocked membership
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -741,7 +731,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -754,7 +743,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -840,7 +828,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -853,7 +840,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -960,7 +946,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -973,7 +958,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -1052,7 +1036,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -1065,7 +1048,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -1144,7 +1126,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                       fill-rule="nonzero"
                     >
                       <g
-                        data-testid="topColorGroup"
                         fill="#323a45"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -1157,7 +1138,6 @@ exports[`MembershipRequestTable shows the request note when the expansion button
                         </g>
                       </g>
                       <g
-                        data-testid="bottomColorGroup"
                         fill="#323a45"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >

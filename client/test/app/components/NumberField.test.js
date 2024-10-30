@@ -51,12 +51,7 @@ describe('NumberField', () => {
 
     setup({ readOnly: false, onChange: null });
 
-    const errorMessageFound = consoleErrorSpy.mock.calls.some((call) =>
-      call.some((arg) =>
-        arg.includes('If NumberField is not ReadOnly, then onChange must be defined'))
-    );
-
-    expect(errorMessageFound).toBe(true);
+    expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });
@@ -65,12 +60,7 @@ describe('NumberField', () => {
 
     setup({ readOnly: true, onChange: null });
 
-    const errorMessageFound = consoleErrorSpy.mock.calls.some((call) =>
-      call.some((arg) =>
-        arg.includes('If NumberField is not ReadOnly, then onChange must be defined'))
-    );
-
-    expect(errorMessageFound).toBe(false);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });

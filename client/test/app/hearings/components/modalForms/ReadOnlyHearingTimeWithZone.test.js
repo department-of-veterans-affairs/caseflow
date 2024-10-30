@@ -2,8 +2,7 @@ import React from 'react';
 
 import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-
-import { render, screen } from '@testing-library/react';
+import { mount } from 'enzyme';
 import moment from 'moment-timezone/moment-timezone';
 import { shortZoneName } from 'app/hearings/utils';
 
@@ -40,7 +39,7 @@ describe('ReadOnlyHearingTimeWithZone', () => {
         ).
           format();
 
-        const {asFragment} = render(
+        const form = mount(
           <ReadOnlyHearingTimeWithZone
             hearingStartTime={startTimeInEasternTime ?? null}
             timezone={timezone}
@@ -49,25 +48,24 @@ describe('ReadOnlyHearingTimeWithZone', () => {
         );
         const zoneName = shortZoneName(timezone);
 
-
-        expect(asFragment()).toMatchSnapshot();
-
+        expect(form).toMatchSnapshot();
         if (hearingStartTime === null) {
-          expect(screen.queryByText('Hearing Time')).toBeNull();
+          expect(form.exists('ReadOnly')).toBe(false);
         } else {
-          const hearingTimeElements = screen.queryAllByText('Hearing Time');
-          expect(hearingTimeElements).not.toHaveLength(0);
+          expect(form.exists('ReadOnly')).toBe(true);
           const dateTime = moment(startTimeInEasternTime).tz(timezone);
 
           if (zoneName === 'Eastern') {
-            const expectedText = `${dateTime.format('h:mm A')} ${zoneName}`;
-            const textElements = screen.queryAllByText(expectedText);
-            expect(textElements).not.toHaveLength(0);
+            expect(
+              form.find(ReadOnly).prop('text')
+            ).toEqual(`${dateTime.format('h:mm A')} ${zoneName}`);
           } else {
-            const expectedText = `${dateTime.format('h:mm A')} ${zoneName} / ${moment(dateTime).tz('America/New_York').
-                format('h:mm A')} Eastern`;
-            const textElements = screen.queryAllByText(expectedText);
-            expect(textElements).not.toHaveLength(0);
+            expect(
+              form.find(ReadOnly).prop('text')
+            ).toEqual(
+              `${dateTime.format('h:mm A')} ${zoneName} / ${moment(dateTime).tz('America/New_York').
+                format('h:mm A')} Eastern`
+            );
           }
         }
       });

@@ -6,9 +6,7 @@ export const views = {
 };
 
 // This might be more elegantly modeled w/ a finite state machine lib like xstate
-export const getSteps = (appeal = {}) => {
-  const { caseType = '', vacateType = '' } = appeal;
-
+export const getSteps = ({ caseType, vacateType }) => {
   switch (vacateType?.toLowerCase()) {
   case 'straight_vacate':
     return ['review_vacatures', 'submit'];

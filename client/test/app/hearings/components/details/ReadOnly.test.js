@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { shallow } from 'enzyme';
 
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 
@@ -10,20 +10,15 @@ describe('ReadOnly', () => {
     const label = 'example';
 
     // Run the test
-    const { asFragment } = render(
+    const readOnly = shallow(
       <ReadOnly label={label} text={example} />
     );
 
-        // Assertions
-        const labelElement = screen.getByText(label);
-        expect(labelElement).toBeInTheDocument();
-
-        const strongElement = screen.getByText(label, { selector: 'strong' });
-        expect(strongElement).toBeInTheDocument();
-
-        const textElement = screen.getByText(/Something\s+Else/);
-        expect(textElement).toBeInTheDocument();
-
-        expect(asFragment()).toMatchSnapshot();
+    // Assertions
+    expect(readOnly.childAt(0).text()).toEqual(label);
+    expect(readOnly.childAt(0).find('strong')).toHaveLength(1);
+    expect(readOnly.childAt(1).text()).toEqual(example);
+    expect(readOnly).toMatchSnapshot();
   });
-});
+})
+;

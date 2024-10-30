@@ -67,8 +67,8 @@ export const docListIsFiltered = createSelector(
 
 // text is a selector that returns the text Pages are currently filtered by
 // result is an Array of Page ids that match the current search :text
-export const getSearchTerm = (state) => state.searchActionReducer?.searchTerm;
-const getExtractedText = (state) => state.searchActionReducer?.extractedText;
+export const getSearchTerm = (state) => state.searchActionReducer.searchTerm;
+const getExtractedText = (state) => state.searchActionReducer.extractedText;
 const getFile = (state, props) => props.file;
 
 export const getTextForFile = createSelector(
@@ -104,7 +104,7 @@ export const getTotalMatchesInFile = createSelector(
   (matches) => sum(map(matches, (match) => match.matches))
 );
 
-const getSelectedIndex = (state) => state.searchActionReducer?.matchIndex;
+const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;
 
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],

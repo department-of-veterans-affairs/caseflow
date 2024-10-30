@@ -25,7 +25,7 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
 
     # text-${pageIndex} is the id of the first page's CommentLayer
-    find('[id^="comment-layer-0"]').click
+    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
     expect(page).to have_css("#addComment", visible: true)
 

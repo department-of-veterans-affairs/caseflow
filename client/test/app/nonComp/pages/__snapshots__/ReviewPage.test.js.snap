@@ -72,9 +72,11 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
+                
                 <span>
                   Incomplete Tasks (0)
                 </span>
+                
               </span>
             </div>
           </button>
@@ -89,9 +91,11 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
+                
                 <span>
                   In Progress Tasks (410)
                 </span>
+                
               </span>
             </div>
           </button>
@@ -106,9 +110,11 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
+                
                 <span>
                   Completed Tasks
                 </span>
+                
               </span>
             </div>
           </button>
@@ -167,7 +173,6 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               >
                 <div
                   class="cf-table-wrapper"
-                  data-testid="queue-table-data-testid"
                 >
                   <section
                     class="cf-app-segment cf-app-segment--alt"
@@ -176,6 +181,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
                       data-css-1ogvp9u=""
                     >
                       <div>
+                        
                         <div
                           class="cf-loading-button-symbol cf-small-loader-symbol"
                         >
@@ -291,9 +297,11 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
+                
                 <span>
                   Incomplete Tasks (0)
                 </span>
+                
               </span>
             </div>
           </button>
@@ -308,9 +316,11 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
+                
                 <span>
                   In Progress Tasks (410)
                 </span>
+                
               </span>
             </div>
           </button>
@@ -325,9 +335,11 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
+                
                 <span>
                   Completed Tasks
                 </span>
+                
               </span>
             </div>
           </button>
@@ -386,7 +398,6 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               >
                 <div
                   class="cf-table-wrapper"
-                  data-testid="queue-table-data-testid"
                 >
                   <section
                     class="cf-app-segment cf-app-segment--alt"
@@ -395,6 +406,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
                       data-css-1ogvp9u=""
                     >
                       <div>
+                        
                         <div
                           class="cf-loading-button-symbol cf-small-loader-symbol"
                         >

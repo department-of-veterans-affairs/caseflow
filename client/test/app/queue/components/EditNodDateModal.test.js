@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import { EditNodDateModal } from 'app/queue/components/EditNodDateModal';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();

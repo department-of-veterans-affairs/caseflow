@@ -9,7 +9,7 @@ import DateSelector from '../../../components/DateSelector';
 
 const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
   <React.Fragment>
-    <div {...rowThirds} data-testid="transcription-details-inputs">
+    <div {...rowThirds}>
       <TextField
         name="taskNumber"
         label="Task #"
@@ -46,7 +46,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
       />
       <div />
     </div>
-    <div {...rowThirds} data-testid="transcription-details-date-inputs">
+    <div {...rowThirds}>
       <DateSelector
         name="sentToTranscriberDate"
         label="Sent to Transcriber"

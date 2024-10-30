@@ -3,18 +3,12 @@
 FactoryBot.define do
   # returns digits 4-8 of epoch time to be used for unique id sequencing
   def time
-    t = Time.now.to_i.to_s.split("")
-    # if t[3] is 0, a leading zero is maintained which affects some tests, so "decrement" that zero
-    t[3] = "9" if t[3] == "0"
-    t[3..7].join
+    Time.now.to_i.to_s.split("")[3..7].join
   end
 
   # returns digits 7-10 of epoch time for use in CSS_ID sequencing
   def shortened_time
-    t = Time.now.to_i.to_s.split("")
-    # if t[6] is 0, a leading zero is maintained which affects some tests, so "decrement" that zero
-    t[6] = "9" if t[6] == "0"
-    t[6..9].join
+    Time.now.to_i.to_s.split("")[6..9].join
   end
 
   # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow

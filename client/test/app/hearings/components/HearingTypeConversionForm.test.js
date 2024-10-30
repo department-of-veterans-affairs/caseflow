@@ -1,14 +1,19 @@
 import React from 'react';
+
 import { HearingTypeConversionForm } from 'app/hearings/components/HearingTypeConversionForm';
-import { render, screen} from '@testing-library/react';
+
+import { mount } from 'enzyme';
 import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from 'test/data';
+import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
+import { AddressLine } from 'app/hearings/components/details/Address';
+import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 import { getAppellantTitle } from 'app/hearings/utils';
 
 import COPY from 'COPY';
 
 describe('HearingTypeConversionForm', () => {
   test('Matches snapshot with default props', () => {
-   const {asFragment}=render(
+    const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={legacyAppealForTravelBoard}
         type="Virtual"
@@ -16,32 +21,29 @@ describe('HearingTypeConversionForm', () => {
     );
 
     // Assertions
-    expect(screen.getByRole('heading', {name: "Veteran"})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Power of Attorney (POA)"})).toBeInTheDocument();
-
-    expect(screen.getByText('Clarence Darrow')).toBeInTheDocument();
-
-    expect(screen.getByText(/Veteran Email/i)).toBeInTheDocument();
-    const poaRegex = new RegExp('POA\\/Representative Email', 'i');
-    expect(screen.getByText(poaRegex)).toBeInTheDocument();
-
-    expect(asFragment()).toMatchSnapshot();
+    expect(hearingTypeConversionForm.find(VirtualHearingSection)).toHaveLength(2);
+    expect(hearingTypeConversionForm.find(AddressLine)).toHaveLength(1);
+    expect(hearingTypeConversionForm.find(HearingEmail)).toHaveLength(2);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 
   test('Does not show a divider on top of Appellant Section', () => {
-    const {asFragment, container}=render(
+    const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={legacyAppealForTravelBoard}
         type="Virtual"
       />
     );
 
-    const element = screen.getByText(getAppellantTitle(legacyAppealForTravelBoard.appellantIsNotVeteran));
-    const previousElement = element.previousElementSibling;
-    expect(previousElement).not.toHaveClass('cf-help-divider');
-    expect(container.querySelectorAll('.cf-help-divider')).toHaveLength(1);
-
-    expect(asFragment()).toMatchSnapshot();
+    expect(
+      hearingTypeConversionForm.
+        findWhere(
+          (node) => node.prop('label') === `${getAppellantTitle(legacyAppealForTravelBoard.appellantIsNotVeteran)}`
+        ).
+        prop('showDivider')
+    ).toEqual(false);
+    expect(hearingTypeConversionForm.find('.cf-help-divider')).toHaveLength(1);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 
   test('Display missing email alert', () => {
@@ -52,15 +54,15 @@ describe('HearingTypeConversionForm', () => {
       }
     };
 
-    const {asFragment, container}=render(
+    const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={appeal}
         type="Virtual"
       />
     );
 
-    expect(container.querySelectorAll('.usa-alert')).toHaveLength(1);
-    expect(asFragment()).toMatchSnapshot();
+    expect(hearingTypeConversionForm.find('.usa-alert')).toHaveLength(1);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 
   test('Displays "the appropriate regional office" when closest regional office has not been determined yet', () => {
@@ -69,18 +71,21 @@ describe('HearingTypeConversionForm', () => {
       closestRegionalOfficeLabel: null
     };
 
-    const {asFragment}=render(
+    const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
         appeal={appeal}
         type="Virtual"
       />
     );
 
-    const string = COPY.CONVERT_HEARING_TYPE_SUBTITLE.
-    replace('%s', COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT);
-    expect(screen.getByText(string)).toBeInTheDocument();
-
-    expect(asFragment()).toMatchSnapshot();
+    expect(
+      hearingTypeConversionForm.
+        find('p').
+        first().
+        text().
+        includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
+    ).toEqual(true);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 });
 

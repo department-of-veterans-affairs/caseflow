@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { createStore } from 'redux';
+import '@testing-library/jest-dom/extend-expect';
 import { LeverCancelButton } from '../../../../app/caseDistribution/components/LeverCancelButton';
 import COPY from '../../../../COPY';
 import leversReducer from '../../../../app/caseDistribution/reducers/levers/leversReducer';

@@ -541,8 +541,25 @@ Object {
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                       option Video focused, 1 of 3. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -587,7 +604,7 @@ Object {
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -681,11 +698,16 @@ Object {
                   class=" css-2b097c-container"
                 >
                   <div
-                    class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                    class="cf-select__control css-yk16xz-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                     >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        New York City regional office
+                      </div>
                       <div
                         class="css-81nyic-Input"
                       >
@@ -695,7 +717,7 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
-                            aria-expanded="true"
+                            aria-expanded="false"
                             aria-haspopup="true"
                             aria-labelledby="regional-office-label"
                             aria-owns="regional-office-listbox"
@@ -708,13 +730,11 @@ Object {
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
                             type="text"
-                            value="New York City regional office"
+                            value=""
                           />
                           <div
                             style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                          >
-                            New York City regional office
-                          </div>
+                          />
                         </div>
                       </div>
                     </div>
@@ -740,26 +760,6 @@ Object {
                             d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
                           />
                         </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="cf-select__menu css-26l3qy-menu"
-                  >
-                    <div
-                      aria-label="regional-office-listbox"
-                      class="cf-select__menu-list css-4ljt47-MenuList"
-                      id="regional-office-listbox"
-                      role="listbox"
-                    >
-                      <div
-                        aria-disabled="false"
-                        class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
-                        id="react-select-5-option-3"
-                        role="option"
-                        tabindex="-1"
-                      >
-                        New York City regional office
                       </div>
                     </div>
                   </div>
@@ -1152,8 +1152,25 @@ Object {
               <div
                 class=" css-2b097c-container"
               >
+                <span
+                  aria-live="polite"
+                  class="css-1laao21-a11yText"
+                >
+                  <span
+                    id="aria-selection-event"
+                  >
+                     
+                    
+                  </span>
+                  <span
+                    id="aria-context"
+                  >
+                     
+                     option Video focused, 1 of 3. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                  </span>
+                </span>
                 <div
-                  class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                  class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
                 >
                   <div
                     class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -1198,7 +1215,7 @@ Object {
                     />
                     <div
                       aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                     >
                       <svg
                         aria-hidden="true"
@@ -1292,11 +1309,16 @@ Object {
                 class=" css-2b097c-container"
               >
                 <div
-                  class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                  class="cf-select__control css-yk16xz-control"
                 >
                   <div
                     class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                   >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      New York City regional office
+                    </div>
                     <div
                       class="css-81nyic-Input"
                     >
@@ -1306,7 +1328,7 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
-                          aria-expanded="true"
+                          aria-expanded="false"
                           aria-haspopup="true"
                           aria-labelledby="regional-office-label"
                           aria-owns="regional-office-listbox"
@@ -1319,13 +1341,11 @@ Object {
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
                           type="text"
-                          value="New York City regional office"
+                          value=""
                         />
                         <div
                           style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                        >
-                          New York City regional office
-                        </div>
+                        />
                       </div>
                     </div>
                   </div>
@@ -1351,26 +1371,6 @@ Object {
                           d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
                         />
                       </svg>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="cf-select__menu css-26l3qy-menu"
-                >
-                  <div
-                    aria-label="regional-office-listbox"
-                    class="cf-select__menu-list css-4ljt47-MenuList"
-                    id="regional-office-listbox"
-                    role="listbox"
-                  >
-                    <div
-                      aria-disabled="false"
-                      class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
-                      id="react-select-5-option-3"
-                      role="option"
-                      tabindex="-1"
-                    >
-                      New York City regional office
                     </div>
                   </div>
                 </div>
@@ -1820,8 +1820,25 @@ Object {
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <span
+                      id="aria-selection-event"
+                    >
+                       
+                      
+                    </span>
+                    <span
+                      id="aria-context"
+                    >
+                       
+                       option Travel focused, 3 of 3. 1 result available for search term Travel. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                    </span>
+                  </span>
                   <div
-                    class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -1866,7 +1883,7 @@ Object {
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
@@ -1960,11 +1977,16 @@ Object {
                   class=" css-2b097c-container"
                 >
                   <div
-                    class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                    class="cf-select__control css-yk16xz-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                     >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        New York City regional office
+                      </div>
                       <div
                         class="css-81nyic-Input"
                       >
@@ -1974,7 +1996,7 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
-                            aria-expanded="true"
+                            aria-expanded="false"
                             aria-haspopup="true"
                             aria-labelledby="regional-office-label"
                             aria-owns="regional-office-listbox"
@@ -1987,13 +2009,11 @@ Object {
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
                             type="text"
-                            value="New York City regional office"
+                            value=""
                           />
                           <div
                             style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                          >
-                            New York City regional office
-                          </div>
+                          />
                         </div>
                       </div>
                     </div>
@@ -2019,26 +2039,6 @@ Object {
                             d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
                           />
                         </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="cf-select__menu css-26l3qy-menu"
-                  >
-                    <div
-                      aria-label="regional-office-listbox"
-                      class="cf-select__menu-list css-4ljt47-MenuList"
-                      id="regional-office-listbox"
-                      role="listbox"
-                    >
-                      <div
-                        aria-disabled="false"
-                        class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
-                        id="react-select-9-option-3"
-                        role="option"
-                        tabindex="-1"
-                      >
-                        New York City regional office
                       </div>
                     </div>
                   </div>
@@ -2431,8 +2431,25 @@ Object {
               <div
                 class=" css-2b097c-container"
               >
+                <span
+                  aria-live="polite"
+                  class="css-1laao21-a11yText"
+                >
+                  <span
+                    id="aria-selection-event"
+                  >
+                     
+                    
+                  </span>
+                  <span
+                    id="aria-context"
+                  >
+                     
+                     option Travel focused, 3 of 3. 1 result available for search term Travel. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                  </span>
+                </span>
                 <div
-                  class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                  class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
                 >
                   <div
                     class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -2477,7 +2494,7 @@ Object {
                     />
                     <div
                       aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                     >
                       <svg
                         aria-hidden="true"
@@ -2571,11 +2588,16 @@ Object {
                 class=" css-2b097c-container"
               >
                 <div
-                  class="cf-select__control cf-select__control--menu-is-open css-yk16xz-control"
+                  class="cf-select__control css-yk16xz-control"
                 >
                   <div
                     class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                   >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      New York City regional office
+                    </div>
                     <div
                       class="css-81nyic-Input"
                     >
@@ -2585,7 +2607,7 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
-                          aria-expanded="true"
+                          aria-expanded="false"
                           aria-haspopup="true"
                           aria-labelledby="regional-office-label"
                           aria-owns="regional-office-listbox"
@@ -2598,13 +2620,11 @@ Object {
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
                           type="text"
-                          value="New York City regional office"
+                          value=""
                         />
                         <div
                           style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                        >
-                          New York City regional office
-                        </div>
+                        />
                       </div>
                     </div>
                   </div>
@@ -2630,26 +2650,6 @@ Object {
                           d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
                         />
                       </svg>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="cf-select__menu css-26l3qy-menu"
-                >
-                  <div
-                    aria-label="regional-office-listbox"
-                    class="cf-select__menu-list css-4ljt47-MenuList"
-                    id="regional-office-listbox"
-                    role="listbox"
-                  >
-                    <div
-                      aria-disabled="false"
-                      class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
-                      id="react-select-9-option-3"
-                      role="option"
-                      tabindex="-1"
-                    >
-                      New York City regional office
                     </div>
                   </div>
                 </div>

@@ -49,6 +49,7 @@ exports[`EditContentionTitle renders correctly in edit mode 1`] = `
       <p>
         Tinnitus
       </p>
+      
       <div
         class="issue-text-buttons"
       >

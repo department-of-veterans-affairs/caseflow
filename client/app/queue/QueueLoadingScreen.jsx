@@ -102,20 +102,12 @@ class QueueLoadingScreen extends React.PureComponent {
     if (this.isUserId(userUrlParam)) {
       const targetUserId = parseInt(userUrlParam, 10);
 
-      return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => {
-        this.props.setTargetUser(resp.body.user);
-
-        // Ensure the user is returned
-        return resp.body.user;
-      });
+      return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) =>
+        this.props.setTargetUser(resp.body.user));
     }
 
-    return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) => {
-      this.props.setTargetUser(resp.body.user);
-
-      // Ensure the user is returned
-      return resp.body.user;
-    });
+    return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) =>
+      this.props.setTargetUser(resp.body.user));
   }
 
   isUserId = (str) => {
@@ -133,8 +125,8 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 
   createLoadPromise = () => {
-    return this.maybeLoadTargetUserInfo().then((result) => {
-      const chosenUserId = result?.id || this.props.targetUserId || this.props.userId;
+    return this.maybeLoadTargetUserInfo().then(() => {
+      const chosenUserId = this.props.targetUserId || this.props.userId;
       const userIsCamoEmployee = this.props.userIsCamoEmployee;
 
       return Promise.all([

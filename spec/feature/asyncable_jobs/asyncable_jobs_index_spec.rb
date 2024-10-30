@@ -137,7 +137,7 @@ feature "Asyncable Jobs index", :postgres do
 
       expect(page).to have_content("Viewing 1-50 of 54 total")
 
-      page.execute_script("document.querySelector('[name=page-button-1]').click()")
+      find("[name=page-button-1]").click
 
       expect(current_url).to match(/\?page=2/)
       expect(page).to have_content("Viewing 51-54 of 54 total")

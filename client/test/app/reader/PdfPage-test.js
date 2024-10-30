@@ -1,5 +1,5 @@
 import { recordMetrics, storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
-import { cleanup, waitFor } from '@testing-library/react';
+import { cleanup } from '@testing-library/react';
 import {
   metricsPdfStorePagesDisabled,
   pageMetricData,
@@ -7,8 +7,8 @@ import {
   pdfPageRenderTimeInMsEnabled,
   recordMetricsArgs,
   storeMetricsBrowserError,
+  storeMetricsData
 } from '../../helpers/PdfPageTests';
-import { PdfPage } from '../../../app/reader/PdfPage';
 
 jest.mock('../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockReturnThis(),
@@ -28,46 +28,46 @@ describe('PdfPage', () => {
 
   describe('.render', () => {
     it('renders outer div', () => {
-      const {container} = pdfPageRenderTimeInMsEnabled();
+      const wrapper = pdfPageRenderTimeInMsEnabled();
 
-      expect(container.querySelector('.cf-pdf-pdfjs-container')).toBeInTheDocument();
+      expect(wrapper.find('.cf-pdf-pdfjs-container')).toHaveLength(1);
     });
   });
 
   describe('when pdfPageRenderTimeInMs is enabled', () => {
     beforeAll(() => {
-      pdfPageRenderTimeInMsEnabled();
+      const wrapper = pdfPageRenderTimeInMsEnabled();
+      const instance = wrapper.instance();
 
-      jest.spyOn(PdfPage.prototype, 'getText').mockImplementation(() =>
-        Promise.resolve({ data: {} })
-      );
-      jest.spyOn(PdfPage.prototype, 'drawPage').mockImplementation(() =>
-        Promise.resolve()
-      );
-      jest.spyOn(PdfPage.prototype, 'drawText').mockReturnValue('Test');
+      jest.spyOn(instance, 'getText').mockImplementation(() =>
+        new Promise((resolve) => resolve({ data: {} })));
+      jest.spyOn(instance, 'drawPage').mockImplementation(() =>
+        new Promise((resolve) => resolve({ data: {} })));
+      jest.spyOn(instance, 'drawText').mockReturnValue('Test');
     });
 
-    it('metrics are stored and recorded', async () => {
+    it('metrics are stored and recorded', () => {
       expect(recordAsyncMetrics).toHaveBeenCalledTimes(2);
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
       expect(recordMetrics).toHaveBeenCalledWith(...recordMetricsArgs);
-
-      await waitFor(() => {
-        expect(PdfPage.prototype.getText).toHaveBeenCalled();
-        expect(PdfPage.prototype.drawPage).toHaveBeenCalled();
-        expect(PdfPage.prototype.drawText).toHaveBeenCalled();
-      });
+      if (pdfPageRenderTimeInMsEnabled().instance().props.pageIndex === 0) {
+        expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsData);
+      }
     });
   });
 
   describe('when pdfPageRenderTimeInMs is disabled with error thrown', () => {
+
     beforeAll(() => {
-      metricsPdfStorePagesDisabled();
-      jest.spyOn(PdfPage.prototype, 'getText').mockImplementation(() => {
+      const wrapper = metricsPdfStorePagesDisabled();
+      const instance = wrapper.instance();
+
+      jest.spyOn(instance, 'getText').mockImplementation(() => {
         throw new Error();
       });
     });
+
     it('storeMetrics is not called', () => {
       expect(storeMetrics).not.toBeCalled();
     });
@@ -75,27 +75,32 @@ describe('PdfPage', () => {
 
   describe('when pdfPageRenderTimeInMs is disabled', () => {
     beforeAll(() => {
-      pdfPageRenderTimeInMsDisabled();
-      jest.spyOn(PdfPage.prototype, 'getText').mockImplementation(() =>
-        Promise.resolve({ data: {} })
-      );
-      jest.spyOn(PdfPage.prototype, 'drawPage').mockImplementation(() =>
-        Promise.resolve()
-      );
-      jest.spyOn(PdfPage.prototype, 'drawText').mockReturnValue('Test');
+      const wrapper = pdfPageRenderTimeInMsDisabled();
+      const instance = wrapper.instance();
+
+      jest.spyOn(instance, 'getText').mockImplementation(() =>
+        new Promise((resolve) => resolve({ data: {} })));
+      jest.spyOn(instance, 'drawPage').mockImplementation(() =>
+        new Promise((resolve) => resolve({ data: {} })));
+      jest.spyOn(instance, 'drawText').mockReturnValue('Test');
     });
+
     it('storeMetrics is not called', () => {
       expect(storeMetrics).not.toBeCalled();
     });
   });
 
   describe('when metricsPdfStorePages is enabled and error thrown', () => {
+
     beforeAll(() => {
-      pdfPageRenderTimeInMsEnabled();
-      jest.spyOn(PdfPage.prototype, 'getText').mockImplementation(() => {
+      const wrapper = pdfPageRenderTimeInMsEnabled();
+      const instance = wrapper.instance();
+
+      jest.spyOn(instance, 'getText').mockImplementation(() => {
         throw new Error();
       });
     });
+
     it('storeMetrics is called with browser error', () => {
       expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsBrowserError);
     });

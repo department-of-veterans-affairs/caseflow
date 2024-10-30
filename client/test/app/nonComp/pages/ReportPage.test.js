@@ -499,21 +499,22 @@ describe('ReportPage', () => {
     });
 
     it('should not display any date time input if options Last 7 days, Last 30 days, Last 365 days', async () => {
-      const options = ['Last 30 Days', 'Last 7 Days', 'Last 365 Days'];
+      ['Last 30 Days', 'Last 7 Days', 'Last 365 Days'].forEach(async (option) => {
 
-      for (const option of options) {
         const dropdownName = screen.getByLabelText(/Range/);
 
-        await selectEvent.select(dropdownName, option);
+        await selectEvent.select(dropdownName, [option]);
 
-        expect(screen.getByText(option)).toBeInTheDocument();
+        await waitFor(() => {
+          expect(screen.getAllByText([option]).length).toBe(1);
+        });
 
         await waitFor(() => {
           expect(screen.queryByText('Date')).not.toBeInTheDocument();
           expect(screen.queryByText('From')).not.toBeInTheDocument();
           expect(screen.queryByText('To')).not.toBeInTheDocument();
         });
-      }
+      });
     });
   });
 });

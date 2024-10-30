@@ -60,8 +60,6 @@ module ByDocketDateDistribution
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def ama_statistics
     docket_counts = {
-      aoj_legacy_priority_stats: {},
-      aoj_legacy_stats: {},
       direct_review_priority_stats: {},
       direct_review_stats: {},
       evidence_submission_priority_stats: {},
@@ -73,8 +71,6 @@ module ByDocketDateDistribution
     }
 
     dockets.each_pair do |sym, docket|
-      next if FeatureToggle.enabled?("disable_#{sym}_distribution_stats".to_sym)
-
       docket_counts["#{sym}_priority_stats".to_sym] = {
         count: docket.count(priority: true, ready: true),
         affinity_date: {
@@ -92,10 +88,8 @@ module ByDocketDateDistribution
       }
     end
 
-    unless FeatureToggle.enabled?(:disable_legacy_distribution_stats)
-      docket_counts[:legacy_priority_stats][:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
-      docket_counts[:legacy_stats][:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
-    end
+    docket_counts[:legacy_priority_stats][:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+    docket_counts[:legacy_stats][:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
 
     sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
 
@@ -108,9 +102,6 @@ module ByDocketDateDistribution
     feature_toggles = [
       :specialty_case_team_distribution
     ]
-    dockets.each_key do |sym|
-      feature_toggles << "disable_#{sym}_distribution_stats".to_sym
-    end
     feature_toggles.each do |sym|
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end

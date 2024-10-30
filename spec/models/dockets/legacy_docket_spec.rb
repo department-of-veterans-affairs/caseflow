@@ -8,9 +8,6 @@ describe LegacyDocket do
     create(:case_distribution_lever, :disable_legacy_priority)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
-    create(:case_distribution_lever, :aoj_cavc_affinity_days)
-    create(:case_distribution_lever, :aoj_aod_affinity_days)
-    create(:case_distribution_lever, :aoj_affinity_days)
   end
 
   let(:docket) do
@@ -359,104 +356,28 @@ describe LegacyDocket do
     end
   end
 
-  context "#affinity_date_count" do
-    before do
-      create_priority_distributable_legacy_appeal_not_tied_to_judge
-      create_aod_cavc_ready_priority_case_1
-      create_aod_cavc_ready_priority_case_2
-      create_cavc_ready_priority_case
-      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123456")
-      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123457")
-      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123458")
-    end
-
-    context "when priority is true" do
-      context "with in window affinity" do
-        it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, true)).to eq(1)
-        end
-      end
-
-      context "with out in window affinity" do
-        it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, true)).to eq(3)
-        end
-      end
-    end
-
-    context "when priority is false" do
-      context "with in window affinity" do
-        it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, false))
-            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
-        end
-      end
-
-      context "with out in window affinity" do
-        it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, false))
-            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
-        end
-      end
-    end
-  end
-
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
       :case,
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "1",
+      bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
   end
 
-  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
+  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
     create(
       :case,
-      bfkey: bfkey,
+      bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "1",
+      bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
-  end
-
-  def create_aod_cavc_ready_priority_case_1
-    create(:case,
-           :aod,
-           :with_appeal_affinity,
-           bfd19: 11.months.ago,
-           bfac: "7",
-           bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 2.days.ago)
-  end
-
-  def create_aod_cavc_ready_priority_case_2
-    create(:case,
-           :aod,
-           :with_appeal_affinity,
-           affinity_start_date: 2.months.ago,
-           bfd19: 11.months.ago,
-           bfac: "7",
-           bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 2.days.ago)
-  end
-
-  def create_cavc_ready_priority_case
-    create(:case,
-           :with_appeal_affinity,
-           affinity_start_date: 1.month.ago,
-           bfd19: 11.months.ago,
-           bfac: "7",
-           bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 2.days.ago)
   end
 end

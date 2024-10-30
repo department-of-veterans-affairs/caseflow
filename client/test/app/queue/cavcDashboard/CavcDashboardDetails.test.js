@@ -52,7 +52,7 @@ describe('CavcDashboardDetails', () => {
 
     await renderCavcDashboardDetails(remand, false);
 
-    const editButton = screen.getByRole('button', {hidden: true});
+    const editButton = screen.getByRole('button', { description: 'Edit', hidden: true });
 
     expect(editButton).toBeDisabled();
     expect(editButton).not.toBeVisible();
@@ -63,7 +63,7 @@ describe('CavcDashboardDetails', () => {
 
     await renderCavcDashboardDetails(remand, true);
 
-    const editButton = screen.getByRole('button', { name: 'Edit' });
+    const editButton = screen.getByRole('button', { description: 'Edit' });
 
     expect(editButton).toBeEnabled();
     expect(editButton).toBeVisible();
@@ -74,7 +74,7 @@ describe('CavcDashboardDetails', () => {
 
     await renderCavcDashboardDetails(dashboard, true);
 
-    const edit = screen.getByRole('button', { name: 'Edit' });
+    const edit = screen.getByRole('button', { description: 'Edit' });
 
     fireEvent.click(edit);
 
@@ -99,7 +99,7 @@ describe('CavcDashboardDetails', () => {
 
     await renderCavcDashboardDetails(dashboard, true);
 
-    const edit = screen.getByRole('button', { name: 'Edit' });
+    const edit = screen.getByRole('button', { description: 'Edit' });
 
     fireEvent.click(edit);
     const cancelModal = document.getElementById('Edit-CAVC-Details-button-id-0');
@@ -119,7 +119,7 @@ describe('CavcDashboardDetails', () => {
 
     await renderCavcDashboardDetails(dashboard, true);
 
-    const edit = screen.getByRole('button', { name: 'Edit' });
+    const edit = screen.getByRole('button', { description: 'Edit' });
 
     fireEvent.click(edit);
 

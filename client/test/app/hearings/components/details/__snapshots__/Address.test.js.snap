@@ -1,16 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AddressLine Matches snapshot with default props 1`] = `
-<DocumentFragment>
-  <div
-    data-css-1a5irm0=""
-    data-testid="read-only-testid"
-  >
-    <pre>
-      John Smith
+<ReadOnly
+  text="John Smith
 123 Fake St.
-Washington, DC 20001
-    </pre>
-  </div>
-</DocumentFragment>
+Washington, DC 20001"
+/>
 `;

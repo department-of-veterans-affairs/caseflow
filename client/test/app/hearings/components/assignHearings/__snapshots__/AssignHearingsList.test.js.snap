@@ -138,7 +138,6 @@ Object {
             </span>
             <span
               data-css-1iar5hk=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -255,7 +254,6 @@ Object {
             </span>
             <span
               data-css-h1aqyj=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -436,7 +434,6 @@ Object {
             </span>
             <span
               data-css-127pskq=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -553,7 +550,6 @@ Object {
             </span>
             <span
               data-css-h1aqyj=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -689,6 +685,7 @@ Object {
               >
                 1:30 AM MDT
               </span>
+              
               <br />
               3:30 AM EDT
             </p>
@@ -736,7 +733,6 @@ Object {
             </span>
             <span
               data-css-1w1a50w=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -853,7 +849,6 @@ Object {
             </span>
             <span
               data-css-h1aqyj=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1037,7 +1032,6 @@ Object {
           </span>
           <span
             data-css-1iar5hk=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1154,7 +1148,6 @@ Object {
           </span>
           <span
             data-css-h1aqyj=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1335,7 +1328,6 @@ Object {
           </span>
           <span
             data-css-127pskq=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1452,7 +1444,6 @@ Object {
           </span>
           <span
             data-css-h1aqyj=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1588,6 +1579,7 @@ Object {
             >
               1:30 AM MDT
             </span>
+            
             <br />
             3:30 AM EDT
           </p>
@@ -1635,7 +1627,6 @@ Object {
           </span>
           <span
             data-css-1w1a50w=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1752,7 +1743,6 @@ Object {
           </span>
           <span
             data-css-h1aqyj=""
-            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
