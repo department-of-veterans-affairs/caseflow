@@ -1,6 +1,9 @@
 <!-- Change JIRA-12345 to reflect the URL of the Jira item this PR is associated with -->
 Resolves [Jira Issue Title](https://jira.devops.va.gov/browse/JIRA-12345)
 
+> [!CAUTION]
+> **Do not include any screenshots within this PR description.**
+
 # Description
 Please explain the changes you made here.
 
@@ -14,12 +17,6 @@ Please explain the changes you made here.
 - [ ] For feature branches merging into main: Was this deployed to UAT?
 
 # Frontend
-## User Facing Changes
- - [ ] Screenshots of UI changes added to PR & Original Issue
-
- BEFORE|AFTER
- ---|---
-
 ## Storybook Story
 *For Frontend (Presentation) Components*
 * [ ] Add a [Storybook](https://github.com/department-of-veterans-affairs/caseflow/wiki/Documenting-React-Components-with-Storybook) file alongside the component file (e.g. create `MyComponent.stories.js` alongside `MyComponent.jsx`)
