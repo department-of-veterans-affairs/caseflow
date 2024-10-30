@@ -14,7 +14,7 @@ class Docket
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
-  def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
+  def appeals(priority: nil, genpop: nil, ready: nil, judge: nil, not_affinity: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
     scope = docket_appeals
@@ -29,8 +29,8 @@ class Docket
       # adjust for non_genpop for distributing non_genpop appeals during the push priority job only
       if genpop == "not_genpop" && judge.present?
         scope = only_non_genpop_appeals_for_push_job(scope, judge)
-      elsif judge.present?
-        scope = adjust_for_affinity(scope, judge)
+      else
+        scope = adjust_for_affinity(scope, not_affinity, judge)
       end
     end
 
@@ -41,9 +41,9 @@ class Docket
     scope.order("appeals.receipt_date")
   end
 
-  def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
+  def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil, not_affinity: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
-    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
+    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge, not_affinity: not_affinity)
     lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
     docket_type_lever = CaseDistributionLever.find_by_item(lever_item)
     docket_type_lever_value = docket_type_lever ? CaseDistributionLever.public_send(lever_item) : nil
@@ -103,9 +103,10 @@ class Docket
   def age_of_oldest_priority_appeal
     @age_of_oldest_priority_appeal ||=
       if use_by_docket_date?
-        ready_priority_nonpriority_appeals(priority: true, ready: true).limit(1).first&.receipt_date
+        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true).limit(1).first&.receipt_date
       else
-        ready_priority_nonpriority_appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true)
+          .limit(1).first&.ready_for_distribution_at
       end
   end
 
@@ -214,8 +215,14 @@ class Docket
     scope.non_genpop_with_case_distribution_lever(judge)
   end
 
-  def adjust_for_affinity(scope, judge)
-    scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+  def adjust_for_affinity(scope, not_affinity, judge = nil)
+    if judge.present?
+      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+    elsif not_affinity
+      scope
+    else
+      scope.genpop_with_case_distribution_lever
+    end
   end
 
   def scoped_for_priority(scope)

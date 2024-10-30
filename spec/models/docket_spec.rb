@@ -8,10 +8,15 @@ describe Docket, :all_dbs do
     create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
     create(:case_distribution_lever, :ama_hearing_docket_time_goals)
     create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :ama_evidence_submission_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
   end
@@ -81,6 +86,19 @@ describe Docket, :all_dbs do
         subject { Docket.new.docket_type }
         it "throws an error" do
           expect { subject }.to raise_error(Caseflow::Error::MustImplementInSubclass)
+        end
+      end
+    end
+
+    describe "affinity_date_count" do
+      context "when case distribution lever value is infinite" do
+        subject { DirectReviewDocket.new.affinity_date_count(true, true) }
+        before do
+          CaseDistributionLever.find_by(item: "cavc_affinity_days").update(value: "infinite")
+        end
+
+        it "Does not raise an error and return results" do
+          expect(subject).to eq(1)
         end
       end
     end
@@ -322,6 +340,33 @@ describe Docket, :all_dbs do
 
       it "counts genpop priority appeals" do
         expect(subject).to eq(3)
+      end
+
+      context "when acd_exclude_from_affinity flag is enabled" do
+        before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+        after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+        let(:docket) { HearingRequestDocket.new }
+        let!(:cavc_appeal2) do
+          create(:appeal,
+                 :type_cavc_remand,
+                 :cavc_ready_for_distribution,
+                 :with_appeal_affinity,
+                 docket_type: Constants.AMA_DOCKETS.hearing,
+                 affinity_start_date: 2.days.ago)
+        end
+        let!(:cavc_appeal3) do
+          create(:appeal,
+                 :type_cavc_remand,
+                 :cavc_ready_for_distribution,
+                 :with_appeal_affinity,
+                 docket_type: Constants.AMA_DOCKETS.hearing,
+                 affinity_start_date: 80.days.ago)
+        end
+        subject { docket.genpop_priority_count }
+
+        it "correctly filters out appeals within affinity window" do
+          expect(subject).to eq(1)
+        end
       end
     end
 
