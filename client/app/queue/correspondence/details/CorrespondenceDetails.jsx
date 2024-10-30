@@ -551,7 +551,7 @@ const CorrespondenceDetails = (props) => {
                   correspondence={props.correspondence}
                   organizations={props.organizations}
                   userCssId={props.userCssId}
-                  appealUuid={taskAdded.appealUuid}
+                  appealUuid={taskAdded.appealUuid || taskAdded.externalId}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                 />
@@ -905,15 +905,6 @@ const CorrespondenceDetails = (props) => {
           const appealIds = resp.body.related_appeals;
           const correspondenceAppeals = resp.body.correspondence_appeals;
 
-          setSelectedAppeals(appealIds);
-          setInitialSelectedAppeals(appealIds);
-          setAppealTableKey((key) => key + 1);
-          props.updateCorrespondenceInfo(tempCor);
-          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
-          setShowSuccessBanner(true);
-          setSelectedPriorMail([]);
-          setDisableSubmitButton(true);
-
           // Removes all entries in the queue.appeals redux store
           Object.entries(props.appealsFromStore).forEach(
             ([, value]) => dispatch(deleteAppeal((value.externalId)))
@@ -926,6 +917,15 @@ const CorrespondenceDetails = (props) => {
           });
 
           dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
+
+          props.updateCorrespondenceInfo(tempCor);
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          setAppealTableKey((key) => key + 1);
+          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
+          setShowSuccessBanner(true);
+          setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
 
           sortAppeals(appealIds);
           window.scrollTo({
