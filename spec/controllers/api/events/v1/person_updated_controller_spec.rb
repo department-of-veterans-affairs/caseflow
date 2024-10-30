@@ -3,8 +3,7 @@
 RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :controller do
   let!(:current_user) { User.authenticate! }
   let(:api_key) { ApiKey.create!(consumer_name: "Person Updated Tester") }
-  let(:event_id) { 1 }
-  let(:fake_event_id) { 1738 }
+  let(:event_id) { SecureRandom.uuid }
 
   before(:each) do
     request.headers["Authorization"] = "Token #{api_key.key_string}"
@@ -49,55 +48,72 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
     it "should not be successful due to unauthorized request" do
       # set up the wrong token
       request.headers["Authorization"] = "BADTOKEN"
-      post :does_person_exist, params: { "participant_id": "NotAPerson" }
+      get :does_person_exist, params: { "participant_id": "NotAPerson" }
       expect(response.status).to eq 401
     end
 
     it "should be successful 204 when person does not exist" do
-      post :does_person_exist, params: { "participant_id": "NotAPerson" }
+      get :does_person_exist, params: { "participant_id": "NotAPerson" }
       expect(response.status).to eq 204
     end
 
     it "should be successful 200 when person exists" do
-      post :does_person_exist, params: { "participant_id": person.participant_id.to_s }
+      get :does_person_exist, params: { "participant_id": person.participant_id.to_s }
       expect(response.status).to eq 200
     end
   end
 
   describe "POST person updated" do
-    let!(:payload) { Events::PersonUpdated::PersonUpdatedEvent.example_response }
+    let(:payload) { JSON.parse Events::PersonUpdated::PersonUpdatedEvent.example_response }
+    let(:person_updated) { double(Events::PersonUpdated) }
+    let(:attributes) { payload.slice(*Events::PersonUpdated::Attributes.members) }
+    let(:is_veteran) { true }
+
+    before do
+      allow(Events::PersonUpdated).to receive(:new).with(
+        payload["event_id"],
+        payload["participant_id"],
+        is_veteran,
+        an_instance_of(
+          Events::PersonUpdated::Attributes
+        ).and(have_attributes(attributes))
+      ).and_return(person_updated)
+    end
 
     context "with a valid token" do
       it "returns 200 status response" do
         load_headers
 
-        post :person_updated, params: JSON.parse(payload)
+        expect(person_updated).to receive(:call)
+
+        post :person_updated, params: payload
 
         expect(response).to have_http_status(:created)
+        expect(response.body).to eq(JSON.dump({ "message": "PersonUpdated successfully processed" }))
       end
     end
 
     context "when event_id is already in Redis Cache" do
-      it "throws a Redis error and returns a 409 status" do
-        load_headers
+      before do
+        allow(person_updated).to receive(:call).and_raise(
+          Caseflow::Error::RedisLockFailed, "Lock failed"
+        )
+      end
 
-        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:PersonUpdated:#{payload['event_id']}"
-        redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
-
+      it "returns a 409 status and error message" do
         post :person_updated, params: payload
         expect(response).to have_http_status(:conflict)
-        redis.del(lock_key)
+        expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
       end
     end
 
     context "when exception occurs" do
       before do
-        allow(Person).to receive(:update!).and_raise(StandardError, "Something went wrong")
+        allow(person_updated).to receive(:call).and_raise(StandardError, "Something went wrong")
       end
 
       it "returns a 422 status and error message" do
-        post :person_updated, params: { event_id: event_id }
+        post :person_updated, params: payload
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
       end
@@ -105,25 +121,23 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
   end
 
   describe "POST #person_updated_error" do
-    let(:pu_error_params) do
+    let(:params) do
       { event_id: event_id, errored_participant_id: 2, error: "some error" }
     end
 
+    let(:person_error) { double(Events::PersonUpdatedError) }
+
     before do
-      allow(controller).to receive(:pu_error_params).and_return(pu_error_params)
+      allow(Events::PersonUpdatedError).to receive(:new).with(
+        event_id, 2, "some error"
+      ).and_return(person_error)
     end
 
     context "when service error handling is successful" do
-      let(:person_error) { double(Events::PersonUpdatedError) }
-
-      before do
-        allow(Events::PersonUpdatedError).to receive(:new).with(
-          event_id, 2, "some error"
-        ).and_return(person_error)
-      end
-
       it "returns a 201 status and success message" do
-        post :person_updated_error, params: { event_id: event_id }
+        expect(person_error).to receive(:call)
+
+        post :person_updated_error, params: params
 
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)).to eq(
@@ -140,7 +154,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
       end
 
       it "returns a 409 status and error message" do
-        post :person_updated_error, params: { event_id: event_id }
+        post :person_updated_error, params: params
 
         expect(response).to have_http_status(:conflict)
         expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
@@ -149,13 +163,13 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
     context "when StandardError occurs" do
       before do
-        allow(person_error).to receive(:handle_service_error).and_raise(
+        allow(person_error).to receive(:call).and_raise(
           StandardError, "Something went wrong"
         )
       end
 
       it "returns a 422 status and error message" do
-        post :person_updated_error, params: { event_id: event_id }
+        post :person_updated_error, params: params
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })

@@ -3,52 +3,46 @@
 class Events::PersonUpdatedError
   include RedisMutex::Macro
 
-  def initialize(consumer_event_id, participant_id, person_attributes)
-    @consumer_event_id = consumer_event_id
+  def initialize(event_id, participant_id, error_message)
+    @event_id = event_id
     @participant_id = participant_id
-    @person_attributes = person_attributes
+    @error_message = error_message
   end
 
   def call
     if redis.exists("RedisMutex:#{redis_key}")
-      fail Caseflow::Error::RedisLockFailed, message:
-        "Key RedisMutex:#{redis_key} is already in the Redis Cache"
+      fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:#{redis_key} is already in the Redis Cache"
     end
 
-    RedisMutex.with_lock(redis_key, block: 60, expire: 60) do
+    RedisMutex.with_lock(redis_key, block: 60, expire: 100) do
       ActiveRecord::Base.transaction do
-        person.assign_attributes(
-          person_attributes
+        event.update!(
+          error: error_message, info: { "errored_claim_id" => participant_id }
         )
-        person.save!
       end
     end
   rescue RedisMutex::LockError => error
     Rails.logger.error("LockError occurred: #{error.message}")
+    raise Caseflow::Error::RedisLockFailed
   rescue StandardError => error
     Rails.logger.error(error.message)
-    event.assign_attributes(error: error.message)
-    event.save!
+    event.update!(error: error.message)
     raise error
   end
 
   private
 
-  attr_reader :consumer_event_id, :participant_id, :person_attributes
+  attr_reader :event_id, :participant_id, :error_message
 
   def redis_key
-    "PersonUpdatedError:#{errored_claim_id}"
+    "PersonUpdatedError:#{event_id}"
   end
 
   def redis
     Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 
-  def veteran
-    Veteran.where(participant_id: participant_id).first
-  end
-
-  def person
-    Person.where(participant_id: participant_id).first
+  def event
+    @event ||= Events::PersonUpdatedEvent.find_or_create_by(reference_id: event_id)
   end
 end
