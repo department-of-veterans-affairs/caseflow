@@ -168,6 +168,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def ensure_date_completed
+    return unless business_line.is_a? VhaBusinessLine
     return unless allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym] == "completed"
 
     unless params[:filter]&.any? { |s| s.include?("completedDateColumn") }

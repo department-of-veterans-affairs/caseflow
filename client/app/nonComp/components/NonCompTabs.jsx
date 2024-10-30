@@ -32,7 +32,7 @@ const NonCompTabsUnconnected = (props) => {
   // Read from the url get params and the local filter. The get params should override the local filter.
   const filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
 
-  if (currentTabName === 'completed' && !filter.some((f) => f.includes('completedDateColumn'))) {
+  if (isVhaBusinessLine && currentTabName === 'completed' && !filter.some((ff) => ff.includes('completedDateColumn'))) {
     filter.push(`col=completedDateColumn&val=last7,${moment().subtract(7, 'days')},`);
   }
 
