@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.describe PersonAndVeteranEventRemediationJob do
   include ActiveJob::TestHelper
 
