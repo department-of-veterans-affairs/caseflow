@@ -65,6 +65,7 @@
       admin_case_distribution: FeatureToggle.enabled?(:admin_case_distribution, user: current_user),
       acd_exclude_from_affinity: FeatureToggle.enabled?(:acd_exclude_from_affinity, user: current_user),
       disable_ama_eventing: FeatureToggle.enabled?(:disable_ama_eventing, user: current_user)
+      legacy_case_movement_vlj_to_vlj_for_evalnsign: FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign, user: current_user)
     }
   }) %>
 <% end %>
