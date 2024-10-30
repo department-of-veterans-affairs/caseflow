@@ -91,7 +91,7 @@ class TaskPageUnconnected extends React.PureComponent {
             <div className="usa-width-two-thirds">
               <div className="cf-form-details">
                 <div><strong>Form being processed</strong> {
-                  task.type === 'Remand' ? DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE :
+                  task.appeal.type === 'Remand' ? DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE :
                     longFormNameFromKey(appeal.formType)
                 }</div>
                 <div><strong>Informal conference requested</strong> {appeal.informalConference ? 'Yes' : 'No'}</div>
@@ -125,6 +125,7 @@ TaskPageUnconnected.propTypes = {
     claimant: PropTypes.object,
     type: PropTypes.string,
     created_at: PropTypes.string,
+    appeal: PropTypes.object,
   }),
   businessLine: PropTypes.string,
   decisionIssuesStatus: PropTypes.object,
