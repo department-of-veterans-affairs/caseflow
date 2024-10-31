@@ -31,7 +31,6 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.issues.length
   end
 
-
   attribute :status do |object|
     object.correspondence.status
   end
@@ -39,5 +38,4 @@ class WorkQueue::CorrespondenceAppealsSerializer
   attribute :assigned_to do |object|
     object.tasks[0]&.assigned_to
   end
-
 end

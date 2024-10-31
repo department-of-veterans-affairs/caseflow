@@ -31,7 +31,6 @@ class WorkQueue::CorrespondenceDetailsAppealSerializer
     object.issues.length
   end
 
-
   # count values pulled from WorkQueue::AppealSerializer issue attribute
   attribute :issue_count do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).count
