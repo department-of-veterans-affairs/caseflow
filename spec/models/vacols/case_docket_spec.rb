@@ -26,12 +26,15 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:inactive_judge) { create(:user, :inactive) }
   let!(:inactive_vacols_judge) { create(:staff, :judge_role, svlj: "V", sdomainid: inactive_judge.css_id) }
 
+  let(:caseflow_attorney) { create(:user) }
+  let!(:vacols_attorney) { create(:staff, :attorney_role, sdomainid: caseflow_attorney.css_id) }
+
   let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
     create(:case,
            bfd19: 1.year.ago,
-           bfac: "3",
+           bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: 3.days.ago,
@@ -69,7 +72,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:third_nonpriority_ready_case) do
     create(:case,
            bfd19: 10.months.ago,
-           bfac: "3",
+           bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "83",
            bfdloout: 1.day.ago,
@@ -103,7 +106,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     create(:case,
            :aod,
            bfd19: 1.year.ago,
-           bfac: "3",
+           bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: aod_ready_case_ready_time,
@@ -142,6 +145,9 @@ describe VACOLS::CaseDocket, :all_dbs do
   end
 
   context ".counts_by_priority_and_readiness" do
+    # this should not be included in the count
+    let!(:aoj_appeal) { create(:legacy_aoj_appeal) }
+
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to match_array([
@@ -157,6 +163,36 @@ describe VACOLS::CaseDocket, :all_dbs do
     subject { VACOLS::CaseDocket.nod_count }
     it "counts nod stage appeals" do
       expect(subject).to eq(1)
+    end
+  end
+
+  context ".genpop_priority_count" do
+    subject { VACOLS::CaseDocket.genpop_priority_count }
+    it "counts genpop priority appeals" do
+      expect(subject).to eq(2)
+    end
+
+    context "with affinitized appeals" do
+      let!(:aod_cavc_ready_case_within_affinity) do
+        create(:legacy_cavc_appeal,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               aod: true,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      let!(:cavc_ready_case_within_affinity) do
+        create(:legacy_cavc_appeal,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      it "correctly filters out appeals based on the lever filters" do
+        expect(subject).to eq(2)
+      end
     end
   end
 
@@ -743,7 +779,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, affinity_start_date: 3.days.ago)
         end
         let!(:c9) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, appeal_affinity: false) }
-        # hearing held but no previous deciding judge
+        # hearing held but no previous deciding judge where hearing judge is active
         let!(:c10) do
           c10 = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney)
           c10.update!(bfmemid: nil)
@@ -828,11 +864,34 @@ describe VACOLS::CaseDocket, :all_dbs do
         let!(:c29) do
           create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney,  appeal_affinity: false)
         end
-        # hearing held but no previous deciding judge
+        # hearing held but no previous deciding judge where hearing judge is ineligible
         let!(:c30) do
           c30 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney)
           c30.update!(bfmemid: nil)
           c30
+        end
+        # hearing held with previous decision where judge is not the same but hearing judge is ineligible
+        let!(:c31) do
+          c31 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney)
+          c31.update!(bfmemid: other_judge.sattyid)
+          c31
+        end
+        let!(:c32) do
+          c32 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney,
+                                            affinity_start_date: 3.days.ago)
+          c32.update!(bfmemid: other_judge.sattyid)
+          c32
+        end
+        let!(:c33) do
+          c33 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, appeal_affinity: false)
+          c33.update!(bfmemid: other_judge.sattyid)
+          c33
+        end
+        # hearing held by excluded judge with no previous decision (tied to excl judge)
+        let!(:c34) do
+          c34 = create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney)
+          c34.update!(bfmemid: nil)
+          c34
         end
 
         it "distributes CAVC cases correctly based on lever value", :aggregate_failures do
@@ -841,24 +900,40 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           # {FOR LEVER BEING A VALUE:}
           cavc_lever.update!(value: 14)
+          CaseDistributionLever.clear_distribution_lever_cache
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
             .to match_array(
-              [c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
+              [c1, c4, c11, c12, c13, c14, c15, c16, c17, c21, c22,
+               c23, c24, c25, c26, c27, c28, c29, c30, c31]
               .map { |c| (c["bfkey"].to_i + 1).to_s }.sort
             )
           # {FOR LEVER BEING INFINITE:}
           cavc_lever.update!(value: "infinite")
+          CaseDistributionLever.clear_distribution_lever_cache
           expect(
             VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
           )
-            .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
-              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .to match_array(
+              [c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
+              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort
+            )
+
+          # ensure that excluded judge recieves their tied cases which would not go to default judge
+          expect(VACOLS::CaseDocket.distribute_priority_appeals(excl_judge_caseflow, "any", 100, true)
+              .map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24,
+              c25, c26, c27, c28, c29, c30, c34
+            ]
+            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
           # {FOR LEVER BEING OMIT:}
           cavc_lever.update!(value: "omit")
+          CaseDistributionLever.clear_distribution_lever_cache
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
             .to match_array([
-              c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16,
-              c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
+              c1, c2, c3, c4, c5, c6, c11, c12, c13, c14, c15, c16,
+              c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33
             ]
             .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
@@ -902,7 +977,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let!(:ca9) do
           create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true, appeal_affinity: false)
         end
-        # hearing held but no previous deciding judge
+        # hearing held but no previous deciding judge where hearing judge is active
         let!(:ca10) do
           ca10 = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true)
           ca10.update!(bfmemid: nil)
@@ -988,11 +1063,34 @@ describe VACOLS::CaseDocket, :all_dbs do
         let!(:ca29) do
           create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, appeal_affinity: false)
         end
-        # hearing held but no previous deciding judge
+        # hearing held but no previous deciding judge where hearing judge is ineligible
         let!(:ca30) do
           ca30 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true)
           ca30.update!(bfmemid: nil)
           ca30
+        end
+        # hearing held with previous decision where judge is not the same but hearing judge is ineligible
+        let!(:ca31) do
+          ca31 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true)
+          ca31.update!(bfmemid: other_judge.sattyid)
+          ca31
+        end
+        let!(:ca32) do
+          ca32 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true,
+                                             affinity_start_date: 3.days.ago)
+          ca32.update!(bfmemid: other_judge.sattyid)
+          ca32
+        end
+        let!(:ca33) do
+          ca33 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, appeal_affinity: false)
+          ca33.update!(bfmemid: other_judge.sattyid)
+          ca33
+        end
+        # hearing held by excluded judge with no previous decision (tied to excl judge)
+        let!(:ca34) do
+          ca34 = create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true)
+          ca34.update!(bfmemid: nil)
+          ca34
         end
 
         it "distributes CAVC AOD cases correctly based on lever value", :aggregate_failures do
@@ -1001,25 +1099,39 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           # {FOR LEVER HAVING A VALUE:}
           cavc_aod_lever.update!(value: 14)
+          CaseDistributionLever.clear_distribution_lever_cache
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
             .to match_array([
-              ca1, ca4, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25,
-              ca26, ca27, ca28, ca29, ca30
+              ca1, ca4, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25,
+              ca26, ca27, ca28, ca29, ca30, ca31
             ]
               .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
           # {FOR LEVER BEING INFINITE:}
           cavc_aod_lever.update!(value: "infinite")
-          expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
-            .to match_array(
-              [ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30]
-              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort
-            )
-          # {FOR LEVER BEING OMIT:}
-          cavc_aod_lever.update!(value: "omit")
+          CaseDistributionLever.clear_distribution_lever_cache
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
             .to match_array([
-              ca1, ca2, ca3, ca4, ca5, ca6, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22,
-              ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30
+              ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24,
+              ca25, ca26, ca27, ca28, ca29, ca30
+            ]
+              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          # ensure that excluded judge recieves their tied cases which would not go to default judge
+          expect(VACOLS::CaseDocket.distribute_priority_appeals(excl_judge_caseflow, "any", 100, true)
+              .map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca18, ca19, ca20, ca21, ca22, ca23, ca24,
+              ca25, ca26, ca27, ca28, ca29, ca30, ca34
+            ]
+              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          # {FOR LEVER BEING OMIT:}
+          cavc_aod_lever.update!(value: "omit")
+          CaseDistributionLever.clear_distribution_lever_cache
+          expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              ca1, ca2, ca3, ca4, ca5, ca6, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22,
+              ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30, ca31, ca32, ca33
             ]
               .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
@@ -1114,13 +1226,14 @@ describe VACOLS::CaseDocket, :all_dbs do
           IneligibleJudgesJob.perform_now
 
           # For case distribution levers set to a value
+          CaseDistributionLever.clear_distribution_lever_cache
           new_hearing_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
           other_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
 
           expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_12, case_13
+              case_1, case_2, case_3, case_4, case_5, case_10, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
@@ -1130,12 +1243,13 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_7, case_8, case_9, case_10, case_12, case_13
+              case_7, case_8, case_10, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           # For case distribution levers set to infinite
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "infinite")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "infinite")
+          CaseDistributionLever.clear_distribution_lever_cache
 
           new_hrng_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
@@ -1159,6 +1273,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           # For case distribution levers set to omit
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "omit")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "omit")
+          CaseDistributionLever.clear_distribution_lever_cache
 
           new_hearing_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
@@ -1166,7 +1281,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           expect(new_hearing_judge_omit.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_9, case_10, case_11, case_12, case_13
+              case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(tied_judge_omit.map { |c| c["bfkey"] }.sort)
@@ -1176,7 +1291,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           expect(other_judge_omit.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_7, case_8, case_9, case_10, case_11, case_12, case_13
+              case_7, case_8, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end
