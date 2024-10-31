@@ -1,10 +1,8 @@
 FROM ruby:2.7.3
-FROM --platform=linux/amd64 node:16.3.0
 
 # Set up environment variables
 ENV APP_HOME=/caseflow \
     ORACLE_HOME=/opt/oracle \
-    LD_LIBRARY_PATH=/opt/oracle/instantclient_23_5 \
     BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git zip unzip libaio1 libaio-dev nodejs fastjar" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
@@ -12,6 +10,11 @@ ENV APP_HOME=/caseflow \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
     LANG="C.UTF-8"
+
+# Install base dependencies
+RUN apt-get update -yqq && \
+    apt-get install -yqq --no-install-recommends $BUILD && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY . $APP_HOME
 
@@ -24,11 +27,6 @@ RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sqlplus-linux.zip
 
 WORKDIR $APP_HOME
 
-# Install base dependencies
-RUN apt-get update -yqq && \
-    apt-get install -yqq --no-install-recommends $BUILD && \
-    rm -rf /var/lib/apt/lists/*
-
 # Set up NVM and Node
 RUN mkdir -p $NVM_DIR && \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
@@ -39,7 +37,7 @@ RUN mkdir -p $NVM_DIR && \
 # Install compatible Bundler version and gems
 COPY Gemfile* .
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
-RUN gem install bundler && bundle install
+RUN gem install bundler -v 2.4.22 && bundle install
 
 # Expose the Rails port
 ARG DEFAULT_PORT=3000
