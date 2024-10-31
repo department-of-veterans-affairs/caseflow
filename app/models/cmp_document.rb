@@ -9,4 +9,12 @@ class CmpDocument < ApplicationRecord
             presence: true
 
   belongs_to :cmp_mail_packet, optional: true
+
+  validate :date_of_receipt_must_be_a_date, on: [:create, :update]
+
+  def date_of_receipt_must_be_a_date
+    date_of_receipt&.to_date || errors.add(:date_of_receipt, :blank)
+  rescue Date::Error
+    errors.add(:date_of_receipt, :invalid)
+  end
 end

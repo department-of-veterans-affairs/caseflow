@@ -7,7 +7,31 @@ class Api::V1::CmpController < Api::ApplicationController
     raise error
   end
 
+  def document
+    new_document = CmpDocument.new(document_params)
+
+    if new_document.save
+      render json: { message: "CMP document successfully created" }, status: :ok
+    else
+      render json: {
+        message: "CMP document could not be created",
+        errors: new_document.errors
+      }, status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def document_params
+    {
+      cmp_document_id: params[:documentId],
+      cmp_document_uuid: params[:documentUuid],
+      date_of_receipt: params[:dateOfReceipt],
+      doctype_name: params[:nonVbmsDocTypeName],
+      packet_uuid: params[:packetUuid],
+      vbms_doctype_id: params[:vbmsDocTypeId]
+    }
+  end
 
   def upload_params
     params.permit(:payload, file: [])
