@@ -33,6 +33,7 @@ services:
       - appeals-db
       - appeals-redis
       - appeals-localstack-aws
+      - appeals-instantclient
     env_file:
       - .env
     networks:
@@ -51,6 +52,11 @@ services:
       - ./local/sqs/conf:/conf
     networks:
       - ls
+
+  appeals-instantclient:
+    platform: linux/amd64
+    container_name: appeals-instantclient
+    image: ghcr.io/oracle/oraclelinux8-instantclient:21
 
   # Metabase Analytics
   appeals-metabase:

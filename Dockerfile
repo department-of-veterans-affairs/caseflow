@@ -3,7 +3,7 @@ FROM ruby:2.7.3
 # Set up environment variables
 ENV APP_HOME=/caseflow \
     ORACLE_HOME=/opt/oracle \
-    BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git zip unzip libaio1 libaio-dev nodejs fastjar" \
+    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
@@ -17,16 +17,6 @@ RUN apt-get update -yqq && \
     rm -rf /var/lib/apt/lists/*
 
 COPY . $APP_HOME
-
-RUN mkdir -p $ORACLE_HOME
-WORKDIR $ORACLE_HOME
-ENV LD_LIBRARY_PATH=$ORACLE_HOME/instantclient_23_5
-
-RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-basic-linux.zip
-RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sdk-linux.zip
-RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sqlplus-linux.zip
-RUN cd $ORACLE_HOME/instantclient* && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci && \
-    echo $ORACLE_HOME/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig
 
 WORKDIR $APP_HOME
 
