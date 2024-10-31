@@ -24,21 +24,25 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      instructions: '',
+      notes: '',
     };
   }
 
-  validateForm = () => Boolean(this.state.instructions);
+  validateForm = () => Boolean(this.state.notes);
 
-  prependUrlToInstructions = () => {
-    return this.state.instructions;
+  formatInstructions = () => {
+    return [
+      COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+      COPY.UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE,
+      this.state.notes
+    ];
   };
 
   buildPayload = () => {
     return {
       data: {
         task: {
-          instructions: this.prependUrlToInstructions()
+          instructions: this.formatInstructions()
         }
       }
     };
@@ -58,7 +62,7 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
   }
 
   actionForm = () => {
-    const { instructions } = this.state;
+    const { notes } = this.state;
 
     return <React.Fragment>
       <div>
@@ -66,9 +70,9 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <TextareaField
             name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
-            onChange={(value) => this.setState({ instructions: value })}
+            onChange={(value) => this.setState({ notes: value })}
             placeholder= "This is the reason this is being put on hold."
-            value={instructions} />
+            value={notes} />
         </div>
       </div>
     </React.Fragment>;

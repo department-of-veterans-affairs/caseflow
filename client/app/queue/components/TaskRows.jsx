@@ -296,25 +296,30 @@ class TaskRows extends React.PureComponent {
     ) : null;
   };
 
-  taskInstructionDetailsItem = () => {
+  taskInstructionDetailsItem = (instructions) => {
+    // instructions is an Array
+    // instructions[0] - task details text
+    // instructions[1] - task action chosen by user
+    // instructions[2] - task notes from user
+
     const divStyle = { marginTop: '1rem' };
 
     return (
       <div style={divStyle}>
-        <b>DETAILS:</b>
+        <small>DETAILS:</small>
         <div style={divStyle}>
           <div style={{ whiteSpace: 'pre-line' }}>
-            Review the hearing transcript and upload the final to VBMS once
-            it has been reviewed for errors or corrected.
+            {instructions[0]}
           </div>
         </div>
         <hr></hr>
-        <div style={{...divStyle, marginBottom: '1rem' }}>
-          <b>No errors found: Upload transcript to VBMS</b>
+        <div style={{ ...divStyle, marginBottom: '1rem' }}>
+          <b>{instructions[1]}</b>
         </div>
         <div style={divStyle}>
-          <b>DETAILS</b>
+          <small>DETAILS</small>
         </div>
+        <p>{instructions[2]}</p>
       </div>
     );
   };
@@ -513,14 +518,18 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
-            {reviewTranscriptTask(task) ? this.taskInstructionDetailsItem() : (!establishmentTask(task) &&
+            {reviewTranscriptTask(task) ?
+              this.taskInstructionDetailsItem(task.instructions) :
+              (!establishmentTask(task) &&
               <dt style={{ width: '100%' }}>
                 {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
               </dt>)
             }
-            <dd style={{ width: '100%' }}>
-              {this.taskInstructionsWithLineBreaks(task)}
-            </dd>
+            {task.type !== 'ReviewTranscriptTask' &&
+              <dd style={{ width: '100%' }}>
+                {this.taskInstructionsWithLineBreaks(task)}
+              </dd>
+            }
           </React.Fragment>
         )}
         <Button
