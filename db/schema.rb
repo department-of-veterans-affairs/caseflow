@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -733,6 +733,14 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.bigint "veteran_id", comment: "Foreign key to veterans table"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
+  end
+
+  create_table "correspondences_appeals_tasks", force: :cascade do |t|
+    t.bigint "correspondence_appeal_id"
+    t.datetime "created_at", null: false
+    t.bigint "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_correspondences_appeals_tasks_on_task_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -1885,12 +1893,12 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -2246,7 +2254,13 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+  create_table "vbms_document_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "doc_type_id"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
@@ -2493,6 +2507,8 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences", "correspondence_types"
   add_foreign_key "correspondences", "veterans"
+  add_foreign_key "correspondences_appeals_tasks", "correspondence_appeals"
+  add_foreign_key "correspondences_appeals_tasks", "tasks"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
