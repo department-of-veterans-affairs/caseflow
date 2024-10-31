@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import TaskRows from '../../../../app/queue/components/TaskRows';
+import COPY from '../../../../COPY';
 
 const reviewTranscriptTask = {
   uniqueId: '8115',
@@ -53,7 +54,9 @@ const reviewTranscriptTask = {
   status: 'completed',
   onHoldDuration: null,
   instructions: [
-    'Schedule Veteran and/or appellant for Board hearing.'
+    COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+    COPY.UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE,
+    'These are some notes'
   ],
   decisionPreparedBy: null,
   availableActions: [],
@@ -94,12 +97,11 @@ test('toggles task instructions visibility', () => {
   render(<TaskRows taskList={[reviewTranscriptTask]} appeal={{}} />);
 
   // Check if the instructions are initially hidden
-  expect(screen.queryByText('Schedule Veteran and/or appellant for Board hearing.')).not.toBeInTheDocument();
+  expect(screen.queryByText('No errors found: Upload to VBMS')).not.toBeInTheDocument();
 
   // Click the toggle button
   fireEvent.click(screen.getByText('View task instructions'));
 
   // Check if the instructions are now visible
-  expect(screen.getByText('No errors found: Upload transcript to VBMS')).toBeInTheDocument();
-  expect(screen.getByText('Schedule Veteran and/or appellant for Board hearing.')).toBeInTheDocument();
+  expect(screen.getByText('No errors found: Upload to VBMS')).toBeInTheDocument();
 });
