@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import COPY from '../../../COPY';
-import userEvent from '@testing-library/user-event';
 import IssuesList from 'app/intake/components/IssueList';
 import { mockedIssueListProps } from './mockData/issueListProps';
 
@@ -22,9 +21,12 @@ describe('IssuesList', () => {
 
   it('renders the "Add Decision Date" list action if an issue has no decision date', async () => {
     setup(mockedIssueListProps);
-    const dropdown = screen.getAllByText('Select action')[0];
 
-    await userEvent.click(dropdown);
+    const dropdowns = screen.getAllByRole('combobox', { name: 'Actions' });
+    const dropdown = dropdowns[0];
+
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+
     expect(screen.getByText('Add decision date')).toBeInTheDocument();
 
   });
@@ -33,8 +35,12 @@ describe('IssuesList', () => {
     setup(mockedIssueListProps);
     const dropdown = screen.getAllByText('Select action')[0];
 
-    await userEvent.click(dropdown);
-    await userEvent.click(screen.getByText('Add decision date'));
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+
+    expect(screen.getByText('Add decision date')).toBeInTheDocument();
+
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'Enter' });
 
     expect(mockOnClickIssueAction).toHaveBeenCalledWith(0, 'add_decision_date');
 
@@ -73,7 +79,7 @@ describe('IssuesList', () => {
 
     const dropdown = screen.getAllByText('Select action')[0];
 
-    await userEvent.click(dropdown);
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
     expect(screen.getByText('Edit decision date')).toBeInTheDocument();
   });
@@ -91,7 +97,7 @@ describe('IssuesList', () => {
     setup(propsWithRequestForIssueUpdates);
     const dropdown = screen.getByText('Select action');
 
-    await userEvent.click(dropdown);
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
     expect(screen.getByText('Request modification')).toBeInTheDocument();
     expect(screen.getByText('Request removal')).toBeInTheDocument();
