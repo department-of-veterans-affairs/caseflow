@@ -333,7 +333,9 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
 
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,
-        payload: correspondence
+        payload: {
+          correspondence
+        }
       });
     });
 };
