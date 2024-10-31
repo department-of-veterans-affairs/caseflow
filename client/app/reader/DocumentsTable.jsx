@@ -40,6 +40,7 @@ import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
 import ReactSelectDropdown from '../components/ReactSelectDropdown';
+import { connection, megaBitsToBytes } from './utils/network';
 
 const NUMBER_OF_COLUMNS = 6;
 const receiptDateFilterStates = {
@@ -52,9 +53,7 @@ const receiptDateFilterStates = {
 };
 
 // This is temporarily here. Will be moved to a utility file.
-const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-const mbpsToBps = (mbps) => mbps * 125000;
-const speedInBps = connection ? mbpsToBps(connection.downlink) : null;
+const mbpsToBps = megaBitsToBytes(connection.downlink);
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -708,7 +707,7 @@ class DocumentsTable extends React.Component {
             File Size
           </div>
         ),
-        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size} browserSpeedInBytes={speedInBps} />,
+        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size} browserSpeedInBytes={mbpsToBps} />,
       },
     ];
   };

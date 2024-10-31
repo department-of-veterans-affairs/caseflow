@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { filesize } from 'filesize';
 import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 import { ICON_SIZES } from '../constants/AppConstants';
+import { documentDownloadTime } from './utils/network';
 
 const DocSizeIndicator = (props) => {
-  const downloadTime = props.docSize / props.browserSpeedInBytes;
+  const downloadTime = documentDownloadTime(props.docSize, props.browserSpeedInBytes);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
