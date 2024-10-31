@@ -722,6 +722,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when CaseDistributionLever" do
       before do
         VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
+        Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.day) { ineligible_judges_list }
       end
 
       let(:aff_judge_caseflow) { create(:user) }
@@ -741,6 +742,20 @@ describe VACOLS::CaseDocket, :all_dbs do
 
       let(:attorney_caseflow) { create(:user) }
       let!(:attorney) { create(:staff, :attorney_role, sdomainid: attorney_caseflow.css_id) }
+
+      let(:ineligible_judges_list) do
+        list = []
+        [[inel_judge_caseflow, inel_judge], [attorney_caseflow, attorney]].each do |user, staff|
+          list.push({
+                      sattyid: staff.sattyid,
+                      sdomaini: staff.sdomainid,
+                      svlj: staff.svlj,
+                      id: user.id,
+                      css_id: user.css_id
+                    })
+        end
+        list
+      end
 
       context ".cavc_affinity_days lever is active" do
         # cavc affinity cases:
@@ -895,7 +910,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         it "distributes CAVC cases correctly based on lever value", :aggregate_failures do
-          IneligibleJudgesJob.new.perform_now
           cavc_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days)
 
           # {FOR LEVER BEING A VALUE:}
@@ -1094,7 +1108,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         it "distributes CAVC AOD cases correctly based on lever value", :aggregate_failures do
-          IneligibleJudgesJob.new.perform_now
           cavc_aod_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_aod_affinity_days)
 
           # {FOR LEVER HAVING A VALUE:}
@@ -1218,8 +1231,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         it "cases are tied to the judge who held a hearing after the previous case was decided", :aggregate_failures do
-          IneligibleJudgesJob.perform_now
-
           # For case distribution levers set to a value
           CaseDistributionLever.clear_distribution_lever_cache
           new_hearing_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
@@ -1380,8 +1391,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         it "only distributes non-genpop appeals", :aggregate_failures do
-          IneligibleJudgesJob.perform_now
-
           # with levers set to a value
           CaseDistributionLever.clear_distribution_lever_cache
 
