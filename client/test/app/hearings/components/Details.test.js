@@ -24,6 +24,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionDetailsInputs from 'app/hearings/components/details/TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from 'app/hearings/components/details/TranscriptionProblemInputs';
 import TranscriptionRequestInputs from 'app/hearings/components/details/TranscriptionRequestInputs';
+import TranscriptionDetailsWebex from '../../../../app/hearings/components/details/TranscriptionDetailsWebex';
 import TranscriptionFilesTable from 'app/hearings/components/details/TranscriptionFilesTable';
 import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
@@ -329,6 +330,7 @@ describe('Details', () => {
 
         expect(details.find(TranscriptionFormSection)).toHaveLength(1);
         expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsWebex)).toHaveLength(1);
         expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
         expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
         expect(details.find(TranscriptionFilesTable)).toHaveLength(1);

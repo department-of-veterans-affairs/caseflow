@@ -1450,6 +1450,7 @@ GEM
     base64 (0.2.0)
     benchmark (0.3.0)
     benchmark-ips (2.14.0)
+    bigdecimal (3.1.8)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
     brakeman (4.7.1)
@@ -1650,7 +1651,7 @@ GEM
     ice_cube (0.16.3)
     immigrant (0.3.6)
       activerecord (>= 3.0)
-    jaro_winkler (1.5.6)
+    jaro_winkler (1.6.0)
     jmespath (1.6.2)
     jquery-rails (4.6.0)
       rails-dom-testing (>= 1, < 3)
@@ -1663,6 +1664,8 @@ GEM
       hana (~> 1.3)
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
+    jwt (2.8.2)
+      base64
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -1710,7 +1713,6 @@ GEM
     mime-types-data (3.2019.1009)
     mini_histogram (0.3.1)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.7)
     minitest (5.19.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
@@ -1730,8 +1732,9 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.5)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.15.6-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -1830,11 +1833,12 @@ GEM
     paper_trail (12.3.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
-    parallel (1.23.0)
+    parallel (1.26.3)
     paranoia (2.6.3)
       activerecord (>= 5.1, < 7.2)
-    parser (2.7.2.0)
+    parser (3.3.5.0)
       ast (~> 2.4.1)
+      racc
     pdf-forms (1.2.0)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
@@ -1852,7 +1856,7 @@ GEM
     public_suffix (4.0.6)
     puma (5.6.4)
       nio4r (~> 2.0)
-    racc (1.7.3)
+    racc (1.8.1)
     rack (2.2.6.4)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -1934,9 +1938,9 @@ GEM
     regexp_parser (1.6.0)
     request_store (1.4.1)
       rack (>= 1.4)
-    reverse_markdown (1.4.0)
+    reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.3.7)
     roo (2.8.2)
       nokogiri (~> 1)
       rubyzip (>= 1.2.1, < 2.0.0)
@@ -1996,6 +2000,7 @@ GEM
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
     ruby-oci8 (2.2.14)
+    ruby-ole (1.2.13.1)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
@@ -2055,7 +2060,7 @@ GEM
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
-    solargraph (0.40.1)
+    solargraph (0.41.2)
       backport (~> 1.1)
       benchmark
       bundler (>= 1.17.2)
@@ -2063,12 +2068,15 @@ GEM
       jaro_winkler (~> 1.5)
       kramdown (~> 2.3)
       kramdown-parser-gfm (~> 1.1)
-      parser (~> 2.3)
+      parser (~> 3.0)
       reverse_markdown (>= 1.0.5, < 3)
       rubocop (>= 0.52)
       thor (~> 1.0)
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
+    spreadsheet (1.3.1)
+      bigdecimal
+      ruby-ole
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -2084,8 +2092,8 @@ GEM
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     test-prof (0.10.1)
-    thor (1.3.1)
-    tilt (2.0.8)
+    thor (1.3.2)
+    tilt (2.4.0)
     timecop (0.9.1)
     timeout (0.4.0)
     tty-tree (0.3.0)
@@ -2111,7 +2119,6 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webrick (1.7.0)
     websocket (1.2.10)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
@@ -2128,13 +2135,14 @@ GEM
       nokogiri (~> 1.11)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yard (0.9.27)
-      webrick (~> 1.7.0)
+    yard (0.9.37)
     zeitwerk (2.6.12)
     ziptz (2.1.6)
 
 PLATFORMS
-  ruby
+  x86_64-darwin-22
+  x86_64-darwin-23
+  x86_64-linux
 
 DEPENDENCIES
   aasm (= 4.11.0)
@@ -2150,6 +2158,7 @@ DEPENDENCIES
   browser
   bullet (~> 6.1.0)
   bummr
+  bundler (~> 2.4.22)
   bundler-audit
   business_time (~> 0.9.3)
   capybara
@@ -2167,6 +2176,8 @@ DEPENDENCIES
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
   faker
+  faraday
+  faraday-multipart
   fast_jsonapi
   fasterer
   foreman
@@ -2177,6 +2188,7 @@ DEPENDENCIES
   icalendar
   immigrant
   json_schemer (~> 0.2.16)
+  jwt
   kaminari
   knapsack_pro (~> 3.8)
   logstasher
@@ -2250,6 +2262,7 @@ DEPENDENCIES
   single_cov
   sniffybara!
   solargraph
+  spreadsheet (~> 1.3)
   sql_tracker
   statsd-instrument
   stringex
