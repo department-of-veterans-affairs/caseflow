@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
@@ -16,6 +17,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
+import moment from 'moment-timezone';
 
 /**
  * This component can be used to easily build tables.
@@ -263,7 +265,7 @@ export class FooterRow extends React.PureComponent {
   }
 }
 
-export default class QueueTable extends React.PureComponent {
+class QueueTableUnConnected extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -306,7 +308,7 @@ export default class QueueTable extends React.PureComponent {
 
     // Ignore this if it's a client side queue
     if (preserveFilter) {
-    // if (preserveFilter && this.props.useTaskPagesApi) {
+      // if (preserveFilter && this.props.useTaskPagesApi) {
       // Grab the local storage filter if the property preserveFilter is true
       const localFilter = localStorage.getItem('queueFilter');
 
@@ -364,6 +366,15 @@ export default class QueueTable extends React.PureComponent {
   };
 
   componentDidUpdate = (previousProps, previousState) => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
+    const filterParams = this.props.tabPaginationOptions['filter[]'];
+
+    if (true &&
+      currentTabName === 'completed' &&
+      filterParams.length === 0) {
+      this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
+    }
     if (this.props.useReduxCache &&
       (this.props.reduxCache[this.requestUrl()]?.tasks?.length !==
         previousProps.reduxCache[this.requestUrl()]?.tasks?.length)) {
@@ -861,6 +872,14 @@ export default class QueueTable extends React.PureComponent {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  businessLineUrl: state.nonComp.businessLineUrl
+});
+
+const QueueTable = connect(mapStateToProps)(QueueTableUnConnected);
+
+export default QueueTable;
 
 HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
