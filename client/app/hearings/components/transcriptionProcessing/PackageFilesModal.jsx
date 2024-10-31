@@ -8,20 +8,10 @@ import ApiUtil from 'app/util/ApiUtil';
 import { useHistory } from 'react-router';
 
 const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }) => {
-  const [transcription, setTranscription] = useState({ task_id: '----' });
   const [returnDateValue, setReturnDateValue] = useState('');
   const [contractor, setContractor] = useState({ id: '0', name: '' });
   const [workOrder, setWorkOrder] = useState('');
   let history = useHistory();
-
-  /**
-   * Grabs the taskId
-  */
-  const getTranscriptionTaskId = () => {
-    ApiUtil.get('/hearings/transcriptions/next_transcription').
-      // eslint-disable-next-line camelcase
-      then((response) => setTranscription(response.body));
-  };
 
   /**
    * Generates the work order number
@@ -49,6 +39,17 @@ const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }
     }
 
     setWorkOrder(`BVA-${firstSet}-${sequencer}`);
+  };
+
+  /**
+   * Grabs the taskId
+  */
+  const getTranscriptionTaskId = () => {
+    ApiUtil.get('/hearings/transcriptions/next_transcription').
+      // eslint-disable-next-line camelcase
+      then((response) => {
+        generateWorkOrder(response.body.task_id);
+      });
   };
 
   // Renders the work order number
@@ -118,10 +119,6 @@ const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }
   useEffect(() => {
     getTranscriptionTaskId();
   }, []);
-
-  useEffect(() => {
-    generateWorkOrder(transcription.task_id);
-  }, [transcription]);
 
   return (
     <Modal

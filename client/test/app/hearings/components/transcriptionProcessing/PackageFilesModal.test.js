@@ -64,10 +64,13 @@ describe('Package files modal', () => {
     expect(await screen.findByText(`BVA-${year}34-6749`)).toBeInTheDocument();
   });
 
-  it('matches snapshot', () => {
-    mockTaskId(346749);
-    const { container } = setup();
+  it('matches snapshot', async () => {
+    mockTaskId(347);
+    const year = new Date().getFullYear();
 
+    const { container} = setup();
+
+    expect(await screen.findByText(`BVA-${year}-0347`)).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
 
