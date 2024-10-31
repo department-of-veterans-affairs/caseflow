@@ -1668,6 +1668,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 20px;
   padding-bottom: 20px;
   display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+  }
 }
 
 .case-details-header-badge,

@@ -970,6 +970,7 @@ const CorrespondenceDetails = (props) => {
             <CopyTextButton
               label="copy-id"
               text={props.correspondence.veteranFileNumber}
+              //textToCopy={props.correspondence.veteranFileNumber}
             />
           </div>
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>

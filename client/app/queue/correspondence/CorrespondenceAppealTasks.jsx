@@ -48,6 +48,72 @@ const CorrespondenceAppealTasks = (props) => {
     }
   }, [waiveEvidenceAlertBanner, appeal]);
 
+  // ---===Future Add Task Modal Usage===---
+
+  // const [isAddTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
+  const handleAddTaskModalOpen = () => {
+    // setIsTaskModalOpen(true);
+    console.log('Generating random number between 1 - 100...');
+    console.log(`You rolled: ${Math.floor((Math.random() * (Math.floor(100) - Math.ceil(1))) + Math.ceil(1))}`);
+  };
+
+  // const handleAddTaskModalClose = () => {
+  //   setIsTaskModalOpen(false);
+  // };
+
+  const renderTaskButton = () => {
+    return (
+      <Button
+      type="button"
+      onClick={handleAddTaskModalOpen}
+      name="addTaskOpen"
+      classNames="tasks-added-button-spacing"
+      >
+        + Add task
+      </Button>
+    )
+  };
+
+  const renderTaskRows = () => {
+    return (
+      <TaskRows
+        appeal={appeal}
+        taskList={tasks}
+        timeline={false}
+        editNodDateEnabled={false}
+        hideDropdown
+        waivableUser={props.waivableUser}
+      />
+    )
+  };
+
+  const renderTaskSectionByCount = () => {
+    if (tasks.length === 0) {
+      return (
+        <div className="left-section">
+          <div className="tasks-added-text-alternate">There are no tasks on this appeal.
+            {props.waivableUser && renderTaskButton}
+          </div>
+        </div>
+      )
+    } else if (tasks.length < 5) {
+      return (
+        <div className="left-section">
+          <span className="tasks-added-text">Tasks added to appeal {props.waivableUser && renderTaskButton}</span>
+          {renderTaskRows}
+        </div>
+      )
+    } else {
+      return (
+        <div className="left-section">
+          <span className="tasks-added-text">Tasks added to appeal</span>
+          {renderTaskRows}
+        </div>
+      )
+    }
+  };
+
   return (
     <>
       <div className="correspondence-existing-appeals">
@@ -136,20 +202,8 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
           </div>
           <div className="tasks-added-details">
-            {appeal && tasks.length !== 0 ?
-              (<div>
-                <span className="tasks-added-text">Tasks added to appeal</span>
-                <TaskRows
-                  appeal={appeal}
-                  taskList={tasks}
-                  timeline={false}
-                  editNodDateEnabled={false}
-                  hideDropdown
-                  waivableUser={props.waivableUser}
-                />
-              </div>) :
-              <span className="tasks-added-text-alternate">There are no tasks on this appeal.</span>
-            }
+            {appeal &&
+              renderTaskSectionByCount}
             {appeal ? '' :
               <span className="tasks-added-text-alternate">
                 The linked appeal must be saved before tasks can be added.</span>}
