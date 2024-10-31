@@ -23,7 +23,7 @@ shared_context "sync_vet_remediations" do
           "name_suffix" => nil,
           "email_address" => nil,
           "ssn" => "683378050" },
-        "record_data"=>
+        "record_data" =>
           { "id" => 5854,
           "participant_id" => "601486438",
           "date_of_birth" => "Thu, 01 Jan 1970",
@@ -62,7 +62,7 @@ shared_context "sync_vet_remediations" do
           "updated_at" => "Wed, 30 Oct 2024 18:48:34.844740000 UTC +00:00",
           "date_of_death" => nil,
           "date_of_death_reported_at" => nil,
-          "bgs_last_synced_at" => "Wed, 30 Oct 2024 18:48:34.844336000 UTC +00:00"},
+          "bgs_last_synced_at" => "Wed, 30 Oct 2024 18:48:34.844336000 UTC +00:00" },
         "record_data" =>
           { "id" => 8346,
           "file_number" => "683378050",
