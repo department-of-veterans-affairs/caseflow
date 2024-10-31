@@ -721,7 +721,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     appeals.reject! do |appeal|
       # will skip if not AOJ || if AOJ being distributed to tied_to judge || if not tied to any judge
-      next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
+      next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid, genpop)
 
       next common_affinity_filter_logic(
         appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
@@ -736,7 +736,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     appeals.reject! do |appeal|
       # will skip if not AOJ CAVC || if AOJ CAVC being distributed to tied_to judge || if not tied to any judge
-      next if tied_to_or_not_aoj_cavc?(appeal, judge_sattyid)
+      next if tied_to_or_not_aoj_cavc?(appeal, judge_sattyid, genpop)
 
       next common_affinity_filter_logic(
         appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
@@ -751,7 +751,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     appeals.reject! do |appeal|
       # will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge
-      next if tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
+      next if tied_to_or_not_aoj_aod?(appeal, judge_sattyid, genpop)
 
       next common_affinity_filter_logic(
         appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
@@ -759,31 +759,31 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     end
   end
 
-  def self.tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
+  def self.tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid, genpop)
     (appeal["prev_type_action"] == "7" || appeal["aod"] == 1) ||
       (appeal["prev_type_action"] != "7" && appeal["aod"] == 0 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
   end
 
-  def self.tied_to_or_not_aoj_cavc?(appeal, judge_sattyid)
+  def self.tied_to_or_not_aoj_cavc?(appeal, judge_sattyid, genpop)
     (appeal["prev_type_action"] != "7" || appeal["aod"] != 0) ||
       (appeal["prev_type_action"] == "7" && appeal["aod"] == 0 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
   end
 
-  def self.tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
+  def self.tied_to_or_not_aoj_aod?(appeal, judge_sattyid, genpop)
     (appeal["aod"] != 1) ||
       (appeal["aod"] == 1 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
   end
 
   def self.ineligible_judges_sattyids
