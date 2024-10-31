@@ -69,10 +69,8 @@ describe Test::LoadTestsController, :postgres, type: :controller do
     before do
       # Set ENV variables
       ENV["JENKINS_CRUMB_ISSUER_URI"] = "http://testJenkinsPipeline.com/crumbIssuer/api/json"
-      ENV["JENKINS_USERNAME"] = "testUser"
-      ENV["JENKINS_API_TOKEN"] = "testApiToken"
-      ENV["JENKINS_PIPELINE_URI"] = "http://testJenkinsPipeline.com/job/loadTestPipeline/buildWithParameters"
-      ENV["JENKINS_PIPELINE_TOKEN"] = "testPipelineToken"
+      ENV["LOAD_TESTING_PIPELINE_URI"] = "http://testJenkinsPipeline.com/job/loadTestPipeline/buildWithParameters"
+      ENV["LOAD_TESTING_PIPELINE_TOKEN"] = "testPipelineToken"
     end
 
     let(:response_headers_hash) do
@@ -101,7 +99,7 @@ describe Test::LoadTestsController, :postgres, type: :controller do
     context "with an unsuccessful crumbIssuer response" do
       it "raises an appropriate error" do
         stub_request(:get, ENV["JENKINS_CRUMB_ISSUER_URI"])\
-          .with(basic_auth: [ENV["JENKINS_USERNAME"], ENV["JENKINS_API_TOKEN"]])\
+          .with(query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}")\
           .to_return(status: 404, headers: response_headers_hash, body: "Test Error")
 
         get :run_load_tests, params: { data: scenarios }
@@ -115,7 +113,6 @@ describe Test::LoadTestsController, :postgres, type: :controller do
       let(:jenkins_request_headers_hash) do
         { "Accept" => "*/*",
           "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-          "Authorization" => "Basic dGVzdFVzZXI6dGVzdEFwaVRva2Vu",
           "Content-Type" => "application/x-www-form-urlencoded",
           "Cookie" => "JSESSIONID.012=node012; Path=/; HttpOnly",
           "Host" => "testJenkinsPipeline.com",
@@ -124,36 +121,45 @@ describe Test::LoadTestsController, :postgres, type: :controller do
       end
 
       let(:form_data) { ActionController::Parameters.new(data: scenarios) }
-
       let(:test_recipe) { Base64.encode64(form_data[:data].to_s) }
-      let(:jenkins_params) { "token=#{ENV['JENKINS_PIPELINE_TOKEN']}&testRecipe=#{test_recipe}" }
-      let(:jenkins_request_uri) { "#{ENV['JENKINS_PIPELINE_URI']}?#{jenkins_params}" }
 
       before do
         crumb = "{\"_class\":\"hudson.security.csrf.DefaultCrumbIssuer\","\
         "\"crumb\":\"value\",\"crumbRequestField\":\"Jenkins-Crumb\"}"
 
-        stub_request(:get, ENV["JENKINS_CRUMB_ISSUER_URI"])\
+        stub_request(:get, ENV["JENKINS_CRUMB_ISSUER_URI"])
+          .with(query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}")
           .to_return(body: crumb, status: 200, headers: response_headers_hash)
       end
 
       it "sends a request to Jenkins successfully create a load test run" do
-        stub_request(:post, jenkins_request_uri)\
-          .with(basic_auth: [ENV["JENKINS_USERNAME"], ENV["JENKINS_API_TOKEN"]],
-                headers: jenkins_request_headers_hash, body: test_recipe)\
-          .to_return(status: 201, headers: response_headers_hash)
+        stub_request(:post, ENV["LOAD_TESTING_PIPELINE_URI"])
+          .with(
+            body: test_recipe,
+            headers: jenkins_request_headers_hash,
+            query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}"
+          )
+          .to_return(status: 201, body: "", headers: {})
 
         get :run_load_tests, params: { data: scenarios }
 
         expect(response.status).to eq 200
+        byebug
         expect(response.body).to include("201")
       end
 
       it "sends a request to Jenkins which is unsuccessful in creating a load test run" do
-        stub_request(:post, jenkins_request_uri)\
-          .with(basic_auth: [ENV["JENKINS_USERNAME"], ENV["JENKINS_API_TOKEN"]],
-                headers: jenkins_request_headers_hash, body: test_recipe)\
-          .to_return(status: 404, headers: response_headers_hash, body: "Test Error")
+        # stub_request(:post, jenkins_request_uri)\
+        #   .with(query: ENV["LOAD_TESTING_PIPELINE_TOKEN"],
+        #         headers: jenkins_request_headers_hash, body: test_recipe)\
+        #   .to_return(status: 404, headers: response_headers_hash, body: "Test Error")
+        stub_request(:post, ENV["LOAD_TESTING_PIPELINE_URI"])
+          .with(
+            body: test_recipe,
+            headers: jenkins_request_headers_hash,
+            query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}"
+          )
+          .to_return(status: 404, body: "Test Error", headers: {})
 
         get :run_load_tests, params: { data: scenarios }
 
