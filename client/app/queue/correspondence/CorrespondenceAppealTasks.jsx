@@ -21,7 +21,7 @@ const CorrespondenceAppealTasks = (props) => {
 
   const dispatch = useDispatch();
   const veteranFullName = props.correspondence.veteranFullName;
-  const appealId = props.appeal.external_id;
+  const appealId = props.appealUuid;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -165,7 +165,7 @@ CorrespondenceAppealTasks.propTypes = {
   task_added: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-  appeal: PropTypes.object,
+  appealUuid: PropTypes.string,
   waivableUser: PropTypes.bool,
   correspondenceInfo: PropTypes.object,
   setWaiveEvidenceAlertBanner: PropTypes.func,
