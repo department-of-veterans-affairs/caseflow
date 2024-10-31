@@ -73,6 +73,14 @@ class HearingRequestDocket < Docket
     )
   end
 
+  def self.limit_genpop_appeals(appeals_array, limit)
+    # genpop 'any' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
+    # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
+    # Instead, reinstate the limit here by filtering out the newest cases
+    appeals_to_reject = appeals_array.flatten.sort_by(&:ready_for_distribution_at).drop(limit)
+    appeals_array.map { |appeals| appeals - appeals_to_reject }
+  end
+
   def extract_sct_appeals(query_args, limit)
     if sct_distribution_enabled?
       _, sct_appeals = create_sct_appeals(query_args, limit)

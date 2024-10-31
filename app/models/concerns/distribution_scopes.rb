@@ -131,7 +131,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
         .where(original_judge_task: { assigned_to_id: judge&.id },
                appeals: { stream_type: Constants.AMA_STREAM_TYPES.court_remand })
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
-      genpop_base_query.ama_non_aod_appeals.none
+      genpop_base_query.ama_non_aod_appeals
     end
   end
 
@@ -145,7 +145,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
         .where(original_judge_task: { assigned_to_id: judge&.id },
                appeals: { stream_type: Constants.AMA_STREAM_TYPES.court_remand })
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
-      genpop_base_query.ama_aod_appeals.none
+      genpop_base_query.ama_aod_appeals
     end
   end
 

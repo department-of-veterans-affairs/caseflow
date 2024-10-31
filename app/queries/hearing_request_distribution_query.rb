@@ -24,6 +24,8 @@ class HearingRequestDistributionQuery
       # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
       return only_genpop_appeals
     end
+
+    []
   end
 
   def self.ineligible_judges_id_cache
@@ -96,7 +98,6 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
-          .none
       end
 
     query
