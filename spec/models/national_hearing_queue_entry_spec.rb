@@ -80,7 +80,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         NationalHearingQueueEntry.pluck(
           :appeal_id, :appeal_type,
           :hearing_request_type, :receipt_date, :external_id,
-          :appeal_stream, :docket_number
+          :appeal_stream, :docket_number, :aod_indicator,
+          :task_id, :schedulable
         )
       ).to match_array [
         [
@@ -90,7 +91,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           1.day.ago.strftime("%Y%m%d"),
           ama_with_sched_task.uuid,
           ama_with_sched_task.stream_type,
-          ama_with_sched_task.stream_docket_number
+          ama_with_sched_task.stream_docket_number,
+          false,
+          ama_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          false
         ],
         [
           legacy_with_sched_task.id,
@@ -99,7 +103,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           1.day.ago.strftime("%Y%m%d"),
           case1.bfkey,
           "Original",
-          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum
+          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum,
+          false,
+          legacy_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          true
         ]
       ]
 
