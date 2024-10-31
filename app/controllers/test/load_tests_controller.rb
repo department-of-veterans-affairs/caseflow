@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./scripts/enable_features_dev.rb"
+require "./scripts/enable_features_dev"
 require "digest"
 require "securerandom"
 require "base64"
@@ -100,9 +100,7 @@ class Test::LoadTestsController < ApplicationController
       target_data_column = "uuid"
     end
 
-    target_id = get_target_data_id(params[:target_id], target_data_type, target_data_column)
-
-    target_id
+    get_target_data_id(params[:target_id], target_data_type, target_data_column)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
@@ -236,9 +234,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Only accessible from prod-test environment
   def check_environment
-    return true if Rails.deploy_env?(:prodtest)
-
-    redirect_to "/404"
+    render status: :not_found if Rails.deploy_env == :production
   end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
