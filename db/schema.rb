@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_28_203026) do
+ActiveRecord::Schema.define(version: 2024_10_29_152313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2151,6 +2151,46 @@ ActiveRecord::Schema.define(version: 2024_10_28_203026) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2471,7 +2511,15 @@ ActiveRecord::Schema.define(version: 2024_10_28_203026) do
               WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
               ELSE false
           END AS aod_indicator,
-      tasks.id AS task_id
+      tasks.id AS task_id,
+          CASE
+              WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
+              CASE
+                  WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
+                  ELSE false
+              END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
+              ELSE false
+          END AS schedulable
      FROM (((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
@@ -2506,7 +2554,8 @@ ActiveRecord::Schema.define(version: 2024_10_28_203026) do
               WHEN ((f_vacols_assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
               ELSE false
           END AS aod_indicator,
-      tasks.id AS task_id
+      tasks.id AS task_id,
+      true AS schedulable
      FROM ((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))

@@ -75,7 +75,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         NationalHearingQueueEntry.pluck(
           :appeal_id, :appeal_type,
           :hearing_request_type, :receipt_date, :external_id,
-          :appeal_stream, :docket_number
+          :appeal_stream, :docket_number, :aod_indicator,
+          :task_id, :schedulable
         )
       ).to match_array [
         [
@@ -85,7 +86,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           1.day.ago.strftime("%Y%m%d"),
           ama_with_sched_task.uuid,
           ama_with_sched_task.stream_type,
-          ama_with_sched_task.stream_docket_number
+          ama_with_sched_task.stream_docket_number,
+          false,
+          ama_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          false
         ],
         [
           legacy_with_sched_task.id,
@@ -94,7 +98,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           1.day.ago.strftime("%Y%m%d"),
           case1.bfkey,
           "Original",
-          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum
+          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum,
+          false,
+          legacy_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          true
         ]
       ]
     end
@@ -386,6 +393,72 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           end
         end
       end
+    end
+  end
+
+  context "schedulable" do
+    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+
+    let(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:legacy_appeal) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: vacols_case)
+    end
+
+    it "is schedulable when its a legacy appeal", bypass_cleaner: true do
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by(
+        appeal: legacy_appeal
+      ).schedulable
+      expect(schedulable).to eq(true)
+    end
+
+    it "is schedulable when AMA appeal is court remand" do
+      appeal.update!(stream_type: "court_remand")
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by(
+        appeal: appeal
+      ).schedulable
+
+      expect(schedulable).to eq(true)
+    end
+
+    it "is schedulable when AMA appeal is AOD" do
+      appeal.update!(aod_based_on_age: true)
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by(
+        appeal: appeal
+      ).schedulable
+
+      expect(schedulable).to eq(true)
+    end
+
+    it "is schedulable when AMA appeal receipt date is before 2020" do
+      appeal.update!(receipt_date: Date.new(2019, 12, 31))
+
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by(
+        appeal: appeal
+      ).schedulable
+
+      expect(schedulable).to eq(true)
+    end
+
+    it "is not schedulable when an AMA appeal doesn't meet any of the necessary conditions" do
+      appeal.update!(
+        receipt_date: Date.new(2020, 1, 1),
+        aod_based_on_age: false,
+        stream_type: "original"
+      )
+
+      NationalHearingQueueEntry.refresh
+      schedulable = NationalHearingQueueEntry.find_by(
+        appeal: appeal
+      ).schedulable
+
+      expect(schedulable).to eq(false)
     end
   end
 
