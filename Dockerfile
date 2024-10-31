@@ -20,10 +20,13 @@ COPY . $APP_HOME
 
 RUN mkdir -p $ORACLE_HOME
 WORKDIR $ORACLE_HOME
+ENV LD_LIBRARY_PATH=$ORACLE_HOME/instantclient_23_5
 
 RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-basic-linux.zip
 RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sdk-linux.zip
 RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sqlplus-linux.zip
+RUN cd $ORACLE_HOME/instantclient* && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci && \
+    echo $ORACLE_HOME/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig
 
 WORKDIR $APP_HOME
 
