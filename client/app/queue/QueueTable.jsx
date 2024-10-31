@@ -855,6 +855,11 @@ class QueueTableUnConnected extends React.PureComponent {
       </table>
     );
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
+
+    const vhaCompletedTab = this.props.businessLineUrl === 'vha' && currentTabName === 'completed';
+
     return (
       <div
         className="cf-table-wrapper"
@@ -865,6 +870,7 @@ class QueueTableUnConnected extends React.PureComponent {
         <FilterSummary
           filteredByList={this.state.filteredByList}
           clearFilteredByList={(newList) => this.updateFilteredByList(newList)}
+          vhaCompletedTab={vhaCompletedTab}
         />
         {paginationElements}
         {body}

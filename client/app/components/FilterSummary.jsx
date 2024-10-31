@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import COPY from '../../COPY';
+import moment from 'moment';
 
 const ALTERNATE_COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',
@@ -20,11 +21,19 @@ const ALTERNATE_COLUMN_NAMES = {
   closedAt: 'Date Completed'
 };
 
-const FilterSummary = ({ filteredByList, clearFilteredByList }) => {
+const FilterSummary = ({ filteredByList, clearFilteredByList, vhaCompletedTab }) => {
   let filterSummary = null;
   let filterListContent = [];
+
   const clearAllFiltersLink = <button
-    onClick={() => clearFilteredByList({})}
+    onClick={() => {
+      if (vhaCompletedTab) {
+        clearFilteredByList({ closedAt: [`all,${moment().subtract(300, 'years')}`] });
+      } else {
+        clearFilteredByList({});
+      }
+    }
+    }
     className="cf-btn-link cf-clear-filters-link"> Clear all filters</button>;
 
   // Don't show anything if there are no filters.
