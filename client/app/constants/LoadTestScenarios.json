@@ -147,5 +147,17 @@
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealsJSON",
+    "targetType": [],
+    "targetId": "Veteran file_number"
+  },
+  {"scenario": "apiV3ContestableIssues",
+    "targetType": [],
+    "targetId": "Supplemental Claim benefit_type"
+  },
+  {"scenario": "appealShowJSON",
+    "targetType": [],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   }
 ]
