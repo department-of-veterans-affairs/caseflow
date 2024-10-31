@@ -31,7 +31,7 @@ const PdfDocument = ({
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
   const requestRef = useRef(null);
-  const [showProgressBar, setShowProgressBar] = useState(false);
+  const showProgressBarRef = useRef(false);
   // Inital wait time in milliseconds
   const minimumInitialWait = 1000;
   // significantAdditionalWait time in seconds
@@ -141,7 +141,7 @@ const PdfDocument = ({
             percentage = ((loaded / doc.file_size) * 100).toFixed(0);
           }
 
-          if (!showProgressBar && percentage < 100) {
+          if (!showProgressBarRef.current && percentage < 100) {
             enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
 
             downloadSpeed = (loaded / (enlapsedTime / 1000)).toFixed(0);
@@ -150,7 +150,7 @@ const PdfDocument = ({
               let projectedEndTime = (doc.file_size - loaded) / downloadSpeed;
 
               if (projectedEndTime > significantAdditionalWait) {
-                setShowProgressBar(true);
+                showProgressBarRef.current = true;
               }
               let barGraphic = Math.min(Math.round(percentage / 10), 10);
 
@@ -171,8 +171,10 @@ const PdfDocument = ({
             loadedBytes: loaded,
             totalBytes: doc.file_size,
           });
-          console.log(`### Downloaded ${percentage}%\n`);
 
+          if (loaded === doc.file_size) {
+            console.log('### Download Complete');
+          }
         },
         cancellableRequest: ({ request }) => {
           requestRef.current = request;
@@ -182,7 +184,7 @@ const PdfDocument = ({
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         requestRef.current = null;
-        setShowProgressBar(false);
+        showProgressBarRef.current = false;
 
         return response.body;
       });
@@ -240,12 +242,23 @@ const PdfDocument = ({
   }, [doc.id]);
 
   useEffect(() => {
+
+    return () => {
+      if (requestRef.current) {
+
+        requestRef.current.abort();
+        showProgressBarRef.current = false;
+      }
+    };
+  }, [doc.id]);
+
+  useEffect(() => {
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      {showProgressBar && (
+      {showProgressBarRef.current && (
         <ProgressBar
           progressPercentage={progressData.progressPercentage}
           loadedBytes={progressData.loadedBytes}
