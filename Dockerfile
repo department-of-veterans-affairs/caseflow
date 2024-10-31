@@ -5,16 +5,13 @@ FROM --platform=linux/amd64 node:16.3.0
 ENV APP_HOME=/caseflow \
     ORACLE_HOME=/opt/oracle \
     LD_LIBRARY_PATH=/opt/oracle/instantclient_23_5 \
-    BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git" \
+    BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git zip unzip libaio1 libaio-dev nodejs fastjar" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
     LANG="C.UTF-8"
-
-RUN apt-get update -yqq
-RUN apt-get install -yqq --no-install-recommends build-essential zip unzip libpq-dev libaio1 libaio-dev nodejs fastjar
 
 COPY . $APP_HOME
 
@@ -30,8 +27,8 @@ RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 WORKDIR $APP_HOME
 
 # Install base dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends $BUILD && \
+RUN apt-get update -yqq && \
+    apt-get install -yqq --no-install-recommends $BUILD && \
     rm -rf /var/lib/apt/lists/*
 
 # Set up NVM and Node
