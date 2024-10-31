@@ -1,8 +1,11 @@
-ARG RUBY_VERSION=2.7.3
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim
+FROM ruby:2.7.3
+FROM --platform=linux/amd64 node:16.3.0
 
 # Set up environment variables
-ENV BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git" \
+ENV APP_HOME=/caseflow \
+    ORACLE_HOME=/opt/oracle \
+    LD_LIBRARY_PATH=/opt/oracle/instantclient_23_5 \
+    BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-certificates wget git" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
@@ -10,23 +13,21 @@ ENV BUILD="build-essential postgresql-client libpq-dev libsqlite3-dev curl ca-ce
     DEPLOY_ENV="demo" \
     LANG="C.UTF-8"
 
-# Copy all files from docker-bin into /usr/bin/ in the container
-COPY docker-bin/. /usr/bin/
+RUN apt-get update -yqq
+RUN apt-get install -yqq --no-install-recommends build-essential zip unzip libpq-dev libaio1 libaio-dev nodejs fastjar
 
-# Copy the contents of the instantclient_23_3 folder to the Oracle directory
-COPY docker-bin/instantclient_23_3 /usr/lib/oracle/instantclient_23_3
+COPY . $APP_HOME
 
-# Set environment variables for Oracle libraries
-ENV ORACLE_HOME="/usr/lib/oracle/instantclient_23_3"
-ENV LD_LIBRARY_PATH="/usr/lib/oracle/instantclient_23_3:$LD_LIBRARY_PATH"
+RUN mkdir -p $ORACLE_HOME
+WORKDIR $ORACLE_HOME
 
-# Install Oracle dependencies and create symbolic links
-WORKDIR /usr/lib/oracle/instantclient_23_3/
-RUN test -e libclntsh.so.23.1 || ln -s libclntsh.so libclntsh.so.23.1
+RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-basic-linux.zip
+RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sdk-linux.zip
+RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sqlplus-linux.zip
 
-WORKDIR /caseflow
+RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 
-COPY . .
+WORKDIR $APP_HOME
 
 # Install base dependencies
 RUN apt-get update && \
@@ -42,10 +43,7 @@ RUN mkdir -p $NVM_DIR && \
 
 # Install compatible Bundler version and gems
 COPY Gemfile* .
-RUN gem install bundler -v 2.4.19 && \
-    bundle config build.ruby-oci8 --with-oci8-include=/usr/lib/oracle/instantclient_23_3 --with-oci8-lib=/usr/lib/oracle/instantclient_23_3 && \
-    bundle install
-
+RUN gem install bundler && bundle install
 
 # Expose the Rails port
 ARG DEFAULT_PORT=3000
