@@ -622,6 +622,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         aoj_aod_affinity_filter(dry_appeals, judge_sattyid, aoj_aod_affinity_lever_value,
                                 excluded_judges_attorney_ids, genpop)
 
+        genpop_filter(dry_appeals) if genpop == "not_genpop"
+
         dry_appeals
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
@@ -629,12 +631,15 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
+        aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids, genpop)
 
-        aoj_cavc_affinity_filter(appeals, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
+        aoj_cavc_affinity_filter(appeals, judge_sattyid, aoj_cavc_affinity_lever_value,
+                                 excluded_judges_attorney_ids, genpop)
 
         aoj_aod_affinity_filter(appeals, judge_sattyid, aoj_aod_affinity_lever_value,
-                                excluded_judges_attorney_ids)
+                                excluded_judges_attorney_ids, genpop)
+
+        genpop_filter(appeals) if genpop == "not_genpop"
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
