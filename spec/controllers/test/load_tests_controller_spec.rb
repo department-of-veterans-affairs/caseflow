@@ -144,15 +144,10 @@ describe Test::LoadTestsController, :postgres, type: :controller do
         get :run_load_tests, params: { data: scenarios }
 
         expect(response.status).to eq 200
-        byebug
         expect(response.body).to include("201")
       end
 
       it "sends a request to Jenkins which is unsuccessful in creating a load test run" do
-        # stub_request(:post, jenkins_request_uri)\
-        #   .with(query: ENV["LOAD_TESTING_PIPELINE_TOKEN"],
-        #         headers: jenkins_request_headers_hash, body: test_recipe)\
-        #   .to_return(status: 404, headers: response_headers_hash, body: "Test Error")
         stub_request(:post, ENV["LOAD_TESTING_PIPELINE_URI"])
           .with(
             body: test_recipe,
