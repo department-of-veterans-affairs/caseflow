@@ -155,14 +155,11 @@ class DatePicker extends React.PureComponent {
       position,
       buttons,
       selected,
-      first: true
     };
   }
 
   apply() {
     const { onChange } = this.props;
-
-    this.setState({ first: false });
 
     if (onChange) {
       onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
