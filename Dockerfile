@@ -22,8 +22,6 @@ RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-basic-linux.zip
 RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sdk-linux.zip
 RUN jar xvf $APP_HOME/docker-bin/oracle_libs/instantclient-sqlplus-linux.zip
 
-RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
-
 WORKDIR $APP_HOME
 
 # Install base dependencies
@@ -40,6 +38,7 @@ RUN mkdir -p $NVM_DIR && \
 
 # Install compatible Bundler version and gems
 COPY Gemfile* .
+RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 RUN gem install bundler && bundle install
 
 # Expose the Rails port
