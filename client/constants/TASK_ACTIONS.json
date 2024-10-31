@@ -554,6 +554,7 @@
     "value": "modal/errors_found_and_corrected"
   },
   "CANCEL_REVIEW_TRANSCRIPT_TASK": {
-    "label": "Cancel task"
+    "label": "Cancel task",
+    "value": "modal/cancel_review_transcript_task"
   }
 }
