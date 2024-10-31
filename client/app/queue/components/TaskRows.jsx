@@ -309,7 +309,7 @@ class TaskRows extends React.PureComponent {
           </div>
         </div>
         <hr></hr>
-        <div style={{...divStyle, marginBottom: '1rem' }}>
+        <div style={{ ...divStyle, marginBottom: '1rem' }}>
           <b>No errors found: Upload transcript to VBMS</b>
         </div>
         <div style={divStyle}>

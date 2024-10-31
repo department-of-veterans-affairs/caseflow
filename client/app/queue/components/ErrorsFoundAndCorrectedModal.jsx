@@ -8,7 +8,7 @@ import TextareaField from '../../components/TextareaField';
 
 const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [isAnyFileSelected, setIsAnyFileSelected] = useState(false);
   const [selectedFile, setSelectedFile] = useState({});
   const [fileInputContainerClassName, setFileInputContainerClassName] = useState('cf-file-input-container');
@@ -36,16 +36,16 @@ const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const requestParams = {
-      file_info: {
-        file: selectedFile.file,
-        file_name: selectedFile.fileName
-      },
-      task_info: {
-        instructions: notes,
-        task_id: props.taskId
-      }
-    };
+    // const requestParams = {
+    //   file_info: {
+    //     file: selectedFile.file,
+    //     file_name: selectedFile.fileName
+    //   },
+    //   task_info: {
+    //     instructions: notes,
+    //     task_id: props.taskId
+    //   }
+    // };
 
     // setLoading(true);
   };

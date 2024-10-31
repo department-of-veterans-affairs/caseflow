@@ -147,7 +147,8 @@ export const TranscriptionFileDispatchTable = ({
    * @returns The url string
    */
   const apiEndpoint = () => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
+    if (!statusFilter || statusFilter[0] === 'Unassigned' ||
+      statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;

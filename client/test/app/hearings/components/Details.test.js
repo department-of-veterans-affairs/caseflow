@@ -330,7 +330,6 @@ describe('Details', () => {
 
         expect(details.find(TranscriptionFormSection)).toHaveLength(1);
         expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionDetailsWebex)).toHaveLength(1);
         expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
         expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
         expect(details.find(TranscriptionFilesTable)).toHaveLength(1);

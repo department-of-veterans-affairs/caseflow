@@ -1732,6 +1732,8 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
+    nokogiri (1.15.6-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.15.6-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.15.6-x86_64-linux)
@@ -2140,6 +2142,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
+  arm64-darwin-23
   x86_64-darwin-22
   x86_64-darwin-23
   x86_64-linux
