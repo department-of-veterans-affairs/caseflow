@@ -44,7 +44,7 @@ class Test::LoadTestsController < ApplicationController
 
     # Set up Jenkins crumbIssuer URI
     crumb_issuer_uri = URI(ENV["JENKINS_CRUMB_ISSUER_URI"])
-    crumb_issuer_uri.query = URI.encode_www_form({token: ENV["LOAD_TESTING_PIPELINE_TOKEN"]})
+    crumb_issuer_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
     http = Net::HTTP.new(crumb_issuer_uri.host, crumb_issuer_uri.port)
 
     # Create GET request to crumbIssuer and get back response containing the crumb
@@ -265,7 +265,7 @@ class Test::LoadTestsController < ApplicationController
   def send_jenkins_run_request(request_headers, encoded_test_recipe)
     # Set up Jenkins pipeline URI with parameters
     jenkins_pipeline_uri = URI(ENV["LOAD_TESTING_PIPELINE_URI"])
-    jenkins_pipeline_uri.query = URI.encode_www_form({token: ENV["LOAD_TESTING_PIPELINE_TOKEN"]})
+    jenkins_pipeline_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
     http = Net::HTTP.new(jenkins_pipeline_uri.host, jenkins_pipeline_uri.port)
 
     # Create POST request to Jenkins pipeline
