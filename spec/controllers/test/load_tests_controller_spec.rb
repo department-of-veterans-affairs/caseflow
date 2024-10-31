@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "webmock/rspec"
+WebMock.allow_net_connect!
 
 describe Test::LoadTestsController, :postgres, type: :controller do
   let(:css_id) { "VACOUSER" }
