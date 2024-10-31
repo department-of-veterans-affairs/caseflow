@@ -101,4 +101,39 @@ class HearingRequestDocket < Docket
     # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
     # Instead, reinstate the limit here by filtering out the newest cases
   end
+
+  # used for distribution_stats
+  # :reek:ControlParameter
+  # :reek:FeatureEnvy
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/ConditionalAssignment\
+  def affinity_date_count(in_window, priority)
+    scope = docket_appeals
+      .joins(:hearings)
+      .genpop_base_query
+      .ready_for_distribution
+      .with_held_hearings
+
+    non_aod_lever = CaseDistributionLever.ama_hearing_case_affinity_days
+    aod_lever = CaseDistributionLever.ama_hearing_case_aod_affinity_days
+
+    return scope.none if priority && aod_lever&.is_a?(String)
+    return scope.none if !priority && non_aod_lever&.is_a?(String)
+
+    if in_window
+      scope = priority ? affinitized_scope(scope, aod_lever) : affinitized_scope(scope, non_aod_lever)
+    else
+      scope = priority ? expired_scope(scope, aod_lever) : expired_scope(scope, non_aod_lever)
+    end
+
+    priority ? scoped_for_priority(scope).ids.size : scope.nonpriority.ids.size
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/ConditionalAssignment
+
+  def affinitized_scope(scope, lever)
+    lever.is_a?(Integer) ? scope.affinitized_ama_affinity_cases(lever) : scope
+  end
+
+  def expired_scope(scope, lever)
+    lever.is_a?(Integer) ? scope.expired_ama_affinity_cases(lever) : scope
+  end
 end

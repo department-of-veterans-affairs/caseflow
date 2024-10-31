@@ -102,6 +102,8 @@ describe HearingRequestDocket, :postgres do
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
 
+        after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+
         subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
 
         it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
@@ -128,6 +130,8 @@ describe HearingRequestDocket, :postgres do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
+
+        after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
         subject do
           HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
@@ -169,6 +173,7 @@ describe HearingRequestDocket, :postgres do
       end
 
       before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+      after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
       subject { described_class.new }
 
@@ -372,6 +377,43 @@ describe HearingRequestDocket, :postgres do
 
       it "correctly flattens the arrays and applies limit" do
         expect(subject).to match_array([appeal_4_weeks_old, appeal_3_weeks_old])
+      end
+    end
+  end
+
+  context "#affinity_date_count" do
+    let!(:hearing_judge) do
+      create(:user, :judge, :with_vacols_judge_record)
+    end
+    let!(:hearing_docket_appeal) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
+    end
+    let!(:aod_hearing_docket_appeal) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
+    end
+    let!(:hearing_lever) do
+      create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    end
+    let!(:aod_hearing_lever) do
+      create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    end
+    let!(:hearing_request_instance) { HearingRequestDocket.new }
+
+    context "for nonpriority" do
+      subject { hearing_request_instance.affinity_date_count(true, false) }
+
+      it "correctly accounts for affinities to judges based on most recently held hearing" do
+        expect(subject).to eq(1)
+      end
+    end
+
+    context "for priority" do
+      subject { hearing_request_instance.affinity_date_count(true, true) }
+
+      it "correctly accounts for affinities to judges based on most recently held hearing" do
+        expect(subject).to eq(1)
       end
     end
   end
