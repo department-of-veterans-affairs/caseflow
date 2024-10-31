@@ -31,7 +31,7 @@ const TRANSCRIPTION_REMEDIES_OPTIONS = getOptionsFromObject(
 );
 
 const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
-  <div {...rowThirds}>
+  <div {...rowThirds} data-testid="transcription-problem-inputs">
     <SearchableDropdown
       name="problemType"
       label="Transcription Problem Type"
