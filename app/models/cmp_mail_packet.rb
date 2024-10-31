@@ -11,5 +11,5 @@ class CmpMailPacket < ApplicationRecord
             :veteran_middle_initial,
             presence: true
 
-  has_many :cmp_documents, inverse_of: :cmp_mail_packet
+  has_many :cmp_documents, inverse_of: :cmp_mail_packet, dependent: :nullify
 end

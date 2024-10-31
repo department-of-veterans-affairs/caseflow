@@ -10,5 +10,5 @@ RSpec.describe CmpMailPacket, type: :model do
   it { should validate_presence_of(:veteran_last_name) }
   it { should validate_presence_of(:veteran_middle_initial) }
 
-  it { should have_many(:cmp_documents) }
+  it { should have_many(:cmp_documents).dependent(:nullify) }
 end
