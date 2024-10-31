@@ -2,6 +2,7 @@
 
 class NationalHearingQueueEntry < CaseflowRecord
   belongs_to :appeal, polymorphic: true
+  belongs_to :task, class_name: "ScheduleHearingTask"
 
   def self.refresh
     Scenic.database.refresh_materialized_view(
