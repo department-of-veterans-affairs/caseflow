@@ -370,11 +370,12 @@ class QueueTableUnConnected extends React.PureComponent {
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
     const filterParams = this.props.tabPaginationOptions['filter[]'];
 
-    if (true &&
+    if (this.props.businessLineUrl === 'vha' &&
       currentTabName === 'completed' &&
       filterParams.length === 0) {
       this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
     }
+
     if (this.props.useReduxCache &&
       (this.props.reduxCache[this.requestUrl()]?.tasks?.length !==
         previousProps.reduxCache[this.requestUrl()]?.tasks?.length)) {
