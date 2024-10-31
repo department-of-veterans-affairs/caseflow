@@ -58,5 +58,6 @@ TranscriptionFormSection.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   transcription: PropTypes.object,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  isWebex: PropTypes.bool
 };

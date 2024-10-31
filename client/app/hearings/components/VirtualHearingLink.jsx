@@ -11,14 +11,15 @@ const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 const VirtualHearingLink = ({
   newWindow,
   link,
-  label
+  label,
+  hearing
 }) => {
   return (
     <Link href={link} target={newWindow ? '_blank' : '_self'}>
       <strong data-testid="strong-element-test-id">{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
-        <ExternalLinkIcon color={COLORS.PRIMARY} />
+        <ExternalLinkIcon color={hearing?.scheduledForIsPast ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>
   );
