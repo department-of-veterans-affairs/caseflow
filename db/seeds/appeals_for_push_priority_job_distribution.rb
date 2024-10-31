@@ -339,7 +339,16 @@ module Seeds
 
     def create_aoj_legacy_priority_not_genpop_cases; end
     def create_aoj_legacy_priority_genpop_cases; end
-    def create_aoj_legacy_priority_not_ready_cases; end
-    def create_aoj_legacy_nonpriority_ready_cases; end
+    def create_aoj_legacy_priority_not_ready_cases
+      tied_or_affinity_judges.each do |judge|
+        c = create(:legacy_aoj_appeal, :aod, bfcurloc: '57', judge: judge.vacols_staff, attorney: attorney.vacols_staff, appeal_affinity: false)
+      end
+    end
+
+    def create_aoj_legacy_nonpriority_ready_cases
+      tied_or_affinity_judges.each do |judge|
+        create(:legacy_aoj_appeal, judge: judge.vacols_staff, attorney: attorney.vacols_staff)
+      end
+    end
   end
 end
