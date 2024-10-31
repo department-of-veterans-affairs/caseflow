@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import DocSizeIndicator from '../../../app/reader/DocSizeIndicator';
 
 it('shows file size', () => {
@@ -23,14 +23,16 @@ it('shows a file size warning when file size is large', () => {
   const downloadSpeedInBytes = connectionSpeed * 125000;
   const fileSize = downloadSpeedInBytes * 16;
 
-  render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} />);
-  expect(screen.getByTitle('Large File Warning')).toBeInTheDocument();
+  const { getByTitle } = render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} />);
+
+  expect(getByTitle('Large File Warning')).toBeInTheDocument();
 });
 it('does not show a file size warning when file size is not large', () => {
   const connectionSpeed = 1;
   const downloadSpeedInBytes = connectionSpeed * 125000;
   const fileSize = downloadSpeedInBytes * 15;
 
-  render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} />);
-  expect(screen.queryByTitle('Large File Warning')).not.toBeInTheDocument();
+  const { queryByTitle } = render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} />);
+
+  expect(queryByTitle('Large File Warning')).not.toBeInTheDocument();
 });
