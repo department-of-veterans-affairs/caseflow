@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V1::PersonUpdatedController < Api::ApplicationController
+class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   def does_person_exist
     person = Person.where(participant_id: params["participant_id"])
 
