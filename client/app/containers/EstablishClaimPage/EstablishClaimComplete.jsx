@@ -5,8 +5,6 @@ import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
 import StatusMessage from '../../components/StatusMessage';
 
-const PARSE_INT_RADIX = 10;
-
 export default class EstablishClaimComplete extends React.Component {
 
   render() {
@@ -84,5 +82,7 @@ EstablishClaimComplete.propTypes = {
   firstHeader: PropTypes.string,
   totalCasesAssigned: PropTypes.number,
   totalCasesCompleted: PropTypes.number,
+  userId: PropTypes.number,
+  userQuotas: PropTypes.arrayOf(PropTypes.object).isRequired,
   veteranName: PropTypes.string
 };

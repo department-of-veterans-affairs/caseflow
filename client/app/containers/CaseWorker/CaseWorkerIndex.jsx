@@ -78,7 +78,7 @@ export default class CaseWorkerIndex extends BaseForm {
 
     // If the user hasn't completed any tasks, their userQuota is null. In order
     // to not accidentally disable the Establish New Claim button, we set it to -1.
-    const tasksRemaining = userQuota ? userQuota.task_count : -1;
+    const tasksRemaining = userQuota ? userQuota.tasks_left_count : -1;
 
     return <BrowserRouter>
       <React.Fragment>
