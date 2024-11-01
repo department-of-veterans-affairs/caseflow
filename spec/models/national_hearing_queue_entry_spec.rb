@@ -297,7 +297,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
   end
 
-    context "when appeals have been staged" do
+  context "when appeals have been staged" do
     let!(:ama_with_sched_task) do
       create(
         :appeal,
