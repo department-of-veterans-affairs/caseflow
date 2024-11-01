@@ -8,10 +8,6 @@ source $THIS_SCRIPT_DIR/env.sh
 # echo "Start DBus"
 # dbus-daemon --system
 
-echo "Waiting for dependencies to properly start up - 240 seconds"
-date
-sleep 240
-
 echo "Starting Appeals App"
 date
 
