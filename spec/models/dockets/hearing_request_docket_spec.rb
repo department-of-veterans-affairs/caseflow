@@ -909,7 +909,6 @@ describe HearingRequestDocket, :postgres do
     end
 
     before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
-    after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
     subject { described_class.new }
 
