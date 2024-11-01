@@ -17,6 +17,9 @@ const columns = [
 
 // CSS styles
 const styles = css({
+  '& .information': {
+    display: 'flex'
+  },
   '& div *': {
     outline: 'none',
   },
@@ -52,6 +55,28 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     }
   };
 
+  const downloadFile = async (docketNumber) => {
+    try {
+      const response = await ApiUtil.get('/hearings/transcription_files/fetch_file', {
+        query: { docket_number: docketNumber },
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+
+      a.href = url;
+      a.download = `${docketNumber}.xls`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading file:', err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [taskNumber]);
@@ -68,33 +93,49 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     return <div>No data found</div>;
   }
 
-  const { workOrder, returnDate, contractorName, woFileInfo } = data;
+  const { workOrder, returnDate, contractorName, woFileInfo, workOrderStatus } = data;
 
   return (
     <div className="cf-app-segment cf-app-segment--alt">
-      <div>
-        <h1>Work order summary #{workOrder}</h1>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Work order:</strong> #{workOrder}
+      <div className="information" style={{ display: 'flex' }}>
+        <div style={{ float: 'left', width: '50%' }}>
+          <h1>Work order summary #{workOrder}</h1>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Work order:</strong> #{workOrder}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Return date:</strong> {returnDate}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Contractor:</strong> {contractorName}
+          </div>
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Return date:</strong> {returnDate}
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Contractor:</strong> {contractorName}
+        <div style={{ float: 'right', width: '50%', position: 'relative' }}>
+          { workOrderStatus.currentStatus &&
+          <button
+            className={['usa-button-secondary']}
+            aria-label="Download return work order"
+            style={{ position: 'absolute', bottom: '0', right: '0' }}
+            onClick={() => downloadFile(woFileInfo[0].docket_number)}
+          >
+            Download return work order
+          </button>
+          }
         </div>
       </div>
-      <hr style={{ margin: '35px 0' }} />
-      <div>
-        <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-        <div {...styles}>
-          <QueueTable
-            columns={columns}
-            rowObjects={woFileInfo}
-            summary="Individual claim history"
-            slowReRendersAreOk
-            className="bold-first-cell"
-          />
+      <div className="woTableInfo">
+        <hr style={{ margin: '35px 0' }} />
+        <div>
+          <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
+          <div {...styles}>
+            <QueueTable
+              columns={columns}
+              rowObjects={woFileInfo}
+              summary="Individual claim history"
+              slowReRendersAreOk
+              className="bold-first-cell"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -104,3 +145,6 @@ export const WorkOrderDetails = ({ taskNumber }) => {
 WorkOrderDetails.propTypes = {
   taskNumber: PropTypes.string.isRequired,
 };
+
+// # test file path for testing
+// app / models / hearings / test_file.xls;

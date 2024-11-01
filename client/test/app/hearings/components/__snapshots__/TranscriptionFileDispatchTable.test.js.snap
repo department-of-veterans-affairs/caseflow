@@ -1139,7 +1139,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
               tabindex="-1"
             >
               <div>
-                Completed-Overdue
+                Completed
               </div>
             </td>
             <td
