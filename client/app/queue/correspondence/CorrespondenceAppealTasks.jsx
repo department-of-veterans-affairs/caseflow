@@ -97,7 +97,7 @@ const CorrespondenceAppealTasks = (props) => {
           </div>
         </div>
       );
-    } else if (tasks.length < 5) {
+    } else if (tasks.length < 4) {
       return (
         <div className="left-section">
           <span className="tasks-added-text-second-alternate">Tasks added to appeal
