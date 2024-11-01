@@ -64,13 +64,13 @@ export const WorkOrderDetails = ({ taskNumber }) => {
 
       const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const element = document.createElement('a');
 
-      a.href = url;
-      a.download = `${docketNumber}.xls`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      element.href = url;
+      element.download = `${docketNumber}.xls`;
+      document.body.appendChild(element);
+      element.click();
+      element.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Error downloading file:', err);

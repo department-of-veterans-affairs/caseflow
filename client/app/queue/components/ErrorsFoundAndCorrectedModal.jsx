@@ -8,21 +8,18 @@ import TextareaField from '../../components/TextareaField';
 
 const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [isAnyFileSelected, setIsAnyFileSelected] = useState(false);
   const [selectedFile, setSelectedFile] = useState({});
   const [fileInputContainerClassName, setFileInputContainerClassName] = useState('cf-file-input-container');
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
-    if (loading) {
-      setIsSubmitDisabled(true);
-    } else if (isAnyFileSelected && notes.trim() !== '') {
+    if (isAnyFileSelected && notes.trim() !== '') {
       setIsSubmitDisabled(false);
     } else if (notes === '') {
       setIsSubmitDisabled(true);
     }
-  }, [loading, isAnyFileSelected, notes]);
+  }, [isAnyFileSelected, notes]);
 
   const cancel = () => {
     props.closeModal();
@@ -36,16 +33,6 @@ const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const requestParams = {
-      file_info: {
-        file: selectedFile.file,
-        file_name: selectedFile.fileName
-      },
-      task_info: {
-        instructions: notes,
-        task_id: props.taskId
-      }
-    };
 
     // setLoading(true);
   };
@@ -65,7 +52,7 @@ const ErrorsFoundAndCorrectedModal = (props) => {
       title="Upload transcript to VBMS"
       closeHandler={cancel}
       confirmButton={<Button disabled={isSubmitDisabled} onClick={submit}>Upload to VBMS</Button>}
-      cancelButton={<Button disabled={loading} linkStyling onClick={cancel}>Cancel</Button>}
+      cancelButton={<Button linkStyling onClick={cancel}>Cancel</Button>}
     >
       <p>Please upload the revised transcript file for upload to VBMS.</p>
       <strong style={{ color: 'black' }}>Please select PDF</strong>
