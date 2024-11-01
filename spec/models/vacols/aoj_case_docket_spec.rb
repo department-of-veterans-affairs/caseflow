@@ -1436,84 +1436,107 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     context "when the genpop value is 'not_genpop'" do
       # data here
       # appeals with no hearing and no previous deciding judge (genpop)
-      let!(:aoj_aod_case_1) do
+      let!(:aoj_aod_genpop_1) do
         c = create(:legacy_aoj_appeal, :aod, judge: aff_judge, attorney: attorney, tied_to: false)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: nil)
         c
       end
-      let!(:aoj_cavc_case_1) do
+      let!(:aoj_cavc_genpop_1) do
         c = create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney, tied_to: false, cavc: true)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: nil)
         c
       end
       # appeals where hearing held by original deciding judge (not genpop)
-      let!(:aoj_aod_case_2) { create(:legacy_aoj_appeal, :aod, judge: vacols_judge, attorney: attorney) }
-      let!(:aoj_cavc_case_2) { create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, cavc: true) }
+      let!(:aoj_aod_judge_2) { create(:legacy_aoj_appeal, :aod, judge: vacols_judge, attorney: attorney) }
+      let!(:aoj_cavc_judge_2) { create(:legacy_aoj_appeal, judge: vacols_judge, attorney: attorney, cavc: true) }
+      let!(:aoj_aod_tied_2) { create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney) }
+      let!(:aoj_cavc_tied_2) { create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, cavc: true) }
       # appeals where hearing held by different judge than original deciding judge
       # before the decision and within affinity window (not genpop)
-      let!(:aoj_aod_case_3) do
+      let!(:aoj_aod_aff_3) do
         c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: aff_judge.sattyid)
         c
       end
-      let!(:aoj_cavc_case_3) do
+      let!(:aoj_cavc_aff_3) do
+        c = create(:legacy_aoj_appeal,
+                   judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago, cavc: true)
+        VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: aff_judge.sattyid)
+        c
+      end
+      let!(:aoj_aod_judge_3) do
+        c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+        VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: vacols_judge.sattyid)
+        c
+      end
+      let!(:aoj_cavc_judge_3) do
         c = create(:legacy_aoj_appeal,
                    judge: other_judge, attorney: attorney, affinity_start_date: 3.days.ago, cavc: true)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: vacols_judge.sattyid)
         c
       end
       # appeals where hearing held by judge after original decision w/ different original judge (not genpop)
-      let!(:aoj_aod_case_4) do
+      let!(:aoj_aod_other_4) do
         c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
         create_case_hearing(c, other_judge_caseflow)
         c
       end
-      let!(:aoj_cavc_case_4) do
+      let!(:aoj_cavc_other_4) do
+        c = create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, tied_to: true, cavc: true)
+        create_case_hearing(c, other_judge_caseflow)
+        c
+      end
+      let!(:aoj_aod_judge_4) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        create_case_hearing(c, judge)
+        c
+      end
+      let!(:aoj_cavc_judge_4) do
         c = create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, tied_to: true, cavc: true)
         create_case_hearing(c, judge)
         c
       end
       # appeals where prev deciding judge ineligible and hearing before decision (genpop)
-      let!(:aoj_aod_case_5) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney) }
-      let!(:aoj_cavc_case_5) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, cavc: true) }
+      let!(:aoj_aod_inel_5) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney) }
+      let!(:aoj_cavc_inel_5) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, cavc: true) }
       # appeals where prev deciding judge excluded and is not the hearing vlj and hearing before decision (genpop)
-      let!(:aoj_aod_case_6) do
+      let!(:aoj_aod_excl_6) do
         c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: excl_judge.sattyid)
         c
       end
-      let!(:aoj_cavc_case_6) do
+      let!(:aoj_cavc_excl_6) do
         c = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, cavc: true)
         VACOLS::Case.where(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s).update(bfmemid: excl_judge.sattyid)
         c
       end
       # appeals w/ no held hearings, active prev deciding judge,
       # affinity start date and value < lever days ago (not genpop for other judge)
-      let!(:aoj_aod_case_7) do
+      let!(:aoj_aod_other_7) do
         create(:legacy_aoj_appeal, :aod,
                judge: other_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
       end
-      let!(:aoj_cavc_case_7) do
+      let!(:aoj_cavc_other_7) do
         create(:legacy_aoj_appeal,
                judge: other_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
       end
       # appeals w/ no held hearings, active prev deciding judge,
       # affinity start date and value < lever days ago (not genpop for requesting judge unless omit)
-      let!(:aoj_aod_case_8) do
+      let!(:aoj_aod_judge_8) do
         create(:legacy_aoj_appeal, :aod,
                judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
       end
-      let!(:aoj_cavc_case_8) do
+      let!(:aoj_cavc_judge_8) do
         create(:legacy_aoj_appeal,
                judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
       end
       # appeals w/ no held hearings, active prev deciding judge,
       # affinity start date and value > lever days ago (genpop unless lever infinite)
-      let!(:aoj_aod_case_9) do
+      let!(:aoj_aod_judge_9) do
         create(:legacy_aoj_appeal, :aod,
                judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago)
       end
-      let!(:aoj_cavc_case_9) do
+      let!(:aoj_cavc_judge_9) do
         create(:legacy_aoj_appeal,
                judge: vacols_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.months.ago, cavc: true)
       end
@@ -1533,7 +1556,8 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(judge_cases.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            aoj_aod_case_2, aoj_cavc_case_3, aoj_cavc_case_4, aoj_aod_case_8, aoj_cavc_case_8
+            aoj_aod_judge_2, aoj_cavc_judge_2, aoj_aod_judge_3, aoj_cavc_judge_3,
+            aoj_aod_judge_4, aoj_cavc_judge_4, aoj_aod_judge_8, aoj_cavc_judge_8
           ].map { |c| c["bfkey"] }.sort)
 
         # For case distribution levers set to infinite
@@ -1546,8 +1570,8 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(judge_cases.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            aoj_aod_case_2, aoj_cavc_case_3, aoj_cavc_case_4, aoj_aod_case_8,
-            aoj_cavc_case_8, aoj_aod_case_9, aoj_cavc_case_9
+            aoj_aod_judge_2, aoj_cavc_judge_2, aoj_aod_judge_3, aoj_cavc_judge_3, aoj_aod_judge_4,
+            aoj_cavc_judge_4, aoj_aod_judge_8, aoj_cavc_judge_8, aoj_aod_judge_9, aoj_cavc_judge_9
           ].map { |c| c["bfkey"] }.sort)
 
         # For case distribution levers set to omit
@@ -1560,7 +1584,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(judge_cases.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            aoj_aod_case_2, aoj_cavc_case_4
+            aoj_aod_judge_2, aoj_cavc_judge_2, aoj_aod_judge_4, aoj_cavc_judge_4
           ].map { |c| c["bfkey"] }.sort)
       end
     end
