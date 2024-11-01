@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_28_165652) do
+ActiveRecord::Schema.define(version: 2024_10_28_214321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -631,6 +631,32 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["appeal_id", "appeal_type"], name: "index_claims_folder_searches_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_claims_folder_searches_on_updated_at"
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
+  end
+
+  create_table "cmp_documents", force: :cascade do |t|
+    t.string "cmp_document_id", null: false
+    t.string "cmp_document_uuid", null: false
+    t.bigint "cmp_mail_packet_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "date_of_receipt", null: false
+    t.string "doctype_name"
+    t.string "packet_uuid", null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "vbms_doctype_id", null: false
+    t.index ["cmp_mail_packet_id"], name: "index_cmp_documents_on_cmp_mail_packet_id"
+  end
+
+  create_table "cmp_mail_packets", force: :cascade do |t|
+    t.string "cmp_packet_number", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.string "packet_source", null: false
+    t.string "packet_uuid", null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "va_dor", null: false
+    t.string "veteran_first_name", null: false
+    t.string "veteran_id", null: false
+    t.string "veteran_last_name", null: false
+    t.string "veteran_middle_initial", null: false
   end
 
   create_table "conference_links", force: :cascade do |t|
@@ -2496,6 +2522,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "cmp_documents", "cmp_mail_packets"
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
