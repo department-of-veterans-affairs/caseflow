@@ -54,8 +54,6 @@ const CorrespondenceAppealTasks = (props) => {
 
   const handleAddTaskModalOpen = () => {
     // setIsTaskModalOpen(true);
-    console.log('Generating random number between 1 - 100...');
-    console.log(`You rolled: ${Math.floor((Math.random() * (Math.floor(100) - Math.ceil(1))) + Math.ceil(1))}`);
   };
 
   // const handleAddTaskModalClose = () => {

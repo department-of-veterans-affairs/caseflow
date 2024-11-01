@@ -455,7 +455,6 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(isButtonDisabled());
   }, [selectedAppeals, initialSelectedAppeals]);
 
-
   useEffect(() => {
     dispatch(updateCorrespondenceInfo(correspondence));
     sortAppeals(initialSelectedAppeals);
