@@ -305,7 +305,6 @@ class QueueTableUnConnected extends React.PureComponent {
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
     const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
 
-    console.log(filterParam);
     let filteredByList;
 
     // Ignore this if it's a client side queue
@@ -332,8 +331,6 @@ class QueueTableUnConnected extends React.PureComponent {
     // to sort on a column, or if filters are provided
     const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName ||
       !_.isEmpty(filteredByList) || querySearchText;
-
-    console.log(filteredByList);
 
     return {
       sortAscending,
@@ -374,11 +371,9 @@ class QueueTableUnConnected extends React.PureComponent {
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
     const filterParams = this.props.tabPaginationOptions?.['filter[]'] || [];
 
-    console.log(this.props?.businessLineUrl === 'vha');
     if (this.props?.businessLineUrl === 'vha' &&
       currentTabName === 'completed' &&
       filterParams.length === 0) {
-      console.log('???');
       this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
     }
 
@@ -418,6 +413,7 @@ class QueueTableUnConnected extends React.PureComponent {
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
 
+        console.log(columnAndValues, columnName, column);
         // Using a more complex split than | to work with issue category strings that contain |
         // This essentially will still split values on '|' but not on ' | '
         const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
@@ -432,14 +428,18 @@ class QueueTableUnConnected extends React.PureComponent {
             // If this is a client side queue, it won't have filterOptions since the options are built dynamically
             // Potentially need to decode the value since it could be set between client side and server side queues
             // Have to double decode because the filter options are often double encoded
+            console.log(this.props);
             const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
 
+            console.log(column.columnName);
             filters[column.columnName] = decodedValues;
           }
 
         }
       });
     }
+
+    console.log(filters);
 
     return filters;
   };
@@ -460,7 +460,6 @@ class QueueTableUnConnected extends React.PureComponent {
   };
 
   updateFilteredByList = (newList) => {
-    console.log(newList);
     this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
@@ -640,7 +639,6 @@ class QueueTableUnConnected extends React.PureComponent {
   requestQueryString = () => {
     const { filteredByList } = this.state;
 
-    console.log(filteredByList);
     const filterParams = [];
 
     // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
@@ -664,7 +662,6 @@ class QueueTableUnConnected extends React.PureComponent {
         if (!_.isEmpty(filteredByList[columnName])) {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
-          console.log(filteredByList);
           filterParams.push(`col=${column.name}&val=${filteredByList[columnName].join('|')}`);
         }
       }
