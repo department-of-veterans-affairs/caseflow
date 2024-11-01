@@ -341,12 +341,14 @@ class TaskRows extends React.PureComponent {
 
     const renderMstLabel = (mstText, style) => {
       if (mstText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (MST):</h5>
-          <small>{mstText}</small>
-        </React.Fragment>;
+        return (
+          <React.Fragment>
+            <h5 style={style}>Reason for Change (MST):</h5>
+            <small>{mstText}</small>
+          </React.Fragment>
+        );
       }
-    };
+    };TranscriptionFileDispatchTabs.jsx
 
     const renderPactLabel = (pactText, style) => {
       if (pactText) {
