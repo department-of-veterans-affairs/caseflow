@@ -64,7 +64,7 @@ SELECT
   CASE
     WHEN (
       f_vacols_corres.sspare2 IS NULL
-      AND f_vacols_corres.sdob <= (CURRENT_DATE - INTERVAL '75 years')
+        AND f_vacols_corres.sdob <= (CURRENT_DATE - INTERVAL '75 years')
     )
       -- This could be either the Veteran or a non-Veteran claimant
       OR people.date_of_birth <= (CURRENT_DATE - INTERVAL '75 years') THEN TRUE

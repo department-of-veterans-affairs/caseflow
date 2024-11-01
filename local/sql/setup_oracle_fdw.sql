@@ -32,7 +32,8 @@ CREATE EXTENSION oracle_fdw;
 -- Create the foreign server
 -- Set the dbserver to point to the db or load balancer on the port it uses to query VACOLS
 CREATE SERVER vacols_sv FOREIGN DATA WRAPPER oracle_fdw OPTIONS (
-    dbserver '{db_or_load_balancer_URL}:{oracle_listener_port}/BVAP'
+    dbserver '{db_or_load_balancer_URL}:1521/BVAP'
+    isolation_level 'read_only'
 );
 
 -- Grant permissions to the postgres user for the foreign tables
