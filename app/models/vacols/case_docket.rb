@@ -895,6 +895,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
   end
 
+  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
   def self.common_affinity_filter_logic(
     appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
   )
@@ -931,7 +932,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       appeal["prev_deciding_judge"] == appeal["vlj"] || genpop == "not_genpop"
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
   def self.not_distributing_to_tied_judge?(appeal, judge_sattyid)
     !appeal["vlj"].blank? &&
