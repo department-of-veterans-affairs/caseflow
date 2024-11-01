@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe NationalHearingQueueEntry, type: :model do
   # refresh in case anything was run in rails console previously
   before(:each) { NationalHearingQueueEntry.refresh }
@@ -399,7 +401,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
   context "schedulable" do
     after(:each) { clean_up_after_threads }
-
 
     let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
