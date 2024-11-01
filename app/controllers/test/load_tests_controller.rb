@@ -234,7 +234,9 @@ class Test::LoadTestsController < ApplicationController
 
   # Only accessible from prod-test environment
   def check_environment
-    render status: :not_found if Rails.deploy_env == :production
+    return true if Rails.deploy_env?(:prodtest)
+
+    redirect_to "/404"
   end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
