@@ -304,6 +304,8 @@ class QueueTableUnConnected extends React.PureComponent {
       tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
     const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
+
+    console.log(filterParam);
     let filteredByList;
 
     // Ignore this if it's a client side queue
@@ -330,6 +332,8 @@ class QueueTableUnConnected extends React.PureComponent {
     // to sort on a column, or if filters are provided
     const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName ||
       !_.isEmpty(filteredByList) || querySearchText;
+
+    console.log(filteredByList);
 
     return {
       sortAscending,
@@ -368,11 +372,13 @@ class QueueTableUnConnected extends React.PureComponent {
   componentDidUpdate = (previousProps, previousState) => {
     const queryParams = new URLSearchParams(window.location.search);
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
-    const filterParams = this.props.tabPaginationOptions['filter[]'];
+    const filterParams = this.props.tabPaginationOptions?.['filter[]'] || [];
 
-    if (this.props.businessLineUrl === 'vha' &&
+    console.log(this.props?.businessLineUrl === 'vha');
+    if (this.props?.businessLineUrl === 'vha' &&
       currentTabName === 'completed' &&
       filterParams.length === 0) {
+      console.log('???');
       this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
     }
 
@@ -454,6 +460,7 @@ class QueueTableUnConnected extends React.PureComponent {
   };
 
   updateFilteredByList = (newList) => {
+    console.log(newList);
     this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
@@ -632,6 +639,8 @@ class QueueTableUnConnected extends React.PureComponent {
 
   requestQueryString = () => {
     const { filteredByList } = this.state;
+
+    console.log(filteredByList);
     const filterParams = [];
 
     // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
@@ -655,6 +664,7 @@ class QueueTableUnConnected extends React.PureComponent {
         if (!_.isEmpty(filteredByList[columnName])) {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
+          console.log(filteredByList);
           filterParams.push(`col=${column.name}&val=${filteredByList[columnName].join('|')}`);
         }
       }
@@ -858,7 +868,7 @@ class QueueTableUnConnected extends React.PureComponent {
     const queryParams = new URLSearchParams(window.location.search);
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
 
-    const vhaCompletedTab = this.props.businessLineUrl === 'vha' && currentTabName === 'completed';
+    const vhaCompletedTab = this.props?.businessLineUrl === 'vha' && currentTabName === 'completed';
 
     return (
       <div
@@ -881,7 +891,7 @@ class QueueTableUnConnected extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  businessLineUrl: state.nonComp.businessLineUrl
+  businessLineUrl: state?.nonComp?.businessLineUrl
 });
 
 const QueueTable = connect(mapStateToProps)(QueueTableUnConnected);
