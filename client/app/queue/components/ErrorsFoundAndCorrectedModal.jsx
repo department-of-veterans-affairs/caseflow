@@ -5,6 +5,8 @@ import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import FileUpload from '../../components/FileUpload';
 import TextareaField from '../../components/TextareaField';
+import COPY from '../../../COPY';
+import { sprintf } from 'sprintf-js';
 
 const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -36,18 +38,39 @@ const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const requestParams = {
-      file_info: {
-        file: selectedFile.file,
-        file_name: selectedFile.fileName
-      },
-      task_info: {
-        instructions: notes,
-        task_id: props.taskId
-      }
+    const { task, appeal } = this.props;
+
+    const formatInstructions = () => {
+      return [
+        COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+        COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE,
+        this.state.notes,
+        selectedFile.fileName
+      ];
+    };
+
+    const requestParams = () => {
+      return {
+        data: {
+          task: {
+            instructions: formatInstructions()
+          },
+          file_info: {
+            file: selectedFile.file,
+            file_name: selectedFile.fileName
+          },
+        }
+      };
+    };
+
+    const successMsg = {
+      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
     };
 
     // setLoading(true);
+
+    return this.props.requestPatch(`/tasks/${task.taskId}
+      /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
   };
 
   const handleFileChange = (file) => {
@@ -114,7 +137,15 @@ const ErrorsFoundAndCorrectedModal = (props) => {
 
 ErrorsFoundAndCorrectedModal.propTypes = {
   closeModal: PropTypes.func,
-  taskId: PropTypes.string
+  taskId: PropTypes.string,
+  appeal: PropTypes.shape({
+    veteranFullName: PropTypes.string
+  }),
+  appealId: PropTypes.string,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
 };
 
 export default ErrorsFoundAndCorrectedModal;

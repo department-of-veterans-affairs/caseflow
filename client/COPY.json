@@ -1618,6 +1618,10 @@
   "UPLOAD_TRANSCRIPTION_VBMS_TEXT": "By uploading to VBMS, you are confirming that you have reviewed the transcript in Caseflow and have found no errors.",
   "UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA": "Please provide context and instructions for this action",
   "UPLOAD_TRANSCRIPTION_VBMS_TITLE": "Upload transcript to VBMS",
-  "UPLOAD_TRANSCRIPTION_VBMS_BUTTON": "Upload to VBMS"
+  "UPLOAD_TRANSCRIPTION_VBMS_BUTTON": "Upload to VBMS",
+  "UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE": "No errors found: Upload to VBMS",
+  "UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE": "Errors found: Upload to VBMS",
+  "UPLOAD_TRANSCRIPTION_VBMS_CANCEL_ACTION_TYPE": "Cancel task",
+  "REVIEW_TRANSCRIPTION_VBMS_MESSAGE": "You have successfully uploaded %s's final transcript to VBMS"
 
 }

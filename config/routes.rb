@@ -402,6 +402,7 @@ Rails.application.routes.draw do
       post :request_hearing_disposition_change
       patch :change_type, to: 'tasks/change_type#update'
       patch :upload_transcription_to_vbms
+      patch :error_found_upload_transcription_to_vbms
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
