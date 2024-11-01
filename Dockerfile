@@ -47,9 +47,15 @@ RUN mkdir -p $NVM_DIR && \
 
 # Install compatible Bundler version and gems
 COPY Gemfile* .
-RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
-RUN gem install bundler -v 2.4.22 && bundle install
+RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc && \
+  bundle config set force_ruby_platform true && \
+  gem install bundler -v 2.4.22 && bundle install && \
+  chmod +x /caseflow/docker-bin/startup.sh && \
+  rm -rf docker-bin
 
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
+
+# Start the Rails application
+# CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
 

@@ -10,12 +10,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
 
-  vacols-db:
-    container_name: VACOLS_DB
-    image: vacols_db:latest
-    ports:
-      - "1521:1521"
-
   # Redis Cache
   appeals-redis:
     image: redis:6.2.6
@@ -36,7 +30,6 @@ services:
     depends_on:
       - appeals-db
       - appeals-redis
-      - vacols-db
     env_file:
       - .env
 

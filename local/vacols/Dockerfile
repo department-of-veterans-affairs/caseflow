@@ -22,10 +22,6 @@
 # ---------------
 FROM oraclelinux:7-slim as base
 
-# Maintainer
-# ----------
-MAINTAINER Gerald Venzl <gerald.venzl@oracle.com>
-
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
 ENV ORACLE_BASE=/opt/oracle \
