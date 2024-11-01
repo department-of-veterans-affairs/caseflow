@@ -3,8 +3,6 @@
 FactoryBot.define do
   factory :transcription_file, class: "Hearings::TranscriptionFile" do
     hearing { create(:hearing, :held) }
-    hearing_id { hearing.id }
-    hearing_type { hearing.request_type }
     docket_number { hearing.docket_number }
     file_name { "transcript.vtt" }
     file_type { "vtt" }
