@@ -12,6 +12,12 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import { clearPdfDocument, setDocumentLoadError, setPageDimensions, setPdfDocument } from '../../reader/Pdf/PdfActions';
+import _ from 'lodash';
+import { PAGE_DIMENSION_SCALE } from '../../reader/constants';
+
+let loadingTask = null;
+let pdfDocument = null;
 
 const PdfDocument = ({
   currentPage,
@@ -98,58 +104,126 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
-  useEffect(() => {
-    const getDocData = async () => {
-      pdfMetrics.current.renderedPageCount = 0;
-      pdfMetrics.current.renderedTimeTotal = 0;
-      setPdfDoc(null);
-      setPdfPages([]);
-      setAllPagesRendered(false);
-      setMetricsLogged(false);
-      const requestOptions = {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      };
+  const onRejected = (reason, step) => {
+    console.error(`DOC ID: ${doc.id} | GET ${props.file} : STEP ${step} : ${reason}`);
+    throw reason;
+  };
 
-      pdfMetrics.current.getStartTime = new Date().getTime();
-      const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
-        return response.body;
-      });
+  const getPagesPromise = () => {
+    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
 
-      pdfMetrics.current.getEndTime = new Date().getTime();
-      const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
-
-      if (docProxy) {
-        setPdfDoc(docProxy);
-        setNumPages(docProxy.numPages);
-      }
-    };
-
-    getDocData().catch((error) => {
-      console.error(`ERROR with getting doc data: ${error}`);
-      setIsDocumentLoadError(true);
+      return pdfDocument.getPage(index + 1);
     });
-  }, [doc.content_url]);
 
-  useEffect(() => {
-    const pageArray = [];
+    return Promise.all(promises);
+  };
 
-    if (!pdfDoc) {
-      return;
-    }
-    const getPdfData = async () => {
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i);
+  const setPageDimensionsForPdf = (pages) => {
+    const viewports = pages.map((page) => {
+      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+    });
 
-        pageArray.push(page);
-      }
-      setPdfPages(pageArray);
+    setPageDimensions(doc.content_url, viewports);
+  };
+
+  const getPdfDoc = () => {
+    const requestOptions = {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer',
     };
 
-    getPdfData();
-  }, [pdfDoc]);
+    return ApiUtil.get(doc.content_url, requestOptions).
+      then((resp) => {
+        loadingTask = getDocument({ data: resp.body, pdfBug: true, verbosity: 0 });
+
+        return loadingTask.promise;
+
+      }, (reason) => onRejected(reason, 'getDocument')).
+      then((pdfjsDocument) => {
+
+        pdfDocument = pdfjsDocument;
+        setPdfDoc(pdfjsDocument);
+        setNumPages(pdfjsDocument.numPages);
+
+        return getPagesPromise(pdfDocument);
+      }, (reason) => onRejected(reason, 'getPdfJsDoc')).
+      then((pages) => {
+        setPdfPages(pages);
+
+        return setPageDimensionsForPdf(pages);
+      }, (reason) => onRejected(reason, 'setPageDimensions')).
+      then(() => {
+        if (loadingTask.destroyed) {
+          return pdfDocument.destroy();
+        }
+        loadingTask = null;
+
+        return setPdfDocument(doc.content_url, pdfDocument);
+      }, (reason) => onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        const message = `READERLOG ERROR Fetching document failed for ${doc.content_url} : ${error}`;
+
+        console.error(message);
+        if (loadingTask) {
+          loadingTask.destroy();
+        }
+        if (pdfDocument) {
+          pdfDocument.destroy();
+          clearPdfDocument(doc.content_url, pdfDocument);
+        }
+        loadingTask = null;
+        setDocumentLoadError(doc.content_url);
+      });
+  };
+
+  useEffect(() => {
+    // const getDocData = async () => {
+    //   pdfMetrics.current.renderedPageCount = 0;
+    //   pdfMetrics.current.renderedTimeTotal = 0;
+    //   setPdfDoc(null);
+    //   setPdfPages([]);
+    //   setAllPagesRendered(false);
+    //   setMetricsLogged(false);
+    //   const requestOptions = {
+    //     cache: true,
+    //     withCredentials: true,
+    //     timeout: true,
+    //     responseType: 'arraybuffer',
+    //   };
+
+    //   pdfMetrics.current.getStartTime = new Date().getTime();
+    //   const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
+    //     return response.body;
+    //   });
+
+    //   pdfMetrics.current.getEndTime = new Date().getTime();
+    //   const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
+
+    //   if (docProxy) {
+    //     setPdfDoc(docProxy);
+    //     setNumPages(docProxy.numPages);
+    //   }
+    // };
+
+    // getDocData().catch((error) => {
+    //   console.error(`ERROR with getting doc data: ${error}`);
+    //   setIsDocumentLoadError(true);
+    // });
+
+    getPdfDoc();
+
+    return () => {
+      if (loadingTask) {
+        loadingTask.destroy();
+      }
+      if (pdfDocument) {
+        pdfDocument.destroy();
+        clearPdfDocument(doc.content_url, pdfDocument);
+      }
+    };
+  }, [doc.content_url]);
 
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));

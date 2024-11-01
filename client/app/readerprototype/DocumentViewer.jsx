@@ -132,6 +132,7 @@ const DocumentViewer = (props) => {
             <PdfDocument
               currentPage={currentPage}
               doc={doc}
+              key={doc.id}
               isDocumentLoadError={isDocumentLoadError}
               rotateDeg={rotateDeg}
               setCurrentPage={setCurrentPageOnScroll}
