@@ -6,108 +6,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
   # refresh in case anything was run in rails console previously
   before(:each) { NationalHearingQueueEntry.refresh }
 
-  context "when appeals have been staged" do
-    let!(:ama_with_sched_task) do
-      create(
-        :appeal,
-        :with_schedule_hearing_tasks,
-        original_hearing_request_type: "central"
-      )
-    end
-
-    let!(:ama_with_completed_status) do
-      create(:appeal, :with_schedule_hearing_tasks).tap do |appeal|
-        ScheduleHearingTask.find_by(appeal: appeal).completed!
-      end
-    end
-
-    let!(:case1) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
-    let!(:case2) { create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
-    let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
-
-    let!(:legacy_with_sched_task) do
-      create(:legacy_appeal,
-             :with_schedule_hearing_tasks,
-             :with_veteran,
-             vacols_case: case1)
-    end
-
-    let!(:legacy_appeal_completed) do
-      create(:legacy_appeal,
-             :with_schedule_hearing_tasks,
-             :with_veteran,
-             vacols_case: case3).tap do |legacy_appeal|
-        ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
-      end
-    end
-
-    let!(:appeal_normal) { create(:appeal) }
-
-    let!(:legacy_appeal_normal) do
-      create(:legacy_appeal,
-             :with_root_task,
-             :with_veteran,
-             vacols_case: case2)
-    end
-
-    it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
-      expect(NationalHearingQueueEntry.count).to eq 0
-
-      NationalHearingQueueEntry.refresh
-
-      expect(
-        NationalHearingQueueEntry.pluck(:appeal_id, :appeal_type)
-      ).to match_array [
-        [ama_with_sched_task.id, "Appeal"],
-        [legacy_with_sched_task.id, "LegacyAppeal"]
-      ]
-
-      clean_up_after_threads
-    end
-
-    it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
-      expect(NationalHearingQueueEntry.count).to eq 0
-
-      NationalHearingQueueEntry.refresh
-
-      expect(
-        NationalHearingQueueEntry.pluck(
-          :appeal_id, :appeal_type,
-          :hearing_request_type, :receipt_date, :external_id,
-          :appeal_stream, :docket_number, :aod_indicator,
-          :task_id, :schedulable
-        )
-      ).to match_array [
-        [
-          ama_with_sched_task.id,
-          "Appeal",
-          ama_with_sched_task.original_hearing_request_type,
-          1.day.ago.strftime("%Y%m%d"),
-          ama_with_sched_task.uuid,
-          ama_with_sched_task.stream_type,
-          ama_with_sched_task.stream_docket_number,
-          false,
-          ama_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
-          false
-        ],
-        [
-          legacy_with_sched_task.id,
-          "LegacyAppeal",
-          case1.bfhr,
-          1.day.ago.strftime("%Y%m%d"),
-          case1.bfkey,
-          "Original",
-          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum,
-          false,
-          legacy_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
-          true
-        ]
-      ]
-
-      clean_up_after_threads
-    end
-  end
-
   context "aod_indicator" do
     subject do
       NationalHearingQueueEntry.refresh
@@ -396,6 +294,108 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           end
         end
       end
+    end
+  end
+
+    context "when appeals have been staged" do
+    let!(:ama_with_sched_task) do
+      create(
+        :appeal,
+        :with_schedule_hearing_tasks,
+        original_hearing_request_type: "central"
+      )
+    end
+
+    let!(:ama_with_completed_status) do
+      create(:appeal, :with_schedule_hearing_tasks).tap do |appeal|
+        ScheduleHearingTask.find_by(appeal: appeal).completed!
+      end
+    end
+
+    let!(:case1) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:case2) { create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
+    let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
+
+    let!(:legacy_with_sched_task) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case1)
+    end
+
+    let!(:legacy_appeal_completed) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case3).tap do |legacy_appeal|
+        ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
+      end
+    end
+
+    let!(:appeal_normal) { create(:appeal) }
+
+    let!(:legacy_appeal_normal) do
+      create(:legacy_appeal,
+             :with_root_task,
+             :with_veteran,
+             vacols_case: case2)
+    end
+
+    it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
+      expect(NationalHearingQueueEntry.count).to eq 0
+
+      NationalHearingQueueEntry.refresh
+
+      expect(
+        NationalHearingQueueEntry.pluck(:appeal_id, :appeal_type)
+      ).to match_array [
+        [ama_with_sched_task.id, "Appeal"],
+        [legacy_with_sched_task.id, "LegacyAppeal"]
+      ]
+
+      clean_up_after_threads
+    end
+
+    it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
+      expect(NationalHearingQueueEntry.count).to eq 0
+
+      NationalHearingQueueEntry.refresh
+
+      expect(
+        NationalHearingQueueEntry.pluck(
+          :appeal_id, :appeal_type,
+          :hearing_request_type, :receipt_date, :external_id,
+          :appeal_stream, :docket_number, :aod_indicator,
+          :task_id, :schedulable
+        )
+      ).to match_array [
+        [
+          ama_with_sched_task.id,
+          "Appeal",
+          ama_with_sched_task.original_hearing_request_type,
+          1.day.ago.strftime("%Y%m%d"),
+          ama_with_sched_task.uuid,
+          ama_with_sched_task.stream_type,
+          ama_with_sched_task.stream_docket_number,
+          false,
+          ama_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          false
+        ],
+        [
+          legacy_with_sched_task.id,
+          "LegacyAppeal",
+          case1.bfhr,
+          1.day.ago.strftime("%Y%m%d"),
+          case1.bfkey,
+          "Original",
+          VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum,
+          false,
+          legacy_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
+          true
+        ]
+      ]
+
+      clean_up_after_threads
     end
   end
 
