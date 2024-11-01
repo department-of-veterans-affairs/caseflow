@@ -149,7 +149,7 @@ class Document < CaseflowRecord
   end
 
   def file_size
-    File.size(default_path) || 0
+    rand(10 * 1024..100 * 1024 * 1024)
   end
 
   def default_path
