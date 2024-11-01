@@ -3,7 +3,6 @@
 RSpec.describe NationalHearingQueueEntry, type: :model do
   # refresh in case anything was run in rails console previously
   before(:each) { NationalHearingQueueEntry.refresh }
-  after(:each) { clean_up_after_threads }
 
   context "when appeals have been staged" do
     let!(:ama_with_sched_task) do
@@ -60,6 +59,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         [ama_with_sched_task.id, "Appeal"],
         [legacy_with_sched_task.id, "LegacyAppeal"]
       ]
+
+      clean_up_after_threads
     end
 
     it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
@@ -100,6 +101,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           true
         ]
       ]
+
+      clean_up_after_threads
     end
   end
 
@@ -300,6 +303,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
 
     context "For legacy appeals" do
+      after(:each) { clean_up_after_threads }
+
       let(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
       let!(:appeal) do
         create(:legacy_appeal,
@@ -393,6 +398,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
   end
 
   context "schedulable" do
+    after(:each) { clean_up_after_threads }
+
+
     let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
     let(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
