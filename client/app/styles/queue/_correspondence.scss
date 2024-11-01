@@ -1673,6 +1673,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.tasks-added-text-second-alternate {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+  }
+}
+
 .case-details-header-badge,
 .case-details-badge {
   display: flex;

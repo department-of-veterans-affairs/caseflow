@@ -65,14 +65,14 @@ const CorrespondenceAppealTasks = (props) => {
   const renderTaskButton = () => {
     return (
       <Button
-      type="button"
-      onClick={handleAddTaskModalOpen}
-      name="addTaskOpen"
-      classNames="tasks-added-button-spacing"
+        type="button"
+        onClick={handleAddTaskModalOpen}
+        name="addTaskOpen"
+        classNames="tasks-added-button-spacing"
       >
         + Add task
       </Button>
-    )
+    );
   };
 
   const renderTaskRows = () => {
@@ -85,7 +85,7 @@ const CorrespondenceAppealTasks = (props) => {
         hideDropdown
         waivableUser={props.waivableUser}
       />
-    )
+    );
   };
 
   const renderTaskSectionByCount = () => {
@@ -93,25 +93,26 @@ const CorrespondenceAppealTasks = (props) => {
       return (
         <div className="left-section">
           <div className="tasks-added-text-alternate">There are no tasks on this appeal.
-            {props.waivableUser && renderTaskButton}
+            {props.waivableUser && renderTaskButton()}
           </div>
         </div>
-      )
+      );
     } else if (tasks.length < 5) {
       return (
         <div className="left-section">
-          <span className="tasks-added-text">Tasks added to appeal {props.waivableUser && renderTaskButton}</span>
-          {renderTaskRows}
+          <span className="tasks-added-text-second-alternate">Tasks added to appeal
+            {props.waivableUser && renderTaskButton()}</span>
+          {renderTaskRows()}
         </div>
-      )
-    } else {
-      return (
-        <div className="left-section">
-          <span className="tasks-added-text">Tasks added to appeal</span>
-          {renderTaskRows}
-        </div>
-      )
+      );
     }
+
+    return (
+      <div className="left-section">
+        <span className="tasks-added-text">Tasks added to appeal</span>
+        {renderTaskRows()}
+      </div>
+    );
   };
 
   return (
@@ -202,8 +203,7 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
           </div>
           <div className="tasks-added-details">
-            {appeal &&
-              renderTaskSectionByCount}
+            {appeal && renderTaskSectionByCount()}
             {appeal ? '' :
               <span className="tasks-added-text-alternate">
                 The linked appeal must be saved before tasks can be added.</span>}
