@@ -196,7 +196,7 @@ class TasksController < ApplicationController
     )
 
     Task.where(id: task.id).update_all(
-      instructions: params[:task][:instructions][2],
+      instructions: params[:task][:instructions],
       status: Constants.TASK_STATUSES.completed,
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
