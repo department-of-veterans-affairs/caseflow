@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe NationalHearingQueueEntry, type: :model do
+
+  # refresh in case anything was run in rails console previously
+  before(:each) { NationalHearingQueueEntry.refresh }
   after(:each) { clean_up_after_threads }
 
   context "when appeals have been staged" do
