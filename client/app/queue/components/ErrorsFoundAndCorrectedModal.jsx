@@ -7,6 +7,16 @@ import FileUpload from '../../components/FileUpload';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestPatch } from '../uiReducer/uiActions';
+import { withRouter } from 'react-router-dom';
+import { setAppealAttrs } from '../QueueActions';
+
+import {
+  appealWithDetailSelector,
+  taskById
+} from '../selectors';
 
 const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -38,13 +48,13 @@ const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const { task, appeal } = this.props;
+    const { task, appeal } = props;
 
     const formatInstructions = () => {
       return [
         COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
         COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE,
-        this.state.notes,
+        notes,
         selectedFile.fileName
       ];
     };
@@ -69,7 +79,7 @@ const ErrorsFoundAndCorrectedModal = (props) => {
 
     // setLoading(true);
 
-    return this.props.requestPatch(`/tasks/${task.taskId}
+    return props.requestPatch(`/tasks/${task.taskId}
       /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
   };
 
@@ -137,7 +147,11 @@ const ErrorsFoundAndCorrectedModal = (props) => {
 
 ErrorsFoundAndCorrectedModal.propTypes = {
   closeModal: PropTypes.func,
-  taskId: PropTypes.string,
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+    type: PropTypes.string,
+  }),
+  requestPatch: PropTypes.func,
   appeal: PropTypes.shape({
     veteranFullName: PropTypes.string
   }),
@@ -148,5 +162,16 @@ ErrorsFoundAndCorrectedModal.propTypes = {
   }),
 };
 
-export default ErrorsFoundAndCorrectedModal;
+const mapStateToProps = (state, ownProps) => ({
+  error: state.ui.messages.error,
+  appeal: appealWithDetailSelector(state, ownProps),
+  task: taskById(state, { taskId: ownProps.taskId })
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestPatch,
+  setAppealAttrs
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ErrorsFoundAndCorrectedModal));
 
