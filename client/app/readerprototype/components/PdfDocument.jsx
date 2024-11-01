@@ -127,6 +127,11 @@ const PdfDocument = ({
   };
 
   const getPdfDoc = () => {
+    pdfMetrics.current.renderedPageCount = 0;
+    pdfMetrics.current.renderedTimeTotal = 0;
+    setAllPagesRendered(false);
+    setMetricsLogged(false);
+
     const requestOptions = {
       cache: true,
       withCredentials: true,
@@ -134,8 +139,11 @@ const PdfDocument = ({
       responseType: 'arraybuffer',
     };
 
+    pdfMetrics.current.getStartTime = new Date().getTime();
+
     return ApiUtil.get(doc.content_url, requestOptions).
       then((resp) => {
+        pdfMetrics.current.getEndTime = new Date().getTime();
         loadingTask = getDocument({ data: resp.body, pdfBug: true, verbosity: 0 });
 
         return loadingTask.promise;
@@ -179,39 +187,6 @@ const PdfDocument = ({
   };
 
   useEffect(() => {
-    // const getDocData = async () => {
-    //   pdfMetrics.current.renderedPageCount = 0;
-    //   pdfMetrics.current.renderedTimeTotal = 0;
-    //   setPdfDoc(null);
-    //   setPdfPages([]);
-    //   setAllPagesRendered(false);
-    //   setMetricsLogged(false);
-    //   const requestOptions = {
-    //     cache: true,
-    //     withCredentials: true,
-    //     timeout: true,
-    //     responseType: 'arraybuffer',
-    //   };
-
-    //   pdfMetrics.current.getStartTime = new Date().getTime();
-    //   const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
-    //     return response.body;
-    //   });
-
-    //   pdfMetrics.current.getEndTime = new Date().getTime();
-    //   const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
-
-    //   if (docProxy) {
-    //     setPdfDoc(docProxy);
-    //     setNumPages(docProxy.numPages);
-    //   }
-    // };
-
-    // getDocData().catch((error) => {
-    //   console.error(`ERROR with getting doc data: ${error}`);
-    //   setIsDocumentLoadError(true);
-    // });
-
     getPdfDoc();
 
     return () => {
