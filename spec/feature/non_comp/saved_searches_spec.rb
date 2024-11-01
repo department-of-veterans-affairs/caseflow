@@ -4,8 +4,6 @@ feature "Saved Searches", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
   let(:vha_saved_searches_url) { "/decision_reviews/vha/searches" }
-  let(:user_saved_search) { create(:saved_search, user: user) }
-  let(:all_saved_searches) { create_list(:saved_search, 5) }
 
   before do
     User.stub = user
@@ -25,25 +23,30 @@ feature "Saved Searches", :postgres do
     end
   end
 
-  context "check save search page is rendering user's searches and all searches" do
-    it "When VHA admin user clicks on All Saved Searches should see all saved searches" do
-      all_saved_searches
-      table = page.find("tbody")
-      page.find("saved-search-queue-tab-1").click
+  describe "checking saved search tables" do
+    let!(:user_saved_search) { create(:saved_search, user: user) }
+    let!(:all_saved_searches) { create_list(:saved_search, 5) }
 
-      table_row = table.first('tr[id^="table-row"]')
-      expect(table_row.count).to eq(5)
-      expect(table_row).to have_content(" ")
+    before do
+      visit vha_saved_searches_url
     end
 
-    it "When VHA admin user clicks on my Saved Searches should see their saved searches" do
-      user_saved_search
-      table = page.find("tbody")
-      page.find('saved-search-queue-tab-0').click
+    context "check save search page is rendering user's searches and all searches" do
+      it "When VHA admin user clicks on All Saved Searches should see all saved searches" do
+        page.find("#saved-search-queue-tab-1").click
+        table = page.find("tbody")
 
-      table_row = table.first('tr[id^="table-row"]')
-      expect(table_row.count).to eq(1)
-      expect(table_row).to have_content(" ")
+        expect(page).to have_text("Viewing 1-6 of 6 total")
+        expect(table).to have_selector("tr", count: 6)
+      end
+
+      it "When VHA admin user clicks on my Saved Searches should see their saved searches" do
+        page.find("#saved-search-queue-tab-0").click
+        table = page.find("tbody")
+
+        expect(page).to have_text("Viewing 1-1 of 1 total")
+        expect(table).to have_selector("tr", count: 1)
+      end
     end
   end
 end
