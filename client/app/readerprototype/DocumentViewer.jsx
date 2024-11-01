@@ -16,6 +16,7 @@ import ShareModal from './components/Comments/ShareModal';
 import { showSideBarSelector } from './selectors';
 import { getRotationDeg } from './util/documentUtil';
 import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import _ from 'lodash';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,6 +105,49 @@ const DocumentViewer = (props) => {
     dispatch(stopPlacingAnnotation('navigation'));
   }, [doc.id, dispatch]);
 
+  const selectedDocId = () => Number(props.match.params.docId);
+
+  const selectedDocIndex = () => (
+    _.findIndex(props.allDocuments, { id: selectedDocId() })
+  );
+
+  const selectedDoc = () => (
+    props.allDocuments[selectedDocIndex()]
+  );
+
+  const getPrevDoc = () => _.get(props.allDocuments, [selectedDocIndex() - 1]);
+  const getNextDoc = () => _.get(props.allDocuments, [selectedDocIndex() + 1]);
+
+  const getPrevDocId = () => _.get(getPrevDoc(), 'id');
+  const getNextDocId = () => _.get(getNextDoc(), 'id');
+  const getPrefetchFiles = () => _.compact(_.map([getPrevDoc(), getNextDoc()], 'content_url'));
+  const files = props.featureToggles.prefetchDisabled ?
+    [doc.content_url] :
+    [...getPrefetchFiles(), doc.content_url];
+  const loadDocs = () => {
+    const files = props.featureToggles.prefetchDisabled ?
+      [doc.content_url] :
+      [...getPrefetchFiles(), doc.content_url];
+
+    return files.map((file) => {
+      return (
+        <PdfDocument
+          currentPage={currentPage}
+          doc={doc}
+          key={doc.id}
+          isDocumentLoadError={isDocumentLoadError}
+          rotateDeg={rotateDeg}
+          setCurrentPage={setCurrentPageOnScroll}
+          setIsDocumentLoadError={setIsDocumentLoadError}
+          setNumPages={setNumPages}
+          zoomLevel={props.zoomLevel}
+          numPages={numPages}
+          isVisible={doc.content_url === file}
+        />
+      );
+    });
+  };
+
   return (
     <>
       <Helmet key={doc?.id}>
@@ -129,17 +173,22 @@ const DocumentViewer = (props) => {
           />
           {showSearchBar && <ReaderSearchBar />}
           <div className="cf-pdf-scroll-view">
-            <PdfDocument
-              currentPage={currentPage}
-              doc={doc}
-              key={doc.id}
-              isDocumentLoadError={isDocumentLoadError}
-              rotateDeg={rotateDeg}
-              setCurrentPage={setCurrentPageOnScroll}
-              setIsDocumentLoadError={setIsDocumentLoadError}
-              setNumPages={setNumPages}
-              zoomLevel={props.zoomLevel}
-            />
+            {files.map((file) =>
+              (
+                <PdfDocument
+                  currentPage={currentPage}
+                  doc={doc}
+                  key={file}
+                  isDocumentLoadError={isDocumentLoadError}
+                  rotateDeg={rotateDeg}
+                  setCurrentPage={setCurrentPageOnScroll}
+                  setIsDocumentLoadError={setIsDocumentLoadError}
+                  setNumPages={setNumPages}
+                  zoomLevel={props.zoomLevel}
+                  numPages={numPages}
+                  isVisible={doc.content_url === file}
+                />
+              ))}
           </div>
           <ReaderFooter
             currentPage={currentPage}
@@ -174,7 +223,7 @@ DocumentViewer.propTypes = {
   showPdf: PropTypes.func,
   match: PropTypes.object,
   zoomLevel: PropTypes.number,
-  onZoomChange: PropTypes.func
+  onZoomChange: PropTypes.func,
 };
 
 export default DocumentViewer;

@@ -12,12 +12,12 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
-import { clearPdfDocument, setDocumentLoadError, setPageDimensions, setPdfDocument } from '../../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import { PAGE_DIMENSION_SCALE } from '../../reader/constants';
 
 let loadingTask = null;
-let pdfDocument = null;
+// let pdfDocument = null;
+let pdfDocumentPages = [];
 
 const PdfDocument = ({
   currentPage,
@@ -27,7 +27,16 @@ const PdfDocument = ({
   setIsDocumentLoadError,
   setNumPages,
   setCurrentPage,
+  isVisible,
   zoomLevel }) => {
+
+    if (!isVisible) {
+      return null;
+    }
+
+  const loadingTaskRef = useRef(null);
+  const pdfDocumentRef = useRef(null);
+
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -46,6 +55,7 @@ const PdfDocument = ({
     alignContent: 'start',
     justifyContent: 'center',
     gap: '8rem',
+    visibility: `${isVisible}`,
   };
 
   const handleRenderingMetrics = (renderingTime) => {
@@ -104,29 +114,34 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
-  const onRejected = (reason, step) => {
-    console.error(`DOC ID: ${doc.id} | GET ${props.file} : STEP ${step} : ${reason}`);
-    throw reason;
-  };
-
   const getPagesPromise = () => {
-    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+    const promises = _.range(0, pdfDoc?.numPages).map((index) => {
 
-      return pdfDocument.getPage(index + 1);
+      return pdfDoc.getPage(index + 1);
     });
 
+    console.log(`getPagesPromise() for ${doc.content_url} : ${promises}`);
     return Promise.all(promises);
   };
 
-  const setPageDimensionsForPdf = (pages) => {
-    const viewports = pages.map((page) => {
-      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-    });
-
-    setPageDimensions(doc.content_url, viewports);
-  };
-
   const getPdfDoc = () => {
+    // console.log(`\n\n\n\n======== START getPdfDoc()============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
+    // console.log(pdfDocument);
+
+    console.log(`======== START getPdfDoc()============= for ${doc.content_url} | pdfDoc: ${pdfDoc}\n\n\n`);
+    console.log(pdfDoc);
+    // console.log(`getPdfDoc() for ${doc.content_url} | loadingTask: ${loadingTask}`);
+
+    // if (pdfDocument) {
+    //   console.log(`\n\n\n\n======== START there IS pdfDocument! delete it!============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
+    //   pdfDocument.destroy(); //this is for the previous pdfDocument after switching docs
+    //   console.log(`\n\n\n\n======== START there IS pdfDocument! make sure deleted for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
+    // }
+
+    // console.log(`\n\n\n\n======== START AFTER getPdfDoc()============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
+    // console.log(pdfDocument)
+    // loadingTask = null;
+    // pdfDocument = null;
     pdfMetrics.current.renderedPageCount = 0;
     pdfMetrics.current.renderedTimeTotal = 0;
     setAllPagesRendered(false);
@@ -148,55 +163,67 @@ const PdfDocument = ({
 
         return loadingTask.promise;
 
-      }, (reason) => onRejected(reason, 'getDocument')).
+      }).catch((e) => {
+        console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 1. getDocument : ${e}`)
+        return setIsDocumentLoadError(true);
+      }).
       then((pdfjsDocument) => {
 
-        pdfDocument = pdfjsDocument;
+        console.log(`READERLOG  for ${doc.content_url} fingerprint`, pdfjsDocument._pdfInfo.fingerprint);
+        //same exact finger print after switching docs
+        //READERLOG  for /document/4/pdf fingerprint 5a7b175a7977a9ca6b66401c0a0dc9a8
+        //READERLOG  for /document/1/pdf fingerprint 5e6d82253ffef74f9727dde0167ed600
+        //READERLOG  for /document/4/pdf fingerprint 5a7b175a7977a9ca6b66401c0a0dc9a8
+
+
+        pdfDocumentRef.current = pdfjsDocument;
+        // pdfDocument = pdfjsDocument;
         setPdfDoc(pdfjsDocument);
         setNumPages(pdfjsDocument.numPages);
+        // debugger;
 
-        return getPagesPromise(pdfDocument);
-      }, (reason) => onRejected(reason, 'getPdfJsDoc')).
+        const promises = _.range(0, pdfjsDocument.numPages).map((index) => {
+
+          return pdfjsDocument.getPage(index + 1);
+        });
+
+        return Promise.all(promises);
+
+      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 2 getting pdfDocument : ${e}`)).
       then((pages) => {
-        setPdfPages(pages);
+        pdfDocumentPages = pages;
 
-        return setPageDimensionsForPdf(pages);
-      }, (reason) => onRejected(reason, 'setPageDimensions')).
+        return setPdfPages(pages);
+      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 3 getting pdfPages : ${e}`)).
       then(() => {
-        if (loadingTask.destroyed) {
-          return pdfDocument.destroy();
+
+        console.log(`getPdfDoc()====cleanup========= for ${doc.content_url} | pdfDoc: ${pdfDoc}`);
+        //get rid of this block? if theres clean up in useEffect return
+        if (loadingTask?.destroyed) {
+          // debugger;
+          return pdfDocumentRef.current.destroy();
         }
         loadingTask = null;
-
-        return setPdfDocument(doc.content_url, pdfDocument);
-      }, (reason) => onRejected(reason, 'setPdfDocument')).
-      catch((error) => {
-        const message = `READERLOG ERROR Fetching document failed for ${doc.content_url} : ${error}`;
-
-        console.error(message);
-        if (loadingTask) {
-          loadingTask.destroy();
-        }
-        if (pdfDocument) {
-          pdfDocument.destroy();
-          clearPdfDocument(doc.content_url, pdfDocument);
-        }
-        loadingTask = null;
-        setDocumentLoadError(doc.content_url);
-      });
+      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 3 getting pdfPages : ${e}`));
+      // loadingTask?.destroy();
+      // pdfDocument?.destroy();
+      // loadingTask = null;
+      // pdfDocument = null;
   };
 
   useEffect(() => {
     getPdfDoc();
 
     return () => {
-      if (loadingTask) {
-        loadingTask.destroy();
-      }
-      if (pdfDocument) {
-        pdfDocument.destroy();
-        clearPdfDocument(doc.content_url, pdfDocument);
-      }
+      // loadingTask?.destroy();
+
+      console.log(`\n\n\nREADERLOG********* CLEANUP() for ${doc.content_url} pdfDocumentRef`, pdfDocumentRef.current);
+      pdfDocumentRef.current?.destroy();
+      // debugger;
+      console.log(`READERLOG********* CLEANUP() for ${doc.content_url} pdfDocumentRef`, pdfDocumentRef.current);
+
+
+      // pdfDocument?.destroy();
     };
   }, [doc.content_url]);
 
@@ -225,7 +252,7 @@ const PdfDocument = ({
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      {isDocumentLoadError && <DocumentLoadError doc={doc} />}
+      {/* {isDocumentLoadError && <DocumentLoadError doc={doc} />} */}
       {pdfPages.map((page, index) => (
         <Page
           setCurrentPage={setCurrentPage}
@@ -260,6 +287,7 @@ PdfDocument.propTypes = {
   setNumPages: PropTypes.func,
   setCurrentPage: PropTypes.func,
   zoomLevel: PropTypes.number,
+  isVisible: PropTypes.bool,
 };
 
 export default PdfDocument;
