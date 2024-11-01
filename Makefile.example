@@ -57,20 +57,26 @@ whats-next:  ## TODO
 ready:  ## Helper command that watches the docker containers to finish start up
 	h=`docker-compose ps | grep -i starting`; while [ "$$h" != "" ]; do h=`docker-compose ps | grep -i starting`; echo $$h; sleep 1; done
 
+refresh: ## refreshes your docker containers forcing it to rebuild
+	docker-compose build --no-cache && docker-compose up -d --no-deps --build
+
+run-cmd:
+	docker-compose run --rm rails $(RUN_ARGS)
+
 up:  ## Start the docker containers
 	docker-compose up -d
 
 up-m1:  ## Start the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml up -d
+	docker-compose up -d
 
 up-docker:  ## Start the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml up -d
+	docker-compose up -d
 
 down:	## Stop the docker containers
 	docker-compose down
 
 down-m1:  ## Stop the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml down
+	docker-compose down
 
 run: up ready  ## Start rails server and frontend server
 	foreman start

@@ -50,9 +50,6 @@ COPY Gemfile* .
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 RUN gem install bundler -v 2.4.22 && bundle install
 
-# Expose the Rails port
-ARG DEFAULT_PORT=3000
-EXPOSE ${DEFAULT_PORT}
+# Run the app
+ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
 
-# Start the Rails application
-CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]

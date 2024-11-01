@@ -1,38 +1,61 @@
-version: '3'
 services:
+  # PostgreSQL Database
+  appeals-db:
+    image: postgres:14.8
+    container_name: appeals-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
   vacols-db:
     container_name: VACOLS_DB
     image: vacols_db:latest
     ports:
       - "1521:1521"
 
+  # Redis Cache
   appeals-redis:
-    container_name: appeals-redis
     image: redis:6.2.6
+    container_name: appeals-redis
     ports:
       - "6379:6379"
 
-  appeals-postgres:
-    image: postgres:14.8
-    container_name: appeals-db
+  # Rails Application
+  rails:
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "bundle exec rails s -p 3000"
     ports:
-      - "5432:5432"
+      - "3000:3000"
     volumes:
-      - "postgresdata:/var/lib/postgresql/data"
-    environment:
-     - POSTGRES_PASSWORD=postgres
+      - .:/caseflow
+    depends_on:
+      - appeals-db
+      - appeals-redis
+      - vacols-db
+    env_file:
+      - .env
 
-  appeals-localstack-aws:
-    container_name: localstack
-    image: localstack/localstack:0.14.5
-    ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=sqs,dynamodb,kms
-    volumes:
-      - ./local/sqs/conf:/conf
+  # # Localstack for AWS Services
+  # appeals-localstack-aws:
+  #   platform: linux/amd64
+  #   image: localstack/localstack:0.14.5
+  #   container_name: localstack
+  #   ports:
+  #     - "4566:4566"
+  #   environment:
+  #     - SERVICES=sqs,dynamodb,kms
+  #   volumes:
+  #     - ./local/sqs/conf:/conf
 
+  # Metabase Analytics
   appeals-metabase:
+    platform: linux/amd64
     container_name: metabase
     build:
       context: metabase
@@ -40,4 +63,4 @@ services:
       - "3002:3000"
 
 volumes:
-  postgresdata:
+  postgresdata: {}

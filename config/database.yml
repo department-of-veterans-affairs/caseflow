@@ -44,11 +44,9 @@ development:
     adapter: oracle_enhanced
     username: VACOLS_DEV
     password: VACOLS_DEV
-    <% if ! ENV['DOCKERIZED'] %>
-    host: localhost
+    host: <%= ENV['DOCKER_HOST'] || "localhost" %>
     port: 1521
-    <% end %>
-    database: <%= ENV['DEMO_DB'] || "BVAP" %>
+    database: <%= ENV['DOCKER_DB'] || "BVAP" %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

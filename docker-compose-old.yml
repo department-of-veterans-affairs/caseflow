@@ -1,0 +1,43 @@
+version: '3'
+services:
+  vacols-db:
+    container_name: VACOLS_DB
+    image: vacols_db:latest
+    ports:
+      - "1521:1521"
+
+  appeals-redis:
+    container_name: appeals-redis
+    image: redis:6.2.6
+    ports:
+      - "6379:6379"
+
+  appeals-postgres:
+    image: postgres:14.8
+    container_name: appeals-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - "postgresdata:/var/lib/postgresql/data"
+    environment:
+     - POSTGRES_PASSWORD=postgres
+
+  appeals-localstack-aws:
+    container_name: localstack
+    image: localstack/localstack:0.14.5
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,dynamodb,kms
+    volumes:
+      - ./local/sqs/conf:/conf
+
+  appeals-metabase:
+    container_name: metabase
+    build:
+      context: metabase
+    ports:
+      - "3002:3000"
+
+volumes:
+  postgresdata:

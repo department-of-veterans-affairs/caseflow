@@ -5,8 +5,8 @@ THIS_SCRIPT_DIR=$(dirname $0)
 # Set variables for application
 source $THIS_SCRIPT_DIR/env.sh
 
-echo "Start DBus"
-dbus-daemon --system
+# echo "Start DBus"
+# dbus-daemon --system
 
 echo "Waiting for dependencies to properly start up - 240 seconds"
 date
