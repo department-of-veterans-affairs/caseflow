@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
-import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
@@ -20,10 +19,8 @@ import _ from 'lodash';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [numPages, setNumPages] = useState(null);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const showSideBar = useSelector(showSideBarSelector);
   const dispatch = useDispatch();
 
@@ -105,48 +102,16 @@ const DocumentViewer = (props) => {
     dispatch(stopPlacingAnnotation('navigation'));
   }, [doc.id, dispatch]);
 
-  const selectedDocId = () => Number(props.match.params.docId);
+  //TODO refactor - consolidate with next/prev functions in ReaderFooter
+  const selectedDocIndex = () => (_.findIndex(props.allDocuments, { id: doc.id }));
+  const getPrevDoc = () => props.allDocuments?.[selectedDocIndex() - 1];
+  const getNextDoc = () => props.allDocuments?.[selectedDocIndex() + 1];
 
-  const selectedDocIndex = () => (
-    _.findIndex(props.allDocuments, { id: selectedDocId() })
-  );
-
-  const selectedDoc = () => (
-    props.allDocuments[selectedDocIndex()]
-  );
-
-  const getPrevDoc = () => _.get(props.allDocuments, [selectedDocIndex() - 1]);
-  const getNextDoc = () => _.get(props.allDocuments, [selectedDocIndex() + 1]);
-
-  const getPrevDocId = () => _.get(getPrevDoc(), 'id');
-  const getNextDocId = () => _.get(getNextDoc(), 'id');
   const getPrefetchFiles = () => _.compact(_.map([getPrevDoc(), getNextDoc()], 'content_url'));
+
   const files = props.featureToggles.prefetchDisabled ?
     [doc.content_url] :
     [...getPrefetchFiles(), doc.content_url];
-  const loadDocs = () => {
-    const files = props.featureToggles.prefetchDisabled ?
-      [doc.content_url] :
-      [...getPrefetchFiles(), doc.content_url];
-
-    return files.map((file) => {
-      return (
-        <PdfDocument
-          currentPage={currentPage}
-          doc={doc}
-          key={doc.id}
-          isDocumentLoadError={isDocumentLoadError}
-          rotateDeg={rotateDeg}
-          setCurrentPage={setCurrentPageOnScroll}
-          setIsDocumentLoadError={setIsDocumentLoadError}
-          setNumPages={setNumPages}
-          zoomLevel={props.zoomLevel}
-          numPages={numPages}
-          isVisible={doc.content_url === file}
-        />
-      );
-    });
-  };
 
   return (
     <>
@@ -179,25 +144,14 @@ const DocumentViewer = (props) => {
                   currentPage={currentPage}
                   doc={doc}
                   key={file}
-                  isDocumentLoadError={isDocumentLoadError}
                   rotateDeg={rotateDeg}
                   setCurrentPage={setCurrentPageOnScroll}
-                  setIsDocumentLoadError={setIsDocumentLoadError}
-                  setNumPages={setNumPages}
                   zoomLevel={props.zoomLevel}
-                  numPages={numPages}
                   isVisible={doc.content_url === file}
+                  showPdf={props.showPdf}
                 />
               ))}
           </div>
-          <ReaderFooter
-            currentPage={currentPage}
-            docId={doc.id}
-            isDocumentLoadError={isDocumentLoadError}
-            numPages={numPages}
-            setCurrentPage={setCurrentPage}
-            showPdf={props.showPdf}
-          />
         </div>
         {showSideBar && (
           <ReaderSidebar

@@ -13,36 +13,30 @@ import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
 import _ from 'lodash';
-import { PAGE_DIMENSION_SCALE } from '../../reader/constants';
-
-let loadingTask = null;
-// let pdfDocument = null;
-let pdfDocumentPages = [];
+import ReaderFooter from './ReaderFooter';
+import { setDocumentLoadError } from '../../reader/Pdf/PdfActions';
 
 const PdfDocument = ({
   currentPage,
   doc,
-  isDocumentLoadError,
   rotateDeg,
-  setIsDocumentLoadError,
-  setNumPages,
   setCurrentPage,
   isVisible,
+  showPdf,
   zoomLevel }) => {
 
-    if (!isVisible) {
-      return null;
-    }
+  if (!isVisible) {
+    return null;
+  }
+  const dispatch = useDispatch();
+  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
+  const [pdfPages, setPdfPages] = useState([]);
+  const [allPagesRendered, setAllPagesRendered] = useState(false);
+  const [metricsLogged, setMetricsLogged] = useState(false);
 
   const loadingTaskRef = useRef(null);
   const pdfDocumentRef = useRef(null);
-
-  const [pdfDoc, setPdfDoc] = useState(null);
-  const [pdfPages, setPdfPages] = useState([]);
-  const dispatch = useDispatch();
   const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
-  const [allPagesRendered, setAllPagesRendered] = useState(false);
-  const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
 
   const containerStyle = {
@@ -114,34 +108,7 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
-  const getPagesPromise = () => {
-    const promises = _.range(0, pdfDoc?.numPages).map((index) => {
-
-      return pdfDoc.getPage(index + 1);
-    });
-
-    console.log(`getPagesPromise() for ${doc.content_url} : ${promises}`);
-    return Promise.all(promises);
-  };
-
   const getPdfDoc = () => {
-    // console.log(`\n\n\n\n======== START getPdfDoc()============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
-    // console.log(pdfDocument);
-
-    console.log(`======== START getPdfDoc()============= for ${doc.content_url} | pdfDoc: ${pdfDoc}\n\n\n`);
-    console.log(pdfDoc);
-    // console.log(`getPdfDoc() for ${doc.content_url} | loadingTask: ${loadingTask}`);
-
-    // if (pdfDocument) {
-    //   console.log(`\n\n\n\n======== START there IS pdfDocument! delete it!============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
-    //   pdfDocument.destroy(); //this is for the previous pdfDocument after switching docs
-    //   console.log(`\n\n\n\n======== START there IS pdfDocument! make sure deleted for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
-    // }
-
-    // console.log(`\n\n\n\n======== START AFTER getPdfDoc()============= for ${doc.content_url} | pdfDocument: ${pdfDocument}`);
-    // console.log(pdfDocument)
-    // loadingTask = null;
-    // pdfDocument = null;
     pdfMetrics.current.renderedPageCount = 0;
     pdfMetrics.current.renderedTimeTotal = 0;
     setAllPagesRendered(false);
@@ -156,32 +123,19 @@ const PdfDocument = ({
 
     pdfMetrics.current.getStartTime = new Date().getTime();
 
-    return ApiUtil.get(doc.content_url, requestOptions).
+    return ApiUtil.get(doc.content_url, requestOptions). //todo setIsDocumentLoadError here
       then((resp) => {
         pdfMetrics.current.getEndTime = new Date().getTime();
-        loadingTask = getDocument({ data: resp.body, pdfBug: true, verbosity: 0 });
+        loadingTaskRef.current = getDocument({ data: resp.body, pdfBug: true, verbosity: 0 });
 
-        return loadingTask.promise;
-
-      }).catch((e) => {
-        console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 1. getDocument : ${e}`)
-        return setIsDocumentLoadError(true);
+        return loadingTaskRef.current.promise;
       }).
+      catch((error) => console.error(`ERROR for ${doc.content_url} : STEP 1. ApiUtil.get : ${error}`)).
       then((pdfjsDocument) => {
-
-        console.log(`READERLOG  for ${doc.content_url} fingerprint`, pdfjsDocument._pdfInfo.fingerprint);
-        //same exact finger print after switching docs
-        //READERLOG  for /document/4/pdf fingerprint 5a7b175a7977a9ca6b66401c0a0dc9a8
-        //READERLOG  for /document/1/pdf fingerprint 5e6d82253ffef74f9727dde0167ed600
-        //READERLOG  for /document/4/pdf fingerprint 5a7b175a7977a9ca6b66401c0a0dc9a8
-
-
+        if (!pdfjsDocument) {
+          return setDocumentLoadError(true);
+        }
         pdfDocumentRef.current = pdfjsDocument;
-        // pdfDocument = pdfjsDocument;
-        setPdfDoc(pdfjsDocument);
-        setNumPages(pdfjsDocument.numPages);
-        // debugger;
-
         const promises = _.range(0, pdfjsDocument.numPages).map((index) => {
 
           return pdfjsDocument.getPage(index + 1);
@@ -189,41 +143,31 @@ const PdfDocument = ({
 
         return Promise.all(promises);
 
-      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 2 getting pdfDocument : ${e}`)).
+      }).
+      catch((error) => console.error(`ERROR for ${doc.content_url} : STEP 2 getting pdfDocument : ${error}`)).
       then((pages) => {
-        pdfDocumentPages = pages;
 
         return setPdfPages(pages);
-      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 3 getting pdfPages : ${e}`)).
+      }).
+      catch((error) => console.error(`ERROR for ${doc.content_url} : STEP 3 getting pdfPages : ${error}`)).
       then(() => {
-
-        console.log(`getPdfDoc()====cleanup========= for ${doc.content_url} | pdfDoc: ${pdfDoc}`);
-        //get rid of this block? if theres clean up in useEffect return
-        if (loadingTask?.destroyed) {
-          // debugger;
+        if (loadingTaskRef.current?.destroyed) {
           return pdfDocumentRef.current.destroy();
         }
-        loadingTask = null;
-      }).catch((e) => console.log(`READERLOG ERROR: DOCID${doc.id} | GET ${doc.content_url} : STEP 3 getting pdfPages : ${e}`));
-      // loadingTask?.destroy();
-      // pdfDocument?.destroy();
-      // loadingTask = null;
-      // pdfDocument = null;
+        loadingTaskRef.current = null;
+      }).
+      catch((error) => {
+        console.error(`ERROR for ${doc.content_url} : STEP 4 getPdfDoc : ${error}`);
+      });
   };
 
   useEffect(() => {
     getPdfDoc();
 
     return () => {
-      // loadingTask?.destroy();
-
-      console.log(`\n\n\nREADERLOG********* CLEANUP() for ${doc.content_url} pdfDocumentRef`, pdfDocumentRef.current);
+      // clean up PDFJS objects - with prefetch, this return block runs for every 3 docs. TODO fix
       pdfDocumentRef.current?.destroy();
-      // debugger;
-      console.log(`READERLOG********* CLEANUP() for ${doc.content_url} pdfDocumentRef`, pdfDocumentRef.current);
-
-
-      // pdfDocument?.destroy();
+      loadingTaskRef.current?.destroy();
     };
   }, [doc.content_url]);
 
@@ -251,25 +195,38 @@ const PdfDocument = ({
   }, [metricsLogged]);
 
   return (
-    <div id="pdfContainer" style={containerStyle}>
-      {/* {isDocumentLoadError && <DocumentLoadError doc={doc} />} */}
-      {pdfPages.map((page, index) => (
-        <Page
-          setCurrentPage={setCurrentPage}
-          scale={zoomLevel}
-          page={page}
-          rotation={rotateDeg}
-          key={`doc-${doc.id}-page-${index}`}
-          renderItem={(childProps) => (
-            <Layer isCurrentPage={currentPage === page.pageNumber}
-              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
-            </Layer>
-          )}
-          setRenderingMetrics={handleRenderingMetrics}
-        />
-      ))}
-    </div>
+    <>
+      <div id="pdfContainer" style={containerStyle}>
+        { isDocumentLoadError ? (
+          <DocumentLoadError doc={doc} />
+        ) : (
+          pdfPages.map((page, index) => (
+            <Page
+              setCurrentPage={setCurrentPage}
+              scale={zoomLevel}
+              page={page}
+              rotation={rotateDeg}
+              key={`doc-${doc.id}-page-${index}`}
+              renderItem={(childProps) => (
+                <Layer isCurrentPage={currentPage === page.pageNumber}
+                  documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+                  <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
+                </Layer>
+              )}
+              setRenderingMetrics={handleRenderingMetrics}
+            />
+          ))
+        )}
+      </div>
+      <ReaderFooter
+        currentPage={currentPage}
+        docId={doc.id}
+        isDocumentLoadError={isDocumentLoadError}
+        numPages={pdfPages.length}
+        setCurrentPage={setCurrentPage}
+        showPdf={showPdf}
+      />
+    </>
   );
 };
 
@@ -281,13 +238,11 @@ PdfDocument.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
   }),
-  isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
-  setIsDocumentLoadError: PropTypes.func,
-  setNumPages: PropTypes.func,
   setCurrentPage: PropTypes.func,
   zoomLevel: PropTypes.number,
   isVisible: PropTypes.bool,
+  showPdf: PropTypes.func,
 };
 
 export default PdfDocument;

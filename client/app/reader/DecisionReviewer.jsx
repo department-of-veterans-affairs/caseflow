@@ -149,6 +149,7 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/${vacolsId}/documents`}
         zoomLevel={this.state.zoomLevel}
         onZoomChange={this.updateZoomLevel}
+        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>
