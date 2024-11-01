@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/fix_file_number_wizard"
+require_relative "../../../lib/helpers/fix_file_number_wizard"
 
 class Remediations::VeteranRecordRemediationService
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
-  def intitialize(vet_ids)
+  def initialize(vet_ids)
     @vet_ids = vet_ids
   end
 
@@ -18,6 +18,8 @@ class Remediations::VeteranRecordRemediationService
     end
   end
 
+  private
+
   def fix_vet(veteran)
     # fixes file numebr
     collections = FixfileNumberCollections.get_collections(veteran)
@@ -25,7 +27,7 @@ class Remediations::VeteranRecordRemediationService
   end
 
   def updated_veterans
-    vet_ids.map do |id|
+    @vet_ids.map do |id|
       Veteran.find(id)
     end
   end
