@@ -396,7 +396,7 @@ module Seeds
 
     def create_aoj_legacy_priority_not_ready_cases
       tied_or_affinity_judges.each do |judge|
-        c = create(:legacy_aoj_appeal, :aod, bfcurloc: '57', judge: judge.vacols_staff, attorney: attorney.vacols_staff, appeal_affinity: false)
+        create(:legacy_aoj_appeal, :aod, bfcurloc: '57', judge: judge.vacols_staff, attorney: attorney.vacols_staff, appeal_affinity: false)
       end
     end
 
