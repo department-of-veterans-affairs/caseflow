@@ -31,7 +31,6 @@ class TranscriptionWorkOrder
     return {} unless transcription_package
 
     contractor_name = transcription_package.contractor.name
-
     {
       hearing_message: COPY::HEARING_BANNER_MESSAGE,
       work_order_message: format(COPY::WORK_ORDER_BANNER_MESSAGE, contractor_name, contractor_name)
@@ -93,8 +92,10 @@ class TranscriptionWorkOrder
   end
 
   def self.fetch_wo_info(task_number)
-    wo_info = TranscriptionPackage.joins(:contractor).select('transcription_packages.expected_return_date,
+    wo_info = TranscriptionPackage.joins(:contractor).select('transcription_packages.id,
+      transcription_packages.expected_return_date,
                transcription_packages.task_number,
+               transcription_packages.aws_link_zip,
                transcription_contractors.name')
       .find_by(task_number: task_number)
 
@@ -104,7 +105,8 @@ class TranscriptionWorkOrder
       {
         returnDate: wo_info.expected_return_date.strftime("%m/%d/%Y"),
         workOrder: wo_info.task_number,
-        contractorName: wo_info.name
+        contractorName: wo_info.name,
+        workOrderLink: wo_info.aws_link_zip
       }
     end
   end
@@ -113,13 +115,32 @@ class TranscriptionWorkOrder
     transcription = find_transcription_with_files(task_number)
     return {} unless transcription
 
-    { woFileInfo: transcription.transcription_files.map { |file| build_file_info(file) } }
+    { woFileInfo: transcription.transcription_files.map { |file| build_file_info(file) },
+      workOrderStatus: fetch_wo_file_status(task_number) }
+  end
+
+  def self.fetch_wo_file_status(task_number)
+    transcription = find_transcription_with_files(task_number)
+    return {} unless transcription
+
+    { currentStatus: check_status_file(transcription.transcription_files) }
   end
 
   def self.find_transcription_with_files(task_number)
-    ::Transcription.includes(
+    transcription = Transcription.includes(
       transcription_files: { hearing: [:hearing_day, :appeal, :judge] }
     ).find_by(task_number: task_number)
+    transcription
+  end
+
+  def self.check_status_file(all_file)
+    status_complete = true
+    all_file.each do |current_file|
+      if current_file.file_status != "Successful upload (AWS)"
+        status_complete = false
+      end
+    end
+    status_complete
   end
 
   def self.build_file_info(file)
