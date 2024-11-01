@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedSearch: {}
+  selectedSearch: {},
+  saveUserSearch: {}
 };
 
 const savedSearchSlice = createSlice({
@@ -10,9 +11,12 @@ const savedSearchSlice = createSlice({
   reducers: {
     selectSavedSearch: (state, action) => {
       state.selectedSearch = action.payload;
+    },
+    saveUserSearch: (state, action) => {
+      state.saveUserSearch = action.payload;
     }
   }
 });
 
 export default savedSearchSlice.reducer;
-export const { selectSavedSearch } = savedSearchSlice.actions;
+export const { selectSavedSearch, saveUserSearch } = savedSearchSlice.actions;

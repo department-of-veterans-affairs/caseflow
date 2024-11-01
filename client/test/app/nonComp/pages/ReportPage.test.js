@@ -328,7 +328,7 @@ describe('ReportPage', () => {
 
   });
 
-  it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
+  it('should have  Save search, Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
     const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
@@ -338,6 +338,10 @@ describe('ReportPage', () => {
     const clearFilters = screen.getByText('Clear filters');
 
     expect(clearFilters).toHaveClass('usa-button-disabled');
+
+    const saveSearch = screen.getByText('Save search');
+
+    expect(saveSearch).toHaveClass('usa-button-disabled');
   });
 
   describe('ReportType Dropdown', () => {
@@ -352,6 +356,10 @@ describe('ReportPage', () => {
       const clearFilters = screen.getByText('Clear filters');
 
       expect(clearFilters).not.toHaveClass('usa-button-disabled');
+
+      const saveSearch = screen.getByText('Save search');
+
+      expect(saveSearch).not.toHaveClass('usa-button-disabled');
     });
 
     it('should list two radio buttons options when Event / Action is selected in ReportType', async () => {
@@ -509,6 +517,29 @@ describe('ReportPage', () => {
           expect(screen.queryByText('From')).not.toBeInTheDocument();
           expect(screen.queryByText('To')).not.toBeInTheDocument();
         });
+      });
+    });
+  });
+
+  describe('Save search', () =>{
+    beforeEach(clickOnReportType);
+
+    it('should enable Save search button', () => {
+      const saveSearch = screen.getByText('Save search');
+
+      expect(saveSearch).not.toHaveClass('usa-button-disabled');
+    });
+
+    it('should open Save your search model upon clicking', async () => {
+
+      const saveSearch = screen.getByText('Save search');
+
+      await fireEvent.click(saveSearch);
+
+      await waitFor(() => {
+        expect(screen.getByText('Save your search')).toBeTruthy();
+        expect(screen.getByText('Search Parameters')).toBeTruthy();
+        expect(screen.getByText('Name this search')).toBeTruthy();
       });
     });
   });

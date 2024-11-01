@@ -278,7 +278,99 @@ export default {
             start_date: '2024-10-07T06:00:00.000Z'
           }
         }
-      }
+      },
+      {
+        id: 17,
+        name: 'Search Name2',
+        description: 'Search Description2 is interesting to be done.',
+        createdAt: '2024-10-11T06:00:00.000Z',
+        userId: 12,
+        userCssId: 'VHAADMIN',
+        userFullName: 'VHAADMIN',
+        saved_params: {
+          report_type: 'event_type_action',
+          events: {
+            0: 'added_decision_date',
+            1: 'added_issue',
+            2: 'added_issue_no_decision_date',
+            3: 'claim_created',
+            4: 'claim_closed'
+          },
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
+      {
+        id: 18,
+        name: 'Search Name2',
+        description: 'Search Description2 is interesting to be done.',
+        createdAt: '2024-10-11T06:00:00.000Z',
+        userId: 12,
+        userCssId: 'VHAADMIN',
+        userFullName: 'VHAADMIN',
+        saved_params: {
+          report_type: 'event_type_action',
+          events: {
+            0: 'added_decision_date',
+            1: 'added_issue',
+            2: 'added_issue_no_decision_date',
+            3: 'claim_created',
+            4: 'claim_closed'
+          },
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
+      // {
+      //   id: 19,
+      //   name: 'Search Name2',
+      //   description: 'Search Description2 is interesting to be done.',
+      //   createdAt: '2024-10-11T06:00:00.000Z',
+      //   userId: 12,
+      //   userCssId: 'VHAADMIN',
+      //   userFullName: 'VHAADMIN',
+      //   saved_params: {
+      //     report_type: 'event_type_action',
+      //     events: {
+      //       0: 'added_decision_date',
+      //       1: 'added_issue',
+      //       2: 'added_issue_no_decision_date',
+      //       3: 'claim_created',
+      //       4: 'claim_closed'
+      //     },
+      //     timing: {
+      //       range: 'after',
+      //       start_date: '2024-10-07T06:00:00.000Z'
+      //     }
+      //   }
+      // },
+      {
+        id: 20,
+        name: 'Search Name2',
+        description: 'Search Description2 is interesting to be done.',
+        createdAt: '2024-10-11T06:00:00.000Z',
+        userId: 12,
+        userCssId: 'VHAADMIN',
+        userFullName: 'VHAADMIN',
+        saved_params: {
+          report_type: 'event_type_action',
+          events: {
+            0: 'added_decision_date',
+            1: 'added_issue',
+            2: 'added_issue_no_decision_date',
+            3: 'claim_created',
+            4: 'claim_closed'
+          },
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
     ],
     fetchIndividualHistory: {
       status: 'succeeded'

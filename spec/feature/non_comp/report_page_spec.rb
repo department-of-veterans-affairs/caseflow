@@ -34,9 +34,20 @@ feature "NonComp Report Page", :postgres do
     # visit vha_report_url
     expect(page).to have_button("Generate task report", disabled: true)
     expect(page).to have_button("Clear filters", disabled: true)
+    expect(page).to have_button("Save search", disabled: true)
     click_dropdown(text: "Status")
     expect(page).to have_button("Generate task report")
     expect(page).to have_button("Clear filters")
+    expect(page).to have_button("Save search")
+  end
+
+  it "when Saved search button in report page is clicked, it should open Save search modal when saved search is less than 10" do
+    click_dropdown(text: "Status")
+    expect(page).to have_button("Save search")
+    click_button "Save search"
+
+    expect(page).to have_text("Save your search")
+    expect(page).to have_text("Search Parameters")
   end
 
   it "report page should not be accessable to non admin VHA user" do
