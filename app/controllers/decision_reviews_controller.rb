@@ -41,7 +41,8 @@ class DecisionReviewsController < ApplicationController
     respond_to do |format|
       format.html { render "index" }
       format.csv do
-        jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
+        filter_params = allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
+        jobs_as_csv = BusinessLineReporter.new(business_line, filter_params).as_csv
         send_data jobs_as_csv, filename: csv_filename
       end
       format.json { queue_tasks }

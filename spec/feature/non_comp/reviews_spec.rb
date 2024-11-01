@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
+  include DownloadHelpers
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:intake_user) }
 
@@ -1055,7 +1056,7 @@ feature "NonComp Reviews Queue", :postgres do
       # expect(page).to have_content("Viewing 1-2 of 2 total")
 
       # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content("Cases completed:")
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       expect(page).to_not have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
 
@@ -1096,17 +1097,46 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  context "Download Completed Tasks csv" do
+    scenario "it should use the filters from the page for the csv response" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+      click_on "Completed Tasks"
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      # Add this back in once the last 7 days pre filter is added again
+      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      click_button "Download completed tasks"
+
+      # Check the csv to make sure it returns the two task rows within the last week and the header row
+      completed_tasks_csv_file(4)
+
+      # Filter by Camp Lejune Family Member
+      find("[aria-label='Filter by issue type']").click
+      find("label", text: "Camp Lejune Family Member").click
+      expect(page).to have_content("Camp Lejune Family Member")
+
+      # The completed tasks csv should be filtered by the issue type now
+      click_button "Download completed tasks"
+      completed_tasks_csv_file(2)
+
+      # Clear the filters and the csv should contain all completed tasks
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("3 total")
+      click_button "Download completed tasks"
+      completed_tasks_csv_file(4)
+    end
+  end
+
   context "For a non comp org that is not VHA" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
 
-    scenario "the Generate task report button does not display for non-vha users" do
-      visit "/decision_reviews/nco"
-      expect(page).to_not have_content("Generate task report")
-    end
-
     scenario "displays tasks page for non VHA" do
-      visit "/decision_reviews/nco"
+      visit "/decision_reviews/#{non_comp_org.url}"
+
+      # The generate task report button does not display for non-vha users
+      expect(page).to_not have_content("Generate task report")
+
       expect(page).to have_content("Non-Comp Org")
       expect(page).to_not have_content("Incomplete Tasks")
       expect(page).to_not have_content("Pending Tasks")
@@ -1157,5 +1187,50 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Page not found")
       end
     end
+
+    context "Download Completed Tasks csv" do
+      scenario "it should not use the filters from the page for the csv response" do
+        visit "/decision_reviews/#{non_comp_org.url}"
+        expect(page).to have_content("Non-Comp Org")
+        click_on "Completed Tasks"
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+        expect(page).to have_content("2 total")
+        click_button "Download completed tasks"
+
+        # Check the csv to make sure return all completed task rows and the header row
+        completed_tasks_csv_file(4)
+
+        # Filter by Camp Lejune Family Member
+        find("[aria-label='Filter by issue type']").click
+        find("label", text: "Camp Lejune Family Member").click
+        expect(page).to have_content("Camp Lejune Family Member")
+
+        # The completed tasks csv should be still have all completed tasks
+        click_button "Download completed tasks"
+        completed_tasks_csv_file(4)
+
+        # Clear the filters and the csv should still contain all completed tasks
+        find(".cf-clear-filters-link").click
+        expect(page).to have_content("2 total")
+        click_button "Download completed tasks"
+        completed_tasks_csv_file(4)
+      end
+    end
+  end
+
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
+
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
+  end
+
+  def completed_tasks_csv_file(rows)
+    csv_file = download_csv
+    expect(csv_file).to_not eq(nil)
+    expect(csv_file.length).to eq(rows)
+    clear_downloads
   end
 end
