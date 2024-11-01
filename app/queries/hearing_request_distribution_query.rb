@@ -98,6 +98,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
+          .none
       end
 
     query
