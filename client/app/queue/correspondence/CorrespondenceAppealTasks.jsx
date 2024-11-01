@@ -203,10 +203,9 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
           </div>
           <div className="tasks-added-details">
-            {appeal && renderTaskSectionByCount()}
-            {appeal ? '' :
+            {appeal ? renderTaskSectionByCount() :
               <span className="tasks-added-text-alternate">
-                The linked appeal must be saved before tasks can be added.</span>}
+                There are no tasks on this appeal. The linked appeal must be saved before tasks can be added.</span>}
           </div>
         </div>
       )}
