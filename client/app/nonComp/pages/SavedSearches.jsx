@@ -14,6 +14,8 @@ import { fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
 const SavedSearches = () => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const savedSearchRows = useSelector((state) => state.savedSearch.fetchedSearches.rows);
+  const userSearches = savedSearchRows.user_searches;
+  const allSearches = savedSearchRows.all_searches;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,16 +26,15 @@ const SavedSearches = () => {
     {
       key: 'my_saved_searches',
       label: 'My saved searches',
-      // this section will later changed to backend call
       page: <SearchTable
-        eventRows={savedSearchRows.user_searches}
+        eventRows={userSearches}
       />
     },
     {
       key: 'all_saved_searches',
       label: 'All saved searches',
       page: <SearchTable
-        eventRows={savedSearchRows.all_searches}
+        eventRows={allSearches}
       />
     }
   ];
