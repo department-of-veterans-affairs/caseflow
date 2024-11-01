@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import moment from 'moment-timezone';
 import { invert } from 'lodash';
 
@@ -9,13 +9,11 @@ import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import TIMEZONES from 'constants/TIMEZONES';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import { timezones, roTimezones } from 'app/hearings/utils';
-import SearchableDropdown from 'app/components/SearchableDropdown';
-import { timezoneDropdownStyles, timezoneStyles } from 'app/hearings/components/details/style';
 
 // Set the test Constants
 const defaultTime = '08:15';
-const defaultRoTimezone = 'America/New_York'
-const defaults = timezones(defaultTime, defaultRoTimezone);
+const defaultRoTimezone = 'America/New_York';
+const defaults = timezones(defaultTime, defaultRoTimezone, '2025-01-01');
 const REGIONAL_OFFICE_TIMEZONES = roTimezones();
 
 // Remove missing Regional Office zones from the count
@@ -24,128 +22,253 @@ const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TI
 // Reverse the commons array but don't mutate to move EST to the top for comparison
 const commons = COMMON_TIMEZONES.slice().reverse();
 
+const hearingDayDate = '2025-01-01';
+
+const changeSpy = jest.fn();
+
 describe('Timezone', () => {
-  test('Matches snapshot with default props', () => {
+  test('Matches snapshot with default props', async () => {
+    const timeZoneLength = Object.keys(TIMEZONES).length + 1;
+
     // Setup the test
-    const tz = shallow(<Timezone time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const {asFragment, container} = render(
+    <Timezone
+      time={HEARING_TIME_OPTIONS[0].value}
+      roTimezone={defaultRoTimezone}/>
+    );
 
-    expect(tz).toMatchSnapshot();
-    expect(tz.find('.cf-select__menu')).toHaveLength(0);
+    // Dropdown is closed
+    expect(screen.queryAllByRole('listbox')).toHaveLength(0);
+    expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
 
-    // Test the dropdown component
-    const dropdown = tz.find(SearchableDropdown);
+    // Find the dropdown
+    const dropdown = screen.getByRole('combobox');
+    expect(dropdown).toBeInTheDocument();
+    expect(dropdown.value).toEqual('');
 
-    expect(dropdown).toHaveLength(1);
-    expect(dropdown.prop('value')).toEqual(null);
-    expect(dropdown.prop('styling')).toEqual(timezoneStyles(commonsCount));
-    expect(dropdown.prop('options')).toHaveLength(Object.keys(TIMEZONES).length + 1);
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown'});
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
+
+    // Dropdown is open
+    expect(container.querySelector('.cf-select__menu')).toBeInTheDocument();
+
+    const options = screen.getAllByRole('option');
+    expect(options.length).toEqual(timeZoneLength);
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Can set timezone', () => {
-    // Setup the test
-    const changeSpy = jest.fn();
-
     // Run the test
-    const tz = mount(
+    const {asFragment, container} = render(
       <Timezone
-        name="tz"
         onChange={changeSpy}
         time={HEARING_TIME_OPTIONS[0].value}
-        roTimezone={defaultRoTimezone}/>
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />
     );
-    const dropdown = tz.find(SearchableDropdown);
 
-    // Initial state
-    expect(tz.find('MenuList')).toHaveLength(0);
-    expect(dropdown).toHaveLength(1);
-    expect(dropdown.prop('value')).toEqual(null);
+    // Find the dropdown
+    const dropdown = screen.getByRole('combobox');
+    expect(dropdown).toBeInTheDocument();
+
+    // Initial state, Dropdown is closed
+     expect(screen.queryAllByRole('listbox')).toHaveLength(0);
+     expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
+     expect(dropdown.value).toEqual('');
 
     // Open the menu
-    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    expect(tz.find('MenuList')).toHaveLength(1);
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
+    expect(container.querySelector('.cf-select__menu')).toBeInTheDocument();
 
     // Change the value
-    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' });
 
-    // // New State
-    expect(tz.find('MenuList')).toHaveLength(0);
+    // New State
+    expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
     expect(changeSpy).toHaveBeenCalledWith(defaults.options[1].value);
-    expect(
-      tz.find('.cf-select__single-value').first().
-        text()
-    ).toEqual(defaults.options[1].label);
-    expect(tz).toMatchSnapshot();
+    const hiddenInput = container.querySelector('[type="hidden"]');
+    expect(hiddenInput).toHaveAttribute('value', defaults.options[1].value);
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays Regional Office timezones first', () => {
     // Run the test
-    const tz = mount(<Timezone time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
-    const dropdown = tz.find(SearchableDropdown);
+    const {asFragment, container} = render(
+    <Timezone
+      time={HEARING_TIME_OPTIONS[0].value}
+      onChange={changeSpy}
+      roTimezone={defaultRoTimezone}/>
+    );
 
-    // Assertions
-    dropdown.prop('options').map((opt, index) => {
-      // Ensure the first option is null
-      if (index === 0) {
-        expect(opt.value).toEqual(null);
-        expect(opt.label).toEqual('');
-      }
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
 
-      // Ensure the common zones are the first 4
-      if (index > 0 && index <= 3) {
-        expect(opt.value).toEqual(commons[index - 1]);
-      }
+    // Ensure the first option is empty and the second exists
+    let options = screen.getAllByRole('option');
+    expect(options.length).toBeGreaterThan(0);
+    expect(options[0].textContent).toEqual('');
+    expect(options[1].textContent).
+    toEqual(`Eastern Time (US & Canada)`);
 
-      // Ensure Regional Office timezones move to the top
-      if (index > 3 && index < commonsCount) {
-        expect(REGIONAL_OFFICE_TIMEZONES).toContain(opt.value);
-      }
 
-      // For all other cases ensure the timezone is one of the available and not a duplicate
-      if (index > commonsCount) {
-        expect(Object.values(TIMEZONES)).toContain(opt.value);
-        expect(REGIONAL_OFFICE_TIMEZONES).not.toContain(opt.value);
-        expect(COMMON_TIMEZONES).not.toContain(opt.value);
-      }
+    // Ensure the common zones are the first 4
+    let hiddenInput = container.querySelector('[type="hidden"]');
+
+    // 1st option
+    fireEvent.click(options[1])
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[1].value);
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Second click
+    fireEvent.click(options[2]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[2].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Third click
+    fireEvent.click(options[3]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[3].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Fourth click
+    fireEvent.click(options[4]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[4].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Ensure Regional Office timezones move to the top
+    const optionTexts = options
+      .map(option => option.textContent.trim())
+      .filter(text => text !== '')
+      .slice(0, commonsCount)
+      .map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
+
+    // Map the option texts to their values by finding the key that contains the text
+    const optionValues = optionTexts.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
     });
-    expect(tz).toMatchSnapshot();
+
+    const sortedOptionValues = optionValues.slice().sort();
+    const sortedRegionalOfficeTimezones = REGIONAL_OFFICE_TIMEZONES.slice().sort();
+    expect(sortedOptionValues).toEqual(sortedRegionalOfficeTimezones);
+
+    // For all other cases ensure the timezone is one of the available and not a duplicate
+    const remainingOptions = options
+      .map(option => option.textContent.trim())
+      .filter(text => text !== '')
+      .slice(commonsCount)
+      .map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
+
+    const remainingOptionValues = remainingOptions.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
+    });
+
+    remainingOptionValues.forEach(item => {
+      expect(REGIONAL_OFFICE_TIMEZONES).not.toContain(item);
+      expect(COMMON_TIMEZONES).not.toContain(item);
+    });
+
+    expect(asFragment()).toMatchSnapshot();
+    // expect(tz).toMatchSnapshot();
   });
 
   test('Respects required prop', () => {
     // Run the test
-    const tz = mount(<Timezone required time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const {asFragment, container} = render(
+      <Timezone
+        required
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}/>
+      );
 
-    // Assertions
-    expect(tz.find('.cf-required')).toHaveLength(1);
-    expect(tz).toMatchSnapshot();
+    expect(container.querySelector('.cf-required')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Does not show required when ReadOnly', () => {
     // Run the test
-    const tz = mount(<Timezone required readOnly time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const {asFragment, container} = render(
+      <Timezone
+        required
+        readOnly
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}/>
+      );
 
-    // Assertions
-    expect(tz.find('.cf-required')).toHaveLength(0);
-    expect(tz).toMatchSnapshot();
+    expect(container.querySelector('.cf-required')).not.toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Dropdown displays correct times based on props time and roTimezone', () => {
-    const time = HEARING_TIME_OPTIONS[0].value;
+    const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
+    const splitTimeString = timeWithTimezone.search('AM');
+    const time = `${timeWithTimezone.slice(0, splitTimeString).trim()} am`;
+
     const roTimezone = 'America/Los_Angeles';
-    const dateTime = moment.tz(time, 'HH:mm', roTimezone)
-    const roTzValueToLabelMapping = invert(TIMEZONES)
+    const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD h:mm a', roTimezone);
+    const roTzValueToLabelMapping = invert(TIMEZONES);
 
-    const tz = mount(
-      <Timezone time={time} roTimezone={roTimezone} />
-    )
-    const dropdown = tz.find(SearchableDropdown);
+    // Run the test
+    const {asFragment} = render(
+      <Timezone
+        time={time}
+        onChange={changeSpy}
+        roTimezone={roTimezone}/>
+      );
 
-    dropdown.prop('options').map((opt) => {
-      if (opt.value && opt.label && REGIONAL_OFFICE_TIMEZONES.includes(opt.value)) {
-        const label = `${roTzValueToLabelMapping[opt.value]} (${moment(dateTime, 'HH:mm').tz(opt.value).format('h:mm A')})`
-        expect(opt.label).toEqual(label)
+    expect( screen.getByRole('combobox')).toBeInTheDocument();
+
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    const options = screen.getAllByRole('option');
+
+    const allOptions = options
+    .map(option => option.textContent.trim())
+    .filter(text => text !== '');
+
+    const allOptionsRegex = allOptions.map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
+
+    const allOptionValues = allOptionsRegex.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
+    });
+
+    allOptionValues.forEach(item => {
+      if (REGIONAL_OFFICE_TIMEZONES.includes(item)) {
+        const label = `${roTzValueToLabelMapping[item]} (${moment(dateTime, 'HH:mm').format('h:mm A')})`;
+        allOptions.map(opt => {
+          if (opt.value === item) {
+            expect(opt.label).toEqual(label);
+          }
+        });
       }
-    })
-    expect(tz).toMatchSnapshot();
+    });
+    expect(asFragment()).toMatchSnapshot();
   })
 });

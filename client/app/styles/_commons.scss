@@ -1174,7 +1174,7 @@ ul {
     &::before {
       position: absolute;
       left: 3px;
-      top: 2px;
+      top: 6px;
     }
   }
 }
@@ -1255,6 +1255,13 @@ button {
         opacity: 0.5;
       }
     }
+  }
+}
+
+.page-progress-indicator-input {
+  .input-container {
+    width: 5rem;
+    margin: 0 0.5rem;
   }
 }
 

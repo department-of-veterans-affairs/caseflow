@@ -22,11 +22,9 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
-
-PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+import networkUtil from '../util/NetworkUtil';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -44,6 +42,8 @@ export class PdfFile extends React.PureComponent {
     this.columnCount = 1;
     this.metricsIdentifier = null;
     this.scrollTimer = null;
+    this.connectionInfo = null;
+    this.firstRejectionLogged = false;
 
     this.metricsAttributes = {
       documentId: this.props.documentId,
@@ -52,11 +52,13 @@ export class PdfFile extends React.PureComponent {
       file: this.props.file,
       documentType: this.props.documentType,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-      overscan: this.props.windowingOverscan
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -68,6 +70,7 @@ export class PdfFile extends React.PureComponent {
     };
 
     window.addEventListener('keydown', this.keyListener);
+    this.connectionInfo = await networkUtil.connectionInfo();
 
     this.props.clearDocumentLoadError(this.props.file);
 
@@ -80,6 +83,11 @@ export class PdfFile extends React.PureComponent {
    */
 
   getDocument = (requestOptions) => {
+    const { file } = this.props;
+
+    if (!file) {
+      return;
+    }
     const logId = uuid.v4();
 
     this.metricsIdentifier = uuid.v4();
@@ -141,26 +149,6 @@ export class PdfFile extends React.PureComponent {
 
         console.error(message);
 
-        const documentData = {
-          documentId: this.props.documentId,
-          documentType: this.props.documentType,
-          file: this.props.file,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-        };
-
-        if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
-          storeMetrics(
-            logId,
-            documentData,
-            { message,
-              type: 'error',
-              product: 'browser',
-              prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            },
-            this.metricsIdentifier
-          );
-        }
-
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -174,18 +162,22 @@ export class PdfFile extends React.PureComponent {
 
     console.error(`${logId} : GET ${file} : STEP ${step} : ${reason}`);
 
-    if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
+    if (this.props.featureToggles.metricsRecordPDFJSGetDocument && !this.firstRejectionLogged) {
+      this.firstRejectionLogged = true;
       const documentData = {
         documentId,
         documentType,
         file,
         step,
         reason,
-        prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        bandwidth: this.connectionInfo
       };
 
+      let message = `Getting PDF document: "${file}"`;
+
       storeMetrics(logId, documentData, {
-        message: `Getting PDF document: "${file}"`,
+        message,
         type: 'error',
         product: 'reader'
       },
@@ -467,32 +459,26 @@ export class PdfFile extends React.PureComponent {
         clearTimeout(this.scrollTimer);
       }
 
+      const scrollStart = performance.now();
+
       this.scrollTimer = setTimeout(() => {
-        const scrollStart = performance.now();
+        const scrollEnd = performance.now();
+        const scrollMessage = `Scroll to page ${this.currentPage + 1}
+        (${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)},
+        ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)})`;
 
-        const data = {
-          overscan: this.props.windowingOverscan,
-          documentType: this.props.documentType,
-          pageCount: this.props.pdfDocument.numPages,
-          pageIndex: this.pageIndex,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-          start: scrollStart,
-          end: performance.now()
-        };
-
-        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
-        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
+        this.metricsAttributes.name = scrollMessage;
 
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: `Scroll to position ${posx}, ${posy}`,
+            message: scrollMessage,
             type: 'performance',
             product: 'reader',
-            start: new Date(performance.timeOrigin + data.start),
-            end: new Date(performance.timeOrigin + data.end),
-            duration: data.start ? data.end - data.start : 0
+            start: new Date(performance.timeOrigin + scrollStart),
+            end: new Date(performance.timeOrigin + scrollEnd),
+            duration: scrollStart ? scrollEnd - scrollStart : 0
           },
           this.metricsIdentifier,
         );
@@ -734,11 +720,11 @@ const mapStateToProps = (state, props) => {
     searchText: getSearchTerm(state, props),
     ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
-    loadError: state.pdf.documentErrors[props.file],
-    pdfDocument: state.pdf.pdfDocuments[props.file],
-    windowingOverscan: state.pdfViewer.windowingOverscan,
+    loadError: state.pdf?.documentErrors[props.file],
+    pdfDocument: state.pdf?.pdfDocuments[props.file],
+    windowingOverscan: state.pdfViewer?.windowingOverscan,
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
-    renderStartTime: state.pdf.renderStartTime
+    renderStartTime: state.pdf?.renderStartTime
   };
 };
 

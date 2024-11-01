@@ -35,6 +35,18 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: this.props.pageIndex,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null
+    };
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -99,7 +111,7 @@ export class PdfPage extends React.PureComponent {
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
-  drawPage = (page) => {
+  drawPage(page) {
     if (this.isDrawing) {
       return Promise.resolve();
     }
@@ -134,7 +146,7 @@ export class PdfPage extends React.PureComponent {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
-  };
+  }
 
   componentDidMount = () => {
     this.setUpPage();
@@ -177,8 +189,7 @@ export class PdfPage extends React.PureComponent {
     }
   };
 
-  drawText = (page, text) => {
-
+  drawText(page, text) {
     if (!this.textLayer) {
       return;
     }
@@ -199,9 +210,12 @@ export class PdfPage extends React.PureComponent {
         this.markText();
       }
     });
-  };
+  }
 
-  getText = (page) => page.getTextContent();
+  // eslint-disable-next-line class-methods-use-this
+  getText(page) {
+    return page.getTextContent();
+  }
 
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
@@ -335,6 +349,7 @@ export class PdfPage extends React.PureComponent {
         onClick={this.onClick}
         ref={this.getPageContainerRef}
         {...markStyle}
+        data-testid="pdf-page"
       >
         <div
           id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}

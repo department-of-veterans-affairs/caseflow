@@ -11,6 +11,7 @@
     userHasEfolderRole: current_user.can?('Download eFolder'),
     featureToggles: {
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
+      bandwidthBanner: FeatureToggle.enabled?(:bandwidth_banner, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
       readerGetDocumentLogging: FeatureToggle.enabled?(:reader_get_document_logging, user: current_user),
@@ -23,7 +24,8 @@
       metricsPdfStorePages: FeatureToggle.enabled?(:metrics_pdf_store_pages, user: current_user),
       pdfPageRenderTimeInMs: FeatureToggle.enabled?(:pdf_page_render_time_in_ms, user: current_user),
       prefetchDisabled: FeatureToggle.enabled?(:prefetch_disabled, user: current_user),
-      readerSearchImprovements: FeatureToggle.enabled?(:reader_search_improvements, user: current_user)
+      readerSearchImprovements: FeatureToggle.enabled?(:reader_search_improvements, user: current_user),
+      readerPrototype: FeatureToggle.enabled?(:reader_prototype, user: current_user)
     },
     buildDate: build_date
   }) %>

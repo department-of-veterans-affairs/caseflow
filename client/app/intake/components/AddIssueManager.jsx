@@ -44,7 +44,7 @@ class AddIssueManager extends React.Component {
   }
 
   setupAddIssuesModal = () => {
-    const { intakeData, formType, featureToggles, userCanEditIntakeIssues } = this.props;
+    const { intakeData, formType, featureToggles, userCanEditIntakeIssues, userIsVhaAdmin } = this.props;
 
     return {
       component: AddIssuesModal,
@@ -53,6 +53,7 @@ class AddIssueManager extends React.Component {
         formType,
         featureToggles,
         userCanEditIntakeIssues,
+        userIsVhaAdmin,
         onCancel: () => this.cancel(),
         onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
           this.setState(
@@ -122,7 +123,7 @@ class AddIssueManager extends React.Component {
   };
 
   setupNonratingRequestIssueModal = () => {
-    const { intakeData, formType, featureToggles, userCanEditIntakeIssues } = this.props;
+    const { intakeData, formType, featureToggles, userCanEditIntakeIssues, userIsVhaAdmin } = this.props;
 
     return {
       component: NonratingRequestIssueModal,
@@ -131,6 +132,7 @@ class AddIssueManager extends React.Component {
         formType,
         featureToggles,
         userCanEditIntakeIssues,
+        userIsVhaAdmin,
         submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSkip: () => this.setState({ currentModal: 'UnidentifiedIssuesModal' }),
@@ -340,6 +342,7 @@ AddIssueManager.propTypes = {
   onComplete: PropTypes.func,
   featureToggles: PropTypes.object,
   userCanEditIntakeIssues: PropTypes.bool,
+  userIsVhaAdmin: PropTypes.bool,
   intakeData: PropTypes.object,
   formType: PropTypes.string,
   addIssue: PropTypes.func,

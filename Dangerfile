@@ -25,7 +25,7 @@ if git.modified_files.grep(/app\/services\//).any?
   )
 end
 
-# Don't let testing shortcuts get into master by accident
+# Don't let testing shortcuts get into main by accident
 if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: true)'`.length > 1
   fail("focus: true is left in test")
 end
@@ -35,19 +35,19 @@ if git.modified_files.grep(/db\/schema.rb/).any?
   warn("This PR changes the schema. Please use the PR template checklist.")
 end
 
-if git.modified_files.grep(/db\/etl\/schema.rb/).any?
+if git.modified_files.grep(/db\/etl_schema.rb/).any?
   warn("This PR changes the etl schema. Please use the PR template checklist.")
 end
 
 new_db_migrations = git.modified_files.grep(/db\/migrate\//).any?
-new_etl_migrations = git.modified_files.grep(/db\/etl\/migrate\//).any?
+new_etl_migrations = git.modified_files.grep(/db\/etl_migrate\//).any?
 
 # migration without migrating
 if new_db_migrations && git.modified_files.grep(/db\/schema.rb/).none?
   warn("This PR contains db migrations, but the schema.rb is not modified. Did you forget to run 'make migrate'?")
 end
 
-if new_etl_migrations && git.modified_files.grep(/db\/etl\/schema.rb/).none?
+if new_etl_migrations && git.modified_files.grep(/db\/etl_schema.rb/).none?
   warn("This PR contains etl migrations, but the etl schema.rb is not modified. Did you forget to run 'make migrate'?")
 end
 

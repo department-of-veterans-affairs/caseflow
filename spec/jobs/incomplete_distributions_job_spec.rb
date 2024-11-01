@@ -6,6 +6,23 @@ describe IncompleteDistributionsJob, :postgres do
   before do
     allow(SlackService).to receive(:new).and_return(slack_service)
     allow(slack_service).to receive(:send_notification) { true }
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :alternative_batch_size)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   context ".perform" do

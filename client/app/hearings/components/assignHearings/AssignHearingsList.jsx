@@ -16,7 +16,7 @@ export const AssignHearingsList = ({ hearings,
   mstIdentification,
   pactIdentification,
   legacyMstPactIdentification }) => {
-  return hearings.length ? sortBy(hearings, 'scheduledTimeString').map((hearing) => (
+  return hearings.length ? sortBy(hearings, 'scheduledFor').map((hearing) => (
     <TimeSlotCard
       key={hearing.appealExternalId}
       hearing={hearing}

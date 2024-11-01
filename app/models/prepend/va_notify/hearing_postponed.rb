@@ -3,9 +3,6 @@
 # Module to notify appellant if Hearing is Postponed
 module HearingPostponed
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Postponement of hearing"
-  # rubocop:enable all
 
   # Legacy Hearing Postponed from the Daily Docket
   # original method defined in app/models/legacy_hearing.rb
@@ -15,7 +12,7 @@ module HearingPostponed
     new_disposition = vacols_record.hearing_disp
     if postponed? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
     end
     super_return_value
   end
@@ -25,7 +22,7 @@ module HearingPostponed
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.class.to_s == "Appeal"
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
     end
     super_return_value
   end
@@ -35,23 +32,15 @@ module HearingPostponed
   # Params: none
   #
   # Response: none
-  # rubocop:disable Metrics/AbcSize
   def update_appeal_states_on_hearing_postponed
     if is_a?(LegacyHearing)
       if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id)&.hearing_disp == "P"
-        MetricsService.record("Updating HEARING_POSTPONED in Appeal States Table for #{appeal.class} ID #{appeal.id}",
-                              name: "AppellantNotification.appeal_mapper") do
-          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
-        end
+        appeal.appeal_state.hearing_postponed_appeal_state_update_action!
       end
     elsif is_a?(Hearing)
       if disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
-        MetricsService.record("Updating HEARING_POSTPONED in Appeal States Table for #{appeal.class} ID #{appeal.id}",
-                              name: "AppellantNotification.appeal_mapper") do
-          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
-        end
+        appeal.appeal_state.hearing_postponed_appeal_state_update_action!
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 end

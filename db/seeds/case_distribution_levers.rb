@@ -22,7 +22,7 @@ module Seeds
 
       validate_levers_creation
       updated_levers.compact!
-      puts "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
+      Rails.logger.info("#{updated_levers.count} levers updated: #{updated_levers}") if updated_levers.count > 0
     end
 
     private
@@ -46,9 +46,11 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
-      puts "*********************************************" unless lever.valid?
-      puts lever.errors.full_messages unless lever.valid?
-      puts "*********************************************" unless lever.valid?
+      unless lever.valid?
+        Rails.logger.error( "*********************************************")
+        Rails.logger.error(lever.errors.full_messages)
+        Rails.logger.error( "*********************************************")
+      end
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -100,9 +102,6 @@ module Seeds
     def validate_levers_creation
       levers = CaseDistributionLevers.levers.map { |lever| lever[:item] }
       existing_levers = CaseDistributionLever.all.map(&:item)
-
-      puts "#{CaseDistributionLever.count} levers exist"
-      puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
     end
 
     class << self
@@ -305,7 +304,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
@@ -315,7 +314,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
-            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
+            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -339,7 +338,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3003
@@ -348,44 +347,6 @@ module Seeds
             item: Constants.DISTRIBUTION.aoj_affinity_days,
             title: Constants.DISTRIBUTION.aoj_affinity_days_title,
             description: "Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.",
-            data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "60",
-            unit: Constants.ACD_LEVERS.days,
-            options: [
-              {
-                item: Constants.ACD_LEVERS.value,
-                data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 60,
-                text: "Attempt distribution to current judge for max of:",
-                unit: Constants.ACD_LEVERS.days,
-                selected: true
-              },
-              {
-                item: Constants.ACD_LEVERS.infinite,
-                data_type: "",
-                value: Constants.ACD_LEVERS.infinite,
-                text: "Always distribute to current judge",
-                unit: ""
-              },
-              {
-                item: Constants.ACD_LEVERS.omit,
-                data_type: "",
-                value: Constants.ACD_LEVERS.omit,
-                text: "Omit variable from distribution rules",
-                unit: ""
-              }
-            ],
-            is_disabled_in_ui: true,
-            min_value: 0,
-            max_value: 999,
-            algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
-            lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
-            lever_group_order: 3004
-          },
-          {
-            item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
-            title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
-            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -413,7 +374,45 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
+            min_value: 0,
+            max_value: 999,
+            algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
+            lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
+            lever_group_order: 3004
+          },
+          {
+            item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
+            title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
+            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available judge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
+            data_type: Constants.ACD_LEVERS.data_types.radio,
+            value: "14",
+            unit: Constants.ACD_LEVERS.days,
+            options: [
+              {
+                item: Constants.ACD_LEVERS.value,
+                data_type: Constants.ACD_LEVERS.data_types.number,
+                value: 14,
+                text: "Attempt distribution to current judge for max of:",
+                unit: Constants.ACD_LEVERS.days,
+                selected: true
+              },
+              {
+                item: Constants.ACD_LEVERS.infinite,
+                data_type: "",
+                value: Constants.ACD_LEVERS.infinite,
+                text: "Always distribute to current judge",
+                unit: ""
+              },
+              {
+                item: Constants.ACD_LEVERS.omit,
+                data_type: "",
+                value: Constants.ACD_LEVERS.omit,
+                text: "Omit variable from distribution rules",
+                unit: ""
+              }
+            ],
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -451,7 +450,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -459,7 +458,7 @@ module Seeds
             lever_group_order: 3006
           },
           {
-            item: Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
+            item: Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals,
             title: "AMA Hearings Start Distribution Prior to Goals",
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.combination,
@@ -475,7 +474,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -487,7 +486,7 @@ module Seeds
             title: "AMA Direct Review Start Distribution Prior to Goals",
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.combination,
-            value: 365,
+            value: 60,
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -499,7 +498,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -523,7 +522,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -531,12 +530,12 @@ module Seeds
             lever_group_order: 4002
           },
           {
-            item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
+            item: Constants.DISTRIBUTION.ama_hearing_docket_time_goals,
             title: "AMA Hearings Docket Time Goals",
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 730,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -562,7 +561,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 550,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -576,10 +575,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 10
+            lever_group_order: 105,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_legacy_priority,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_legacy_priority,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_legacy_non_priority,
@@ -588,10 +602,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 101
+            lever_group_order: 101,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_legacy_non_priority,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_legacy_non_priority,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
@@ -600,10 +629,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 102
+            lever_group_order: 102,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
@@ -612,22 +656,52 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 103
+            lever_group_order: 103,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 104
+            lever_group_order: 104,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_priority_hearing,
@@ -636,10 +710,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 105
+            lever_group_order: 106,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
@@ -648,22 +737,76 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 106
+            lever_group_order: 107,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 107
+            lever_group_order: 108,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+                value:  'false',
+                disabled: false
+              }
+            ]
+          },
+          {
+            item: Constants.DISTRIBUTION.enable_nonsscavlj,
+            title: Constants.DISTRIBUTION.enable_nonsscavlj_title,
+            description: "This is the internal lever used to enable and disable Non-SSC AVLJ work.",
+            data_type: Constants.ACD_LEVERS.data_types.boolean,
+            value: true,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
+          {
+            item: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move,
+            title: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move_title,
+            description: "This is the internal lever used to alter the number of appeals to be returned for Non-SSC AVLJs",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: 2,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 999
           },
         ]
       end
@@ -689,7 +832,7 @@ module Seeds
           full_update_lever(lever)
         end
 
-        puts "Levers updated: #{levers_to_update.map { |lever| lever[:item] }}"
+        Rails.logger.info("Levers updated: #{levers_to_update.map { |lever| lever[:item] }}")
       end
 
       private
@@ -705,7 +848,6 @@ module Seeds
       # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
       def full_update_lever(lever)
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-
         existing_lever.update(
           title: lever[:title],
           description: lever[:description],
@@ -723,9 +865,11 @@ module Seeds
           lever_group_order: lever[:lever_group_order]
         )
 
-        puts "*********************************************" unless existing_lever.valid?
-        puts existing_lever.errors.full_messages unless existing_lever.valid?
-        puts "*********************************************" unless existing_lever.valid?
+        unless lever.valid?
+          Rails.logger.error( "*********************************************")
+          Rails.logger.error(lever.errors.full_messages)
+          Rails.logger.error( "*********************************************")
+        end
       end
     end
   end

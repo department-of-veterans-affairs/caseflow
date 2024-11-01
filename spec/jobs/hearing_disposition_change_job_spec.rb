@@ -9,14 +9,19 @@ describe HearingDispositionChangeJob, :all_dbs do
 
     hearing = create(:hearing, appeal: appeal, disposition: disposition)
     if scheduled_for
+      hearing_day = create(:hearing_day, scheduled_for: scheduled_for)
       hearing = create(
         :hearing,
         appeal: appeal,
         disposition: disposition,
-        scheduled_time: scheduled_for
+        scheduled_time: scheduled_for,
+        scheduled_in_timezone: Time.zone.name,
+        scheduled_datetime: HearingDatetimeService.prepare_datetime_for_storage(
+          date: hearing_day.scheduled_for,
+          time_string: "#{scheduled_for.strftime('%I:%M %p')} #{Time.zone.name}"
+        ),
+        hearing_day: hearing_day
       )
-      hearing_day = create(:hearing_day, scheduled_for: scheduled_for)
-      hearing.update!(hearing_day: hearing_day)
     end
 
     if associated_hearing
@@ -167,6 +172,7 @@ describe HearingDispositionChangeJob, :all_dbs do
 
         it "returns a label indicating that the hearing was recently held and does not change the task" do
           attributes_before = task.attributes.except(*attributes_date_fields)
+
           expect(subject).to eq(:between_one_and_two_days_old)
           expect(task.reload.attributes.except(*attributes_date_fields)).to eq(attributes_before)
         end

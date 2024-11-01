@@ -1,0 +1,21 @@
+---
+openapi: 3.0.2
+info:
+  title: API V1
+  version: v1
+security:
+  - bearerAuth: []
+servers:
+- url: /api/v1/
+paths:
+  "/cmp":
+    $ref: "./v1/upload.yml"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow
+  schemas:
+    payload:
+      $ref: "./v1/payload.yml"

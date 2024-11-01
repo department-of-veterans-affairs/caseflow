@@ -5,7 +5,7 @@ import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
 import Alert from 'app/components/Alert';
 import Button from '../../components/Button';
-import Dropdown from '../../components/Dropdown';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
@@ -27,46 +27,72 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-  generateIssueActionOptions = (issue, userCanWithdrawIssues, userCanEditIntakeIssues, isDtaError, docketType) => {
+  /* eslint-disable max-params */
+  generateIssueActionOptions = (
+    issue,
+    userCanWithdrawIssues,
+    userCanEditIntakeIssues,
+    isDtaError,
+    docketType,
+    formType
+  ) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
-      options.push({ displayText: 'Undo correction',
+      options.push({ label: 'Undo correction',
         value: 'undo_correction' });
     } else if (issue.correctionType && !issue.examRequested && docketType !== 'Legacy') {
       options.push(
-        { displayText: 'Remove issue',
+        { label: 'Remove issue',
           value: 'remove' }
       );
-      if (userCanEditIntakeIssues) {
+      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
         options.push(
-          { displayText: 'Edit issue',
+          { label: 'Edit issue',
             value: 'edit' }
         );
       }
     } else if (issue.endProductCleared) {
-      options.push({ displayText: 'Correct issue',
+      options.push({ label: 'Correct issue',
         value: 'correct' });
     } else if (!issue.examRequested && !issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
       if (userCanWithdrawIssues && issue.id) {
         options.push(
-          { displayText: 'Withdraw issue',
+          { label: 'Withdraw issue',
             value: 'withdraw' }
         );
       }
       if (docketType !== 'Legacy') {
         options.push(
-          { displayText: 'Remove issue',
+          { label: 'Remove issue',
             value: 'remove' }
         );
       }
-      if (userCanEditIntakeIssues) {
+      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
         options.push(
-          { displayText: 'Edit issue',
+          { label: 'Edit issue',
             value: 'edit' }
         );
       }
     }
+    if (this.props.showRequestIssueUpdateOptions && this.props.intakeData.benefitType === 'vha') {
+      options = [];
+      options.push(
+        { label: 'Request modification',
+          value: 'requestModification' }
+      );
+
+      options.push(
+        { label: 'Request removal',
+          value: 'requestRemoval' }
+      );
+
+      options.push(
+        { label: 'Request withdrawal',
+          value: 'requestWithdrawal' }
+      );
+    }
+    /* eslint-enable max-params */
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -74,7 +100,7 @@ export default class IssuesList extends React.Component {
     if ((!issue.date || issue.editedDecisionDate) && !isIssueWithdrawn && !issue.isUnidentified) {
       options.push(
         {
-          displayText: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
+          label: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
           value: 'add_decision_date'
         }
       );
@@ -93,7 +119,9 @@ export default class IssuesList extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       editPage,
-      featureToggles
+      featureToggles,
+      disableIssueActions,
+      disableEditingForCompAndPen
     } = this.props;
 
     return <div className="issues">
@@ -109,12 +137,19 @@ export default class IssuesList extends React.Component {
             editableIssueProperties);
 
           const issueActionOptions = this.generateIssueActionOptions(
-            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
+            issue,
+            userCanWithdrawIssues,
+            userCanEditIntakeIssues,
+            intakeData.isDtaError,
+            intakeData.docketType,
+            formType
           );
 
           const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
-            !issue.isUnidentified;
+            !issue.isUnidentified && !intakeData.isLegacy;
+
+          const showNewIssueBasedOnRequestIssueBanner = issue.addedFromApprovedRequest;
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
@@ -127,7 +162,7 @@ export default class IssuesList extends React.Component {
                 issue={issue}
                 issueIdx={issue.index}
                 requestIssues={intakeData.requestIssues}
-                legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
                 legacyAppeals={intakeData.legacyAppeals}
                 featureToggles={featureToggles}
                 formType={formType} />
@@ -137,13 +172,17 @@ export default class IssuesList extends React.Component {
               </div> }
 
               <div className="issue-action">
-                {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
+                {editPage && !_.isEmpty(issueActionOptions) && <SearchableDropdown
                   name={`issue-action-${issue.index}`}
+                  key={issue.id}
                   label="Actions"
                   hideLabel
                   options={issueActionOptions}
-                  defaultText="Select action"
-                  onChange={(option) => onClickIssueAction(issue.index, option)}
+                  placeholder="Select action"
+                  onChange={(option) => onClickIssueAction(issue.index, option.value)}
+                  searchable={false}
+                  doubleArrow
+                  readOnly={disableIssueActions || disableEditingForCompAndPen}
                 /> }
                 {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
@@ -161,9 +200,17 @@ export default class IssuesList extends React.Component {
                 styling={alertStyling}
                 type="warning"
               /> : null}
+            {showNewIssueBasedOnRequestIssueBanner ?
+              <Alert
+                message={COPY.VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE}
+                messageStyling={messageStyling}
+                styling={alertStyling}
+                type="info"
+              /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
-              issueIdx={issue.index} />}
+              issueIdx={issue.index}
+              disableEditingForCompAndPen={disableEditingForCompAndPen} />}
           </div>;
         })}
       </div>
@@ -179,6 +226,10 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
+  userCanRequestIssueUpdates: PropTypes.bool,
+  showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  disableIssueActions: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };

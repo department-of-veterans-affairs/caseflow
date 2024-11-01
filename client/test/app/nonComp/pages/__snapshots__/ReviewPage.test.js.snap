@@ -72,11 +72,9 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
-                
                 <span>
-                  Incomplete tasks
+                  Incomplete Tasks (0)
                 </span>
-                
               </span>
             </div>
           </button>
@@ -91,11 +89,9 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
-                
                 <span>
-                  In progress tasks
+                  In Progress Tasks (410)
                 </span>
-                
               </span>
             </div>
           </button>
@@ -110,11 +106,9 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
           >
             <div>
               <span>
-                
                 <span>
-                  Completed tasks
+                  Completed Tasks
                 </span>
-                
               </span>
             </div>
           </button>
@@ -135,10 +129,13 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
             role="tabpanel"
           >
             <div
-              class="non-comp-queue-table-wrapper"
+              class="search-and-description-container"
             >
               <div
-                class="cf-search-ahead-parent cf-push-right cf-noncomp-search"
+                class="cf-noncomp-queue-completed-task noncomp-tab-description"
+              />
+              <div
+                class="cf-search-ahead-parent cf-noncomp-search"
               >
                 <span
                   class="usa-search usa-search-small cf-search-ahead"
@@ -161,11 +158,16 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
                   />
                 </span>
               </div>
+            </div>
+            <div
+              class="non-comp-queue-table-wrapper"
+            >
               <div
                 class="section-hearings-list"
               >
                 <div
                   class="cf-table-wrapper"
+                  data-testid="queue-table-data-testid"
                 >
                   <section
                     class="cf-app-segment cf-app-segment--alt"
@@ -174,7 +176,6 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
                       data-css-1ogvp9u=""
                     >
                       <div>
-                        
                         <div
                           class="cf-loading-button-symbol cf-small-loader-symbol"
                         >
@@ -290,11 +291,9 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
-                
                 <span>
-                  Incomplete tasks
+                  Incomplete Tasks (0)
                 </span>
-                
               </span>
             </div>
           </button>
@@ -309,11 +308,9 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
-                
                 <span>
-                  In progress tasks
+                  In Progress Tasks (410)
                 </span>
-                
               </span>
             </div>
           </button>
@@ -328,11 +325,9 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
           >
             <div>
               <span>
-                
                 <span>
-                  Completed tasks
+                  Completed Tasks
                 </span>
-                
               </span>
             </div>
           </button>
@@ -353,10 +348,13 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
             role="tabpanel"
           >
             <div
-              class="non-comp-queue-table-wrapper"
+              class="search-and-description-container"
             >
               <div
-                class="cf-search-ahead-parent cf-push-right cf-noncomp-search"
+                class="cf-noncomp-queue-completed-task noncomp-tab-description"
+              />
+              <div
+                class="cf-search-ahead-parent cf-noncomp-search"
               >
                 <span
                   class="usa-search usa-search-small cf-search-ahead"
@@ -379,11 +377,16 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
                   />
                 </span>
               </div>
+            </div>
+            <div
+              class="non-comp-queue-table-wrapper"
+            >
               <div
                 class="section-hearings-list"
               >
                 <div
                   class="cf-table-wrapper"
+                  data-testid="queue-table-data-testid"
                 >
                   <section
                     class="cf-app-segment cf-app-segment--alt"
@@ -392,7 +395,6 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
                       data-css-1ogvp9u=""
                     >
                       <div>
-                        
                         <div
                           class="cf-loading-button-symbol cf-small-loader-symbol"
                         >

@@ -56,6 +56,17 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :judge_inactive do
+      inactive
+      with_inactive_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
+    trait :judge_with_appeals_excluded_from_affinity do
+      with_appeals_excluded_from_affinity_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
     trait :ama_only_judge do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge)&.update(ama_only_push: true, ama_only_request: true) ||
@@ -63,6 +74,12 @@ FactoryBot.define do
       end
 
       roles { ["Hearing Prep"] }
+    end
+
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, user: user)
+      end
     end
 
     trait :with_vacols_judge_record do
@@ -77,21 +94,30 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacols_record do
+    trait :with_vacols_record_satty_id do
       after(:create) do |user|
         create(:staff, :has_sattyid, slogid: user.css_id, user: user)
-      end
-    end
-
-    trait :with_inactive_vacols_judge_record do
-      after(:create) do |user|
-        create(:staff, :inactive_judge, user: user)
       end
     end
 
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      end
+    end
+
+    # This team will not end up being searchable unless you chain .unscoped because of the org model default scope
+    trait :with_inactive_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.inactive!
+      end
+    end
+
+    trait :with_appeals_excluded_from_affinity_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.update!(exclude_appeals_from_affinity: true)
       end
     end
 
@@ -104,6 +130,12 @@ FactoryBot.define do
     trait :with_vacols_acting_judge_record do
       after(:create) do |user|
         create(:staff, :attorney_judge_role, user: user)
+      end
+    end
+
+    trait :with_vacols_titled_attorney_record do
+      after(:create) do |user|
+        create(:staff, :titled_attorney_role, user: user)
       end
     end
 
@@ -120,6 +152,19 @@ FactoryBot.define do
       end
     end
 
+    trait :vha_admin_user do
+      after(:create) do |user|
+        VhaBusinessLine.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
+      end
+    end
+
+    trait :vha_default_user do
+      after(:create) do |user|
+        VhaBusinessLine.singleton.add_user(user)
+      end
+    end
+
     trait :bva_intake_admin do
       after(:create) do |user|
         BvaIntake.singleton.add_user(user)
@@ -133,6 +178,30 @@ FactoryBot.define do
         Functions.grant!("System Admin", users: existing_sysadmins + [user.css_id])
         Bva.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, Bva.singleton)
+      end
+    end
+
+    trait :non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :non_ssc_avlj, user: user)
+      end
+    end
+
+    trait :ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :ssc_avlj, user: user)
+      end
+    end
+
+    trait :vlj_user do
+      after(:create) do |user|
+        create(:staff, :vlj, user: user)
+      end
+    end
+
+    trait :inactive_non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :inactive_non_ssc_avlj, user: user)
       end
     end
 

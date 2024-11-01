@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 describe DocketCoordinator do
+  before do
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :minimum_legacy_proportion)
+    create(:case_distribution_lever, :maximum_direct_review_proportion)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+  end
+
   describe "direct review docket steady state" do
     before do
       FeatureToggle.enable!(:test_facols)
@@ -284,6 +300,7 @@ describe DocketCoordinator do
   end
 
   describe "#genpop_priority_count" do
+    before { allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0) }
     subject { DocketCoordinator.new.genpop_priority_count }
 
     let(:expected_priority_count) { genpop_priority_cases_count }

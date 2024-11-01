@@ -1,88 +1,61 @@
-FROM ruby:2.7.3-slim
-MAINTAINER Development and Operations team @ Department of Veterans Affairs
+FROM ruby:2.7.3
 
-# Build variables
-ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
-ENV CASEFLOW git yarn
-
-# Environment (system) variables
-ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
-    ORACLE_HOME="/opt/oracle/instantclient_12_2" \
-    LANG="AMERICAN_AMERICA.US7ASCII" \
+# Set up environment variables
+ENV APP_HOME=/caseflow \
+    ORACLE_HOME=/opt/oracle \
+    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs fastjar" \
+    NVM_DIR="/usr/local/nvm" \
+    NODE_VERSION="16.16.0" \
+    PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
-    PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" \
-    NODE_OPTIONS="--max-old-space-size=8192" \
-    SSL_CERT_FILE="/etc/ssl/certs/cacert.pem"
-# install oracle deps
-WORKDIR /opt/oracle/instantclient_12_2/
-COPY docker-bin/oracle_libs/* ./
-RUN ln -s libclntsh.so.12.1 libclntsh.so
+    LANG="C.UTF-8"
 
-WORKDIR /caseflow
-
-# Copy all the files
-COPY . .
-
-RUN pwd && ls -lsa
-
-# Install VA Trusted Certificates
-RUN mkdir -p /usr/local/share/ca-certificates/va
-COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
-#COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
-RUN update-ca-certificates
-COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
-
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
-RUN apt -y update && \
-    apt -y upgrade && \
-    mkdir -p /usr/share/man/man1 && \
-    mkdir /usr/share/man/man7 && \
-    apt install -y ${BUILD} && \
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt -y update
-
-#install node
-RUN mkdir /usr/local/nvm
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 14.20.0
-ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
-RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-   && nvm install $NODE_VERSION \
-   && nvm alias default $NODE_VERSION \
-   && nvm use default
-ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
-ENV PATH $NVM_INSTALL_PATH/bin:$PATH
-
-RUN apt install -y ${CASEFLOW} &&  \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get clean && apt-get autoclean && apt-get autoremove
+# Install base dependencies
+RUN apt-get update -yqq && \
+    apt-get install -yqq --no-install-recommends $BUILD && \
+    rm -rf /var/lib/apt/lists/*
 
 
-# install jemalloc
-RUN apt install -y --no-install-recommends libjemalloc-dev
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
+ORACLE_HOME="/opt/oracle/instantclient_19_24" \
+OCI_DIR="/opt/oracle/instantclient_19_24"
 
+WORKDIR /opt/oracle
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linux-arm64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linux-arm64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linux-arm64.zip
+RUN jar xvf instantclient-basic-linux-arm64.zip
+RUN jar xvf instantclient-sqlplus-linux-arm64.zip
+RUN jar xvf instantclient-sdk-linux-arm64.zip
 
-# install datadog agent
-RUN DD_INSTALL_ONLY=true DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=$(cat config/datadog.key) bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/datadog-agent/master/cmd/agent/install_script.sh)"
+# fix for oracle client
+RUN rm /opt/oracle/instantclient_19_24/libclntsh.so
+WORKDIR /opt/oracle/instantclient_19_24
+RUN ln -s libclntsh.so.19.1 libclntsh.so
 
-RUN rm -rf /var/lib/apt/lists/*
+COPY . $APP_HOME
 
-# Installing the version of bundler that corresponds to the Gemfile.lock
-# Rake 13.0.1 is already installed, so we're uninstalling it and letting bundler install rake later.
-RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i /usr/local/lib/ruby/gems/2.7.0 rake
-RUN bundle install && \
-    cd client && \
-    yarn install && \
-    yarn run build:demo && \
-    chmod +x /caseflow/docker-bin/startup.sh && \
-    rm -rf docker-bin
+WORKDIR $APP_HOME
+
+# Set up NVM and Node
+RUN mkdir -p $NVM_DIR && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
+    . "$NVM_DIR/nvm.sh" && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION
+
+# Install compatible Bundler version and gems
+COPY Gemfile* .
+RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc && \
+  bundle config set force_ruby_platform true && \
+  gem install bundler -v 2.4.22 && bundle install && \
+  chmod +x /caseflow/docker-bin/startup.sh && \
+  rm -rf docker-bin
 
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
 
+# Start the Rails application
+# CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
 

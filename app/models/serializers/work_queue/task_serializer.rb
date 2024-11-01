@@ -146,11 +146,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :issue_types do |object|
-    if object.appeal.is_a?(LegacyAppeal)
-      object.appeal.issue_categories
-    else
-      object.appeal.request_issues.active.map(&:nonrating_issue_category)
-    end.join(",")
+    object.appeal.issue_categories.join(",")
   end
 
   attribute :external_hearing_id do |object|

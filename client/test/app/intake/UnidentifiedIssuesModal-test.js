@@ -1,67 +1,76 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 import UnidentifiedIssuesModal from '../../../app/intake/components/UnidentifiedIssuesModal';
 import { sample1 } from './testData';
-
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 describe('UnidentifiedIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
 
   describe('renders', () => {
-    it('renders button text', () => {
-      const wrapper = mount(
-        <UnidentifiedIssuesModal 
-        formType={formType} 
-        intakeData={intakeData}
-        onSkip={() => null} />
+
+    const defaultProps = {
+      formType: formType,
+      intakeData: intakeData,
+      onSkip: () => null,
+    };
+
+    const setup = (props) => {
+      return render(
+        <UnidentifiedIssuesModal
+          {...defaultProps} {...props}
+        />
       );
+    }
+    it('renders button text', () => {
+      setup();
+      expect(screen.getByText('Cancel adding this issue')).toBeInTheDocument();
+      expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
+      expect(screen.getByText('Add this issue')).toBeInTheDocument();
 
-      const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
-      const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
-
-      expect(cancelBtn.text()).toBe('Cancel adding this issue');
-      expect(skipBtn.text()).toBe('None of these match, see more options');
-      expect(submitBtn.text()).toBe('Add this issue');
-
-      wrapper.setProps({
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      });
-
-      expect(cancelBtn.text()).toBe('cancel');
-      expect(skipBtn.text()).toBe('skip');
-      expect(submitBtn.text()).toBe('submit');
+    });
+    it('renders with new props', async () => {
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal 
-        formType={formType} 
+      const {container, rerender} = render(<UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData} />);
 
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
 
-      wrapper.setProps({ onSkip: () => null });
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
+      rerender(<UnidentifiedIssuesModal formType={formType} intakeData={intakeData} onSkip={() => null} />);
+
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).toBeInTheDocument();
     });
 
-    it('disables button when nothing selected', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} 
+    it('disables button when nothing selected', async () => {
+      const {container, rerender} = render(<UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData} />);
 
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+      let submitBtn = container.querySelector('.cf-modal-controls .add-issue');
 
-      expect(submitBtn.prop('disabled')).toBe(true);
+      expect(submitBtn).toBeDisabled();
 
-      wrapper.setState({
-        description: 'blah blah',
-        disabled: false
-      });
+      rerender(
+        <UnidentifiedIssuesModal
+          formType={formType}
+          intakeData={intakeData}
+          description={'blah blah'}
+          decisionDate={'2022-01-01'}
+          notes={'Some notes'}
+          verifiedUnidentifiedIssue={true}
+        />
+      );
 
-      // We need to find element again, or it won't appear updated
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+      let inputElement = container.querySelector('input[id="Transcribe the issue as it\'s written on the form"]');
+      fireEvent.change(inputElement, { target: { value: 'blah blah' } });
+
+      submitBtn = container.querySelector('.cf-modal-controls .add-issue');
+      expect(submitBtn).not.toBeDisabled();
     });
   });
 });

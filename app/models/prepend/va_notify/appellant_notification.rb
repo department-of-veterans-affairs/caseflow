@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
-# rubocop:disable Metrics/ModuleLength
 module AppellantNotification
   extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
@@ -24,21 +23,81 @@ module AppellantNotification
     end
   end
 
+  class InactiveAppealError < StandardError
+    def initialize(appeal_id, message = "The appeal status is inactive")
+      super(message + " for appeal with id #{appeal_id}")
+    end
+
+    def status
+      "Inactive"
+    end
+  end
+
   class NoAppealError < StandardError; end
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-  def self.handle_errors(appeal)
+
+  def self.handle_errors(appeal, template_name)
     fail NoAppealError if appeal.nil?
+    if template_name == Constants.EVENT_TYPE_FILTERS.quarterly_notification && !appeal.active?
+      fail InactiveAppealError, appeal.external_id
+    end
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
-    message_attributes[:appeal_id] = (appeal.class.to_s == "Appeal") ? appeal.uuid : appeal.vacols_id
+    message_attributes[:appeal_id] = appeal.external_id
     message_attributes[:participant_id] = appeal.claimant_participant_id
     claimant = get_claimant(appeal)
 
+    AppellantNotification.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
+  end
+
+  # Purpose: Method to check appeal state for statuses and send out a notification based on
+  # which statuses are turned on in the appeal state
+  #
+  # Params: appeal object (AMA of Legacy)
+  #         temaplate_name (ex. quarterly_notification, appeal_docketed, etc.)
+  #         appeal_status (only used for quarterly notifications)
+  #
+  # Response: Create notification and return it to SendNotificationJob
+
+  def self.notify_appellant(
+    appeal,
+    template_name,
+    appeal_status = nil
+  )
+    msg_bdy = create_payload(appeal, template_name, appeal_status)
+
+    if template_name == "Appeal docketed" && msg_bdy.appeal_type == "LegacyAppeal"
+      Notification.create!(
+        appeals_id: msg_bdy.appeal_id,
+        appeals_type: msg_bdy.appeal_type,
+        event_type: template_name,
+        notification_type: "Email and SMS",
+        participant_id: msg_bdy.participant_id,
+        event_date: Time.zone.today,
+        notifiable: appeal
+      )
+    end
+    SendNotificationJob.perform_later(msg_bdy.to_json)
+  end
+
+  def self.create_payload(appeal, template_name, appeal_status = nil)
+    message_attributes = AppellantNotification.handle_errors(appeal, template_name)
+    VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
+  end
+
+  def self.get_claimant(appeal)
+    if appeal.is_a?(Appeal)
+      appeal.claimant
+    elsif appeal.is_a?(LegacyAppeal)
+      appeal.appellant_is_not_veteran ? appeal.person_for_appellant : appeal.veteran
+    end
+  end
+
+  def self.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
     begin
       if claimant.nil?
         fail NoClaimantError, message_attributes[:appeal_id]
-      elsif message_attributes[:participant_id] == "" || message_attributes[:participant_id].nil?
+      elsif message_attributes[:participant_id].blank?
         fail NoParticipantIdError, message_attributes[:appeal_id]
       elsif appeal.veteran_appellant_deceased?
         message_attributes[:status] = "Failure Due to Deceased"
@@ -51,184 +110,4 @@ module AppellantNotification
     end
     message_attributes
   end
-  # Public: Updates/creates appeal state based on event type
-  #
-  # appeal - appeal that was found in appeal_mapper
-  # event - The module that is being triggered to send a notification
-  #
-  # Examples
-  #
-  #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
-  #   # => A new appeal state is created if it doesn't exist
-  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
-
-  # rubocop:disable Metrics/AbcSize
-
-  def self.update_appeal_state(appeal, event)
-    appeal_type = appeal.class.to_s
-    appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
-                   AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
-    case event
-    when "decision_mailed"
-      appeal_state.update!(
-        decision_mailed: true,
-        appeal_docketed: false,
-        hearing_postponed: false,
-        hearing_withdrawn: false,
-        hearing_scheduled: false,
-        vso_ihp_pending: false,
-        vso_ihp_complete: false,
-        privacy_act_pending: false,
-        privacy_act_complete: false
-      )
-    when "appeal_docketed"
-      appeal_state.update!(appeal_docketed: true)
-    when "appeal_cancelled"
-      appeal_state.update!(
-        decision_mailed: false,
-        appeal_docketed: false,
-        hearing_postponed: false,
-        hearing_withdrawn: false,
-        hearing_scheduled: false,
-        vso_ihp_pending: false,
-        vso_ihp_complete: false,
-        privacy_act_pending: false,
-        privacy_act_complete: false,
-        scheduled_in_error: false,
-        appeal_cancelled: true
-      )
-    when "hearing_postponed"
-      appeal_state.update!(hearing_postponed: true, hearing_scheduled: false)
-    when "hearing_withdrawn"
-      appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false)
-    when "hearing_scheduled"
-      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false, scheduled_in_error: false)
-    when "scheduled_in_error"
-      appeal_state.update!(scheduled_in_error: true, hearing_scheduled: false)
-    when "vso_ihp_pending"
-      appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false)
-    when "vso_ihp_cancelled"
-      appeal_state.update!(vso_ihp_pending: false, vso_ihp_complete: false)
-    when "vso_ihp_complete"
-      # Only updates appeal state if ALL ihp tasks are completed
-      if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
-         appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
-        appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false)
-      end
-    when "privacy_act_pending"
-      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false)
-    when "privacy_act_complete"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      open_tasks = appeal.tasks.open
-      if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-         open_tasks.where(type: PrivacyActTask.name).empty? &&
-         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-        appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
-      end
-    when "privacy_act_cancelled"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      open_tasks = appeal.tasks.open
-      if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
-         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-        appeal_state.update!(privacy_act_pending: false)
-      end
-    end
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity,  Metrics/AbcSize
-  # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
-  #
-  # appeal_id  - id of appeal
-  # appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
-  # event - The module that is being triggered to send a notification
-  #
-  # Examples
-  #
-  #  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
-  #   # => A new appeal state is created if it doesn't exist
-  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
-
-  def self.appeal_mapper(appeal_id, appeal_type, event)
-    if appeal_type == "Appeal"
-      appeal = Appeal.find_by(id: appeal_id)
-      AppellantNotification.update_appeal_state(appeal, event)
-    elsif appeal_type == "LegacyAppeal"
-      appeal = LegacyAppeal.find_by(id: appeal_id)
-      AppellantNotification.update_appeal_state(appeal, event)
-    else
-      Rails.logger.error("Appeal type not supported for " + event)
-    end
-  end
-  # Purpose: Method to check appeal state for statuses and send out a notification based on
-  # which statuses are turned on in the appeal state
-  #
-  # Params: appeal object (AMA of Legacy)
-  #         temaplate_name (ex. quarterly_notification, appeal_docketed, etc.)
-  #         appeal_status (only used for quarterly notifications)
-  #
-  # Response: Create notification and return it to SendNotificationJob
-  # rubocop:disable Metrics/CyclomaticComplexity
-
-  def self.notify_appellant(
-    appeal,
-    template_name,
-    appeal_status = nil
-  )
-    msg_bdy = create_payload(appeal, template_name, appeal_status)
-    appeal_docketed_event_enabled = FeatureToggle.enabled?(:appeal_docketed_event)
-
-    return nil if template_name == "Appeal docketed" &&
-                  !appeal_docketed_event_enabled &&
-                  msg_bdy.appeal_type == "LegacyAppeal"
-
-    if template_name == "Appeal docketed" && appeal_docketed_event_enabled && msg_bdy.appeal_type == "LegacyAppeal"
-      Notification.create!(
-        appeals_id: msg_bdy.appeal_id,
-        appeals_type: msg_bdy.appeal_type,
-        event_type: template_name,
-        notification_type: notification_type,
-        participant_id: msg_bdy.participant_id,
-        event_date: Time.zone.today
-      )
-    end
-    SendNotificationJob.perform_later(msg_bdy.to_json)
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  def self.create_payload(appeal, template_name, appeal_status = nil)
-    message_attributes = AppellantNotification.handle_errors(appeal)
-    VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
-  end
-
-  def self.notification_type
-    notification_type =
-      if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
-        "Email and SMS"
-      elsif FeatureToggle.enabled?(:va_notify_email)
-        "Email"
-      elsif FeatureToggle.enabled?(:va_notify_sms)
-        "SMS"
-      else
-        "None"
-      end
-    notification_type
-  end
-
-  def self.get_claimant(appeal)
-    appeal_type = appeal.class.to_s
-    participant_id = appeal.claimant_participant_id
-    claimant =
-      if appeal_type == "Appeal"
-        appeal.claimant
-      elsif appeal_type == "LegacyAppeal"
-        veteran = Veteran.find_by(participant_id: participant_id)
-        person = Person.find_by(participant_id: participant_id)
-        appeal.appellant_is_not_veteran ? person : veteran
-      end
-    claimant
-  end
 end
-# rubocop:enable Metrics/ModuleLength

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Seeds::StaticTestCaseData do
+  before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
   let(:seed) { described_class.new }
 
   context "initial values" do

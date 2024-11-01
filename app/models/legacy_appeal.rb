@@ -42,6 +42,7 @@ class LegacyAppeal < CaseflowRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
   has_one :appeal_state, as: :appeal
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :notifications, as: :notifiable
 
   class UnknownLocationError < StandardError; end
 
@@ -345,6 +346,10 @@ class LegacyAppeal < CaseflowRecord
         representative: VACOLS::Representative.appellant_representative(vacols_id)
       )
     end
+  end
+
+  def appeal_affinity
+    VACOLS::Case.find_by(bfkey: vacols_id).appeal_affinity
   end
 
   ## BEGIN Hearing specific attributes and methods
@@ -958,6 +963,10 @@ class LegacyAppeal < CaseflowRecord
   end
   # rubocop:enable Naming/PredicateName
 
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -1108,6 +1117,10 @@ class LegacyAppeal < CaseflowRecord
 
     def repository
       AppealRepository
+    end
+
+    def aoj_appeal_repository
+      AojAppealRepository
     end
 
     # Wraps the closure of appeals in a transaction

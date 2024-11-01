@@ -10,13 +10,24 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        batch_size_per_attorney
        ama_direct_review_start_distribution_prior_to_goals
        ama_hearing_case_affinity_days
+       ama_hearing_case_aod_affinity_days
        cavc_affinity_days
+       cavc_aod_affinity_days
+       ama_hearing_case_aod_affinity_days
        ama_evidence_submission_docket_time_goals
-       ama_hearings_docket_time_goals]
+       ama_hearing_docket_time_goals
+       ama_hearing_start_distribution_prior_to_goals
+       ama_evidence_submission_start_distribution_prior_to_goals
+       nonsscavlj_number_of_appeals_to_move
+       aoj_affinity_days
+       aoj_aod_affinity_days
+       aoj_cavc_affinity_days]
   end
   let!(:float_levers) do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
   end
+
+  before { Seeds::CaseDistributionLevers.new.seed! }
 
   describe "validations" do
     it "requires a title" do
@@ -61,7 +72,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
       it "validates combination data_type" do
         lever = CaseDistributionLever.find_by_item(
-          Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals
+          Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals
         )
         valid = lever.update(options: nil)
 
@@ -95,6 +106,30 @@ RSpec.describe CaseDistributionLever, :all_dbs do
           "Item is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS"
         )
       end
+    end
+  end
+
+  context ".aoj_affinity_days" do
+    it "only returns value with aoj affinity days" do
+      aoj_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days)
+
+      expect(aoj_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_affinity_days)
+    end
+  end
+
+  context ".aoj_cavc_affinity_days" do
+    it "only returns value with aoj cavc affinity" do
+      aoj_cavc_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days)
+
+      expect(aoj_cavc_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_cavc_affinity_days)
+    end
+  end
+
+  context ".aoj_aod_affinity_days" do
+    it "only returns value with aoj aod affinity" do
+      aoj_aod_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days)
+
+      expect(aoj_aod_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_aod_affinity_days)
     end
   end
 

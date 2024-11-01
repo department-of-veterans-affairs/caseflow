@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 describe LegacyDocket do
+  before do
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
+  end
+
   let(:docket) do
     LegacyDocket.new
   end
@@ -17,6 +29,32 @@ describe LegacyDocket do
   context "#docket_type" do
     it "is legacy" do
       expect(subject.docket_type).to eq "legacy"
+    end
+  end
+
+  context "#ready_priority_nonpriority_legacy_appeals" do
+    context "when priority is true" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_truthy
+      end
+    end
+
+    context "when priority is false" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_truthy
+      end
     end
   end
 
@@ -321,28 +359,104 @@ describe LegacyDocket do
     end
   end
 
+  context "#affinity_date_count" do
+    before do
+      create_priority_distributable_legacy_appeal_not_tied_to_judge
+      create_aod_cavc_ready_priority_case_1
+      create_aod_cavc_ready_priority_case_2
+      create_cavc_ready_priority_case
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123456")
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123457")
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123458")
+    end
+
+    context "when priority is true" do
+      context "with in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(true, true)).to eq(1)
+        end
+      end
+
+      context "with out in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(false, true)).to eq(3)
+        end
+      end
+    end
+
+    context "when priority is false" do
+      context "with in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(true, false))
+            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
+        end
+      end
+
+      context "with out in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(false, false))
+            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
+        end
+      end
+    end
+  end
+
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
       :case,
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "3",
+      bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
   end
 
-  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
+  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
       :case,
-      bfkey: "12345",
+      bfkey: bfkey,
       bfd19: 1.year.ago,
-      bfac: "3",
+      bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
+  end
+
+  def create_aod_cavc_ready_priority_case_1
+    create(:case,
+           :aod,
+           :with_appeal_affinity,
+           bfd19: 11.months.ago,
+           bfac: "7",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
+  end
+
+  def create_aod_cavc_ready_priority_case_2
+    create(:case,
+           :aod,
+           :with_appeal_affinity,
+           affinity_start_date: 2.months.ago,
+           bfd19: 11.months.ago,
+           bfac: "7",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
+  end
+
+  def create_cavc_ready_priority_case
+    create(:case,
+           :with_appeal_affinity,
+           affinity_start_date: 1.month.ago,
+           bfd19: 11.months.ago,
+           bfac: "7",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
   end
 end

@@ -442,15 +442,6 @@
       "zip" : "89086",
       "timezone" : "America/Los_Angeles"
    },
-   "vc_0505V" : {
-      "address_1" : "7455 W. Washington Ave.",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "Las Vegas",
-      "state" : "NV",
-      "zip" : "89128",
-      "timezone" : "America/Los_Angeles"
-   },
    "vba_355" : {
       "address_1" : "50 Carr 165",
       "address_2" : null,
@@ -629,7 +620,7 @@
       "city" : "Anchorage",
       "state" : "AK",
       "zip" : "99504",
-      "timezone" : "America/Anchorage"
+      "timezone" : "America/Juneau"
    },
    "vc_0523V" : {
       "address_1" : "2119 West Lincoln Avenue",
@@ -702,15 +693,6 @@
       "state" : "TN",
       "zip" : "38132",
       "timezone" : "America/Kentucky/Louisville"
-   },
-   "vc_0720V" : {
-      "address_1" : "1645 Downtown West Blvd #28",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "Knoxville",
-      "state" : "TN",
-      "zip" : "37919",
-      "timezone" : "America/Chicago"
    },
    "vc_0737V" : {
       "address_1" : "400 Veterans Ave",
@@ -1009,15 +991,6 @@
       "zip" : "42101-4905",
       "timezone" : "America/Kentucky/Louisville"
    },
-   "vha_626GF" : {
-      "address_1" : "6098 Debra Road",
-      "address_2" : null,
-      "address_3" : "6200 Building, Suite 5200",
-      "city" : "Chattanooga",
-      "state" : "TN",
-      "zip" : "37411-5702",
-      "timezone" : "America/Chicago"
-   },
    "vha_626GH" : {
       "address_1" : "851 South Willow Avenue",
       "address_2" : null,
@@ -1094,7 +1067,7 @@
       "address_1" : "913 Northwest Garden Valley Boulevard",
       "address_2" : null,
       "address_3" : null,
-      "city" : "Rosenburg",
+      "city" : "Roseburg",
       "state" : "OR",
       "zip" : "97471-6523",
       "timezone" : "America/Los_Angeles"
@@ -1109,7 +1082,7 @@
       "timezone" : "America/Los_Angeles"
    },
    "vha_653GA" : {
-      "address_1" : "2191 Marion Street",
+      "address_1" : "2191 Marion Ave",
       "address_2" : "",
       "address_3" : null,
       "city" : "North Bend",
@@ -1124,6 +1097,15 @@
       "city" : "Brookings",
       "state" : "OR",
       "zip" : "97415-9702",
+      "timezone" : "America/Los_Angeles"
+   },
+   "vha_653QA" : {
+      "address_1" : "211 E 7th Ave",
+      "address_2" : null,
+      "address_3" : "Suite 118",
+      "city" : "Eugene",
+      "state" : "OR",
+      "zip" : "97401",
       "timezone" : "America/Los_Angeles"
    },
    "vha_657GJ" : {
@@ -1304,6 +1286,15 @@
       "city" : "Klamath Falls",
       "state" : "OR",
       "zip" : "97601-6417",
+      "timezone" : "America/Los_Angeles"
+   },
+   "vha_692GB" : {
+      "address_1" : "1877 Williams Hwy",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Grants Pass",
+      "state" : "OR",
+      "zip" : "97527",
       "timezone" : "America/Los_Angeles"
    },
    "vha_693" : {

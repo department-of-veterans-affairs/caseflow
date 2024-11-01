@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
-  let!(:lever_user) { create(:user) }
+  before { Seeds::CaseDistributionLevers.new.seed! }
   let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }
 
@@ -36,7 +36,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2023-07-01 10:10:01",
+      created_at: 11.months.ago.at_noon,
       previous_value: 10,
       update_value: 42,
       case_distribution_lever: lever2
@@ -49,7 +49,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2023-07-01 10:11:01",
+      created_at: 10.months.ago.at_noon,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
@@ -62,7 +62,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2020-07-01 10:11:01",
+      created_at: 13.months.ago.at_noon,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
@@ -101,10 +101,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -121,10 +118,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_truthy
     end
   end
@@ -139,7 +133,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "renders a page with the grouped levers and lever history" do
-      lever_keys = %w[static batch affinity docket_distribution_prior docket_time_goal docket_levers]
+      lever_keys = %w[static batch affinity docket_distribution_prior docket_time_goal docket_levers internal]
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "levers"
@@ -175,10 +169,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -195,10 +186,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_truthy
     end
   end

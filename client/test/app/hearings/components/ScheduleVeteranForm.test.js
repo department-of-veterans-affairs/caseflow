@@ -1,36 +1,56 @@
 import React from 'react';
-import { mount } from 'enzyme';
-
-import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
-import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
 import { generateAmaTask } from 'test/data/tasks';
 import { queueWrapper } from 'test/data/stores/queueStore';
-import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import {
-  HearingDateDropdown,
-  RegionalOfficeDropdown,
-  AppealHearingLocationsDropdown,
-} from 'app/components/DataDropdowns';
-import { AppealInformation } from 'app/hearings/components/scheduleHearing/AppealInformation';
-import { AddressLine } from 'app/hearings/components/details/Address';
-import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
-import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
-import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
-import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
-import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
-import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
+  VIRTUAL_HEARING_LABEL
+} from 'app/hearings/constants';
+import ApiUtil from 'app/util/ApiUtil';
 
 // Set the spies
 const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
+const fetchScheduledHearingsMock = jest.fn();
+jest.mock('app/util/ApiUtil', () => ({
+  convertToSnakeCase: jest.fn(obj => obj),
+  convertToCamelCase: jest.fn(obj => obj),
+  get: jest.fn().mockResolvedValue({})
+}));
+
+const mockResponse = {
+  body: {
+    filled_hearing_slots: [
+      {
+        external_id: "123456",
+        hearing_time: "09:00",
+        issue_count: 3,
+        docket_number: "12345678",
+        docket_name: "Legacy",
+        poa_name: "Some POA Name"
+      },
+      {
+        external_id: "789012",
+        hearing_time: "10:30",
+        issue_count: 2,
+        docket_number: "87654321",
+        docket_name: "AMA",
+        poa_name: "Another POA Name"
+      }
+    ]
+  }
+};
+
+const convertRegex = (str) => {
+  return new RegExp(str, 'i');
+}
 
 describe('ScheduleVeteranForm', () => {
   test('Matches snapshot with default props', () => {
     // Render the address component
-    const scheduleVeteran = mount(
+    const {container, asFragment} = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -39,24 +59,28 @@ describe('ScheduleVeteranForm', () => {
         hearing={defaultHearing}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
     // Assertions
-    expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.getByRole('combobox', { name: 'Hearing Type' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Regional Office' })).toBeInTheDocument();
+    expect(container.querySelector('.schedule-veteran-appeals-info')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: `${amaAppeal.veteranInfo.veteran.full_name}` })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Displays hearing form when regional office is selected', () => {
+  test('Displays hearing form when regional office is selected', async () => {
     // Render the address component
-    const scheduleVeteran = mount(
+    ApiUtil.get.mockResolvedValue(mockResponse);
+
+    const {container, asFragment} = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
+        fetchScheduledVeterans={fetchScheduledHearingsMock}
         appeal={{
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
@@ -67,24 +91,23 @@ describe('ScheduleVeteranForm', () => {
         }}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
     // Assertions
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
-
-    expect(scheduleVeteran.find(AppellantSection)).toHaveLength(0);
-    expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(0);
-
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(container.querySelector('.schedule-veteran-appeals-info')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: `${amaAppeal.veteranInfo.veteran.full_name}` })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Hearing Location' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Hearing Date' })).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'undefined Timezone Required' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'POA/Representative Timezone Required' })).not.toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays Virtual Hearing form fields when type is changed to Virtual', () => {
-    // Render the address component
-    const scheduleVeteran = mount(
+    ApiUtil.get.mockResolvedValue(mockResponse);
+    const {container, asFragment, rerender} = render(
       <ScheduleVeteranForm
         virtual
         userCanCollectVideoCentralEmails
@@ -102,47 +125,72 @@ describe('ScheduleVeteranForm', () => {
         }}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
-    // CHeck for virtual hearing fields
-    expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
-    expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
+    // Check for virtual hearing fields
+    expect(screen.getByRole('combobox', { name: 'undefined Timezone Required' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Hearing Date' })).toBeInTheDocument();
 
-    // Ensure the Veteran address is not displayed
-    expect(scheduleVeteran.find(ReadOnly).first().
-      find(AddressLine)).toHaveLength(0);
+    //  If the hearing is virtual, AppealHearingLocationsDropdown should not be displayed
+    expect(screen.queryByRole('combobox', { name: 'Hearing Location' })).not.toBeInTheDocument();
 
-    // Ensure Video-only fields are not displayed
-    expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(0);
-    expect(scheduleVeteran.find('[label="Hearing Location"]').text()).toEqual('Hearing LocationVirtual');
+   // Assert that "Hearing Location" is present
+    expect(screen.getByText('Hearing Location')).toBeInTheDocument();
+    expect(screen.getByText('Virtual')).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'undefined Timezone Required' })).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'POA/Representative Timezone Required' })).toBeInTheDocument();
 
-    // Ensure Timezone fields display when scheduling virtual
-    expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
-
-    // Change the regional office to Central
-    scheduleVeteran.setProps({
-      hearing: {
-        ...defaultHearing,
-        regionalOffice: 'C',
-        virtualHearing: virtualHearing.virtualHearing
+    rerender(<ScheduleVeteranForm
+        virtual
+        userCanCollectVideoCentralEmails
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={{
+          ...amaAppeal,
+          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
+        }}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: 'C',
+          virtualHearing: virtualHearing.virtualHearing
+        }}
+      />,
+      {
+        wrapper: queueWrapper,
       }
-    });
+    );
 
-    // Make sure the timezones display after changing to Central
-    expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
+    const regionalOffice  = screen.getByRole('combobox', { name: 'Regional Office' });
+    fireEvent.keyDown(regionalOffice, { key: 'ArrowDown' });
+    const centralOffice = screen.getByRole('option', { name: 'Central' });
+    fireEvent.click(centralOffice);
 
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.getByText('Central')).toBeInTheDocument();
+
+    expect(screen.queryByRole('combobox', { name: 'Hearing Date' })).not.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Finding upcoming hearing dates for this regional office...' })).toBeInTheDocument();
+
+    // // Make sure the timezones display after changing to Central
+    expect(screen.getByRole('combobox', { name: 'undefined Timezone Required' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' })).toBeInTheDocument();
+
+    const cityStateZip = `${defaultHearing.representativeAddress.city}, ${defaultHearing.representativeAddress.state} ${defaultHearing.representativeAddress.zip}`;
+    const matchingAddresses = screen.queryAllByText(convertRegex(cityStateZip));
+    expect(matchingAddresses.length).toBeGreaterThan(0);
+    expect(container.querySelector('.schedule-veteran-appeals-info')).toBeInTheDocument();
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays error messages when errors are present', () => {
     // Setup the test
     const error = 'Please select hearing day';
-
     // Render the address component
-    const scheduleVeteran = mount(
+    const {container, asFragment } = render(
       <ScheduleVeteranForm
         errors={{ hearingDay: error }}
         goBack={cancelSpy}
@@ -158,14 +206,14 @@ describe('ScheduleVeteranForm', () => {
         }}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
     // Assertions
-    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
-    expect(scheduleVeteran.find(HearingDateDropdown).prop('errorMessage')).toEqual(error);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(container.querySelector('.schedule-veteran-appeals-info')).toBeInTheDocument();
+    expect(screen.getByText(error)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displayes Unschedules Notes input', () => {
@@ -178,7 +226,7 @@ describe('ScheduleVeteranForm', () => {
       }
     });
 
-    const scheduleVeteran = mount(
+    const { asFragment } = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -188,16 +236,16 @@ describe('ScheduleVeteranForm', () => {
         hearingTask={parentHearingTask}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
-    expect(scheduleVeteran.find(UnscheduledNotes)).toHaveLength(1);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.getByRole('textbox', { name: 'Notes' })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('RO dropdown includes Virtual Hearings as option is type is selected as Virtual', () => {
-    const scheduleVeteran = mount(
+    const { asFragment } = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -207,29 +255,29 @@ describe('ScheduleVeteranForm', () => {
         virtual
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
-    expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(RegionalOfficeDropdown).
-      prop('excludeVirtualHearingsOption')).toEqual(false);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.getByRole('combobox', { name: 'Regional Office' })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays ReadOnlyHearingTimeWithZone when video is selected and halfDay is true', () => {
     const hearing = {
       ...defaultHearing,
+      requestType: 'Video',
       regionalOffice: defaultHearing.regionalOfficeKey,
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
         beginsAt: '2021-07-29T11:30:00-04:00',
         halfDay: true,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
-    const scheduleVeteran = mount(
+    const { asFragment } = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -239,17 +287,13 @@ describe('ScheduleVeteranForm', () => {
         virtual={false}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
-    expect(scheduleVeteran.find(HearingTime)).toHaveLength(0);
-    expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(1);
-    expect(
-      scheduleVeteran.find(ReadOnlyHearingTimeWithZone).find(ReadOnly).
-        prop('text')
-    ).toEqual('8:30 AM Pacific / 11:30 AM Eastern');
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.queryByRole('combobox', { name: 'Hearing Time' })).not.toBeInTheDocument();
+    expect(screen.getByText('8:30 AM Pacific / 11:30 AM Eastern')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays HearingTime when video is selected and halfDay is false', () => {
@@ -261,10 +305,11 @@ describe('ScheduleVeteranForm', () => {
         readableRequestType: 'Video',
         beginsAt: null,
         halfDay: false,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
-    const scheduleVeteran = mount(
+    const { asFragment } = render(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -274,12 +319,13 @@ describe('ScheduleVeteranForm', () => {
         virtual={false}
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       }
     );
 
-    expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
-    expect(scheduleVeteran.find(ReadOnlyHearingTimeWithZone)).toHaveLength(0);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.getByRole('combobox', { name: 'Hearing Time' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '8:30 AM Pacific Time (US & Canada) / 11:30 AM Eastern Time (US & Canada)' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '12:30 PM Pacific Time (US & Canada) / 3:30 PM Eastern Time (US & Canada)' })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

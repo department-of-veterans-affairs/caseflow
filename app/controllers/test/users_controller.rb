@@ -6,7 +6,7 @@ Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mo
 CaseflowCertification::Application.load_tasks
 
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :optional_seed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
   skip_before_action :deny_vso_access, only: [:index, :set_user, :show]
 
@@ -14,7 +14,9 @@ class Test::UsersController < ApplicationController
     {
       name: "Queue",
       links: {
-        your_queue: "/queue"
+        your_queue: "/queue",
+        assignment_queue: "/queue/USER_CSS_ID/assign", # USER_CSS_ID is then updated in TestUsers file
+        case_distribution_dashboard: "/acd-controls/test"
       }
     },
     {
@@ -64,7 +66,7 @@ class Test::UsersController < ApplicationController
         admin: "/admin",
         test_veterans: "/test/data",
         metrics_dashboard: "/metrics/dashboard",
-        case_distribution_dashboard: "/acd-controls/test"
+        swagger: "/api-docs"
       }
     }
   ].freeze
@@ -106,6 +108,13 @@ class Test::UsersController < ApplicationController
       Rake::Task["db:seed"].reenable
       Rake::Task["db:seed"].invoke
     end
+    head :ok
+  end
+
+  def optional_seed
+    return unless Rails.deploy_env?(:demo)
+
+    system "bundle exec rake db:seed:optional"
     head :ok
   end
 

@@ -11,6 +11,11 @@ export class ErrorAlert extends React.PureComponent {
         body: 'The dispositions for this task could not be saved.' +
               ' Please try submitting again. If the problem persists, please contact the Caseflow team' +
               ' via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.'
+      },
+      pendingModificationRequests: {
+        title: 'This case has pending issue modification requests',
+        body: 'The dispositions for this task could not be saved.' +
+              ' Please resolve all pending issue modification requests before trying to disposition this claim again'
       }
     }[this.props.errorCode];
 

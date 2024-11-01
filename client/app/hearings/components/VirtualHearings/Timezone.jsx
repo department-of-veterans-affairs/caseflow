@@ -15,9 +15,10 @@ export const Timezone = ({
   time,
   roTimezone,
   required,
-  optional
+  optional,
+  hearingDayDate
 }) => {
-  const { options, commonsCount } = timezones(time, roTimezone);
+  const { options, commonsCount } = timezones(time, roTimezone, hearingDayDate);
 
   return (
     <SearchableDropdown
@@ -53,5 +54,6 @@ Timezone.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   time: PropTypes.string.isRequired,
-  roTimezone: PropTypes.string.isRequired
+  roTimezone: PropTypes.string.isRequired,
+  hearingDayDate: PropTypes.string.isRequired
 };

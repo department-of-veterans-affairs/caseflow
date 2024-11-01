@@ -33,7 +33,7 @@ class CaseDistributionApp extends React.PureComponent {
 
 CaseDistributionApp.propTypes = {
   acdLeversForStore: PropTypes.object,
-  loadAcdExcludeFromAffinity: PropTypes.bool,
+  loadAcdExcludeFromAffinity: PropTypes.func,
   acd_exclude_from_affinity: PropTypes.bool,
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,

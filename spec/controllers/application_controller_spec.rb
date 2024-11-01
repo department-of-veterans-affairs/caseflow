@@ -56,7 +56,7 @@ describe ApplicationController, type: :controller do
       it "sets Cache-Control etc" do
         get :index
 
-        expect(response.headers["Cache-Control"]).to eq "no-cache, no-store"
+        expect(response.headers["Cache-Control"]).to eq "no-store"
       end
     end
   end

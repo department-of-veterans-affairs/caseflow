@@ -60,6 +60,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
     )
   end
 
+  let!(:in_progress_higher_level_review) do
+    create(:higher_level_review,
+           :with_vha_issue,
+           :with_end_product_establishment,
+           :processed,
+           :update_assigned_at,
+           benefit_type: "vha",
+           veteran: veteran,
+           claimant_type: :veteran_claimant)
+  end
+
   # create associated intake
   let!(:intake) do
     create(
@@ -645,7 +656,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
         expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
@@ -694,7 +705,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
         click_intake_add_issue
         click_intake_no_matching_issues
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
 
         expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
         expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
@@ -1593,11 +1604,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
         end
 
         expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
-        fill_in(with: "")
+        find("textarea").fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
         expect(page).to have_button("Submit", disabled: true)
 
-        fill_in(with: "Right Knee")
+        find("textarea").fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)
         click_button("Submit")
         expect(page).to have_content("Right Knee")
@@ -1637,6 +1648,123 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+  end
+
+  context "For VHA Admin" do
+    before do
+      vha_org.add_user(current_user)
+      OrganizationsUser.make_user_admin(current_user, vha_org)
+    end
+    let(:edit_issue_url) { in_progress_higher_level_review.caseflow_only_edit_issues_url }
+    let(:vha_org) { VhaBusinessLine.singleton }
+
+    it "should require decision date if task is in progress or assigned status" do
+      visit edit_issue_url
+
+      step "should display Decision date required banner for Vha Admin" do
+        expect(in_progress_higher_level_review.task_in_progress?).to be true
+        expect(page).to have_content("Add issue")
+        click_on "Add issue"
+        expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+        expect(page).to have_current_path(in_progress_higher_level_review.caseflow_only_edit_issues_url)
+        expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+      end
+
+      step "should require decision date" do
+        expect(page).to have_content("Decision date")
+        fill_in "Issue category", with: "Beneficiary Travel"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "I am a VHA issue"
+        expect(page).to have_button("Add this issue", disabled: true)
+        find("#decision-date").set(1.month.ago.strftime("%m/%d/%Y"))
+        safe_click "#decision-date"
+        expect(page).to have_button("Add this issue", disabled: false)
+      end
+    end
+
+    it "should required decision date if unidentified issue is being added" do
+      visit edit_issue_url
+      expect(in_progress_higher_level_review.task_in_progress?).to be true
+      click_on "Add issue"
+      # click on "None of these match, see more options"
+      safe_click "#Add-issue-2-button-id-2"
+      expect(page).to have_text("Describe the issue to mark it as needing further review.")
+      fill_in "Transcribe the issue as it's written on the form", with: "unindentified test"
+      expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+      expect(page).to have_button("Add this issue", disabled: true)
+      find("#decision-date").set(1.month.ago.strftime("%m/%d/%Y"))
+      safe_click "#decision-date"
+      expect(page).to have_button("Add this issue", disabled: false)
+    end
+  end
+
+  context "when remove_comp_and_pen_intake is enabled and benefit type is compensation or pension" do
+    %w[pension compensation].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:higher_level_review_disable) do
+          create(
+            :higher_level_review,
+            :processed,
+            intake: create(:intake),
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            informal_conference: false,
+            same_office: false,
+            benefit_type: benefit_type
+          )
+        end
+
+        let(:request_issue_disable) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: higher_level_review_disable,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
+
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          higher_level_review_disable.create_issues!([request_issue_disable])
+          higher_level_review_disable.establish!
+          higher_level_review_disable.reload
+          request_issue.reload
+        end
+
+        after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
+
+        it "Requested issues dropdown is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
+          expect(page).to have_content(benefit_type.capitalize)
+        end
+
+        it "Edit claim label button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit claim label", disabled: true)
+        end
+
+        it "Add Issue button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Add issue", disabled: true)
+        end
+
+        it "Edit contention title button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit contention title", disabled: true)
+        end
       end
     end
   end

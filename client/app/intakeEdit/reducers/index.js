@@ -5,6 +5,7 @@ import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
+import { formatIssueModificationRequests } from '../../intake/util/issueModificationRequests';
 
 export const mapDataToInitialState = function(props = {}) {
   const {
@@ -13,10 +14,16 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
+    userIsVhaAdmin,
     userCanSplitAppeal,
+    userCanRequestIssueUpdates,
+    isRemand,
+    userFullName,
+    userCssId,
     isLegacy,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
@@ -39,7 +46,12 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
+    userIsVhaAdmin,
     userCanSplitAppeal,
+    userCanRequestIssueUpdates,
+    isRemand,
+    userCssId,
+    userFullName,
     isLegacy,
     addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
@@ -48,6 +60,9 @@ export const mapDataToInitialState = function(props = {}) {
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
     addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
+    originalPendingIssueModificationRequests:
+      formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
@@ -57,7 +72,8 @@ export const mapDataToInitialState = function(props = {}) {
     updatedIssues: null,
     editEpUpdateError: null,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   };
 };
 

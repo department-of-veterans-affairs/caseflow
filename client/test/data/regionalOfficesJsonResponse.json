@@ -178,9 +178,7 @@
       "timezone": "America/Chicago",
       "state": "TN",
       "alternate_locations": [
-        "vc_0720V",
-        "vc_0719V",
-        "vha_626GF"
+        "vc_0719V"
       ],
       "facility_locator_id": "vba_320",
       "city": "Nashville"
@@ -497,13 +495,15 @@
       "state": "OR",
       "alternate_locations": [
         "vba_347",
+        "vha_653QA",
         "vha_653GB",
         "vha_648GA",
         "vha_692GA",
         "vha_687GC",
         "vha_653GA",
         "vba_346",
-        "vha_692"
+        "vha_692",
+        "vha_692GB"
       ],
       "facility_locator_id": "vba_348",
       "city": "Portland"
@@ -552,7 +552,7 @@
       "timezone": "America/Los_Angeles",
       "state": "NV",
       "alternate_locations": [
-        "vha_593", "vc_0505V"
+        "vha_593"
       ],
       "facility_locator_id": "vba_354",
       "city": "Reno"
@@ -607,7 +607,7 @@
     "RO63": {
       "label": "Anchorage regional office",
       "hold_hearings": true,
-      "timezone": "America/Anchorage",
+      "timezone": "America/Juneau",
       "state": "AK",
       "alternate_locations": null,
       "facility_locator_id": "vba_463",

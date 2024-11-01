@@ -6,7 +6,7 @@
 ##
 # rubocop:disable Rails/ApplicationMailer
 class DispatchMailer < ActionMailer::Base
-  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
+  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsDecisions@messages.va.gov>"
   layout "dispatch_mailer"
   helper VirtualHearings::LinkHelper
 

@@ -143,6 +143,10 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def can_be_performed?
+    validate_before_perform
+  end
+
   private
 
   def changes?
@@ -154,7 +158,16 @@ class RequestIssuesUpdate < CaseflowRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.find_or_build_request_issue_from_intake_data(issue_data)
+      request_issue = review.find_or_build_request_issue_from_intake_data(issue_data)
+
+      # If the data has a issue modification request id here, then add it in as an association
+      issue_modification_request_id = issue_data[:issue_modification_request_id]
+      if issue_modification_request_id && request_issue
+        issue_modification_request = IssueModificationRequest.find(issue_modification_request_id)
+        request_issue.issue_modification_requests << issue_modification_request
+      end
+
+      request_issue
     end
   end
 
@@ -224,9 +237,6 @@ class RequestIssuesUpdate < CaseflowRecord
     if !changes?
       @error_code = :no_changes
     elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-      if @error_code == :no_changes
-        RequestIssuesUpdate.where(review: review).where.not(id: id).processable.last.destroy
-      end
       @error_code = :previous_update_not_done_processing
     end
 

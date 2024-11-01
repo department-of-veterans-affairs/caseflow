@@ -1,0 +1,11 @@
+type: object
+title: Upload Payload
+description: Payload containing content name and the provider specific data. <a href="#model-payload">Schema can be found here.</a>
+required:
+  - contentName
+  - providerData
+properties:
+  contentName:
+    $ref: './contentName.yml'
+  providerData:
+    $ref: './uploadProviderDataRequest.yml'

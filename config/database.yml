@@ -18,26 +18,6 @@ default: &default
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
 
-demo:
-  <<: *default
-  database: caseflow_certification_demo
-
-ssh_forwarding:
-  <<: *default
-  database: caseflow_certification_ssh_forwarding
-
-development:
-  <<: *default
-  database: caseflow_certification_development
-
-staging:
-  <<: *default
-  database: caseflow_certification_staging
-
-production:
-  <<: *default
-  url: <%= ENV["POSTGRES_URL"] %>
-
 # NOTE Rails 6 has native support for multiple databases,
 # and this configuration should change to nest "primary" and "etl" and "vacols"
 # under each env name, per
@@ -51,83 +31,126 @@ etl_default: &etl_default
   <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   <% end %>
+  migrations_paths: db/etl_migrate
 
-etl_development:
-  <<: *etl_default
-  database: caseflow_etl_development
-
-etl_test:
-  <<: *etl_default
-  database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
-
-etl_production:
-  <<: *etl_default
-  url: <%= ENV["ETL_DB_URL"] %>
-
-development_vacols:
-  adapter: oracle_enhanced
-  username: VACOLS_DEV
-  password: VACOLS_DEV
-  <% if ! ENV['DOCKERIZED'] %>
-  host: localhost
-  port: 1521
-  <% end %>
-  database: <%= ENV['DEMO_DB'] || "BVAP" %>
-
-demo_vacols:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/demo-vacols.sqlite3
-
-ssh_forwarding_vacols:
-  adapter: oracle_enhanced
-  host: localhost
-  port: 1526
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  database: BVAP
-
-staging_vacols:
-  adapter: oracle_enhanced
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  host: vacols.dev.vaco.va.gov
-  port: 1526
-  database: BVAP.VACO.VA.GOV
-
-production_vacols:
-  adapter: oracle_enhanced
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  host: <%= ENV["VACOLS_HOST"] %>
-  port: <%= ENV["VACOLS_PORT"] %>
-  database: <%= ENV["VACOLS_DATABASE"] %>
-  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+development:
+  primary:
+    <<: *default
+    database: caseflow_certification_development
+  etl:
+    <<: *etl_default
+    database: caseflow_etl_development
+  vacols:
+    adapter: oracle_enhanced
+    username: VACOLS_DEV
+    password: VACOLS_DEV
+    <% if ENV["DOCKERIZED"] %>
+    host: vacols-db
+    <% else %>
+    host: localhost
+    <% end %>
+    port: 1521
+    database: <%= ENV['DOCKER_DB'] || "BVAP" %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
-  database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
-  <% if ENV['POSTGRES_HOST'] %>
-  host: <%= ENV['POSTGRES_HOST'] %>
-  <% end %>
-  <% if ENV['POSTGRES_PASSWORD'] %>
-  password: <%= ENV['POSTGRES_PASSWORD'] %>
-  <% end %>
+  primary:
+    <<: *default
+    username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+    database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
+    <% if ENV['POSTGRES_HOST'] %>
+    host: <%= ENV['POSTGRES_HOST'] %>
+    <% end %>
+    <% if ENV['POSTGRES_PASSWORD'] %>
+    password: <%= ENV['POSTGRES_PASSWORD'] %>
+    <% end %>
+  etl:
+    <<: *etl_default
+    database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+  # Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
+  # Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
+  # Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
+  vacols:
+    adapter: oracle_enhanced
+    username: VACOLS_TEST
+    password: VACOLS_TEST
+    database: "(DESCRIPTION=
+      (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=<%= ENV['TEST_VACOLS_HOST']%>)(PORT=1521)))
+      (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
+      (CONNECT_DATA=(SID=BVAP))
+    )"
 
-# Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
-# Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
-# Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
-test_vacols:
-  adapter: oracle_enhanced
-  username: VACOLS_TEST
-  password: VACOLS_TEST
-  database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=<%= ENV['TEST_VACOLS_HOST']%>)(PORT=1521)))
-    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
-    (CONNECT_DATA=(SID=BVAP))
-  )"
+# For use by GH workflow `Make-docs-to-webpage` (See `.github/workflows/make-docs.yml`)
+make_docs:
+  primary:
+    <<: *default
+    username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+    database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
+    <% if ENV['POSTGRES_HOST'] %>
+    host: <%= ENV['POSTGRES_HOST'] %>
+    <% end %>
+    <% if ENV['POSTGRES_PASSWORD'] %>
+    password: <%= ENV['POSTGRES_PASSWORD'] %>
+    <% end %>
+  etl:
+    <<: *etl_default
+    database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+  # Even though it won't be used, Rails expects a 'vacols' DB configuration due to
+  #   VACOLS::Record `establish_connection :vacols`
+  vacols:
+    adapter: postgresql
+    pool: 1
+    timeout: 5000
+    database: test-vacols
+
+demo:
+  primary:
+    <<: *default
+    database: caseflow_certification_demo
+  vacols:
+    adapter: sqlite3
+    pool: 5
+    timeout: 5000
+    database: db/demo-vacols.sqlite3
+
+ssh_forwarding:
+  primary:
+    <<: *default
+    database: caseflow_certification_ssh_forwarding
+  vacols:
+    adapter: oracle_enhanced
+    host: localhost
+    port: 1526
+    username: <%= ENV["VACOLS_USERNAME"] %>
+    password: <%= ENV["VACOLS_PASSWORD"] %>
+    database: BVAP
+
+staging:
+  primary:
+    <<: *default
+    database: caseflow_certification_staging
+  vacols:
+    adapter: oracle_enhanced
+    username: <%= ENV["VACOLS_USERNAME"] %>
+    password: <%= ENV["VACOLS_PASSWORD"] %>
+    host: vacols.dev.vaco.va.gov
+    port: 1526
+    database: BVAP.VACO.VA.GOV
+
+production:
+  primary:
+    <<: *default
+    url: <%= ENV["POSTGRES_URL"] %>
+  etl:
+    <<: *etl_default
+    url: <%= ENV["ETL_DB_URL"] %>
+  vacols:
+    adapter: oracle_enhanced
+    username: <%= ENV["VACOLS_USERNAME"] %>
+    password: <%= ENV["VACOLS_PASSWORD"] %>
+    host: <%= ENV["VACOLS_HOST"] %>
+    port: <%= ENV["VACOLS_PORT"] %>
+    database: <%= ENV["VACOLS_DATABASE"] %>
+    pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>

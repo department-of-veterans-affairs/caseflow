@@ -25,7 +25,7 @@
 
 4. Change directory to appeals by typing: `cd appeals`
 
-5. Navigate to [instant client](https://www.oracle.com/database/tecdchnologies/instant-client/linux-x86-64-downloads.html)
+5. Navigate to [instant client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html)
 
 6. Download the following zip files (Step can be skipped if you received the file transfer files)
     * instantclient-basic-linux.x64-12.2.0.1.0.zip
@@ -96,12 +96,12 @@
 
 27. Run `make reset`
    * If issues occur:
-      1.  Run `bundle exec rake db:create`
+      1.  Run `bundle exec rake db:create:primary`
          * If you get connection issues stating no file to be found, run the following:
             * `rm /opt/homebrew/var/postgres/postmaster.pid` or possibly `rm /usr/local/var/postgres/postmaster.pid`
             * `brew services restart postgresql`
       2. Run `bundle exec rake local:vacols:seed`
-      3. Run `bundle exec rake db:schema:load db:seed`
+      3. Run `bundle exec rake db:schema:load:primary db:seed`
 
 27. Open a new tab in terminal
 

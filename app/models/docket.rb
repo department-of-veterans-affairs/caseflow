@@ -5,21 +5,28 @@ class Docket
   include DistributionConcern
   include DistributionScopes
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
-  def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
+  def appeals(priority: nil, genpop: nil, ready: nil, judge: nil, not_affinity: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
-    scope = docket_appeals.active
+    scope = docket_appeals
+
+    # The `ready_for_distribution` scope will functionally add a filter for active appeals, and adding it here first
+    # will cause that scope to always return zero appeals.
+    scope = scope.active unless ready
 
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      scope = adjust_for_affinity(scope, not_affinity, judge) if FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -27,6 +34,23 @@ class Docket
     scope = scope.nonpriority if priority == false
 
     scope.order("appeals.receipt_date")
+  end
+
+  def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil, not_affinity: nil)
+    priority_status = priority ? PRIORITY : NON_PRIORITY
+    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge, not_affinity: not_affinity)
+    lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
+    docket_type_lever = CaseDistributionLever.find_by_item(lever_item)
+    docket_type_lever_value = docket_type_lever ? CaseDistributionLever.public_send(lever_item) : nil
+
+    if docket_type_lever_value == "true"
+      appeals.none
+    elsif priority_status == NON_PRIORITY &&
+          start_distribution_prior_to_goal&.is_toggle_active && calculate_days_for_time_goal_with_prior_to_goal > 0
+      appeals.where("appeals.receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
+    else
+      appeals
+    end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -40,7 +64,7 @@ class Docket
 
   # currently this is used for reporting needs
   def ready_to_distribute_appeals
-    docket_appeals.active.ready_for_distribution
+    docket_appeals.ready_for_distribution
   end
 
   def genpop_priority_count
@@ -56,25 +80,28 @@ class Docket
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
-    appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
+    ready_priority_nonpriority_appeals(
+      priority: true,
+      ready: true,
+      genpop: true
+    ).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
-    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
-  # but the judge that is passed in isn't relevant here
-  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    ready_priority_nonpriority_appeals(priority: false, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
     @age_of_oldest_priority_appeal ||=
       if use_by_docket_date?
-        appeals(priority: true, ready: true).limit(1).first&.receipt_date
+        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true).limit(1).first&.receipt_date
       else
-        appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true)
+          .limit(1).first&.ready_for_distribution_at
       end
   end
 
@@ -88,6 +115,12 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
+  def tied_to_vljs(judge_ids)
+    docket_appeals.ready_for_distribution
+      .most_recent_hearings
+      .tied_to_judges(judge_ids)
+  end
+
   # rubocop:disable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
@@ -95,7 +128,12 @@ class Docket
       query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
       appeals, sct_appeals = create_sct_appeals(query_args, limit)
     else
-      appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+      appeals = ready_priority_nonpriority_appeals(
+        priority: priority,
+        ready: true,
+        genpop: genpop,
+        judge: distribution.judge
+      ).limit(limit)
       sct_appeals = []
     end
 
@@ -130,6 +168,41 @@ class Docket
       .pluck(:id).size
   end
 
+  # used for distribution_stats
+  # :reek:ControlParameter
+  # :reek:FeatureEnvy
+  def affinity_date_count(in_window, priority)
+    scope = docket_appeals.ready_for_distribution
+
+    scope = if in_window
+              scope.non_genpop_by_affinity_start_date
+            else
+              scope.genpop_by_affinity_start_date
+            end
+
+    return scoped_for_priority(scope).ids.size if priority
+
+    scope.nonpriority.ids.size
+  end
+
+  def calculate_days_for_time_goal_with_prior_to_goal
+    return 0 unless docket_time_goal > 0
+
+    docket_time_goal - Integer(start_distribution_prior_to_goal.value)
+  end
+
+  def docket_time_goal
+    @docket_time_goal ||= begin
+      does_lever_exist = CaseDistributionLever.exists?(item: "ama_#{docket_type}_docket_time_goals")
+      does_lever_exist ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : 0
+    end
+  end
+
+  def start_distribution_prior_to_goal
+    @start_distribution_prior_to_goal ||=
+      CaseDistributionLever.find_by(item: "ama_#{docket_type}_start_distribution_prior_to_goals")
+  end
+
   private
 
   # :reek:ControlParameter
@@ -137,8 +210,14 @@ class Docket
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
-  def adjust_for_affinity(scope, judge)
-    scope.genpop.or(scope.non_genpop_for_judge(judge))
+  def adjust_for_affinity(scope, not_affinity, judge = nil)
+    if judge.present?
+      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+    elsif not_affinity
+      scope
+    else
+      scope.genpop_with_case_distribution_lever
+    end
   end
 
   def scoped_for_priority(scope)
