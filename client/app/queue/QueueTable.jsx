@@ -413,7 +413,6 @@ class QueueTableUnConnected extends React.PureComponent {
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
 
-        console.log(columnAndValues, columnName, column);
         // Using a more complex split than | to work with issue category strings that contain |
         // This essentially will still split values on '|' but not on ' | '
         const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
@@ -428,10 +427,8 @@ class QueueTableUnConnected extends React.PureComponent {
             // If this is a client side queue, it won't have filterOptions since the options are built dynamically
             // Potentially need to decode the value since it could be set between client side and server side queues
             // Have to double decode because the filter options are often double encoded
-            console.log(this.props);
             const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
 
-            console.log(column.columnName);
             filters[column.columnName] = decodedValues;
           }
 
