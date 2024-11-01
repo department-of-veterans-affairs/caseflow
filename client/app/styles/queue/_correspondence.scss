@@ -1634,6 +1634,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .task-added-header {
   font-weight: bold;
   font-size: 15px;
+  padding-right: 1.5rem;
+  margin-bottom: 12px;
 }
 
 .number-of-issues-header {
@@ -1657,6 +1659,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .corr-tasks-added-col {
   flex-direction: column;
   width: 15%;
+  padding: 0 1.5rem 0 0;
+  //display: inline-block;
 
   .stream-type {
     text-transform: capitalize;
@@ -1665,6 +1669,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .corr-tasks-added-col:not(:last-child) .task-added-value{
   border-right: 2px solid #ccc;
   margin-right: 3%;
+  padding-right: 1.5rem;
 }
 
 .first-row {
