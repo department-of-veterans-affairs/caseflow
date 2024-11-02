@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import Mark from 'mark.js';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from '../../components/Button';
@@ -90,7 +91,7 @@ const ReaderSearchBar = () => {
     []
   );
 
-  const onChange = (value) => {
+  const onChange = debounce((value) => {
     setFoundIndex(0);
 
     if (value === '') {
@@ -110,7 +111,7 @@ const ReaderSearchBar = () => {
         },
       });
     }
-  };
+  }, 500);
 
   const index = foundCount === 0 ? 0 : foundIndex + 1;
   const internalText = `${index} of ${foundCount > 9999 ? 'many' : foundCount}`;

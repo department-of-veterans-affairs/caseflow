@@ -138,6 +138,7 @@ const DocumentViewer = (props) => {
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
+              isSearching={showSearchBar}
             />
           </div>
           <ReaderFooter
