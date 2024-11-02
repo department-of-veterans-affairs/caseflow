@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_29_152313) do
+ActiveRecord::Schema.define(version: 2024_11_02_024601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2565,4 +2565,6 @@ ActiveRecord::Schema.define(version: 2024_10_29_152313) do
        LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
+  add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
+
 end
