@@ -4,6 +4,7 @@ exports[`TranscriptionDetailsWebex matches snapshot 1`] = `
 <div>
   <div
     data-css-1tr8n64=""
+    data-testid="transcription-details-webex"
   >
     <h2>
       Transcription

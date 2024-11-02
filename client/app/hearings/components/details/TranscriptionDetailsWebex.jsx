@@ -45,7 +45,7 @@ const validateReturnDate = (returnDate, expectedReturnDate) => {
 
 const TranscriptionDetailsWebex = ({ transcription, title, readOnly }) => {
   return (
-    <div {...detailStyles}>
+    <div {...detailStyles} data-testid="transcription-details-webex">
       <h2>{title}</h2>
       <div {...rowThirds}>
         <div>
