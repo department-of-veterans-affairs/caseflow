@@ -1,12 +1,15 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import * as PDFJS from 'pdfjs-dist';
+import PropTypes from 'prop-types';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import usePageVisibility from '../hooks/usePageVisibility';
 
 // Similar to the behavior in Page.jsx, we need to manipulate height and width
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
 const TextLayer = memo((props) => {
-  const { page, zoomLevel, rotation } = props;
+  // isSearching is used to trigger a re-render so that the text layer is searchable for all pages
+  // eslint-disable-next-line no-unused-vars
+  const { page, zoomLevel, rotation, isSearching } = props;
 
   // We need to prevent multiple renderings of text to prevent doubling up. Without
   // tracking this, the search bar will report double the number of found instances
@@ -14,6 +17,9 @@ const TextLayer = memo((props) => {
   const scale = zoomLevel / 100;
   const viewport = page.getViewport({ scale: 1 });
   const textLayerRef = useRef(null);
+  const textContentRef = useRef(null);
+  const isVisible = usePageVisibility(textLayerRef);
+
   let positionX = 0;
   let positionY = 0;
 
@@ -41,36 +47,43 @@ const TextLayer = memo((props) => {
   };
 
   useEffect(() => {
-    const getPageText = async () => {
-      page.
-        getTextContent().
-        then((pageText) => {
-          PDFJS.renderTextLayer({
-            textContent: pageText,
-            container: textLayerRef.current,
-            viewport,
-            textDivs: [],
-          });
-          setHasRenderedText(true);
-        }).
-        catch(() => {
-          // this catch is necessary to prevent the error: TypeError: Cannot read properties of null
-          // (reading 'ownerDocument')
-        });
+    const getPageText = () => {
+      page.getTextContent().then((result) => {
+        textContentRef.current = result;
+      });
     };
 
-    if (textLayerRef.current && !hasRenderedText) {
+    if (textLayerRef.current && !textContentRef.current && !hasRenderedText) {
       getPageText();
     }
   }, [textLayerRef.current]);
 
-  return <div ref={textLayerRef} className="cf-pdf-pdfjs-textLayer" style={textLayerStyle} />;
+  useEffect(() => {
+    if (textLayerRef.current && textContentRef.current && !hasRenderedText) {
+      PDFJS.renderTextLayer({
+        textContent: textContentRef.current,
+        container: textLayerRef.current,
+        viewport,
+        textDivs: [],
+      });
+      setHasRenderedText(true);
+    }
+  }, [textLayerRef.current, textContentRef.current, hasRenderedText, isVisible]);
+
+  return (
+    <div
+      ref={textLayerRef}
+      className="cf-pdf-pdfjs-textLayer"
+      style={textLayerStyle}
+    />
+  );
 });
 
 TextLayer.propTypes = {
   page: PropTypes.any,
   zoomLevel: PropTypes.number,
   rotation: PropTypes.string,
+  isSearching: PropTypes.bool
 };
 
 export default TextLayer;

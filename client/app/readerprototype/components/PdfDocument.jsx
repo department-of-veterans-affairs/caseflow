@@ -21,7 +21,9 @@ const PdfDocument = ({
   setIsDocumentLoadError,
   setNumPages,
   setCurrentPage,
-  zoomLevel }) => {
+  zoomLevel,
+  isSearching
+}) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -187,7 +189,7 @@ const PdfDocument = ({
           renderItem={(childProps) => (
             <Layer isCurrentPage={currentPage === page.pageNumber}
               documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
+              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} isSearching={isSearching} />
             </Layer>
           )}
           setRenderingMetrics={handleRenderingMetrics}
