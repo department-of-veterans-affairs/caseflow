@@ -43,7 +43,7 @@ if [[ $# -gt 1 ]]; then
 fi
 
 build(){
-  build_facols_dir="${THIS_SCRIPT_DIR}/build_facols"
+  build_facols_dir="${THIS_SCRIPT_DIR}/build_facols_AMD"
 
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
@@ -70,7 +70,7 @@ build(){
   echo "--------"
   echo ""
 
-  docker build --force-rm --no-cache --tag  vacols_db:latest $build_facols_dir
+  docker build --force-rm --no-cache --tag  vacols_db:latest $build_facols_dir --platform=linux/amd64
   docker_build_result=$?
   echo ""
   echo "--------"
@@ -91,12 +91,12 @@ build(){
 }
 
 push(){
-  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com
+  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com
   docker tag vacols_db:latest vacols_db:${today}
-  docker tag vacols_db:${today} 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
-  docker tag vacols_db:latest 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
-  if docker push 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today} ; then
-    docker push 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+  docker tag vacols_db:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
+  docker tag vacols_db:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+  if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today} ; then
+    docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
     echo "${bold}Success. ${normal}The latest docker image has been pushed."
   else
     echo "${bold}Failed to Upload. ${normal}Probably you don't have permissions to do this. Ask the DevOps Team please"
@@ -107,7 +107,7 @@ push(){
 download(){
   # get circleci latest image from this same repo
   facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep -m 1 facols | awk '{print $3}')
-  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com
+  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com
   docker pull $facols_image
   docker tag $facols_image vacols_db:latest
 }
