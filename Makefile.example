@@ -64,30 +64,15 @@ run-cmd:
 	docker-compose run --rm rails $(RUN_ARGS)
 
 up:  ## Start the docker containers
-	docker-compose up -d
-
-up-m1:  ## Start the docker containers on a M1 Mac
-	docker-compose up -d
-
-up-docker:  ## Start the docker containers on a M1 Mac
-	docker-compose up -d
+	docker-compose up
 
 down:	## Stop the docker containers
-	docker-compose down
-
-down-m1:  ## Stop the docker containers on a M1 Mac
 	docker-compose down
 
 run: up ready  ## Start rails server and frontend server
 	foreman start
 
-run-m1: up-m1 ready  ## Start rails server and frontend server on a M1 Mac
-	foreman start
-
 run-backend: up ready  ## Start rails server without the frontend
-	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
-
-run-backend-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
 	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
 
 run-frontend: ## Start just the frontend server
@@ -96,9 +81,6 @@ run-frontend: ## Start just the frontend server
 ## These "cold" commands makes the app take significantly less resources
 ## However this does require a page refresh in the browser to pick up changes
 run-backend-cold: up ready  ## Start rails server without the frontend
-	bundle exec rails s -p 3000
-
-run-backend-cold-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
 	bundle exec rails s -p 3000
 
 run-frontend-cold: ## Start just the frontend server
@@ -110,6 +92,8 @@ storybook: ## run Storybook
 test: clean  ## Run test suite
 	bundle exec rake
 
+build-local: clean build-facols refresh ready reset
+
 clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
 	rm -f log/test.log
@@ -117,26 +101,23 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 	rm -f log/logstasher.log
-
-realclean: clean ## TODO
-	rm -rf client/node_modules
-	rm -f client/package-lock.json
+	# rm -rf client/node_modules
+	# rm -f client/package-lock.json
 
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## Connect directly to the FACOLS oracle database
+facols-db:  ## Connect directly to the FACOLS oracle database
 	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 download-facols:	## Download the FACOLS Docker image
 	./local/vacols/build_push.sh rake
 
+build-facols:
+	./local/vacols/build_oracle.sh -v 19.3.0 -e
+
 sqs-conf-dir:	## Create local required dir
 	mkdir -p local/sqs/conf
-
-build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
-
-build-m1: clean sqs-conf-dir download-facols up-m1 ready reset	## First time local dev setup on a M1 Mac
 
 destroy: clean
 	bundle exec rake local:destroy
