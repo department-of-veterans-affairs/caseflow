@@ -149,15 +149,27 @@
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealsJSON",
-    "targetType": [],
+    "targetType": [{
+      "value": "veteran",
+      "label": "Veteran"
+    }],
     "targetId": "Veteran file_number"
   },
   {"scenario": "apiV3ContestableIssues",
-    "targetType": [],
-    "targetId": "Supplemental Claim benefit_type"
+    "targetType": [{
+      "value": "supplementalClaim",
+      "label": "Supplemental Claim"
+    }],
+    "targetId": "Supplemental Claim uuid"
   },
   {"scenario": "appealShowJSON",
-    "targetType": [],
+    "targetType": [{
+      "value": "appeal",
+      "label": "Appeal"
+    }, {
+      "value": "legacy_appeal",
+      "label": "Legacy Appeal"
+    }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   }
 ]
