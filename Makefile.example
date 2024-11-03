@@ -92,7 +92,7 @@ storybook: ## run Storybook
 test: clean  ## Run test suite
 	bundle exec rake
 
-build-local: clean build-facols refresh ready reset
+build-local: clean build-facols refresh reset
 
 clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
