@@ -41,6 +41,7 @@ import { datePickerFilterValue } from 'app/components/DatePicker';
 import { encodeQueryParams } from 'app/util/QueryParamsUtil';
 import { when } from 'jest-when';
 import ApiUtil from 'app/util/ApiUtil';
+import COPY from '../../../COPY';
 
 jest.mock('classnames');
 
@@ -658,8 +659,8 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'Between these dates');
 
-        enterInputValue('start-date', '2024-05-01');
-        enterInputValue('end-date', '2024-05-10');
+        enterInputValue(COPY.DATE_PICKER_FROM, '2024-05-01');
+        enterInputValue(COPY.DATE_PICKER_TO, '2024-05-10');
 
         clickSubmissionButton('Apply Filter');
 
@@ -688,7 +689,7 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'Before this date');
 
-        enterInputValue('start-date', '2024-05-10');
+        enterInputValue(COPY.DATE_PICKER_DATE, '2024-05-10');
 
         clickSubmissionButton('Apply Filter');
 
@@ -716,7 +717,7 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'After this date');
 
-        enterInputValue('start-date', '2024-05-15');
+        enterInputValue(COPY.DATE_PICKER_DATE, '2024-05-15');
 
         clickSubmissionButton('Apply Filter');
 
@@ -740,7 +741,7 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'On this date');
 
-        enterInputValue('start-date', '2024-05-15');
+        enterInputValue(COPY.DATE_PICKER_DATE, '2024-05-15');
 
         clickSubmissionButton('Apply Filter');
 
@@ -760,7 +761,7 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'On this date');
 
-        enterInputValue('start-date', '2024-05-15');
+        enterInputValue(COPY.DATE_PICKER_DATE, '2024-05-15');
 
         clickSubmissionButton('Apply Filter');
 
@@ -869,7 +870,7 @@ describe('QueueTable', () => {
 
         selectFromDropdown('Date filter parameters', 'On this date');
 
-        enterInputValue('start-date', '2024-05-15');
+        enterInputValue(COPY.DATE_PICKER_DATE, '2024-05-15');
 
         clickSubmissionButton('Apply Filter');
 
