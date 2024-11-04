@@ -211,7 +211,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     genpop_base_query
       .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
              lever_days.days.ago)
-      .where(original_judge_task: { assigned_to_id: judge&.id })
+      .where("original_judge_task.assigned_to_id = ? OR
+        (appeals.stream_type != 'court_remand' and original_judge_task.id is null)", judge&.id)
   end
 
   def non_genpop_by_affinity_start_date
