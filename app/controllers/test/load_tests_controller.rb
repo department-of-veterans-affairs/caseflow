@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./scripts/enable_features_dev.rb"
+require "./scripts/enable_features_dev"
 require "digest"
 require "securerandom"
 require "base64"
@@ -44,11 +44,11 @@ class Test::LoadTestsController < ApplicationController
 
     # Set up Jenkins crumbIssuer URI
     crumb_issuer_uri = URI(ENV["JENKINS_CRUMB_ISSUER_URI"])
+    crumb_issuer_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
     http = Net::HTTP.new(crumb_issuer_uri.host, crumb_issuer_uri.port)
 
     # Create GET request to crumbIssuer and get back response containing the crumb
     crumb_request = Net::HTTP::Get.new(crumb_issuer_uri.request_uri)
-    crumb_request.basic_auth ENV["JENKINS_USERNAME"], ENV["JENKINS_API_TOKEN"]
     crumb_response = http.request(crumb_request)
 
     # If the crumbIssuer response is successful, send the Jenkins request to kick off the pipeline
@@ -106,9 +106,7 @@ class Test::LoadTestsController < ApplicationController
       target_data_column = "file_number"
     end
 
-    target_id = get_target_data_id(params[:target_id], target_data_type, target_data_column)
-
-    target_id
+    get_target_data_id(params[:target_id], target_data_type, target_data_column)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
@@ -242,9 +240,11 @@ class Test::LoadTestsController < ApplicationController
     end
   end
 
-  # Only accessible from non-prod environment
+  # Only accessible from prod-test environment
   def check_environment
-    return render status: :not_found if Rails.deploy_env == :production
+    return true if Rails.deploy_env?(:prodtest)
+
+    redirect_to "/404"
   end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
@@ -270,14 +270,12 @@ class Test::LoadTestsController < ApplicationController
   # Sends the request and raises an error if there are any failures
   def send_jenkins_run_request(request_headers, encoded_test_recipe)
     # Set up Jenkins pipeline URI with parameters
-    jenkins_pipeline_uri = URI(ENV["JENKINS_PIPELINE_URI"])
-    jenkins_pipeline_uri.query = URI.encode_www_form({ token: ENV["JENKINS_PIPELINE_TOKEN"],
-                                                       testRecipe: encoded_test_recipe })
+    jenkins_pipeline_uri = URI(ENV["LOAD_TESTING_PIPELINE_URI"])
+    jenkins_pipeline_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
     http = Net::HTTP.new(jenkins_pipeline_uri.host, jenkins_pipeline_uri.port)
 
     # Create POST request to Jenkins pipeline
     jenkins_run_request = Net::HTTP::Post.new(jenkins_pipeline_uri, request_headers)
-    jenkins_run_request.basic_auth ENV["JENKINS_USERNAME"], ENV["JENKINS_API_TOKEN"]
     jenkins_run_request.body = encoded_test_recipe
     jenkins_response = http.request(jenkins_run_request)
 
