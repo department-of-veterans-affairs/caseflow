@@ -16,11 +16,11 @@ RUN apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends $BUILD && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . $APP_HOME
-
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
 ORACLE_HOME="/opt/oracle/instantclient_19_24" \
 OCI_DIR="/opt/oracle/instantclient_19_24"
+
+COPY . $APP_HOME
 
 WORKDIR /opt/oracle
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linux-arm64.zip
