@@ -2,12 +2,12 @@
 
 shared_context "sync_vet_remediations" do
   # rubocop:disable Layout/HashAlignment
-  let(:person_remediation_event_record) do
+  let(:person_event_record) do
     {
       "id" => 4296,
       "event_id" => 1540,
       "created_at" => DateTime.new(2022, 1, 2),
-      "updated_at" => DateTime.new(2022, 1, 1),
+      "updated_at" => DateTime.now,
       "evented_record_type" => "Person",
       "evented_record_id" => 5854,
       "info" =>
@@ -39,18 +39,18 @@ shared_context "sync_vet_remediations" do
     }
   end
 
-  let(:veteran_remediation_event_record) do
+  let(:veteran_event_record) do
     {
       "id" => 4296,
       "event_id" => 1540,
       "created_at" => DateTime.new(2022, 1, 2),
-      "updated_at" => DateTime.new(2022, 1, 1),
+      "updated_at" => DateTime.now,
       "evented_record_type" => "Veteran",
       "evented_record_id" => 5854,
       "info" =>
         { "before_data" =>
           { "id" => 8346,
-          "file_number" => "683378050",
+          "file_number" => "683378051",
           "participant_id" => "601486438",
           "first_name" => "HEIDI",
           "last_name" => "HERMAN",
