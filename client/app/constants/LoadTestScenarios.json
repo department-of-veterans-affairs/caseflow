@@ -1,10 +1,14 @@
 [
   {"scenario": "hearingsShow",
     "targetType": [{
-      "value": "hearing",
+      "value": "Hearing",
       "label": "Hearing"
+    },
+    {
+      "value": "LegacyHearing",
+      "label": "Legacy Hearing"
     }],
-    "targetId": "Hearing uuid"
+    "targetId": "Hearing uuid, Legacy Hearing vacols_id"
   },
   {"scenario": "intake",
     "targetType": [],
@@ -12,7 +16,7 @@
   },
   {"scenario": "tasksJSON",
     "targetType": [{
-      "value": "user",
+      "value": "User",
       "label": "User"
     }],
     "targetId": "User id"
@@ -23,88 +27,88 @@
   },
   {"scenario": "supplementalClaimsEdit",
     "targetType": [{
-      "value": "supplementalClaim",
+      "value": "SupplementalClaim",
       "label": "Supplemental Claim"
     }],
     "targetId": "SupplementalClaim uuid"
   },
   {"scenario": "higherLevelReviewPage",
     "targetType": [{
-      "value": "higherLevelReview",
+      "value": "HigherLevelReview",
       "label": "Higher Level Review"
     }],
     "targetId": "HigherLevelReview uuid"
   },
   {"scenario": "advanceOnDocketMotions",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealDocumentCount",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealHearings",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealPowerOfAttorney",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealVeteran",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "claimantsPoa",
     "targetType": [{
-      "value": "claimant",
+      "value": "Claimant",
       "label": "Claimant"
     }],
     "targetId": "Participant id"
   },
   {"scenario": "higherLevelReviewUpdate",
     "targetType": [{
-      "value": "higherLevelReview",
+      "value": "HigherLevelReview",
       "label": "Higher Level Review"
     }],
     "targetId": "HigherLevelReview uuid"
   },
   {"scenario": "updatePowerOfAttorney",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
@@ -123,51 +127,51 @@
   },
   {"scenario": "queueAppeal",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"},
     {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "v2MetricLogs",
     "targetType": [{
-      "value": "metric",
+      "value": "Metric",
       "label": "Metric"
     }],
     "targetId": ""
   },
   {"scenario": "readerIndex",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealsJSON",
     "targetType": [{
-      "value": "veteran",
+      "value": "Veteran",
       "label": "Veteran"
     }],
     "targetId": "Veteran file_number"
   },
   {"scenario": "apiV3ContestableIssues",
     "targetType": [{
-      "value": "supplementalClaim",
+      "value": "SupplementalClaim",
       "label": "Supplemental Claim"
     }],
     "targetId": "Supplemental Claim uuid"
   },
   {"scenario": "appealShowJSON",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
