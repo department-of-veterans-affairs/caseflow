@@ -12,7 +12,7 @@ ENV APP_HOME=/caseflow \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
     LANG="C.UTF-8" \
-    POSTGRES_HOST="appeals-db" \
+    POSTGRES_HOST="appeals-pg" \
     POSTGRES_USER="postgres" \
     POSTGRES_PASSWORD="postgres" \
     RAILS_ENV="development" \
@@ -23,10 +23,7 @@ ENV APP_HOME=/caseflow \
     DOCKERIZED="true" \
     DOCKER_HOST="host.docker.internal" \
     DOCKER_PORT="1521" \
-    DOCKER_DB="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))" \
-    PATH="/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/nvm/versions/node/v16.16.0/bin:/usr/local/bundle/bin:/usr/local/bundle/gems/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/oracle/instantclient_12_2:" \
-    LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
-    ORACLE_HOME="/opt/oracle/instantclient_19_24"
+    DOCKER_DB="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))"
 
 # Install base dependencies
 RUN apt-get update -yqq && \

@@ -570,7 +570,7 @@ Running Caseflow
 The following steps are an alternative to step 7 of the Running Caseflow section in the event that you absolutely cannot get those commands to work:
 1. In caseflow, run
     * a. `make down`
-        * i.  Removes appeals-db, appeals-redis, and localstack docker containers
+        * i.  Removes appeals-pg, appeals-redis, and localstack docker containers
     * b. `docker-compose down –v`
         * i. Removes caseflow_postgresdata docker volume
     * c. `make up-m1`
@@ -582,7 +582,7 @@ The following steps are an alternative to step 7 of the Running Caseflow section
             * b. Download caseflow-db-backup.gz (not able to share this download via policy, ask in the slack channel)
             * c. Enter terminal, navigate to ~/Downloads
             * e. Run command
-                * i. `gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres`
+                * i. `gzip -dck caseflow-db-backup.gz | docker exec -i appeals-pg psql -U postgres`
                 * ii. (this command will link the caseflow_certification_database to docker)
             * f. Enter terminal, navigate to caseflow, and run
                 * i. `make up-m1`

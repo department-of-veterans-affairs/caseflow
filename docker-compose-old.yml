@@ -14,7 +14,7 @@ services:
 
   appeals-postgres:
     image: postgres:14.8
-    container_name: appeals-db
+    container_name: appeals-pg
     ports:
       - "5432:5432"
     volumes:

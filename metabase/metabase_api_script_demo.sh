@@ -5,7 +5,7 @@ ADMIN_PASSWORD=caseflow1
 USER_EMAIL=caseflow@caseflow.demo
 USER_PASSWORD=caseflow1
 
-CASEFLOW_HOST=appeals-db
+CASEFLOW_HOST=appeals-pg
 # The Metabase port needs to be 3000 because this will run in the appeals-app container in AWS and the port mapping
 # in docker-compose is for the host only
 METABASE_HOST=appeals-metabase

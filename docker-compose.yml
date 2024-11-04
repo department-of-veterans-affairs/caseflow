@@ -1,8 +1,8 @@
 services:
   # PostgreSQL Database
-  appeals-db:
+  appeals-pg:
     image: postgres:14.8
-    container_name: appeals-db
+    container_name: appeals-pg
     ports:
       - "5432:5432"
     volumes:
@@ -32,7 +32,7 @@ services:
     volumes:
       - .:/caseflow
     depends_on:
-      - appeals-db
+      - appeals-pg
       - appeals-redis
     env_file:
       - .env

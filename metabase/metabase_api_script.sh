@@ -5,7 +5,7 @@ ADMIN_PASSWORD=caseflow1
 USER_EMAIL=caseflow@caseflow.demo
 USER_PASSWORD=caseflow1
 
-CASEFLOW_HOST=appeals-db
+CASEFLOW_HOST=appeals-pg
 VACOLS_HOST=host.docker.internal
 
 echo "⌚︎ Waiting for Metabase to start"
