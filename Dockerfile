@@ -1,15 +1,32 @@
 FROM ruby:2.7.3
 
+SHELL ["/bin/bash", "-c"]
+
 # Set up environment variables
 ENV APP_HOME=/caseflow \
     ORACLE_HOME=/opt/oracle \
-    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs fastjar libjemalloc-dev" \
+    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs fastjar libjemalloc2 libjemalloc-dev" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
-    LANG="C.UTF-8"
+    LANG="C.UTF-8" \
+    POSTGRES_HOST="appeals-db" \
+    POSTGRES_USER="postgres" \
+    POSTGRES_PASSWORD="postgres" \
+    RAILS_ENV="development" \
+    DEPLOY_ENV="demo" \
+    NLS_LANG="AMERICAN_AMERICA.US7ASCII" \
+    REDIS_URL_CACHE="redis://appeals-redis:6379/0/cache/" \
+    REDIS_URL_SIDEKIQ="redis://appeals-redis:6379" \
+    DOCKERIZED="true" \
+    DOCKER_HOST="host.docker.internal" \
+    DOCKER_PORT="1521" \
+    DOCKER_DB="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))" \
+    PATH="/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/nvm/versions/node/v16.16.0/bin:/usr/local/bundle/bin:/usr/local/bundle/gems/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/oracle/instantclient_12_2:" \
+    LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
+    ORACLE_HOME="/opt/oracle/instantclient_19_24"
 
 # Install base dependencies
 RUN apt-get update -yqq && \
@@ -17,8 +34,8 @@ RUN apt-get update -yqq && \
     rm -rf /var/lib/apt/lists/*
 
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
-ORACLE_HOME="/opt/oracle/instantclient_19_24" \
-OCI_DIR="/opt/oracle/instantclient_19_24"
+    ORACLE_HOME="/opt/oracle/instantclient_19_24" \
+    OCI_DIR="/opt/oracle/instantclient_19_24"
 
 COPY . $APP_HOME
 
@@ -36,6 +53,8 @@ RUN rm /opt/oracle/instantclient_19_24/libclntsh.so
 WORKDIR /opt/oracle/instantclient_19_24
 RUN ln -s libclntsh.so.19.1 libclntsh.so
 
+# RUN source /caseflow/docker-bin/env.sh
+
 WORKDIR $APP_HOME
 
 # Set up NVM and Node
@@ -50,9 +69,16 @@ COPY Gemfile* .
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc && \
   bundle config set force_ruby_platform true && \
   gem install bundler -v 2.4.22 && bundle install && \
-  chmod +x /caseflow/docker-bin/startup.sh && \
-  rm -rf docker-bin
+  chmod +x /caseflow/docker-bin/startup.sh
+  # && \ rm -rf docker-bin
 
 # Run the app
-ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
+ENTRYPOINT ["/bin/bash"]
+
+# # Run the app
+# ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
+
+# Start the Rails application
+# CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+
 

@@ -21,7 +21,4 @@ export PATH=/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/nvm/ver
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_19_24
 export ORACLE_HOME=/opt/oracle/instantclient_19_24
 
-# export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
-# export ORACLE_HOME=/opt/oracle/instantclient_12_2
-
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
