@@ -91,9 +91,11 @@ export const enterModalRadioOptions = (radioSelection) => {
 export const selectFromDropdown = async (dropdownName, dropdownSelection) => {
   const dropdown = screen.getByRole('combobox', { name: dropdownName });
 
-  userEvent.click(dropdown);
+  fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
-  userEvent.click(screen.getByRole('option', { name: dropdownSelection }));
+  const option = screen.getByRole('option', { name: dropdownSelection });
+
+  fireEvent.click(option);
 };
 
 /**
