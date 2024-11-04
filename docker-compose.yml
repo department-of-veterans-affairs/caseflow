@@ -9,6 +9,8 @@ services:
       - postgresdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - appeals-caseflow
 
   # Redis Cache
   appeals-redis:
@@ -16,6 +18,8 @@ services:
     container_name: appeals-redis
     ports:
       - "6379:6379"
+    networks:
+      - appeals-caseflow
 
   # Rails Application
   rails:
@@ -32,18 +36,22 @@ services:
       - appeals-redis
     env_file:
       - .env
+    networks:
+      - appeals-caseflow
 
-  # # Localstack for AWS Services
-  # appeals-localstack-aws:
-  #   platform: linux/amd64
-  #   image: localstack/localstack:0.14.5
-  #   container_name: localstack
-  #   ports:
-  #     - "4566:4566"
-  #   environment:
-  #     - SERVICES=sqs,dynamodb,kms
-  #   volumes:
-  #     - ./local/sqs/conf:/conf
+  # Localstack for AWS Services
+  appeals-localstack-aws:
+    platform: linux/amd64
+    image: localstack/localstack:0.14.5
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,dynamodb,kms
+    volumes:
+      - ./local/sqs/conf:/conf
+    networks:
+      - appeals-caseflow
 
   # Metabase Analytics
   appeals-metabase:
@@ -53,6 +61,14 @@ services:
       context: metabase
     ports:
       - "3002:3000"
+    networks:
+      - appeals-caseflow
 
 volumes:
   postgresdata: {}
+
+networks:
+  appeals-caseflow:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
