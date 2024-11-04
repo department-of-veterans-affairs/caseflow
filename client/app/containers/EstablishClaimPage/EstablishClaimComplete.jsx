@@ -22,7 +22,7 @@ export default class EstablishClaimComplete extends React.Component {
       veteranName
     } = this.props;
 
-    let availableTasksMessage, casesAssigned,hasQuotaReached, quotaReachedMessage, secondHeader;
+    let availableTasksMessage, casesAssigned, hasQuotaReached, quotaReachedMessage, secondHeader;
 
     availableTasksMessage = availableTasks ? 'You can now establish the next claim or return to your Work History.' :
       'You can now close Caseflow or return to your Work History.';
@@ -31,8 +31,8 @@ export default class EstablishClaimComplete extends React.Component {
       {availableTasksMessage}
     </span>;
 
-    let userQuota = userQuotas.find(userQuota => userQuota.user_id === userId)
-    console.log(userQuotas)
+    let userQuota = userQuotas.find((userQuota) => userQuota.user_id === userId);
+
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
         return <span>
@@ -44,7 +44,7 @@ export default class EstablishClaimComplete extends React.Component {
       }
     };
 
-    casesAssigned = userQuota.task_count
+    casesAssigned = userQuota.task_count;
 
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
@@ -80,6 +80,8 @@ EstablishClaimComplete.propTypes = {
   checklist: PropTypes.array,
   employeeCount: PropTypes.number,
   firstHeader: PropTypes.string,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func,
   totalCasesAssigned: PropTypes.number,
   totalCasesCompleted: PropTypes.number,
   userId: PropTypes.number,
