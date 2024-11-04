@@ -77,7 +77,7 @@ module WarRoom
                         intersect
                         SELECT *
                         FROM no_ep_list),
-            no_040_sync as (SELECT distinct reference_id,
+            no_040_sync as (SELECT distinct no_040_ep.reference_id,
                         COUNT(no_040_ep.reference_id) FILTER (WHERE report_load = '#{rep_load}') OVER (PARTITION BY no_040_ep.reference_id) as decision_issue_count,
                         COUNT(no_040_ep.reference_id) FILTER (WHERE report_load = '#{rep_load}' AND (decision_sync_processed_at IS NOT NULL OR closed_at IS NOT NULL)) OVER (PARTITION BY no_040_ep.reference_id) as synced_count
                         FROM no_040_ep
