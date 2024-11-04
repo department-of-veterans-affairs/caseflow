@@ -78,8 +78,8 @@ const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
 };
 
-const reviewTranscriptTask = (task) => {
-  return task.type === 'ReviewTranscriptTask';
+const completedOrCancelledReviewTranscriptTask = (task) => {
+  return task.type === 'ReviewTranscriptTask' && ['completed', 'cancelled'].includes(task.status);
 };
 
 const tdClassNames = (timeline, task) => {
@@ -518,14 +518,14 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
-            {reviewTranscriptTask(task) ?
+            {completedOrCancelledReviewTranscriptTask(task) ?
               this.taskInstructionDetailsItem(task.instructions) :
               (!establishmentTask(task) &&
-              <dt style={{ width: '100%' }}>
-                {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
-              </dt>)
+            <dt style={{ width: '100%' }}>
+              {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+            </dt>)
             }
-            {task.type !== 'ReviewTranscriptTask' &&
+            {!completedOrCancelledReviewTranscriptTask(task) &&
               <dd style={{ width: '100%' }}>
                 {this.taskInstructionsWithLineBreaks(task)}
               </dd>
