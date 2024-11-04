@@ -16,6 +16,7 @@ RUN apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends $BUILD && \
     rm -rf /var/lib/apt/lists/*
 
+COPY . $APP_HOME
 
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_19_24" \
 ORACLE_HOME="/opt/oracle/instantclient_19_24" \
@@ -28,13 +29,12 @@ RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instant
 RUN jar xvf instantclient-basic-linux-arm64.zip
 RUN jar xvf instantclient-sqlplus-linux-arm64.zip
 RUN jar xvf instantclient-sdk-linux-arm64.zip
+RUN rm instantclient-basic-linux-arm64.zip instantclient-sqlplus-linux-arm64.zip instantclient-sdk-linux-arm64.zip
 
 # fix for oracle client
 RUN rm /opt/oracle/instantclient_19_24/libclntsh.so
 WORKDIR /opt/oracle/instantclient_19_24
 RUN ln -s libclntsh.so.19.1 libclntsh.so
-
-COPY . $APP_HOME
 
 WORKDIR $APP_HOME
 

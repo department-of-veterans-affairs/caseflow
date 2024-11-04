@@ -92,7 +92,7 @@ storybook: ## run Storybook
 test: clean  ## Run test suite
 	bundle exec rake
 
-build-local: clean build-facols refresh reset
+build: clean build-facols refresh reset
 
 clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
@@ -111,10 +111,10 @@ facols-db:  ## Connect directly to the FACOLS oracle database
 	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 download-facols:	## Download the FACOLS Docker image
-	./local/vacols/build_push.sh rake
+	./docker-bin/oracle_libs/build_push.sh rake
 
 build-facols:
-	./local/vacols/build_oracle.sh -v 19.3.0 -e
+	./docker-bin/oracle_libs/build_push.sh local
 
 sqs-conf-dir:	## Create local required dir
 	mkdir -p local/sqs/conf

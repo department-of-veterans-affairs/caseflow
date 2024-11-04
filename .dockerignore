@@ -19,3 +19,6 @@ client/yarn-error.log
 
 # Ignore vim swap files
 *.swp
+
+# Ignore Oracle files in docker-bin
+docker-bin/oracle_libs/*
