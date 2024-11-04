@@ -15,9 +15,9 @@ source $THIS_SCRIPT_DIR/env.sh
 # rake local:vacols:wait_for_connection
 # echo "############################################# Vacols ready #############################################"
 
-echo "############################################# Creating DB in PG #############################################"
-bundle exec rake db:create:primary
-bundle exec rake db:schema:load:primary
+# echo "############################################# Creating DB in PG #############################################"
+# bundle exec rake db:create:primary
+# bundle exec rake db:schema:load:primary
 
 # echo "############################################# Seeding Facols #############################################"
 # rake local:vacols:seed
@@ -28,11 +28,11 @@ bundle exec rake db:schema:load:primary
 # echo "############################################# Enabling Feature Flags #############################################"
 # bundle exec rails runner scripts/enable_features_dev.rb
 
-echo "############################################# Enabling caching #############################################"
-touch tmp/caching-dev.txt
+# echo "############################################# Enabling caching #############################################"
+# touch tmp/caching-dev.txt
 
-echo "############################################# Initializing metabase #############################################"
-/caseflow/metabase/metabase_api_script_demo.sh
+# echo "############################################# Initializing metabase #############################################"
+# /caseflow/metabase/metabase_api_script_demo.sh
 
 echo "############################################# Starting Caseflow App localhost:3000 #############################################"
 rails server --binding 0.0.0.0 -p 3000

@@ -11,19 +11,7 @@ ENV APP_HOME=/caseflow \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
-    LANG="C.UTF-8" \
-    POSTGRES_HOST="appeals-pg" \
-    POSTGRES_USER="postgres" \
-    POSTGRES_PASSWORD="postgres" \
-    RAILS_ENV="development" \
-    DEPLOY_ENV="demo" \
-    NLS_LANG="AMERICAN_AMERICA.US7ASCII" \
-    REDIS_URL_CACHE="redis://appeals-redis:6379/0/cache/" \
-    REDIS_URL_SIDEKIQ="redis://appeals-redis:6379" \
-    DOCKERIZED="true" \
-    DOCKER_HOST="host.docker.internal" \
-    DOCKER_PORT="1521" \
-    DOCKER_DB="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))"
+    LANG="C.UTF-8"
 
 # Install base dependencies
 RUN apt-get update -yqq && \
@@ -70,10 +58,10 @@ RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc && \
   # && \ rm -rf docker-bin
 
 # Run the app
-ENTRYPOINT ["/bin/bash"]
+# ENTRYPOINT ["/bin/bash"]
 
 # # Run the app
-# ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
 
 # Start the Rails application
 # CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
