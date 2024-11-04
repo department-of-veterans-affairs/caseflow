@@ -134,46 +134,6 @@ describe('NonratingRequestIssueModal', () => {
       submitBtn = screen.getByRole('button', { name: /Add this issue/i });
       expect(submitBtn).not.toBeDisabled();
     });
-
-    it('disables button when invalid description entered', () => {
-      const { container, rerender } = setup();
-
-      let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
-      expect(submitBtn).toBeDisabled();
-
-      rerender(
-        <NonratingRequestIssueModal
-          {...defaultProps}
-          benefitType= 'compensation'
-          category={{
-            label: 'Apportionment',
-            value: 'Apportionment'
-          }}
-          decisionDate={'2019-06-01'}
-          dateError={false}
-          description={''}
-        />
-      );
-
-      // Simulate user input of invalid characters
-      let issueCategoryInput = screen.getByRole('combobox', { name: /Issue category/i });
-      userEvent.click(issueCategoryInput); // open the dropdown menu
-      userEvent.type(issueCategoryInput, 'Apportionment{enter}'); // select the option
-
-      // Fill out Decision Date
-      let decisionDateInput = container.querySelector('input[id="decision-date"]');
-      fireEvent.change(decisionDateInput, { target: { value: '2019-06-01' } });
-
-      // Fill out Issue description
-      let inputElement = container.querySelector('input[id="Issue description"]');
-      fireEvent.change(inputElement, { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
-
-      submitBtn = screen.getByRole('button', { name: /Add this issue/i });
-      expect(submitBtn).toBeDisabled();
-
-      expect(screen.getByText('Invalid character')).toBeInTheDocument();
-      expect(container.querySelector('.usa-input-error-message')).toBeInTheDocument();
-    });
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {

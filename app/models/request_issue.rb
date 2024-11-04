@@ -12,6 +12,7 @@ class RequestIssue < CaseflowRecord
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
   include SyncLock
+  include DescriptionCharacterMap
 
   # Pagination for VBMS API
   paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
@@ -24,9 +25,6 @@ class RequestIssue < CaseflowRecord
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
-
-  # contested issue description pattern
-  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
@@ -45,13 +43,6 @@ class RequestIssue < CaseflowRecord
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
-
-  # only allow specified characters for description
-  validates(
-    :contested_issue_description,
-    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
-    allow_blank: true
-  )
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
@@ -87,6 +78,7 @@ class RequestIssue < CaseflowRecord
 
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
+  before_save :sanitize_issue_descriptions
 
   after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
@@ -1182,6 +1174,28 @@ class RequestIssue < CaseflowRecord
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
     save!
+  end
+
+  # The purpose of this code is sanitize the `contested_issue_description` and
+  # `nonrating_issue_description` of `RequestIssue`'s to match what is expected
+  # from VBMS. We ideally want to swap commonly used characters with safe alternatives
+  # to maintain readability, and sanitize the remaining to ensure it's validity.
+  def sanitize_issue_descriptions
+    [
+      contested_issue_description,
+      nonrating_issue_description
+    ].each do |d|
+      next if d.nil?
+
+      # substitute known invalid characters
+      # note - Ruby treats these symbols as valid UTF-8, so we have to manually swap them out
+      DESCRIPTION_CHARACTER_MAP.each do |c|
+        d.gsub!(/#{c[:invalid]}/, c[:valid])
+      end
+
+      # sanitize remaining characters
+      d.gsub!(DESCRIPTION_CHARACTERS_BLACKLIST, "")
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength
