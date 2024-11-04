@@ -10,7 +10,7 @@ class Fakes::BGSServiceRecordMaker
   private
 
   def csv_file_path
-    Rails.root.join("local", "vacols", "bgs_setup.csv")
+    Rails.root.join("docker-bin", "oracle_libs", "bgs_setup.csv")
   end
 
   def ama_begin_date

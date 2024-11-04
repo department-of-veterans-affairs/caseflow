@@ -3,7 +3,7 @@ FROM ruby:2.7.3
 # Set up environment variables
 ENV APP_HOME=/caseflow \
     ORACLE_HOME=/opt/oracle \
-    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs fastjar" \
+    BUILD="build-essential postgresql-client zlib1g-dev libpq-dev libsqlite3-dev ca-certificates git libaio1 libaio-dev nodejs fastjar libjemalloc-dev" \
     NVM_DIR="/usr/local/nvm" \
     NODE_VERSION="16.16.0" \
     PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH" \
