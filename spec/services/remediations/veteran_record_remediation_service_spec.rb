@@ -26,4 +26,19 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
       # will check by file number and possibly other
     end
   end
+
+  describe ".fix_vet" do
+    xit "fixes file number" do
+    end
+  end
+
+  describe ".updated_veterans" do
+    xit "returns a Veteran object from event record" do
+    end
+  end
+
+  describe ".update_records!" do
+    xit "updates incorrect file number assocations for a Veteran" do
+    end
+  end
 end
