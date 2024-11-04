@@ -66,7 +66,7 @@ const CorrespondenceAppealTasks = (props) => {
         type="button"
         onClick={handleAddTaskModalOpen}
         name="addTaskOpen"
-        classNames="tasks-added-button-spacing"
+        classNames="usa-button-secondary tasks-added-button-spacing"
       >
         + Add task
       </Button>
