@@ -57,8 +57,9 @@ RSpec.describe PersonAndVeteranEventRemediationJob do
     end
 
     xit "sends an array of found dup person evented records to service class" do
-      allow(PersonAndVeteranEventRemediationJob).to receive(:find_and_remediate_duplicate_people).and_return(%w[1234 5678 9101 1213])
-      subject.perform_now
+      # allow(PersonAndVeteranEventRemediationJob).to receive(:find_and_remediate_duplicate_people)
+      #   .with(:person_event_record).and_return(%w[1234 5678 9101 1213])
+      # subject.perform_now
       # get some sort of count of dup person ids that get returned
     end
 
