@@ -60,7 +60,7 @@ describe Test::LoadTestsController, :postgres, type: :controller do
         supplemental_claim.reload
         get :target, params: { target_type: "SupplementalClaim" }
         expect(response.status).to eq 200
-        expect(JSON.parse(response.body)["data"]).to eq(supplemental_claim.uuid)
+        expect(JSON.parse(response.body)["data"]["uuid"]).to eq(supplemental_claim.uuid)
       end
     end
   end
