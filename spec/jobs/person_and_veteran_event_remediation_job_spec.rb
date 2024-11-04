@@ -1,48 +1,75 @@
 # frozen_string_literal: true
 
+require "support/shared_context/sync_vet_remediations"
+
 RSpec.describe PersonAndVeteranEventRemediationJob do
   include ActiveJob::TestHelper
 
-  # we are uncertain how to get staged data for an event to test these.
-  # would we need/want to create a factory or just mock up an Event hash like below.
+  include_context "sync_vet_remediations"
 
-  describe ".set_up" do
-    # subject { described_class.new.perform(appeal_id: appeal.id, appeal_type: appeal.class.name) }
+  context ".perform" do
     let(:current_user) { create(:user, roles: ["System Admin"]) }
+    let(:create_job) do
+      PersonAndVeteranEventRemediationJob.new
+    end
+    let(:person_event_record) do
+      {
+        "id" => 4296,
+        "event_id" => 1540,
+        "created_at" => DateTime.new(2022, 1, 2),
+        "updated_at" => DateTime.now,
+        "evented_record_type" => "Person",
+        "evented_record_id" => 5854,
+        "info" =>
+          { "before_data" =>
+            { "id" => 5854,
+              "participant_id" => "601486438",
+              "date_of_birth" => "Thu, 01 Jan 1970",
+              "created_at" => "Wed, 30 Oct 2024 17:32:46.642838000 UTC +00:00",
+              "updated_at" => "Wed, 30 Oct 2024 17:32:47.112988000 UTC +00:00",
+              "first_name" => "HEIDI",
+              "last_name" => "HERMAN",
+              "middle_name" => nil,
+              "name_suffix" => nil,
+              "email_address" => nil,
+              "ssn" => "683378050" },
+            "record_data" =>
+            { "id" => 5854,
+              "participant_id" => "601486438",
+              "date_of_birth" => "Thu, 01 Jan 1970",
+              "created_at" => "Wed, 30 Oct 2024 17:32:46.642838000 UTC +00:00",
+              "updated_at" => "Wed, 30 Oct 2024 17:32:47.112988000 UTC +00:00",
+              "first_name" => "HEIDI",
+              "last_name" => "HERMAN",
+              "middle_name" => nil,
+              "name_suffix" => nil,
+              "email_address" => nil,
+              "ssn" => "683378050" },
+            "update_type" => "U" }
+      }
+    end
 
-    it "sets a current user" do
+    subject { create_job }
+    # we are uncertain how to get staged data for an event to test these.
+    # would we need/want to create a factory or just mock up an Event hash?
+    xit "sets a current user" do
       expect(current_user).to be_an_instance_of(User)
     end
-  end
 
-  # event_record = {
-  #   info => {
-  #     before_data => {
-  #       # vet attributes before event
-  #     },
-  #     record_data =>{
-  #       # vet info upon event creation
-  #     }
-  #   }
-  # }
-
-  describe ".perform" do
     xit "sends an array of found dup person evented records to service class" do
+      allow(PersonAndVeteranEventRemediationJob).to receive(:find_and_remediate_duplicate_people).and_return(%w[1234 5678 9101 1213])
+      subject.perform_now
       # get some sort of count of dup person ids that get returned
     end
 
     xit "sends an array of found veteran ids with changed file numbers" do
       # get some sort of count of veteran ids with changed file numbers that get returned
     end
-  end
 
-  describe ".find and remediate duplicate people" do
     xit "sends an array of found person ids with same ssn numbers" do
       # get some sort of count of dup person ids that get returned
     end
-  end
 
-  describe ".find and update veteran records" do
     xit "sends an array of found veteran ids with changed file numbers" do
       # get some sort of count of veteran ids with changed file numbers that get returned
     end
