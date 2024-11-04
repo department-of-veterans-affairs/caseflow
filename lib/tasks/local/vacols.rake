@@ -45,7 +45,7 @@ namespace :local do
       puts "Getting data from VACOLS, sanitizing it, and dumping it to local files."
 
       case_descriptors = []
-      CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+      CSV.foreach(Rails.root.join("docker-bin/oracle_libs", "cases.csv"), headers: true) do |row|
         case_descriptors << row.to_h
       end
 
@@ -110,7 +110,7 @@ namespace :local do
     private
 
     def bgs_record_from_case(cases, case_descriptors)
-      CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("docker-bin/oracle_libs", "bgs_setup.csv"), "wb") do |csv|
         csv << %w[vbms_id bgs_key]
         cases.each_with_index do |c, i|
           csv << [c.bfcorlid, case_descriptors[i]["bgs_key"]]
@@ -119,7 +119,7 @@ namespace :local do
     end
 
     def vbms_record_from_case(cases, case_descriptors)
-      CSV.open(Rails.root.join("local/vacols", "vbms_setup.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("docker-bin/oracle_libs", "vbms_setup.csv"), "wb") do |csv|
         csv << %w[vbms_id documents]
         cases.each_with_index do |c, i|
           csv << [c.bfcorlid, case_descriptors[i]["vbms_key"]]
@@ -128,7 +128,7 @@ namespace :local do
     end
 
     def write_csv(klass, rows, sanitizer)
-      CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("docker-bin/oracle_libs", klass.name + "_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
         rows.to_a.flatten.select { |e| e }.sort.each do |row|

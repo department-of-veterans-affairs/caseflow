@@ -842,7 +842,7 @@ module Seeds
     end
 
     def create_legacy_appeal_at_acting_judge
-      # Find the 2 VACOLS Cases for the Acting Judge (seeded from local/vacols/VACOLS::Case_dump.csv)
+      # Find the 2 VACOLS Cases for the Acting Judge (seeded from docker-bin/oracle_libs/VACOLS::Case_dump.csv)
       # - Case 3662860 does not have a decision drafted for it yet, so it is assigned to the AVLJ as an attorney
       # - Case 3662859 has a valid decision document, so it is assigned to the AVLJ as a judge
       vacols_case_attorney = VACOLS::Case.find_by(bfkey: "3662860")
@@ -936,7 +936,7 @@ module Seeds
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols
     def create_legacy_issues_eligible_for_opt_in
-      # this vet number exists in local/vacols VBMS and BGS setup csv files.
+      # this vet number exists in docker-bin/oracle_libs VBMS and BGS setup csv files.
       veteran_file_number_legacy_opt_in = "872958715S"
       legacy_vacols_id = "LEGACYID"
 

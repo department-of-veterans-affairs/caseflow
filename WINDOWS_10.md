@@ -46,8 +46,8 @@
             * `git clone https://<yourtoken>@github.com/department-of-veterans-affairs/caseflow`
             * `cd caseflow`
             * `git checkout dev-supporting/setup-ubuntu`
-            * `cp -r ~/caseflow-setup/caseflow-facols/build_facols local/vacols/build_facols `
-            * `cp ~/caseflow-setup/*.zip local/vacols/build_facols/`
+            * `cp -r ~/caseflow-setup/caseflow-facols/build_facols docker-bin/oracle_libs/build_facols `
+            * `cp ~/caseflow-setup/*.zip docker-bin/oracle_libs/build_facols/`
             * `rm -rf ~/__MACOSX && rm -rf ~/caseflow-setup && rm -f ~/caseflow-setup.zip`
             * `source scripts/ubuntu_setup.sh`
     * This may take a few hours to run. If you run into issues, try to keep your Ubuntu terminal window open and reach out for help if you're stuck
