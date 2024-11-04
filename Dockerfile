@@ -56,6 +56,3 @@ RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc && \
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
 
-# Start the Rails application
-# CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
-
