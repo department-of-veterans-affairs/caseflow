@@ -362,6 +362,11 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
 
+      # rubocop:disable Rails/TimeZone
+      ama_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now)
+      legacy_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now)
+      # rubocop:enable Rails/TimeZone
+
       NationalHearingQueueEntry.refresh
 
       expect(
@@ -387,9 +392,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           false,
           ama_hearing_task.assigned_to_id,
           ama_hearing_task.assigned_by_id,
-          ama_hearing_task.days_on_hold,
-          ama_hearing_task.days_waiting,
-          ama_hearing_task.task_status
+          ((Time.zone.now - ama_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((ama_hearing_task.closed_at - ama_hearing_task.created_at) / 60 / 60 / 24).floor,
+          ama_hearing_task.status
         ],
         [
           legacy_with_sched_task.id,
@@ -404,9 +409,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           true,
           legacy_hearing_task.assigned_to_id,
           legacy_hearing_task.assigned_by_id,
-          legacy_hearing_task.days_on_hold,
-          legacy_hearing_task.days_waiting,
-          legacy_hearing_task.task_status
+          ((Time.zone.now - legacy_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((legacy_hearing_task.closed_at - legacy_hearing_task.created_at) / 60 / 60 / 24).floor,
+          legacy_hearing_task.status
         ]
       ]
 
