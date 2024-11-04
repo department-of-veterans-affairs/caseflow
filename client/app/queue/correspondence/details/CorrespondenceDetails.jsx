@@ -64,6 +64,8 @@ const CorrespondenceDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [priorMailDisabled, setPriorMailDisabled] = useState(true);
+  const [appealsDisabled, setAppealsDisabled] = useState(true);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -133,7 +135,10 @@ const CorrespondenceDetails = (props) => {
         (key) => newState[key] !== originalStates[key]
       );
 
-      setDisableSubmitButton(!isAnyChanged);
+      const valueToButton = !isAnyChanged && appealsDisabled;
+
+      setDisableSubmitButton(valueToButton);
+      setPriorMailDisabled(!isAnyChanged);
 
       return newState;
     });
@@ -452,7 +457,11 @@ const CorrespondenceDetails = (props) => {
       return initialSelectedAppeals?.every((appeal) => selectedAppeals.includes(appeal));
     };
 
-    setDisableSubmitButton(isButtonDisabled());
+    const valueToSubmitButton = isButtonDisabled() && priorMailDisabled;
+
+    setDisableSubmitButton(valueToSubmitButton);
+    setAppealsDisabled(isButtonDisabled());
+
   }, [selectedAppeals, initialSelectedAppeals]);
 
   useEffect(() => {
@@ -697,7 +706,10 @@ const CorrespondenceDetails = (props) => {
     setSelectedPriorMail(selectedCheckboxes);
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
-    setDisableSubmitButton(!isAnyCheckboxSelected);
+    const valueToButton = !isAnyCheckboxSelected && appealsDisabled;
+
+    setDisableSubmitButton(valueToButton);
+    setPriorMailDisabled(!isAnyCheckboxSelected);
   };
 
   const getDocumentColumns = (correspondenceRow) => {
