@@ -3,13 +3,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import TaskRows from '../../../../app/queue/components/TaskRows';
 import COPY from '../../../../COPY';
 import {
-  completedReviewPackageTaskNoErrorsFoundData,
-  cancelledReviewPackageTaskCancelTaskData
+  completedReviewTranscriptTaskNoErrorsFoundData,
+  cancelledReviewTranscriptTaskCancelTaskData
 } from '../../../data/queue/taskLists/index';
 
 test('renders ReviewTranscriptTask details correctly', () => {
 
-  render(<TaskRows taskList={[completedReviewPackageTaskNoErrorsFoundData]} appeal={{}} />);
+  render(<TaskRows taskList={[completedReviewTranscriptTaskNoErrorsFoundData]} appeal={{}} />);
 
   // Check if assigned by and assignee names are rendered correctly
   expect(screen.getByText('L. Roth')).toBeInTheDocument();
@@ -24,7 +24,7 @@ test('renders ReviewTranscriptTask details correctly', () => {
 
 test('toggles task instructions visibility - Action: No Errors found', () => {
 
-  render(<TaskRows taskList={[completedReviewPackageTaskNoErrorsFoundData]} appeal={{}} />);
+  render(<TaskRows taskList={[completedReviewTranscriptTaskNoErrorsFoundData]} appeal={{}} />);
 
   // Check if the instructions are initially hidden
   expect(screen.queryByText(COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)).not.toBeInTheDocument();
@@ -42,7 +42,7 @@ test('toggles task instructions visibility - Action: No Errors found', () => {
 
 test('toggles task instructions visibility - Action: Cancel task', () => {
 
-  render(<TaskRows taskList={[cancelledReviewPackageTaskCancelTaskData]} appeal={{}} />);
+  render(<TaskRows taskList={[cancelledReviewTranscriptTaskCancelTaskData]} appeal={{}} />);
 
   // Check if the instructions are initially hidden
   expect(screen.queryByText(COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)).not.toBeInTheDocument();

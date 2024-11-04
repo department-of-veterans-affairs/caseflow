@@ -273,7 +273,7 @@ export const getQueueConfig = () => ({
   use_task_pages_api: false,
 });
 
-export const completedReviewPackageTaskNoErrorsFoundData = {
+export const completedReviewTranscriptTaskNoErrorsFoundData = {
   uniqueId: '8115',
   isLegacy: false,
   type: 'ReviewTranscriptTask',
@@ -347,7 +347,7 @@ export const completedReviewPackageTaskNoErrorsFoundData = {
   appeal_receipt_date: '2024-06-18'
 };
 
-export const cancelledReviewPackageTaskCancelTaskData = {
+export const cancelledReviewTranscriptTaskCancelTaskData = {
   uniqueId: '3188',
   isLegacy: false,
   type: 'ReviewTranscriptTask',
