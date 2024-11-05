@@ -168,8 +168,9 @@ class CorrespondenceDetailsController < CorrespondenceController
   # returns all correspondence appeals tasks to be loaded into the redux store
   def correspondences_appeals_tasks
     tasks = []
-    @correspondence.correspondence_appeals.each do |cor_appeal|
-      tasks << appeals_tasks_for_frontend(cor_appeal)
+    @correspondence.correspondence_appeals&.each do |cor_appeal|
+      result = appeals_tasks_for_frontend(cor_appeal)
+      tasks << result if result.present?
     end
 
     render json: { tasks: json_appeal_tasks(tasks.flatten!) }
@@ -266,7 +267,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def json_appeal_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: current_user, role: "generic" },
-      tasks: tasks,
+      tasks: tasks || [],
       ama_serializer: ama_serializer
     ).call
   end
