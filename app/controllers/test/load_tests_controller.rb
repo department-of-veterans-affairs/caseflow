@@ -98,6 +98,12 @@ class Test::LoadTestsController < ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "User"
+      target_data_type = User
+      target_data_column = "id"
+    when "Veteran"
+      target_data_type = Veteran
+      target_data_column = "file_number"
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
@@ -110,6 +116,8 @@ class Test::LoadTestsController < ApplicationController
   def get_target_data_id(target_id, target_data_type, target_data_column)
     target_data_id = if target_data_type.to_s == "Metric"
                        target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "SupplementalClaim"
+                       target_id.presence ? SupplementalClaim.find_by_uuid(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else
