@@ -113,19 +113,14 @@ class BaseHearingUpdateForm
     )
   end
 
-  it "should update scheduled_datetime if it is not null already" do
-    date_str = "#{hearing.hearing_day.scheduled_for} America/New_York"
-    is_dst = Time.zone.parse(date_str).dst?
+  def only_time_updated_or_timezone_updated?
+    # Always false if the virtual hearing was just created or if any emails were changed
+    if virtual_hearing_created? || appellant_email.present? || representative_email.present?
+      return false
+    end
 
-    hearing.update(
-      scheduled_datetime: "2021-04-23T11:30:00#{is_dst ? '-04:00' : '-05:00'}",
-      scheduled_in_timezone: "America/New_York"
-    )
-    subject.update
-    updated_scheduled_datetime = hearing.scheduled_datetime
-
-    expect(updated_scheduled_datetime.strftime("%Y-%m-%d %H:%M %z"))
-      .to eq "#{hearing.hearing_day.scheduled_for.strftime('%Y-%m-%d')} 21:45 #{is_dst ? '-0400' : '-0500'}"
+    # True if hearing time was updated or if the representative timezone or appellant timezone is changed
+    scheduled_time_string.present? || representative_timezone.present? || appellant_timezone.present?
   end
 
   def start_async_job?
