@@ -169,7 +169,6 @@ exports[`DatePicker renders default state correctly 1`] = `
               Date
             </span>
           </label>
-          
           <div
             class="input-container"
           >
@@ -368,7 +367,6 @@ exports[`DatePicker restores input values correctly 1`] = `
               From
             </span>
           </label>
-          
           <div
             class="input-container"
           >
@@ -397,7 +395,6 @@ exports[`DatePicker restores input values correctly 1`] = `
               To
             </span>
           </label>
-          
           <div
             class="input-container"
           >
@@ -594,7 +591,6 @@ exports[`DatePicker shows one date field for after mode 1`] = `
               Date
             </span>
           </label>
-          
           <div
             class="input-container"
           >
@@ -791,7 +787,6 @@ exports[`DatePicker shows one date field for before mode 1`] = `
               Date
             </span>
           </label>
-          
           <div
             class="input-container"
           >
@@ -988,7 +983,6 @@ exports[`DatePicker shows one date field for on mode 1`] = `
               Date
             </span>
           </label>
-          
           <div
             class="input-container"
           >
