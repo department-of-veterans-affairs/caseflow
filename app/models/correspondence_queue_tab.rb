@@ -9,7 +9,6 @@ class CorrespondenceQueueTab < QueueTab
     [
       { appeal: [:veteran] },
       :assigned_by,
-      :assigned_to,
       :children,
       :parent
     ]

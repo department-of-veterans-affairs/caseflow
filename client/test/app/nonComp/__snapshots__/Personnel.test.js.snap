@@ -57,7 +57,7 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="report-type-label"
+                            aria-label="Event / Action"
                             aria-owns="report-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -120,7 +120,6 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                 class=""
               >
                 <span>
-                  
                    
                 </span>
               </legend>
@@ -218,7 +217,6 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="timing-range-label"
                               aria-owns="timing-range-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -416,7 +414,6 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                                       aria-autocomplete="list"
                                       aria-expanded="false"
                                       aria-haspopup="true"
-                                      aria-labelledby="conditions-0-options-personnel-label"
                                       aria-owns="conditions-0-options-personnel-listbox"
                                       autocapitalize="none"
                                       autocomplete="off"

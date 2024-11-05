@@ -60,6 +60,46 @@ class CorrespondenceTasksController < TasksController
     process_package_action_decision(correspondence_tasks_params[:decision])
   end
 
+  def assign_to_person
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: User.find_by_css_id(correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now
+    )
+    task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
+  end
+
+  def assign_to_team
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: Organization.find_by(name: correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now
+    )
+    task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
+  end
+
+  def cancel
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def complete
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def change_task_type
+    @task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    @task.update!(
+      type: change_task_type_params[:type],
+      instructions: change_task_type_params[:instructions]
+    )
+  end
+
   private
 
   def correspondence_tasks_params
@@ -73,8 +113,16 @@ class CorrespondenceTasksController < TasksController
       :action_type,
       :type,
       :correspondence_uuid,
-      instructions: []
+      :assigned_to,
+      :instructions,
+      :type
     )
+  end
+
+  def change_task_type_params
+    change_type_params = params.require(:task).permit(:type, :instructions)
+    change_type_params[:instructions] = @task.flattened_instructions(change_type_params)
+    change_type_params
   end
 
   def process_package_action_decision(decision)

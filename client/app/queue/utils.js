@@ -205,7 +205,8 @@ const taskAttributesFromRawTask = (task) => {
     },
     veteranParticipantId: task.attributes.veteran_participant_id,
     veteranSSN: task.attributes.veteran_ssn,
-    appeal_receipt_date: task.attributes.appeal_receipt_date
+    appeal_receipt_date: task.attributes.appeal_receipt_date,
+    waivable: task.attributes.waivable
   };
 };
 
@@ -563,7 +564,8 @@ export const prepareAppealForStore = (appeals) => {
       locationHistory: prepareLocationHistoryForStore(appeal),
       hasCompletedSctAssignTask: appeal.attributes.has_completed_sct_assign_task,
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      waivable: appeal.attributes?.waivable
     };
 
     return accumulator;
@@ -610,7 +612,10 @@ export const prepareAppealForSearchStore = (appeals) => {
       evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
       hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      assignedToLocation: appeal.attributes.assigned_to_location
     };
 
     return accumulator;
@@ -641,7 +646,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       locationHistory: prepareLocationHistoryForStore(appeal),
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      waivable: appeal.attributes?.waivable
     };
 
     return accumulator;
@@ -900,7 +906,7 @@ export const currentDaysOnHold = (task) => {
 };
 
 export const taskIsActive = (task) =>
-  ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
+  ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status) || task?.waivable;
 
 export const taskActionData = ({ task, match }) => {
   if (!task) {

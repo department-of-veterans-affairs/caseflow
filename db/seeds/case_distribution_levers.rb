@@ -348,13 +348,13 @@ module Seeds
             title: Constants.DISTRIBUTION.aoj_affinity_days_title,
             description: "Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "60",
+            value: "14",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
                 item: Constants.ACD_LEVERS.value,
                 data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 60,
+                value: 14,
                 text: "Attempt distribution to current judge for max of:",
                 unit: Constants.ACD_LEVERS.days,
                 selected: true
@@ -374,7 +374,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -384,7 +384,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
             title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
-            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
+            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available judge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -412,7 +412,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -450,7 +450,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],

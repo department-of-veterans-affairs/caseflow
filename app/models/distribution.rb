@@ -39,13 +39,18 @@ class Distribution < CaseflowRecord
 
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
-      ama_stats = ama_statistics
-
-      # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
-      update!(status: "completed", completed_at: Time.zone.now, statistics: completed_statistics(ama_stats))
-
-      record_distribution_stats(ama_stats)
+      # update status and time before generating the statistics to reduce amount of time a user waits for cases
+      update!(status: "completed", completed_at: Time.zone.now)
     end
+
+    ama_stats = ama_statistics
+
+    # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
+    update!(statistics: completed_statistics(ama_stats))
+
+    record_distribution_stats(ama_stats)
+
+    CaseDistributionLever.clear_distribution_lever_cache
   rescue StandardError => error
     process_error(error)
     title = "Distribution Failed"

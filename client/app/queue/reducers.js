@@ -26,6 +26,7 @@ import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
 import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
 import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
 import cachingReducer from './caching/cachingReducer';
+import correspondenceDetailsReducer from './correspondence/correspondenceDetailsReducer/correspondenceDetailsReducer';
 
 export const initialState = {
   judges: {},
@@ -817,7 +818,8 @@ const rootReducer = combineReducers({
   cavcDashboard: cavcDashboardReducer,
   intakeCorrespondence: intakeCorrespondenceReducer,
   reviewPackage: reviewPackageReducer,
-  caching: cachingReducer
+  caching: cachingReducer,
+  correspondenceDetails: correspondenceDetailsReducer
 });
 
 export default timeFunction(

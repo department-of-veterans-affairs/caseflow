@@ -1,4 +1,5 @@
 {
+  "CORRESPONDENCE_TASK_DETAIL_URL": "/queue/correspondence/uuid",
   "INTAKE_TASK_URL": "/queue/correspondence/uuid/intake",
   "REVIEW_PACKAGE_TASK_URL": "/queue/correspondence/uuid/review_package",
   "REASSIGN_PACKAGE_TASK_MODAL_URL": "/modal/reassign_package",

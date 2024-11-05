@@ -57,7 +57,7 @@ exports[`DaysWaiting renders correctly 1`] = `
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="report-type-label"
+                            aria-label="Event / Action"
                             aria-owns="report-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -120,7 +120,6 @@ exports[`DaysWaiting renders correctly 1`] = `
                 class=""
               >
                 <span>
-                  
                    
                 </span>
               </legend>
@@ -218,7 +217,6 @@ exports[`DaysWaiting renders correctly 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="timing-range-label"
                               aria-owns="timing-range-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -369,7 +367,7 @@ exports[`DaysWaiting renders correctly 1`] = `
                     class="days-waiting"
                   >
                     <div
-                      class="sc-bdfBwQ gZlgoQ"
+                      class="sc-aXZVg elchKe"
                     >
                       <div
                         class=""
@@ -414,7 +412,6 @@ exports[`DaysWaiting renders correctly 1`] = `
                                         aria-autocomplete="list"
                                         aria-expanded="false"
                                         aria-haspopup="true"
-                                        aria-labelledby="conditions-0-options-comparison-operator-label"
                                         aria-owns="conditions-0-options-comparison-operator-listbox"
                                         autocapitalize="none"
                                         autocomplete="off"

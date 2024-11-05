@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <div
+    class="prototype-canvas-wrapper"
+    id="canvasWrapper-1"
+    style="height: 792px; width: 612px; position: relative; background-color: white;"
+  >
+    <canvas
+      class="prototype-canvas cf-pdf-page-hidden"
+      height="792"
+      id="canvas-1"
+      style="position: relative; top: 0px;"
+      width="612"
+    />
+  </div>
+</div>
+`;

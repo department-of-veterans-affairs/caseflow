@@ -211,6 +211,7 @@ export const PAGE_TITLES = {
   CANCEL_AND_ASSIGN_TO_RO: 'Cancel Task and Assign Regional Office',
   SEND_TO_SCHEDULE_VETERAN_LIST: 'Send to Schedule Veteran List',
   CANCEL_TASK: 'Cancel Task',
+  ASSIGN_TASK: 'Assign Task',
   ASSIGN_HEARING: 'Assign Hearing',
   REMOVE_HEARING_TO_CORRECT_ERROR: 'Remove hearing to correct a scheduling error',
   POSTPONE_HEARING: 'Postpone Hearing',
@@ -222,7 +223,10 @@ export const PAGE_TITLES = {
   COMPLETE_HEARING_WITHDRAWAL_REQUEST: 'Complete Hearing Withdrawal Request',
   REVIEW_PACKAGE: 'Review Package',
   CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
-  CORRESPONDENCE_INTAKE: 'Correspondence Intake'
+  CORRESPONDENCE_INTAKE: 'Correspondence Intake',
+  CORRESPONDENCE_DETAILS: 'Correspondence Details',
+  EDIT_GENERAL_INFORMATION: 'Edit General Information',
+  ASSIGN_CORR_TASK_TO_TEAM: 'Assign Task',
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';

@@ -54,7 +54,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Other"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -160,7 +160,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
     </fieldset>
     <br />
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -188,7 +188,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -221,7 +221,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -254,7 +254,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-jSgupP fVzfOf"
+      class="sc-iGgWBj wByRC"
       data-css-197sbx6=""
     >
       <div
@@ -321,7 +321,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -349,7 +349,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -382,7 +382,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-bdfBwQ eMrOcK"
+      class="sc-aXZVg dVbwak"
     >
       <div
         class="cf-form-textinput   "
@@ -458,7 +458,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
                         aria-autocomplete="list"
                         aria-expanded="false"
                         aria-haspopup="true"
-                        aria-labelledby="state-label"
+                        aria-label="CA"
                         aria-owns="state-listbox"
                         autocapitalize="none"
                         autocomplete="off"
@@ -530,7 +530,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-gsTCUz fPDxqp"
+      class="sc-gEvEer fqA-dSf"
     >
       <div
         class="cf-form-textinput   "
@@ -587,7 +587,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -620,7 +620,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-gKsewC gdIzHy"
+      class="sc-gsFSXq ewWWqk"
     >
       <div
         class="cf-form-textinput   "
@@ -760,7 +760,6 @@ exports[`ClaimantForm renders default state correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -873,7 +872,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Child"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -929,7 +928,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
     <br />
     <br />
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -957,7 +956,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -990,7 +989,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -1018,7 +1017,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-jSgupP fVzfOf"
+      class="sc-iGgWBj wByRC"
       data-css-197sbx6=""
     >
       <div
@@ -1085,7 +1084,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-fubCfw jWpDCb"
+      class="sc-imWYAI isQuG"
     >
       <div
         class="cf-form-textinput   "
@@ -1118,7 +1117,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -1151,7 +1150,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -1184,7 +1183,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-bdfBwQ eMrOcK"
+      class="sc-aXZVg dVbwak"
     >
       <div
         class="cf-form-textinput   "
@@ -1265,7 +1264,6 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
                         aria-autocomplete="list"
                         aria-expanded="false"
                         aria-haspopup="true"
-                        aria-labelledby="state-label"
                         aria-owns="state-listbox"
                         autocapitalize="none"
                         autocomplete="off"
@@ -1320,7 +1318,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-gsTCUz fPDxqp"
+      class="sc-gEvEer fqA-dSf"
     >
       <div
         class="cf-form-textinput   "
@@ -1382,7 +1380,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -1415,7 +1413,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-gKsewC gdIzHy"
+      class="sc-gsFSXq ewWWqk"
     >
       <div
         class="cf-form-textinput   "
@@ -1555,7 +1553,6 @@ exports[`HlrScClaimantForm renders default state correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -1668,7 +1665,7 @@ exports[`HlrScClaimantForm renders healthcare provider relationship state correc
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Healthcare Provider"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -1831,7 +1828,7 @@ exports[`HlrScClaimantForm renders healthcare provider relationship state correc
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Healthcare Provider"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -1994,7 +1991,7 @@ exports[`HlrScClaimantForm renders other relationship state correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Other"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -2157,7 +2154,7 @@ exports[`HlrScClaimantForm renders other relationship state correctly 2`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Other"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -2320,7 +2317,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="relationship-label"
+                      aria-label="Spouse"
                       aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
@@ -2376,7 +2373,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
     <br />
     <br />
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -2404,7 +2401,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -2437,7 +2434,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -2465,7 +2462,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-jSgupP fVzfOf"
+      class="sc-iGgWBj wByRC"
       data-css-197sbx6=""
     >
       <div
@@ -2532,7 +2529,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-fubCfw jWpDCb"
+      class="sc-imWYAI isQuG"
     >
       <div
         class="cf-form-textinput   "
@@ -2565,7 +2562,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -2598,7 +2595,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-hKgILt lgVycS"
+      class="sc-fqkvVR iuMLlt"
     >
       <div
         class="cf-form-textinput   "
@@ -2631,7 +2628,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-bdfBwQ eMrOcK"
+      class="sc-aXZVg dVbwak"
     >
       <div
         class="cf-form-textinput   "
@@ -2712,7 +2709,6 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
                         aria-autocomplete="list"
                         aria-expanded="false"
                         aria-haspopup="true"
-                        aria-labelledby="state-label"
                         aria-owns="state-listbox"
                         autocapitalize="none"
                         autocomplete="off"
@@ -2767,7 +2763,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-gsTCUz fPDxqp"
+      class="sc-gEvEer fqA-dSf"
     >
       <div
         class="cf-form-textinput   "
@@ -2829,7 +2825,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-eCssSg jjCqxh"
+      class="sc-dcJsrY yoDvq"
     >
       <div
         class="cf-form-textinput   "
@@ -2862,7 +2858,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-gKsewC gdIzHy"
+      class="sc-gsFSXq ewWWqk"
     >
       <div
         class="cf-form-textinput   "

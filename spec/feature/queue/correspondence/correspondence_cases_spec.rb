@@ -379,6 +379,117 @@ RSpec.feature("The Correspondence Cases page") do
     end
   end
 
+  context "Correspondence Cases - Pending Tasks - part 2" do
+    before :each do
+      correspondence_spec_super_access
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    # Creating correspondence with each task type
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+
+      task_array = [
+        PrivacyComplaintCorrespondenceTask,
+        CongressionalInterestCorrespondenceTask,
+        StatusInquiryCorrespondenceTask,
+        PowerOfAttorneyRelatedCorrespondenceTask,
+        PrivacyActRequestCorrespondenceTask,
+        DeathCertificateCorrespondenceTask,
+        OtherMotionCorrespondenceTask,
+        CavcCorrespondenceCorrespondenceTask
+      ]
+
+      3.times do
+        corres_array = (1..8).map { create(:correspondence, :pending) }
+
+        corres_array.each do |corres|
+          task_array.each do |task|
+            next if corres.tasks.any? { |e| e.instance_of? task }
+
+            task.create!(
+              appeal_id: corres.id,
+              appeal_type: "Correspondence",
+              assigned_to: InboundOpsTeam.singleton
+            )
+          end
+        end
+      end
+    end
+
+    it "verifies routes for PrivacyComplaintCorrespondenceTask types on the pending tab." do
+      # filter PrivacyComplaintCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Privacy Complaint Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for CongressionalInterestCorrespondenceTask types on the pending tab." do
+      # filter CongressionalInterestCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Congressional Interest Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for StatusInquiryCorrespondenceTask types on the pending tab." do
+      # filter StatusInquiryCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Status Inquiry Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for PowerOfAttorneyRelatedCorrespondenceTask types on the pending tab." do
+      # filter PowerOfAttorneyRelatedCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Power Of Attorney Related Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for PrivacyActRequestCorrespondenceTask types on the pending tab." do
+      # filter PrivacyActRequestCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Privacy Act Request Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for DeathCertificateCorrespondenceTask types on the pending tab." do
+      # filter DeathCertificateCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Death Certificate Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for OtherMotionCorrespondenceTask types on the pending tab." do
+      # filter OtherMotionCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Other Motion Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+
+    it "verifies routes for CavcCorrespondenceCorrespondenceTask types on the pending tab." do
+      # filter CavcCorrespondenceCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: /Cavc Correspondence Correspondence Task/).click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
+  end
+
   context "Correspondence Cases - Assigned" do
     before :each do
       correspondence_spec_super_access
@@ -907,6 +1018,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       5.times do
+        create(:correspondence_auto_assignable_user)
         corres_array = (1..2).map { create(:correspondence) }
         task_array = [ReassignPackageTask, RemovePackageTask]
 

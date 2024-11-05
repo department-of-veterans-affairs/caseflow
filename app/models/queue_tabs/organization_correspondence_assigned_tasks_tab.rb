@@ -18,7 +18,7 @@ class OrganizationCorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes).active.where.not(assigned_to_type: "Organization")
+    CorrespondenceTask.includes(*task_includes).assigned_tasks
   end
 
   # :reek:UtilityFunction

@@ -49,6 +49,7 @@ describe CorrespondenceDocumentsEfolderUploader do
         expect(failed_task.appeal_id).to eq(correspondence.id)
         expect(failed_task.assigned_to).to eq(current_user)
         expect(failed_task.parent_id).to eq(parent_task.id)
+        expect(failed_task.instructions[0]).to include("Mock failure for upload in non-prod env")
       end
 
       context "with existing EfolderUploadFailedTask" do

@@ -17,12 +17,21 @@ import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
-
-  state = { currentPage: this.props.currentPage };
+  constructor(props) {
+    super(props);
+    this.state = { currentPage: props.currentPage };
+  }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
   getKeyForRow = (rowNumber, object) => object.id;
+
+  toggleCheckboxState = (appealId) => {
+    const appealsToConsider = this.props?.initialAppealIds || this.props?.taskRelatedAppealIds;
+    const checked = appealsToConsider.includes(Number(appealId));
+
+    return checked ? this.props?.userAccess !== 'admin_access' : false;
+  };
 
   getColumns = () => {
     const columns = [];
@@ -32,14 +41,19 @@ class CaseListTable extends React.PureComponent {
         {
           header: '',
           valueFunction: (appeal) => {
+            const isChecked = this.props.taskRelatedAppealIds.map(Number).includes(Number(appeal.id));
+
             return (
               <div className="checkbox-column-inline-style">
                 <Checkbox
                   name={`${appeal.id}`}
                   id={`${appeal.id}`}
-                  defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
+                  defaultValue={isChecked}
                   hideLabel
                   onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
+                  disabled={
+                    this.props.disabled || this.toggleCheckboxState(appeal.id)
+                  }
                 />
               </div>
             );
@@ -55,12 +69,12 @@ class CaseListTable extends React.PureComponent {
           return (
             <React.Fragment>
               <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-              <CaseDetailsLink
+              <b><CaseDetailsLink
                 appeal={appeal}
                 userRole={this.props.userRole}
                 getLinkText={() => appeal.docketNumber}
                 linkOpensInNewTab={this.props.linkOpensInNewTab}
-              />
+              /></b>
             </React.Fragment>
           );
         }
@@ -166,6 +180,7 @@ class CaseListTable extends React.PureComponent {
                 styling={this.props.styling}
               />
             }
+            enableTopPagination = {this.props.enableTopPagination || false}
           />
         </div> :
         <Table
@@ -191,7 +206,11 @@ CaseListTable.propTypes = {
   userRole: PropTypes.string,
   userCssId: PropTypes.string,
   currentPage: PropTypes.number,
-  updatePageHandlerCallback: PropTypes.func
+  updatePageHandlerCallback: PropTypes.func,
+  disabled: PropTypes.bool,
+  enableTopPagination: PropTypes.bool,
+  toggleCheckboxState: PropTypes.func
+
 };
 
 CaseListTable.defaultProps = {

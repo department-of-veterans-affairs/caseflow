@@ -26,6 +26,8 @@ class Task < CaseflowRecord
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
+  has_one :correspondences_appeals_task
+  has_one :correspondence_appeal, through: :correspondences_appeals_task
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
   validates :assigned_to, :appeal, :type, :status, presence: true
@@ -626,12 +628,6 @@ class Task < CaseflowRecord
     unless can_be_updated_by_user?(user)
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
     end
-  end
-
-  def can_be_received_by?(team)
-    return false if assigned_to?(team)
-
-    false if parent_assigned_to?(team)
   end
 
   # rubocop:disable Metrics/AbcSize

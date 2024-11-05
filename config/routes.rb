@@ -106,6 +106,8 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+        post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
+        post '/decision_review_updated_error', to: 'decision_review_updated#decision_review_updated_error'
       end
     end
 
@@ -244,27 +246,28 @@ Rails.application.routes.draw do
       get "/:hearing_day_id/filled_hearing_slots", to: "filled_hearing_slots#index"
     end
   end
-  get "/hearings/dockets", to: redirect("/hearings/schedule")
-  get "hearings/schedule", to: "hearings/hearing_day#index"
-  get "hearings/schedule/add_hearing_day", to: "hearings/hearing_day#index"
-  get "hearings/:hearing_id/details", to: "hearings_application#show_hearing_details_index"
-  get "hearings/:hearing_id/worksheet", to: "hearings_application#show_hearing_worksheet_index"
-  get "hearings/:id/virtual_hearing_job_status", to: "hearings#virtual_hearing_job_status"
-  get "hearings/schedule/docket/:id", to: "hearings/hearing_day#index"
-  get "hearings/schedule/docket/:id/edit", to: "hearings/hearing_day#index"
-  get "hearings/schedule/docket/:id/print", to: "hearings/hearing_day_print#index"
-  get "hearings/schedule/build", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/build/upload", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/build/upload/:schedule_period_id", to: "hearings_application#build_schedule_index"
-  get "hearings/schedule/assign", to: "hearings_application#index"
-  get "hearings/worksheet/print", to: "hearings/worksheets_print#index"
-  post "hearings/hearing_day", to: "hearings/hearing_day#create"
-  get "hearings/schedule/:schedule_period_id/download", to: "hearings/schedule_periods#download"
-  get "hearings/schedule/assign/hearing_days", to: "hearings/hearing_day#index_with_hearings"
-  get "hearings/queue/appeals/:vacols_id", to: "queue#index"
-  get "hearings/find_closest_hearing_locations", to: "hearings#find_closest_hearing_locations"
+  get '/hearings/dockets', to: redirect("/hearings/schedule")
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_details_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_worksheet_index"
+  get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
+  get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
+  get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearings_application#index"
+  get 'hearings/worksheet/print', to: "hearings/worksheets_print#index"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
+  get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
+  get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
+  get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
+  get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
-  post "hearings/hearing_view/:id", to: "hearings/hearing_view#create"
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
 
@@ -305,7 +308,8 @@ Rails.application.routes.draw do
     patch "update", on: :member
     post "edit_ep", on: :member
   end
-  match "/supplemental_claims/:claim_id/edit/:any" => "supplemental_claims#edit", via: [:get]
+  match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
+  get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
@@ -355,6 +359,10 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/current_step", to: "correspondence_intake#current_step", as: :queue_correspondence_intake_current_step
     post "/correspondence/:correspondence_uuid/correspondence_intake_task", to: "correspondence_tasks#create_correspondence_intake_task"
     patch "/correspondence/tasks/:task_id/update", to: "correspondence_tasks#update"
+    patch "/correspondence/tasks/:task_id/assign_to_person", to: "correspondence_tasks#assign_to_person"
+    patch "/correspondence/tasks/:task_id/cancel", to: "correspondence_tasks#cancel"
+    patch "/correspondence/tasks/:task_id/change_task_type", to: "correspondence_tasks#change_task_type"
+    patch "/correspondence/tasks/:task_id/complete", to: "correspondence_tasks#complete"
     get "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#review_package"
     get "/correspondence/edit_document_type_correspondence", to: "correspondence_review_package#document_type_correspondence"
     patch "/correspondence/:correspondence_uuid/intake_update", to: "correspondence_intake#intake_update"
@@ -364,10 +372,22 @@ Rails.application.routes.draw do
     get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
+    patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
     post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
+    patch "/correspondence/:correspondence_uuid/update_correspondence", to: "correspondence_details#update_correspondence"
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
+    post "/correspondence/:correspondence_uuid/correspondence_response_letter",
+         to: "correspondence_details#create_response_letter_for_correspondence"
+    get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
+    patch "/correspondence/:correspondence_uuid/edit_general_information", to: "correspondence_details#edit_general_information"
+    post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
+         to: "correspondence_details#save_correspondence_appeals"
+
+    resources :correspondence, param: :correspondence_uuid do
+      post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
+    end
     get "/appeals/:vacols_id", to: "queue#index"
     get "/appeals/:appealId/notifications", to: "queue#index"
     get "/appeals/:appeal_id/cavc_dashboard", to: "cavc_dashboard#index"

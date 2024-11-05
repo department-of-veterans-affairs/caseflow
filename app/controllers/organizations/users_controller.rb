@@ -2,12 +2,6 @@
 
 class Organizations::UsersController < OrganizationsController
   def index
-    @permissions = organization.organization_permissions.select(
-      :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
-    )
-
-    @user_permissions = user_permissions
-
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
@@ -18,7 +12,11 @@ class Organizations::UsersController < OrganizationsController
           dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users),
           membership_requests: pending_membership_requests,
-          isVhaOrg: vha_organization?
+          isVhaOrg: vha_organization?,
+          organization_permissions: organization.organization_permissions.select(
+            :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
+          ),
+          organization_user_permissions: user_permissions
         }
       end
     end
@@ -57,6 +55,7 @@ class Organizations::UsersController < OrganizationsController
       adjust_admin_rights
     end
 
+    update_user_conference_provider
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
@@ -121,6 +120,14 @@ class Organizations::UsersController < OrganizationsController
       OrganizationsUser.make_user_admin(user_to_modify, organization)
     else
       OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
+    end
+  end
+
+  def update_user_conference_provider
+    new_conference_provider = params.dig(:attributes, :conference_provider)
+
+    if organization["url"] == HearingsManagement.singleton.url && new_conference_provider
+      OrganizationsUser.update_user_conference_provider(user_to_modify, new_conference_provider)
     end
   end
 

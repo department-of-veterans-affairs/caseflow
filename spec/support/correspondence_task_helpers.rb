@@ -67,4 +67,8 @@ module CorrespondenceTaskHelpers
     InboundOpsTeam.singleton.add_user(current_super)
     User.authenticate!(user: current_super)
   end
+
+  def organizations_array_list
+    @organizations_array_list ||= Constants::ORGANIZATION_NAMES.values
+  end
 end

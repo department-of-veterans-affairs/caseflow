@@ -18,6 +18,7 @@ import {
   setCanEditCavcDashboards,
   setCanViewCavcDashboards,
   setFeatureToggles,
+  setMeetingType,
   setUserId,
   setUserRole,
   setUserCssId,
@@ -52,6 +53,8 @@ import AddCavcDatesModal from './cavc/AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
+import CorrespondenceCancelTaskModal from './components/CorrespondenceCancelTaskModal';
+import CorrespondenceCompleteTaskModal from './components/CorrespondenceCompleteTaskModal';
 import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -92,6 +95,8 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
+import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
+import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -117,12 +122,16 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
+import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
+import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
+import CorrespondenceEditGeneralInformationModal from './components/CorrespondenceEditGeneralInformationModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
+    this.props.setMeetingType(this.props.conferenceProvider);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
@@ -614,8 +623,7 @@ class QueueApp extends React.PureComponent {
 
   routedOrganizationUsers = (props) => (
     <OrganizationUsers {...props.match.params}
-      organizationPermissions={this.props.organizationPermissions}
-      orgnizationUserPermissions={this.props.userPermissions}
+      conferenceSelectionVisibility = {this.props.featureToggles.conference_selection_visibility}
     />
   );
 
@@ -715,8 +723,50 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceAssignTaskModal = (props) => (
+    <CorrespondenceAssignTaskModal
+      {...props.match.params}
+      userCssId={this.props.userCssId}
+    />
+  );
+
+  routedCorrespondenceCancelTaskModal = (props) => (
+    <CorrespondenceCancelTaskModal {...props.match.params} />
+  );
+
+  routedCorrespondenceChangeTaskTypeModal = (props) => (
+    <CorrespondenceChangeTaskTypeModal {...props.match.params} />
+  );
+
+  routedCorrespondenceCompleteTaskModal = (props) => (
+    <CorrespondenceCompleteTaskModal {...props.match.params}
+      {...this.props}
+    />
+  );
+
   routedCorrespondenceCases = (props) => (
     <CorrespondenceCases {...props.match.params}
+      {...this.props}
+    />
+  );
+
+  routedCorrespondenceDetails = (props) => (
+    <CorrespondenceDetails {...props.match.params}
+      {...this.props}
+      correspondenceResponseLetters={this.props.correspondenceResponseLetters}
+      correspondenceTypes={this.props.correspondenceTypes}
+    />
+  );
+
+  routedCorrespondenceAssignTeamModal = (props) => (
+    <CorrespondenceAssignTeamModal
+      {...props.match.params}
+      userOrganizations={this.props.organizations}
+    />
+  );
+
+  routedCorrespondenceEditGeneralInformationModal = (props) => (
+    <CorrespondenceEditGeneralInformationModal {...props.match.params}
       {...this.props}
     />
   );
@@ -792,6 +842,13 @@ class QueueApp extends React.PureComponent {
               path="/queue/correspondence"
               title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
               render={this.routedCorrespondenceCases}
+            />
+
+            <PageRoute
+              exact
+              path ="/queue/correspondence/:correspondence_uuid"
+              title={`${PAGE_TITLES.CORRESPONDENCE_DETAILS}`}
+              render={this.routedCorrespondenceDetails}
             />
 
             <PageRoute
@@ -976,14 +1033,66 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path="/queue/correspondence/:correspondence_uuid/intake"
-              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
 
             <PageRoute
-              path="/queue/correspondence/:correspondence_uuid/intake"
-              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
-              render={this.routedCorrespondenceIntake}
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.value
+            })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
+              render={this.routedCorrespondenceAssignTeamModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+                `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.value
+                })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_TASK} | Caseflow`}
+              render={this.routedCorrespondenceAssignTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
+              render={this.routedCorrespondenceCancelTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/:correspondence_uuid/tasks/:task_id/modal/change_task_type"
+              title={`${PAGE_TITLES.CHANGE_TASK_TYPE} | Caseflow`}
+              render={this.routedCorrespondenceChangeTaskTypeModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
+              render={this.routedCorrespondenceCompleteTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path ="/queue/correspondence/:correspondence_uuid/modal/edit_correspondence_general_information"
+              title={`${PAGE_TITLES.EDIT_GENERAL_INFORMATION} | Caseflow}`}
+              render={this.routedCorrespondenceEditGeneralInformationModal}
             />
 
             {motionToVacateRoutes.page}
@@ -1026,7 +1135,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1239,7 +1349,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
               title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedCompleteTaskModal}
@@ -1577,7 +1688,10 @@ QueueApp.propTypes = {
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
   userPermissions: PropTypes.array,
-  configUrl: PropTypes.string
+  configUrl: PropTypes.string,
+  correspondenceResponseLetters: PropTypes.array,
+  conferenceProvider: PropTypes.string,
+  setMeetingType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -1590,6 +1704,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditAod,
       setCanEditNodDate,
       setUserIsCobAdmin,
+      setMeetingType,
       setCanEditCavcRemands,
       setCanEditCavcDashboards,
       setCanViewCavcDashboards,

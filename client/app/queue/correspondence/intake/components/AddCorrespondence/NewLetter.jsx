@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '../../../../../components/TextField';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import DateSelector from 'app/components/DateSelector';
+import DateSelector from '../../../../../components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import {
 
 export const NewLetter = (props) => {
   const index = props.index;
+  const onFormCompletion = props.onFormCompletion;
   const currentDate = moment(new Date()).format('YYYY-MM-DD');
   const currentLetter = props.currentLetter;
   const letterHash = {};
@@ -41,6 +42,7 @@ export const NewLetter = (props) => {
   const [responseWindows, setResponseWindows] = useState(displayLetter ? currentLetter.responseWindows : '');
   const naValue = 'N/A';
   const dispatch = useDispatch();
+  const isPastOrCurrentDate = moment(letterCard.date).isSameOrBefore(moment(), 'day');
 
   const radioOptions = [
     { displayText: '65 days',
@@ -121,6 +123,14 @@ export const NewLetter = (props) => {
 
     return false;
   };
+
+  useEffect(() => {
+    if (props.addLetterCheck === true) {
+      const isComplete = canContinue();
+
+      onFormCompletion(isComplete);
+    }
+  }, [letterCard]);
 
   const findSub = (option, aux) => {
     const subCate = [];
@@ -236,6 +246,7 @@ export const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
+    setCustomResponseWindowState(false);
   };
 
   useEffect(() => {
@@ -249,14 +260,18 @@ export const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterCard({ ...letterCard,
-      title: val
+      title: val,
+      subType: '',
+      reason: '',
     });
+    setCustomResponseWindowState(false);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
       subType: val
     });
+    setCustomResponseWindowState(false);
   };
 
   const changeSubReason = (val) => {
@@ -266,9 +281,24 @@ export const NewLetter = (props) => {
   };
 
   const changeDate = (val) => {
-    setLetterCard({ ...letterCard,
-      date: val
-    });
+    const isFutureDate = moment(val).isAfter(moment(), 'day');
+
+    if (isFutureDate) {
+      setLetterCard({
+        ...letterCard,
+        date: val,
+        type: '',
+        title: '',
+        subType: '',
+        reason: '',
+        responseWindows: ''
+      });
+    } else {
+      setLetterCard({
+        ...letterCard,
+        date: val
+      });
+    }
   };
 
   const removeLetter = () => {
@@ -277,81 +307,87 @@ export const NewLetter = (props) => {
   };
 
   return (
-    <div className="gray-border new-letter-container">
-      <div className="response_letter_date">
-        <DateSelector
-          name="date-set"
-          label="Date sent"
-          value= {letterCard.date}
-          onChange={(val) => changeDate(val)}
-          type="date"
+    <>
+      <div className={props.addLetterCheck ? 'details-page-letter-container' : 'gray-border new-letter-container'}>
+        <div className="response_letter_date">
+          <DateSelector
+            name="date-set"
+            label="Date sent"
+            value={letterCard.date}
+            onChange={(val) => changeDate(val)}
+            type="date"
+            noFutureDates
+          />
+        </div>
+        <br />
+        <SearchableDropdown
+          name="response-letter-type"
+          label="Letter type"
+          placeholder="Select..."
+          options={letterTypesData}
+          value={letterCard.type}
+          onChange={(val) => changeLetterType(val.value)}
+          readOnly={!isPastOrCurrentDate}
         />
+        <br />
+        <SearchableDropdown
+          name="response-letter-title"
+          label="Letter title"
+          placeholder="Select..."
+          readOnly={letterCard.type.length === 0}
+          options={letterTitleSelector}
+          value={letterCard.title}
+          onChange={(val) => changeLetterTitle(val.value)}
+        />
+        <br />
+        <SearchableDropdown
+          name="response-letter-subcategory"
+          label="Letter subcategory"
+          placeholder="Select..."
+          readOnly={letterCard.title.length === 0}
+          options={letterSubSelector}
+          value={letterCard.subType}
+          onChange={(val) => changeLetterSubTitle(val.value)}
+        />
+        <br />
+        <SearchableDropdown
+          name="response-letter-subcategory-reason"
+          label="Letter subcategory reason"
+          placeholder="Select..."
+          readOnly={letterCard.subType.length === 0}
+          options={letterSubReason}
+          value={letterCard.reason}
+          onChange={(val) => changeSubReason(val.value)}
+        />
+        <br />
+        <RadioField
+          label="How long should the response window be for this response letter?"
+          name={`How long should the response window be for this response letter?-${index}`}
+          options={valueOptions}
+          value={responseWindows}
+          onChange={(val) => handleCustomWindowState(val)}
+        />
+        {customResponseWindowState && (
+          <TextField
+            label="Number of days (Value must be between 1 and 64)"
+            name="content"
+            useAriaLabel
+            onChange={handleDays}
+            value={letterCard.customValue}
+          />
+        )}
+        <br />
+        {!props.addLetterCheck && (
+          <Button
+            name="Remove"
+            onClick={() => removeLetter()}
+            classNames={['cf-btn-link', 'cf-right-side', 'remove-button']}
+          >
+            <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
+          </Button>
+        )}
       </div>
-      <br />
-      <SearchableDropdown
-        name="response-letter-type"
-        label="Letter type"
-        placeholder="Select..."
-        options={letterTypesData}
-        value={letterCard.type}
-        onChange={(val) => changeLetterType(val.value)}
-      />
-      <br />
-      <SearchableDropdown
-        name="response-letter-title"
-        label="Letter title"
-        placeholder="Select..."
-        readOnly = {letterCard.type.length === 0}
-        options={letterTitleSelector}
-        value={letterCard.title}
-        onChange={(val) => changeLetterTitle(val.value)}
-      />
-      <br />
-      <SearchableDropdown
-        name="response-letter-subcategory"
-        label="Letter subcategory"
-        placeholder="Select..."
-        readOnly = {letterCard.title.length === 0}
-        options={letterSubSelector}
-        value={letterCard.subType}
-        onChange={(val) => changeLetterSubTitle(val.value)}
-      />
-      <br />
-      <SearchableDropdown
-        name="response-letter-subcategory-reason"
-        label="Letter subcategory reason"
-        placeholder="Select..."
-        readOnly = {letterCard.subType.length === 0}
-        options={letterSubReason}
-        value={letterCard.reason}
-        onChange={(val) => changeSubReason(val.value)}
-      />
-      <br />
-      <RadioField
-        label="How long should the response window be for this response letter?"
-        name={`How long should the response window be for this response letter?-${index}`}
-        options={valueOptions}
-        value = {responseWindows}
-        onChange={(val) => handleCustomWindowState(val)}
-      />
-      { customResponseWindowState &&
-        <TextField
-          label="Number of days (Value must be between 1 and 64)"
-          name="content"
-          useAriaLabel
-          onChange={handleDays}
-          value={letterCard.customValue}
-        />
-      }
-      <br />
-      <Button
-        name="Remove"
-        onClick={() => removeLetter()}
-        classNames={['cf-btn-link', 'cf-right-side', 'remove-button']}
-      >
-        <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
-      </Button>
-    </div>
+    </>
   );
 };
 
@@ -367,7 +403,9 @@ NewLetter.propTypes = {
   setUnrelatedTasksCanContinue: PropTypes.func,
   currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,
-  onContinueStatusChange: PropTypes.func
+  onContinueStatusChange: PropTypes.func,
+  onFormCompletion: PropTypes.func.isRequired,
+  addLetterCheck: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => (

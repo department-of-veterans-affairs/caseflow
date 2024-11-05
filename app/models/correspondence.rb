@@ -8,19 +8,33 @@ class Correspondence < CaseflowRecord
   has_paper_trail
   include PrintsTaskTree
   include AppealableCorrespondence
+  include CorrespondenceBelongsToPolymorphicAppealConcern
 
   has_many :correspondence_documents, dependent: :destroy
   has_many :correspondence_appeals, dependent: :destroy
   has_many :appeals, through: :correspondence_appeals
   has_many :correspondence_relations, dependent: :destroy
   has_many :related_correspondences, through: :correspondence_relations, dependent: :destroy
+  has_many :correspondence_response_letters, dependent: :destroy
   belongs_to :correspondence_type
   belongs_to :veteran
 
   after_create :initialize_correspondence_tasks
 
+  # root task manages checks for different child tasks
+  delegate :tasks_not_related_to_an_appeal, to: :root_task
+  delegate :closed_tasks_not_related_to_an_appeal, to: :root_task
+  delegate :correspondence_mail_tasks, to: :root_task
+  delegate :open_package_action_task, to: :root_task
+  delegate :review_package_task, to: :root_task
+  delegate :open_intake_task, to: :root_task
+
   def initialize_correspondence_tasks
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
+  end
+
+  def status
+    root_task&.correspondence_status
   end
 
   def type
@@ -39,15 +53,7 @@ class Correspondence < CaseflowRecord
 
   # Cannot use has_many :tasks - Task model does not contain a correspondence_id column
   def tasks
-    Task.where(appeal_id: id, appeal_type: type)
-  end
-
-  def review_package_task
-    ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
-  end
-
-  def open_intake_task
-    CorrespondenceIntakeTask.open.find_by(appeal_id: id)
+    CorrespondenceTask.where(appeal_id: id, appeal_type: type)
   end
 
   def root_task

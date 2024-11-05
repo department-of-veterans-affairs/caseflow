@@ -1,4 +1,3 @@
-
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a file number, SSN, or AMA docket number",
@@ -120,6 +119,15 @@
     "APPROVE": "approve",
     "REJECT": "reject"
   },
+  "CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
+  "CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL": "Provide context and instructions for the action",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION": "Task for %s's case has been completed",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been completed",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TITLE": "Edit general information",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_VADOR": "VA DOR",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TYPE": "Correspondence type",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_NOTES": "Notes",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_DETAIL": "Correspondence has been updated",
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
@@ -703,6 +711,7 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_BUTTON": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "REASSIGN_TASK_TITLE": "Re-assign to person",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
   "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
   "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a team who will determine if there is a conflict of jurisdiction.",
@@ -827,6 +836,7 @@
   "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add admin rights",
   "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
+  "USER_MANAGEMENT_SELECT_HEARINGS_CONFERENCE_TYPE": "Schedule hearings using:",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE": "You successfully %s %s's request",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE": "The user was %s regular member access to %s.",
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
@@ -1007,6 +1017,7 @@
   "INTAKE_EDIT_ISSUE_DECISION_DATE": "Decision date: ",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "INTAKE_REMOVE_COMP_AND_PEN": "Higher Level Reviews and Supplemental Claims with Compensation and Pension & Survivor's Benefits are now handled through VBMS and are no longer established through Caseflow",
+  "INTAKE_EDIT_DISABLED_COMP_AND_PEN":"Higher Level Reviews and Supplemental Claims for Compensation and Pension Claims are now managed in VBMS. They can no longer be edited in Caseflow",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
   "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
   "VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS": "VHA10D1B3R2Appeals@va.gov",
@@ -1257,8 +1268,9 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
-  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
-  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
+  "HC_VIRTUAL_HEARING_LINK_LABEL": "Hearing Coordinator Link",
+  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Hearing",
+  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Hearing",
   "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
   "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
   "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
@@ -1502,9 +1514,11 @@
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
   "CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor reviews the request.",
-  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with Claims Folder",
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
+  "CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE": "Provide context and instructions for this action",
+  "CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE": "Provide instructions and context for this change",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
   "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences",
   "BAAA_NO_UNASSIGNED_CORRESPONDENCE": "There are no correspondences available for assignment",
@@ -1616,5 +1630,15 @@
     }
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
-  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests."
+  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
+  "CORRESPONDENCE_DETAILS": {
+    "COMPLETED_MAIL_TASKS": "Completed Mail Tasks",
+    "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake.",
+    "SAVE_CHANGES_BANNER": {
+      "MESSAGE": "You have successfully saved changes to this page",
+      "TYPE": "success"
+    }
+  },
+  "ALL_CORRESPONDENCES": "All Correspondence",
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }

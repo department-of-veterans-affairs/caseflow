@@ -22,4 +22,8 @@ class WorkQueue::CorrespondenceTaskSerializer
   attribute :status
   attribute :updated_at
   attribute :type
+  # other location for task actions. Will be needed for correspondence related tasks
+  attribute :available_actions do |object, params|
+    object.available_actions_unwrapper(params[:user])
+  end
 end

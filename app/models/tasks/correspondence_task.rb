@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceTask < Task
-  belongs_to :correspondence, class_name: "Correspondence", foreign_key: "appeal_id"
+  belongs_to :correspondence, foreign_type: "Correspondence", foreign_key: "appeal_id", polymorphic: true
   self.abstract_class = true
 
   before_create :verify_org_task_unique
@@ -10,6 +10,39 @@ class CorrespondenceTask < Task
   validate :assignee_status_is_valid_on_create, on: :create
 
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
+  scope :tasks_not_related_to_an_appeal, -> { where(type: tasks_not_related_to_an_appeal_names) }
+  scope :correspondence_mail_tasks, -> { where(type: correspondence_mail_task_names) }
+  scope :efolder_parent_tasks, -> { where(id: where(type: EfolderUploadFailedTask.name).active.pluck(:parent_id)) }
+
+  # scopes to handle task queue logic
+  # Correspondence Cases queries
+  scope :unassigned_tasks, -> { where(type: ReviewPackageTask.name, status: Constants.TASK_STATUSES.unassigned) }
+  # due to 'on_hold' tasks also getting action_required_tasks, join efolder parent task
+  scope :assigned_tasks, lambda {
+                           where(type: active_task_names).active.or(efolder_parent_tasks)
+                         }
+  scope :action_required_tasks, -> { where(assigned_to: InboundOpsTeam.singleton).package_action_tasks.active }
+  scope :pending_tasks, -> { tasks_not_related_to_an_appeal.open }
+  # a correspondence is completed if the root task is completed or there are no active child tasks
+  # since active child tasks set the root task status to 'on_hold', the assumption is if a root task isn't on hold or
+  # cancelled, the correspondence is completed.
+  # This assumption is used to lower the N+1 query checking all the child task statuses.
+  scope :completed_root_tasks, lambda {
+                                 where(type: CorrespondenceRootTask.name).where.not(
+                                   status: Constants.TASK_STATUSES.on_hold
+                                 ).where.not(status: Constants.TASK_STATUSES.cancelled)
+                               }
+
+  # Your Correspondence queries
+  scope :user_assigned_tasks, lambda { |assignee|
+    where(type: active_task_names).open.where("assigned_to_id=?", assignee&.id)
+  }
+
+  scope :user_in_progress_tasks, lambda { |assignee|
+    where("assigned_to_id=?", assignee&.id)
+      .where.not(type: EfolderUploadFailedTask.name)
+      .where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.on_hold])
+  }
 
   delegate :nod, to: :correspondence
 
@@ -39,13 +72,43 @@ class CorrespondenceTask < Task
     end
   end
 
+  def self.active_task_names
+    [
+      CorrespondenceIntakeTask.name,
+      ReviewPackageTask.name
+    ].freeze
+  end
+
   def self.package_action_task_names
     [
       ReassignPackageTask.name,
       RemovePackageTask.name,
       SplitPackageTask.name,
       MergePackageTask.name
-    ]
+    ].freeze
+  end
+
+  def self.tasks_not_related_to_an_appeal_names
+    [
+      CavcCorrespondenceCorrespondenceTask.name,
+      CongressionalInterestCorrespondenceTask.name,
+      DeathCertificateCorrespondenceTask.name,
+      FoiaRequestCorrespondenceTask.name,
+      OtherMotionCorrespondenceTask.name,
+      PowerOfAttorneyRelatedCorrespondenceTask.name,
+      PrivacyActRequestCorrespondenceTask.name,
+      PrivacyComplaintCorrespondenceTask.name,
+      StatusInquiryCorrespondenceTask.name
+    ].freeze
+  end
+
+  def self.correspondence_mail_task_names
+    [
+      AssociatedWithClaimsFolderMailTask.name,
+      AddressChangeCorrespondenceMailTask.name,
+      EvidenceOrArgumentCorrespondenceMailTask.name,
+      VacolsUpdatedMailTask.name
+    ].freeze
   end
 
   def verify_org_task_unique
@@ -101,11 +164,11 @@ class CorrespondenceTask < Task
   end
 
   def task_url
-    # Future: route to the Correspondence Details Page after implementation.
-    if ENV["RAILS_ENV"] == "production"
+    # route to the Correspondence Details Page.
+    if !FeatureToggle.enabled?(:correspondence_queue)
       "/under_construction"
     else
-      "/explain/correspondence/#{correspondence.uuid}/"
+      Constants.CORRESPONDENCE_TASK_URL.CORRESPONDENCE_TASK_DETAIL_URL.sub("uuid", correspondence.uuid)
     end
   end
 
