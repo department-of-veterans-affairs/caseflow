@@ -268,7 +268,9 @@ export const workOrderColumn = () => {
     valueFunction: (row) => (
       <div>
         <Link
-          to={`/transcription_work_order/display_wo_summary/?taskNumber=${row.workOrder}`}
+          to={`/transcription_work_order/display_wo_summary/?taskNumber=${
+            row.workOrder
+          }`}
           target="_blank"
           style={styles.workOrderLink}
         >
@@ -461,7 +463,7 @@ export const statusColumn = (currentTab) => {
         displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
       },
     ];
-  } else if (currentTab === COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB) {
+  } else if (currentTab === 'All') {
     filterOptions = [
       {
         value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
@@ -498,7 +500,7 @@ export const statusColumn = (currentTab) => {
     label: 'status filter',
     filterOptions,
     valueFunction: (row) => {
-      let status = currentTab === COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB ?
+      let status = currentTab === COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB || currentTab === 'All' ?
         row.fileStatus : row.status;
       let displayStatus = status;
 

@@ -3,7 +3,7 @@
 exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 1`] = `
 <div>
   <div
-    data-css-2jinkx=""
+    data-css-qu9dh5=""
   >
     <div
       class="cf-table-wrapper"
@@ -1139,7 +1139,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
               tabindex="-1"
             >
               <div>
-                Completed-Overdue
+                Completed
               </div>
             </td>
             <td
@@ -1217,7 +1217,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
 exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend data 1`] = `
 <div>
   <div
-    data-css-2jinkx=""
+    data-css-qu9dh5=""
   >
     <div
       class="cf-table-wrapper"
@@ -3688,7 +3688,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
 exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend data 1`] = `
 <div>
   <div
-    data-css-2jinkx=""
+    data-css-qu9dh5=""
   >
     <div
       class="cf-table-wrapper"
@@ -4902,7 +4902,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
 exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backend data and handles selected and locked records 1`] = `
 <div>
   <div
-    data-css-2jinkx=""
+    data-css-qu9dh5=""
   >
     <div
       class="cf-table-wrapper"

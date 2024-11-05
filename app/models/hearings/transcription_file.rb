@@ -105,6 +105,17 @@ class Hearings::TranscriptionFile < CaseflowRecord
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 
+  # Purpose:Fetches the file by docket number and type
+  # Return:The temporary save location of the file
+  def self.fetch_file_by_docket_and_type(docket_number)
+    file = where(docket_number: docket_number, file_type: "xls")
+      .where.not(date_returned_box: nil)
+      .first
+    return nil unless file
+
+    file.fetch_file_from_s3!
+  end
+
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
