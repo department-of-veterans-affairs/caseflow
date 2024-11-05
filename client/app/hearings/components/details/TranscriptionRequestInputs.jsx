@@ -6,7 +6,7 @@ import DateSelector from '../../../components/DateSelector';
 import Checkbox from '../../../components/Checkbox';
 
 const TranscriptionRequestInputs = ({ hearing, update, readOnly }) => (
-  <div {...rowThirds}>
+  <div {...rowThirds} data-testid="transcription-request-inputs">
     <div>
       <strong>Copy Requested by Appellant/Rep</strong>
       <Checkbox

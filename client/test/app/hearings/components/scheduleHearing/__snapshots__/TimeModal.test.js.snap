@@ -70,7 +70,6 @@ exports[`renders correctly 1`] = `
             <div>
               Enter time as h:mm AM/PM, for example "1:00 PM"
             </div>
-            
             <div
               class="time-select"
               data-css-1nsikqq=""
