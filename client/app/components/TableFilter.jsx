@@ -215,7 +215,7 @@ class TableFilter extends React.PureComponent {
       getFilterValues;
 
     return (
-      <span {...iconStyle}>
+      <span {...iconStyle} data-testid="table-filter-testid">
         <FilterIcon
           aria-label={this.filterIconAriaLabel()}
           label={this.filterIconAriaLabel()}
