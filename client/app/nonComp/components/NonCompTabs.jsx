@@ -9,6 +9,7 @@ import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
 import { fetchTaskFilterDetails } from '../reducers';
+import { LoadingIcon } from '../../components/icons/LoadingIcon';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -123,7 +124,7 @@ const NonCompTabsUnconnected = (props) => {
     }
   };
 
-  return (<TabWindow
+  return (props.taskFilterDetailsLoading ? <LoadingIcon /> : <TabWindow
     onChange={((value) => resetPageNumberOnTabChange(value))}
     name="tasks-organization-queue"
     tabs={tabs}

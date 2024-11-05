@@ -23,7 +23,6 @@ import {
 } from '../util/index';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
-import { LoadingIcon } from '../../components/icons/LoadingIcon';
 
 class TaskTableTabUnconnected extends React.PureComponent {
   constructor(props) {
@@ -103,7 +102,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
   render = () => {
     this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.searchValue;
 
-    return this.props.taskFilterDetailsLoading ? <LoadingIcon /> : <React.Fragment>
+    return <React.Fragment>
       <div className="search-and-description-container">
         <div className="cf-noncomp-queue-completed-task noncomp-tab-description">{this.props.description}</div>
         <div className="cf-search-ahead-parent cf-noncomp-search">
@@ -158,13 +157,11 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
   tabName: PropTypes.string,
-  taskFilterDetailsLoading: PropTypes.bool,
 };
 
 const TaskTableTab = connect(
   (state) => ({
-    featureToggles: state.nonComp.featureToggles,
-    taskFilterDetailsLoading: state.nonComp.taskFilterDetailsLoading
+    featureToggles: state.nonComp.featureToggles
   }),
 )(TaskTableTabUnconnected);
 
