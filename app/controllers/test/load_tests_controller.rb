@@ -5,7 +5,7 @@ require "digest"
 require "securerandom"
 require "base64"
 class Test::LoadTestsController < ApplicationController
-  before_action :check_environment
+  # before_action :check_environment
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"

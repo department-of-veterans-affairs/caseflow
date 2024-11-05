@@ -10,6 +10,7 @@ import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
 import OrgCheckboxSection from './OrgCheckboxSection';
+import RoleConfiguration from './RoleConfiguration';
 
 export default function UserConfiguration(props) {
   const [stationSelected, setStationSelected] = useState('');
@@ -21,6 +22,7 @@ export default function UserConfiguration(props) {
   const stationsMapping = new Map();
 
   const functionsAvailable = props.form_values.functions_available;
+  const roles = props.form_values.all_csum_roles;
   const featureToggles = props.featuresList;
   const currentState = props.currentState;
   const updateState = props.updateState;
@@ -90,7 +92,7 @@ export default function UserConfiguration(props) {
 
   return (
     <div>
-      <p>Station ID</p>
+      <h3><strong>Station ID</strong></h3>
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
@@ -104,7 +106,7 @@ export default function UserConfiguration(props) {
       { isSelectedStation &&
         (<div>
           <br />
-          <p>Regional Office</p>
+          <h3><strong>Regional Office</strong></h3>
           <SearchableDropdown
             name="Regional office dropdown"
             hideLabel
@@ -118,12 +120,12 @@ export default function UserConfiguration(props) {
           { isSelectedOffice &&
             (<div>
               <br />
-              <p>Organizations</p>
+              <h3><strong>Organizations</strong></h3>
               <div className="load-test-container">
                 <OrgCheckboxSection {...props} />
               </div>
               <br />
-              <h2><strong>Functions</strong></h2>
+              <h3><strong>Functions</strong></h3>
               <div className="load-test-container test-class-sizing">
                 {functionsAvailable.map((functionOption) => (
                   <FunctionConfiguration
@@ -135,7 +137,19 @@ export default function UserConfiguration(props) {
                 ))}
               </div>
               <br />
-              <h2><strong>Feature Toggles</strong></h2>
+              <h3><strong>Roles</strong></h3>
+              <div className="load-test-container test-class-sizing">
+                {roles.map((role) => (
+                  <RoleConfiguration
+                    key={role}
+                    role={role}
+                    currentState={currentState}
+                    updateState={props.updateState}
+                  />
+                ))}
+              </div>
+              <br />
+              <h3><strong>Feature Toggles</strong></h3>
               <div className="load-test-container test-class-sizing">
                 {featureToggles.map((featureToggle) => (
                   <FeatureToggleConfiguration

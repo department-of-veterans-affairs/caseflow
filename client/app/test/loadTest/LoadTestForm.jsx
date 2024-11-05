@@ -15,6 +15,7 @@ export default function LoadTestForm(props) {
 
   const currentState = props.currentState;
   const updateState = props.updateState;
+  let showScenarios = Object.keys(currentState.user.user.regional_office).length !== 0;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -37,7 +38,7 @@ export default function LoadTestForm(props) {
           user: {
             station_id: currentState.user.user.station_id,
             regional_office: currentState.user.user.regional_office,
-            roles: [],
+            roles: currentState.user.user.roles,
             functions: currentState.user.user.functions,
             organizations: properlyFormattedOrgsArray,
             feature_toggles: currentState.user.user.feature_toggles
@@ -55,11 +56,16 @@ export default function LoadTestForm(props) {
       <AppFrame>
         <form onSubmit={onSubmit} >
           <AppSegment filledBackground>
-            <h1>Test Target Configuration</h1>
+            <h1>Welcome to the Caseflow Load Test page</h1>
+            <h2>User Configuration</h2>
             <UserConfiguration {...props} updateState={updateState} currentState={currentState} />
             <br />
-            <h2>Scenario Groups</h2>
-            <ScenarioConfigurations {...props} updateState={updateState} currentState={currentState} />
+            { showScenarios &&
+            <>
+              <h2>Scenario Groups</h2>
+              <ScenarioConfigurations {...props} updateState={updateState} currentState={currentState} />
+            </>
+            }
           </AppSegment>
           <div {...css({ overflow: 'hidden' })}>
             <Button
