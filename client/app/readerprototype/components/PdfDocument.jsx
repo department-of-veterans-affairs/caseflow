@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
 import ProgressBar from './ProgressBar';
+import ProgressBarUtil from '../util/ProgressBarUtil';
 
 const PdfDocument = ({
   currentPage,
@@ -32,10 +33,6 @@ const PdfDocument = ({
   const metricsLoggedRef = useRef(metricsLogged);
   const requestRef = useRef(null);
   const showProgressBarRef = useRef(false);
-  // Inital wait time in milliseconds
-  const minimumInitialWait = 1000;
-  // significantAdditionalWait time in seconds
-  const significantAdditionalWait = 3;
   const [progressData, setProgressData] = useState({
     progressPercentage: 0,
     loadedBytes: 0,
@@ -133,48 +130,20 @@ const PdfDocument = ({
         timeout: true,
         responseType: 'arraybuffer',
         onProgress: ({ loaded }) => {
-          let percentage = 0;
-          let downloadSpeed = 0;
-          let enlapsedTime = 0;
+          const percentage = ProgressBarUtil.calculateProgress({ loaded, file_size: doc.file_size });
+          const enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
+          const downloadSpeed = (loaded / (enlapsedTime / 1000)).toFixed(0);
 
-          if (doc.file_size > 0) {
-            percentage = ((loaded / doc.file_size) * 100).toFixed(0);
+          const shouldShow = ProgressBarUtil.shouldShowProgressBar(enlapsedTime, downloadSpeed, percentage, loaded, doc.file_size);
+          if (!showProgressBarRef.current && shouldShow){
+            showProgressBarRef.current = true;
           }
 
-          if (!showProgressBarRef.current && percentage < 100) {
-            enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
-
-            downloadSpeed = (loaded / (enlapsedTime / 1000)).toFixed(0);
-
-            if (enlapsedTime > minimumInitialWait) {
-              let projectedEndTime = (doc.file_size - loaded) / downloadSpeed;
-
-              if (projectedEndTime > significantAdditionalWait) {
-                showProgressBarRef.current = true;
-              }
-              let barGraphic = Math.min(Math.round(percentage / 10), 10);
-
-              console.log(
-                `### Downloaded ${percentage}%\n`,
-                `${'*'.repeat(barGraphic)}`,
-                `${'_'.repeat(10 - barGraphic)}\n`,
-                `File Size: ${doc.file_size} bytes\n`,
-                `Loaded: ${loaded} bytes\n`,
-                `Elapsed Time :${enlapsedTime / 1000} seconds\n`,
-                `At ${downloadSpeed / 125000} Mbits/second\n`,
-                `Finish in ${projectedEndTime.toFixed(0)} seconds`
-              );
-            }
-          }
           setProgressData({
             progressPercentage: percentage,
             loadedBytes: loaded,
             totalBytes: doc.file_size,
           });
-
-          if (loaded === doc.file_size) {
-            console.log('### Download Complete');
-          }
         },
         cancellableRequest: ({ request }) => {
           requestRef.current = request;
