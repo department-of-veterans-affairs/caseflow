@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-include ActiveJob::TestHelper
 
 describe NationalHearingQueueEntryRefreshJob, :postgres do
+  include ActiveJob::TestHelper
   describe "#perform" do
     context "when it follows the happy path" do
       it "completes the national hearing queue refresh without raising any errors" do
@@ -45,7 +45,7 @@ describe NationalHearingQueueEntryRefreshJob, :postgres do
       before do
         allow(NationalHearingQueueEntry).to receive(:refresh).and_raise(StandardError)
       end
-      
+
       it "doesn't raise any errors" do
         expect do
           perform_enqueued_jobs { NationalHearingQueueEntryRefreshJob.perform_later }
