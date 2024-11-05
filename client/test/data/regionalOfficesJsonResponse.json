@@ -178,9 +178,7 @@
       "timezone": "America/Chicago",
       "state": "TN",
       "alternate_locations": [
-        "vc_0720V",
-        "vc_0719V",
-        "vha_626GF"
+        "vc_0719V"
       ],
       "facility_locator_id": "vba_320",
       "city": "Nashville"

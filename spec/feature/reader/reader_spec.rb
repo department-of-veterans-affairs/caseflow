@@ -25,7 +25,7 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
 
     # text-${pageIndex} is the id of the first page's CommentLayer
-    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
+    find('[id^="comment-layer-0"]').click
 
     expect(page).to have_css("#addComment", visible: true)
 
@@ -1081,8 +1081,9 @@ RSpec.feature "Reader", :all_dbs do
       # Test the document count updates after viewing a document
       expect(page).to have_content("You've viewed 0 out of #{documents.length} documents")
       click_on documents[0].type
+      click_on "Previous"
       click_on "Back"
-      expect(page).to have_content("You've viewed 1 out of #{documents.length} documents")
+      expect(page).to have_content("You've viewed 2 out of #{documents.length} documents")
 
       find(".rc-collapse-header", text: "Claims folder details").click
       regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"

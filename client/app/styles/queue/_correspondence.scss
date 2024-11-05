@@ -526,6 +526,22 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin: 80px auto 50px 100px;
 }
 
+.checkbox-modal-size-corr-details {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding: 0;
+  width: 105%;
+  margin-bottom: 10px;
+
+  .cf-form-checkboxes{
+    margin-bottom: 0rem;
+    margin-top: 1rem;
+
+  }
+}
+
 .confirm-correspondence-view-border {
   border: 2px solid $color-gray-lighter;
   margin-bottom: 20px;
@@ -1659,6 +1675,20 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 20px;
   padding-bottom: 20px;
   display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.tasks-added-text-second-alternate {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
 }
 
 .case-details-header-badge,
@@ -1855,4 +1885,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     background-color: $color-gray-darker !important; /* Dark gray background on hover */
     color: white !important; /* White text on hover */
   }
+}
+
+.back-button {
+margin-left: 240px;
 }

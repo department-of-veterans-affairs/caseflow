@@ -22,7 +22,6 @@ import COPY from '../../../../COPY';
 import UserAlerts from '../../../components/UserAlerts';
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 import { ScheduledInErrorModal } from '../ScheduledInErrorModal';
-import { DailyDocketGuestLinkSection } from './DailyDocketGuestLinkSection';
 
 const alertStyling = css({
   marginBottom: '30px',
@@ -301,9 +300,6 @@ export default class DailyDocket extends React.Component {
             )}
           </div>
         </div>
-        {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <DailyDocketGuestLinkSection linkInfo={dailyDocket.conferenceLink} />
-        )}
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled

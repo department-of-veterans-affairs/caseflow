@@ -120,7 +120,6 @@ exports[`DaysWaiting renders correctly 1`] = `
                 class=""
               >
                 <span>
-                  
                    
                 </span>
               </legend>
@@ -368,7 +367,7 @@ exports[`DaysWaiting renders correctly 1`] = `
                     class="days-waiting"
                   >
                     <div
-                      class="sc-bdfBwQ gZlgoQ"
+                      class="sc-aXZVg elchKe"
                     >
                       <div
                         class=""

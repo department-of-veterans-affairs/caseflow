@@ -9,7 +9,7 @@ import pdfViewerReducer from './PdfViewer/PdfViewerReducer';
 import documentsReducer from './Documents/DocumentsReducer';
 import annotationLayerReducer from './AnnotationLayer/AnnotationLayerReducer';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   caseSelect: caseSelectReducer,
   pdf: pdfReducer,
   searchActionReducer,
