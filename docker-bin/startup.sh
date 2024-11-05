@@ -9,7 +9,7 @@ echo "############################################# Starting Appeals App #######
 date
 
 echo "############################################# Waiting for Vacols to be ready #############################################"
-rake local:vacols:wait_for_connection
+bundle exec rake local:vacols:wait_for_connection
 
 echo "############################################# Creating DB in PG #############################################"
 bundle exec rake db:create:primary
