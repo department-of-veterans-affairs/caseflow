@@ -16,7 +16,5 @@ export DOCKER_HOST=host.docker.internal
 export DOCKER_PORT=1521
 export DOCKER_DB="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))"
 
-# export PATH=/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/nvm/versions/node/v16.16.0/bin:/usr/local/bundle/bin:/usr/local/bundle/gems/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/oracle/instantclient_12_2:
-
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_19_24
 export ORACLE_HOME=/opt/oracle/instantclient_19_24
