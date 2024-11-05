@@ -44,16 +44,15 @@ RSpec.describe PersonAndVeteranEventRemediationJob do
     let(:person_1) { create(:person, participant_id: "601486438", ssn: "683378050") }
     let(:person_2) { create(:person, participant_id: "601486439", ssn: "683378050") }
 
-
     subject { create_job }
     # we are uncertain how to get staged data for an event to test these.
     # would we need/want to create a factory or just mock up an Event hash?
 
-    xit "sets a current user" do
+    it "sets a current user" do
       expect(current_user).to be_an_instance_of(User)
     end
 
-    xit "sends an array of found dup person evented records to service class" do
+    xit "finds and remediates duplicate person records" do
       subject.perform_now
       expect(person_2).to be_deleted
     end
