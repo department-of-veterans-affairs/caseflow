@@ -12,25 +12,23 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   def perform
     setup_job
-    if dups = find_and_remediate_duplicate_people
-      DuplicatePersonRemediationService.new(dups).remediate
+    find_events("Person").select do |event_record|
+      others_with_original = Person.where(ssn: event_record.evented_record.ssn)&.map(&:id)&.uniq
+      DuplicatePersonRemediationService.new(others_with_original).remediate! if others_with_original.size > 1
     end
-
     find_and_update_veteran_records
   end
 
   private
 
-  def find_duplicates
-
-  def find_duplicate_people
-    # grabs array of event records for person objects
-    find_events("Person").select do |event_record|
-      # logic for remediation selection
-      others_with_original = Person.where(ssn: event_record.evented_record.ssn)&.map(&:id)&.uniq
-      DuplicatePersonRemediationService.new(others_with_original).remediate! if others_with_original.size > 1
-    end
-  end
+  # def find_duplicate_people
+  #   # grabs array of event records for person objects
+  #   find_events("Person").select do |event_record|
+  #     # logic for remediation selection
+  #     others_with_original = Person.where(ssn: event_record.evented_record.ssn)&.map(&:id)&.uniq
+  #     DuplicatePersonRemediationService.new(others_with_original).remediate! if others_with_original.size > 1
+  #   end
+  # end
 
   def find_events(event_type)
     EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
