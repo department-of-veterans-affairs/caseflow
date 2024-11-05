@@ -60,6 +60,9 @@ const styles = css({
   '& th:last-child .cf-dropdown-filter': {
     left: '-231px',
   },
+   '& .unassigned-tab td:nth-child(3)': {
+    fontWeight: 'bold',
+  },
   '& .cf-table-wrapper': {
     minHeight: '620px',
     overflow: 'unset',
@@ -72,6 +75,7 @@ export const TranscriptionFileDispatchTable = ({
   selectFilesForPackage,
   openModal,
   searchValue,
+  className
 }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -147,7 +151,11 @@ export const TranscriptionFileDispatchTable = ({
    * @returns The url string
    */
   const apiEndpoint = () => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
+    if (
+      !statusFilter ||
+      statusFilter[0] === 'Unassigned' ||
+      statusFilter[0] === 'Completed' ||
+      statusFilter[0] === 'All') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
@@ -287,6 +295,7 @@ export const TranscriptionFileDispatchTable = ({
         rowObjects={[]}
         enablePagination
         casesPerPage={15}
+        className={className}
         useTaskPagesApi
         taskPagesApiEndpoint={apiEndpoint()}
         anyFiltersAreSet
