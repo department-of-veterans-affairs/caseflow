@@ -17,7 +17,7 @@ import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
-import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModel';
+import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
 
@@ -28,6 +28,7 @@ import { saveUserSearch } from '../../nonComp/actions/savedSearchSlice';
 import savedSearchesData from 'test/data/nonComp/savedSearchesData';
 
 import { get } from 'lodash';
+import COPY from 'app/../COPY';
 
 import {
   REPORT_TYPE_OPTIONS,
@@ -336,6 +337,8 @@ const ReportPage = ({ history }) => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
   const currentUserCssId = useSelector((state) => state.nonComp.currentUserCssId);
+  const saveSearchStatus = useSelector((state) => state.savedSearch.status);
+  const saveSearchAlertTitle = useSelector((state) => state.savedSearch.message);
   const isCSVGenerating = csvGeneration === 'loading';
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
@@ -423,7 +426,15 @@ const ReportPage = ({ history }) => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
   }, []);
 
-  return (
+  return (<>
+    { saveSearchStatus === 'succeeded' ?
+      <Alert
+        type="success"
+        title={saveSearchAlertTitle}
+        message={COPY.SEARCH_ALERT_DESCRIPTION}
+        scrollOnAlert={false} /> :
+      null
+    }
     <NonCompLayout
       buttons={
         <ReportPageButtons
@@ -503,6 +514,7 @@ const ReportPage = ({ history }) => {
         </form>
       </FormProvider>
     </NonCompLayout>
+  </>
   );
 };
 
