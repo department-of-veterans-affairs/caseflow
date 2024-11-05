@@ -218,9 +218,9 @@ RSpec.feature "Convert hearing request type" do
 
       step "Confirm success message" do
         expect(page).to have_content(
-          "You have successfully converted #{appellant_name}'s hearing to virtual"
+          "You have successfully converted #{appellant_name}'s hearing to virtual", wait: 30
         )
-        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL, wait: 30)
 
         # We only display hearing types for AMA hearings
         if hearing.is_a?(Hearing)
@@ -268,16 +268,19 @@ RSpec.feature "Convert hearing request type" do
             click_dropdown(name: "appealHearingLocation", index: 0)
             click_dropdown(name: "hearingDate", index: 1)
             click_dropdown(name: "optionalHearingTime0", index: 0)
-            click_button(text: "Schedule")
+            safe_click("#button-Schedule")
+
+            expect(page).to have_content("You have successfully assigned")
           end
 
           step "navigate to the hearings form" do
-            appeal = Appeal.last
             User.authenticate!(user: vso_user)
             visit "queue/appeals/#{appeal.uuid}"
             expect(page).to have_content("Video")
             expect(page).to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
             click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+            expect(page).to have_content("Convert to Virtual Hearing")
+            expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
             expect(page).to have_current_path("/hearings/#{appeal.hearings.first.uuid}/details")
           end
         end
@@ -297,7 +300,7 @@ RSpec.feature "Convert hearing request type" do
             click_dropdown(name: "appealHearingLocation", index: 0)
             click_dropdown(name: "hearingDate", index: 0)
             click_dropdown(name: "optionalHearingTime0", index: 0)
-            click_button(text: "Schedule")
+            safe_click("#button-Schedule")
           end
 
           step "vso user" do
