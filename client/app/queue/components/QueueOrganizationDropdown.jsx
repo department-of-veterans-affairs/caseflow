@@ -22,14 +22,22 @@ export default class QueueOrganizationDropdown extends React.Component {
       label: COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL
     };
 
+    const correspondenceTable = (org) => {
+      return org.name === COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL ||
+      org.name === COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES;
+    };
+
     const organizationItems = organizations.map((org, index) => {
       // If the url is a specified path, use it over the organization route
-      const orgHref = org.url.includes('/') ? org.url : `/organizations/${org.url}`;
+      const orgHref = org.url?.includes('/') ? org.url : `/organizations/${org.url}`;
+
+      const label = correspondenceTable(org) ?
+        org.name : sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name);
 
       return {
         key: (index + 1).toString(),
         href: (location === org.url) ? '#' : orgHref,
-        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)
+        label
       };
     });
 
