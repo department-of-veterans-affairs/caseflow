@@ -23,6 +23,7 @@ Object {
         </span>
         <span
           data-css-12sli69=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -164,6 +165,7 @@ Object {
       </span>
       <span
         data-css-12sli69=""
+        data-testid="tooltip-testid"
       >
         <div
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
