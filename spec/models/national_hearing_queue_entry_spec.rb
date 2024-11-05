@@ -14,6 +14,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
 
     context "For AMA appeals" do
+      after(:each) { clean_up_after_threads }
       let!(:appeal) do
         create(
           :appeal,
