@@ -823,17 +823,30 @@ describe HearingRequestDocket, :postgres do
 
     context "when genpop with not_genpop" do
       let(:genpop) { "not_genpop" }
+      let(:priority) { true }
+      let!(:ready_aod_appeal_tied_to_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 7.days.ago)
+      end
+      let!(:ready_aod_appeal_tied_to_judge_out_of_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago)
+      end
+
       let!(:ready_cavc_appeal_tied_to_requesting_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago,
-                                 affinity_start_date: 10.days.ago)
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
       end
       let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago)
+      end
+
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_in_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago,
+          affinity_start_date: 10.days.ago)
+      end
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_out_of_window) do
         create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago,
-                                 affinity_start_date: 22.days.ago)
+          affinity_start_date: 22.days.ago)
       end
-      let!(:ready_cavc_appeal_tied_to_other_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 10.days.ago, affinity_start_date: 10.days.ago)
-      end
+
       let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_in_window) do
         create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago, aod: true,
                                  affinity_start_date: 10.days.ago)
@@ -842,8 +855,13 @@ describe HearingRequestDocket, :postgres do
         create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago, aod: true,
                                  affinity_start_date: 22.days.ago)
       end
-      let!(:ready_cavc_aod_appeal_tied_to_other_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 15.days.ago, aod: true,
+
+      let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_in_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago, aod: true,
+                                 affinity_start_date: 10.days.ago)
+      end
+      let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_out_of_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago, aod: true,
                                  affinity_start_date: 22.days.ago)
       end
 
@@ -851,33 +869,25 @@ describe HearingRequestDocket, :postgres do
         before do
           CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 0)
 
-          create_most_recent_hearing(ready_cavc_appeal_tied_to_requesting_judge_in_window,
+          create_most_recent_hearing(ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_in_window,
                                      requesting_judge_no_attorneys)
-          create_most_recent_hearing(ready_cavc_appeal_tied_to_requesting_judge_out_of_window,
+          create_most_recent_hearing(ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_out_of_window,
                                      requesting_judge_no_attorneys)
-          create_most_recent_hearing(ready_cavc_appeal_tied_to_other_judge_in_window, other_judge)
 
-          create_most_recent_hearing(ready_cavc_aod_appeal_tied_to_requesting_judge_in_window,
+          create_most_recent_hearing(ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_in_window,
                                      requesting_judge_no_attorneys)
-          create_most_recent_hearing(ready_cavc_aod_appeal_tied_to_requesting_judge_out_of_window,
+          create_most_recent_hearing(ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_out_of_window,
                                      requesting_judge_no_attorneys)
-          create_most_recent_hearing(ready_cavc_aod_appeal_tied_to_other_judge_in_window, other_judge)
-
-          ready_cavc_appeal_tied_to_requesting_judge_in_window.update!(stream_type: "original")
-          ready_cavc_appeal_tied_to_requesting_judge_out_of_window.update!(stream_type: "original")
-          ready_cavc_appeal_tied_to_other_judge_in_window.update!(stream_type: "original")
-
-          ready_cavc_aod_appeal_tied_to_requesting_judge_in_window.update!(
-            stream_type: "original", established_at: Time.zone.now
-          )
-          ready_cavc_aod_appeal_tied_to_requesting_judge_out_of_window.update!(stream_type: "original")
-          ready_cavc_aod_appeal_tied_to_other_judge_in_window.update!(stream_type: "original")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
           expect(subject.map(&:case_id)).to match_array(
-            [ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
-             ready_cavc_aod_appeal_tied_to_requesting_judge_in_window.uuid]
+            [ready_aod_appeal_tied_to_judge_in_window.uuid,
+             ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
+             ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_in_window.uuid,
+             ready_cavc_aod_appeal_tied_to_requesting_judge_in_window.uuid,
+             ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_in_window.uuid
+            ]
           )
         end
       end

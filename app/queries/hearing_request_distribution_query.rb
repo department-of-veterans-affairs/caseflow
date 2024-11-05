@@ -38,12 +38,13 @@ class HearingRequestDistributionQuery
 
   def not_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_not_genpop_non_aod_hearing_query(base_relation)
+    ama_non_aod_cavc_query = generate_ama_not_genpop_non_aod_cavc_query(base_relation)
     ama_aod_hearing_query = generate_ama_not_genpop_aod_hearing_query(base_relation)
 
-    ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
+    [ama_non_aod_hearing_query.or(ama_aod_hearing_query), ama_non_aod_cavc_query].flatten.uniq
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength]
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
@@ -97,6 +98,32 @@ class HearingRequestDistributionQuery
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .most_recent_hearings
+          .with_appeal_affinities
+          .none
+      end
+
+    query
+  end
+
+  def generate_ama_not_genpop_non_aod_cavc_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_appeals
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
           .with_appeal_affinities
           .none
       end

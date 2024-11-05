@@ -304,6 +304,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where(hearings: { disposition: "held", judge_id: nil })
   end
 
+  def with_cavc_appeals
+    where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
+  end
+
   def with_no_hearings
     left_joins(:hearings).where(hearings: { id: nil })
   end
