@@ -44,10 +44,10 @@ development:
     adapter: oracle_enhanced
     username: VACOLS_DEV
     password: VACOLS_DEV
-    <% if ENV["DOCKERIZED"] %>
-    host: vacols-db
-    <% else %>
+    <% if ! ENV["DOCKERIZED"] %>
     host: localhost
+    <% else %>
+    host: <%= ENV['DOCKER_HOST'] %>
     <% end %>
     port: 1521
     database: <%= ENV['DOCKER_DB'] || "BVAP" %>

@@ -114,7 +114,7 @@ download-facols:	## Download the FACOLS Docker image
 	./docker-bin/oracle_libs/build_push.sh rake
 
 build-facols:
-	./docker-bin/oracle_libs/build_push.sh local
+	./docker-bin/oracle_libs/build_oracle.sh -v 19.3.0 -e
 
 sqs-conf-dir:	## Create local required dir
 	mkdir -p local/sqs/conf
