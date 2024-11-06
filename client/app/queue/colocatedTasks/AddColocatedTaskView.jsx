@@ -119,9 +119,15 @@ class AddColocatedTaskView extends React.PureComponent {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
           this.props.deleteTask(task.uniqueId);
         }
+
+        const nextStepUrl = this.getNextStepUrl();
+
+        if (nextStepUrl) {
+          this.props.history.push(nextStepUrl);
+        }
       }).
       catch(() => {
-        // handle the error from the frontend
+        // Handle the error appropriately
       });
   };
 
@@ -217,6 +223,9 @@ AddColocatedTaskView.propTypes = {
     uniqueId: PropTypes.string,
     taskId: PropTypes.string,
     isLegacy: PropTypes.bool
+  }),
+  history: PropTypes.shape({
+    push: PropTypes.func
   })
 };
 
