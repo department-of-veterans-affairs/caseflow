@@ -264,7 +264,7 @@ describe ExternalApi::VBMSService do
       it "calls the CE API" do
         allow(SecureRandom).to receive(:uuid).and_return("12345")
         # rubocop:disable Rails/TimeZone
-        allow(Time).to receive(:current).and_return(Time.parse("2024-07-26"))
+        allow(Time.zone).to receive(:now).and_return(Time.parse("2024-07-26"))
         # rubocop:enable Rails/TimeZone
         filename = "12345location"
 
@@ -330,7 +330,7 @@ describe ExternalApi::VBMSService do
       it "calls the CE API" do
         allow(SecureRandom).to receive(:uuid).and_return("12345")
         # rubocop:disable Rails/TimeZone
-        allow(Time).to receive(:current).and_return(Time.parse("2024-07-26"))
+        allow(Time.zone).to receive(:now).and_return(Time.parse("2024-07-26"))
         # rubocop:enable Rails/TimeZone
         filename = "12345location"
 
