@@ -1,33 +1,41 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import React from "react";
+import { render, screen } from "@testing-library/react";
 
-import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
+import { VirtualHearingSection } from "app/hearings/components/VirtualHearings/Section";
 
 // Setup the test
-const label = 'Section Header';
-const Tester = () => <div />;
+const label = "Section Header";
+const Tester = () => <div data-testid="tester-component" />;
 
-describe('VirtualHearingSection', () => {
-  test('Matches snapshot with default props', () => {
+describe("VirtualHearingSection", () => {
+  test("Matches snapshot with default props", () => {
     // Run the test
-    const section = shallow(<VirtualHearingSection label={label} ><Tester /></VirtualHearingSection>);
+    const { asFragment } = render(
+      <VirtualHearingSection label={label}>
+        <Tester />
+      </VirtualHearingSection>
+    );
 
     // Assertions
-    expect(section.find(Tester)).toHaveLength(1);
-    expect(section).toMatchSnapshot();
-
+    const testerComponent = screen.getByTestId("tester-component");
+    expect(testerComponent).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Returns nothing when hide prop is true', () => {
+  test("Returns nothing when hide prop is true", () => {
     // Run the test
-    const section = shallow(<VirtualHearingSection label={label} hide ><Tester /></VirtualHearingSection>);
+    const { container } = render(
+      <VirtualHearingSection label={label} hide>
+        <Tester />
+      </VirtualHearingSection>
+    );
+
+    const testerComponent = screen.queryByTestId('tester-component');
 
     // Assertions
-    expect(section.find(Tester)).toHaveLength(0);
-    expect(section.children()).toHaveLength(0);
-    expect(section).toEqual({});
-    expect(section).toMatchSnapshot();
-
+    expect(testerComponent).not.toBeInTheDocument();
+    expect(container.children.length).toBe(0);
+    expect(container.firstChild).toBeNull();
+    expect(container).toMatchSnapshot(`<div />`);
   });
-})
-;
+});
