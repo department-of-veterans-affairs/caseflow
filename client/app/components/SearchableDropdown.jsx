@@ -44,13 +44,17 @@ const CustomInput = (props) => {
   const innerProps = {
     ...props.innerProps,
     role: 'combobox',
-    'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
     'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
     'aria-expanded': props.selectProps.menuIsOpen,
     'aria-haspopup': true,
   };
 
-  return <components.Input {...props} {...innerProps} />;
+  const updatedProps = {
+    ...innerProps,
+    ...(props.selectProps?.value && { 'aria-label': `${props.selectProps?.value?.label}` })
+  };
+
+  return <components.Input {...props} {...updatedProps} />;
 };
 
 const DoubleArrowDropdownIndicator = (props) => {

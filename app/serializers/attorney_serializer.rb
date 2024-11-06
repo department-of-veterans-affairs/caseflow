@@ -6,6 +6,6 @@ class AttorneySerializer
   attribute :css_id
   attribute :full_name
   attribute :active_task_count do |object|
-    object.tasks.active.size + QueueRepository.tasks_for_user(object.css_id).count
+    object.tasks.not_correspondence.active.size + QueueRepository.tasks_for_user(object.css_id).count
   end
 end
