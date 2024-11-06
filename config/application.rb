@@ -224,6 +224,8 @@ module CaseflowCertification
       "#{root}/app/models/tasks/hearing_mail_tasks",
       "#{root}/app/models/tasks/pre_docket",
       "#{root}/app/models/tasks/special_case_movement",
+      "#{root}/app/models/tasks/mail_tasks_not_related_to_appeal",
+      "#{root}/app/models/tasks/correspondence",
       "#{root}/app/models/validators",
       "#{root}/app/models/vanotify",
       "#{root}/app/serializers/case_distribution",
