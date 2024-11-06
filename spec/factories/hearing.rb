@@ -135,18 +135,22 @@ FactoryBot.define do
       after(:create) do |hearing, _evaluator|
         hearing.meeting_type.update(service_name: "webex")
         s3_dirs = { ta: "transcript_audio", tr: "transcript_raw", tt: "transcript_text" }
+        s3_dirs = { ta: "transcript_audio", tr: "transcript_raw", tt: "transcript_text" }
 
         2.times do |count|
           { mp4: s3_dirs[:ta], mp3: s3_dirs[:ta], vtt: s3_dirs[:tr], rtf: s3_dirs[:tt] }.each do |file_type, dir|
             file_name = "#{hearing.docket_number}_#{hearing.id}_Hearing#{count == 1 ? '-2' : ''}.#{file_type}"
-            TranscriptionFile.create!(
+            Hearings::TranscriptionFile.create!(
               hearing_id: hearing.id,
               hearing_type: "Hearing",
+              file_name: file_name,
+              file_type: file_type.to_s,
               file_name: file_name,
               file_type: file_type.to_s,
               docket_number: hearing.docket_number,
               file_status: "Successful upload (AWS)",
               date_upload_aws: Time.zone.today,
+              aws_link: "vaec-appeals-caseflow-test/#{dir}/#{file_name}"
               aws_link: "vaec-appeals-caseflow-test/#{dir}/#{file_name}"
             )
           end
