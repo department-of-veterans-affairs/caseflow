@@ -40,12 +40,15 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
   context "Formerly Video Virtual Hearing" do
     let(:expected_central_office_time) do
+      time_str = "#{updated_hearing_time} #{hearing.hearing_day.scheduled_for} America/New_York"
+      tz_abbr = Time.zone.parse(time_str).dst? ? "ET" : "EST"
+
       Time
         .parse(updated_hearing_time)
         .strftime("%F %T")
         .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
         .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
-        .strftime("%-l:%M %p ET") # and render it in the format expected in the modal
+        .strftime("%-l:%M %p #{tz_abbr}") # and render it in the format expected in the modal
     end
 
     scenario "Virtual hearing time is updated" do
@@ -55,6 +58,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       click_dropdown(name: "optionalHearingTime0", text: updated_video_hearing_time)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
+
       expect(page).to have_content("Time: #{expected_central_office_time} / #{expected_regional_office_time}")
       click_button(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
 
