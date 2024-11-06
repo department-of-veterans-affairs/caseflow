@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../../../components/Modal';
@@ -63,6 +64,15 @@ const AddTaskModalCorrespondenceDetails = ({
 
   // Updates additional content on the second page
   const updateAdditionalContent = (newContent) => setAdditionalContent(newContent);
+
+  // Helper function to determine the button text
+  const getButtonText = () => {
+    if (isLoading) {
+      return 'Loading...';
+    }
+
+    return isSecondPage ? 'Submit' : 'Next';
+  };
 
   // Handles toggling of auto-text checkboxes
   const handleToggleCheckbox = (checkboxText) => {
@@ -134,7 +144,7 @@ const AddTaskModalCorrespondenceDetails = ({
           onClick={isSecondPage ? handleSubmit : handleNext}
           disabled={isSecondPage ? isSubmitDisabled : false}
         >
-          {isLoading ? 'Loading...' : isSecondPage ? 'Submit' : 'Next'}
+          {getButtonText()}
         </Button>
       }
       cancelButton={
@@ -186,6 +196,7 @@ const AddTaskModalCorrespondenceDetails = ({
               className="add-task-dropdown-style"
               onChange={updateTaskType}
               value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
+              isSearchable={false}
             />
             <TextareaField
               name="content"
