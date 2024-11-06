@@ -43,7 +43,11 @@ const AddTaskModalCorrespondenceDetails = ({
   // Filters task type options based on unrelated tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
     return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
-      filter((option) => !unrelatedTaskList.some((existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase())).
+      filter((option) =>
+        !unrelatedTaskList.some(
+          (existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase()
+        )
+      ).
       map((option) => ({ value: option.value, label: option.label }));
   };
 
@@ -52,7 +56,8 @@ const AddTaskModalCorrespondenceDetails = ({
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [unrelatedTaskList]);
 
-  // Submit disabled if task type is not selected, the page is loading, or task content and additional are not filled out
+  // Submit disabled if task type is not selected,
+  // the page is loading, or task content and additional are not filled out
   const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
 
   // Handle task type selection, stores the selected task type
@@ -123,6 +128,14 @@ const AddTaskModalCorrespondenceDetails = ({
     return null;
   }
 
+  let buttonText = 'Next';
+
+  if (isLoading) {
+    buttonText = 'Loading...';
+  } else if (isSecondPage) {
+    buttonText = 'Submit';
+  }
+
   return (
     <Modal
       // Dynamic title for each page
@@ -134,7 +147,7 @@ const AddTaskModalCorrespondenceDetails = ({
           onClick={isSecondPage ? handleSubmit : handleNext}
           disabled={isSecondPage ? isSubmitDisabled : false}
         >
-          {isLoading ? 'Loading...' : isSecondPage ? 'Submit' : 'Next'}
+          {buttonText}
         </Button>
       }
       cancelButton={

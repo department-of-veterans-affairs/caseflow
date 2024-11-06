@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { useHistory } from 'react-router';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -187,8 +186,8 @@ const CorrespondenceDetails = (props) => {
 
       // Check if the PATCH request was successful
       if (isSuccess(patchResponse)) {
-        const appealIds = patchResponse?.body?.related_appeals;
-        const correspondenceAppeals = patchResponse?.body?.correspondence_appeals;
+        const appealIds = patchResponse?.body?.relatedAppeals;
+        const correspondenceAppeals = patchResponse?.body?.correspondenceAppeals;
 
         if (appealIds && correspondenceAppeals) {
           // Clear existing appeals from the Redux store
@@ -207,7 +206,7 @@ const CorrespondenceDetails = (props) => {
           // Update selected appeals in state
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
-          sortAppeals(appealIds); // Sort the appeals
+          sortAppeals(appealIds);
           setAppealTableKey((key) => key + 1);
 
           // Smoothly scroll to the top of the page
@@ -457,7 +456,7 @@ const CorrespondenceDetails = (props) => {
       return;
     }
 
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+    props.correspondence.correspondenceAppeals.forEach((corAppeal) => {
       dispatch(fetchAppealDetails(corAppeal.appealUuid));
     });
 
@@ -898,8 +897,8 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
-          const appealIds = resp.body.related_appeals;
-          const correspondenceAppeals = resp.body.correspondence_appeals;
+          const appealIds = resp.body.relatedAppeals;
+          const correspondenceAppeals = resp.body.correspondenceAppeals;
 
           // Removes all entries in the queue.appeals redux store
           Object.entries(props.appealsFromStore).forEach(
@@ -908,7 +907,7 @@ const CorrespondenceDetails = (props) => {
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
 
-          correspondenceAppeals.map((corAppeal) => {
+          correspondenceAppeals.forEach((corAppeal) => {
             dispatch(fetchAppealDetails(corAppeal.appealUuid));
           });
 
