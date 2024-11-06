@@ -104,7 +104,7 @@ class ExternalApi::VBMSService
         file_upload_payload = ClaimEvidenceFileUploadPayload.new(
           content_name: filename,
           content_source: uploadable_document.source,
-          date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+          date_va_received_document: Time.zone.now.strftime("%Y-%m-%d"),
           document_type_id: uploadable_document.document_type_id,
           subject: uploadable_document.document_type,
           new_mail: true
@@ -135,7 +135,7 @@ class ExternalApi::VBMSService
         file_upload_payload = ClaimEvidenceFileUploadPayload.new(
           content_name: filename,
           content_source: uploadable_document.source,
-          date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+          date_va_received_document: Time.zone.now.strftime("%Y-%m-%d"),
           document_type_id: uploadable_document.document_type_id,
           subject: uploadable_document.document_subject.presence || uploadable_document.document_type,
           new_mail: true
@@ -218,7 +218,7 @@ class ExternalApi::VBMSService
     if FeatureToggle.enabled?(:use_ce_api)
       begin
         file_update_payload = ClaimEvidenceFileUpdatePayload.new(
-          date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+          date_va_received_document: Time.zone.now.strftime("%Y-%m-%d"),
           document_type_id: uploadable_document.document_type_id,
           file_content_path: uploadable_document.pdf_location,
           file_content_source: uploadable_document.source,
