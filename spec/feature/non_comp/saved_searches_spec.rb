@@ -33,7 +33,7 @@ feature "Saved Searches", :postgres do
 
     context "check save search page is rendering user's searches and all searches" do
       it "When VHA admin user clicks on All Saved Searches should see all saved searches" do
-        page.find("#saved-search-queue-tab-1").click
+        page.find("button", text: "All saved searches").click
         table = page.find("tbody")
 
         expect(page).to have_text("Viewing 1-6 of 6 total")
@@ -41,7 +41,7 @@ feature "Saved Searches", :postgres do
       end
 
       it "When VHA admin user clicks on my Saved Searches should see their saved searches" do
-        page.find("#saved-search-queue-tab-0").click
+        page.find("button", text: "My saved searches").click
         table = page.find("tbody")
 
         expect(page).to have_text("Viewing 1-1 of 1 total")

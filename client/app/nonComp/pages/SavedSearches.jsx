@@ -13,9 +13,9 @@ import { fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
 
 const SavedSearches = () => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
-  const savedSearchRows = useSelector((state) => state.savedSearch.fetchedSearches.rows);
-  const userSearches = savedSearchRows.user_searches;
-  const allSearches = savedSearchRows.all_searches;
+  const savedSearchRows = useSelector((state) => state.savedSearch.fetchedSearches);
+  const userSearches = savedSearchRows.userSearches;
+  const allSearches = savedSearchRows.searches;
   const dispatch = useDispatch();
 
   useEffect(() => {

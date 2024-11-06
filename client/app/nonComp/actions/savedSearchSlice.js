@@ -6,10 +6,8 @@ const initialState = {
   fetchedSearches: {
     error: null,
     status: 'idle',
-    rows: {
-      all_searches: {},
-      user_searches: {}
-    }
+    searches: {},
+    userSearches: {}
   }
 };
 
@@ -23,7 +21,12 @@ export const fetchedSearches = createAsyncThunk(
 
       const searches = response.body;
 
-      return thunkApi.fulfillWithValue(searches);
+      const flattenSearchesData = {
+        all_searches: searches.all_searches.map(({ attributes, ...rest }) => ({ ...attributes, ...rest })),
+        user_searches: searches.user_searches.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }))
+      };
+
+      return thunkApi.fulfillWithValue(flattenSearchesData);
 
     } catch (error) {
       console.error(error);
@@ -47,7 +50,8 @@ const savedSearchSlice = createSlice({
       }).
       addCase(fetchedSearches.fulfilled, (state, action) => {
         state.fetchedSearches.status = 'succeeded';
-        state.fetchedSearches.rows = action.payload;
+        state.fetchedSearches.searches = action.payload.all_searches;
+        state.fetchedSearches.userSearches = action.payload.user_searches;
       }).
       addCase(fetchedSearches.rejected, (state, action) => {
         state.fetchedSearches.status = 'failed';
