@@ -462,6 +462,16 @@ describe BusinessLine do
         create_list(:veteran_record_request_task, 5, assigned_to: business_line)
       end
 
+      let(:task_type_counts_hash) do
+        {
+          %w(BoardGrantEffectuationTask Appeal) => 5,
+          %w(DecisionReviewTask HigherLevelReview) => 5,
+          %w(DecisionReviewTask Remand) => 5,
+          %w(DecisionReviewTask SupplementalClaim) => 10,
+          %w(VeteranRecordRequest Appeal) => 5
+        }
+      end
+
       subject { business_line.in_progress_tasks(filters: task_filters) }
 
       include_examples "task filtration"
@@ -484,6 +494,10 @@ describe BusinessLine do
             ).pluck(:id)
           )
         end
+
+        it "type counts should include board grant effectuation tasks" do
+          expect(business_line.in_progress_tasks_type_counts).to eq(task_type_counts_hash)
+        end
       end
 
       context "With the :board_grant_effectuation_task FeatureToggle disabled" do
@@ -500,6 +514,12 @@ describe BusinessLine do
               on_hold_sc_tasks_on_active_decision_reviews +
               remand_tasks_on_active_decision_reviews
             ).pluck(:id)
+          )
+        end
+
+        it "type counts should not include board grant effectuation tasks" do
+          expect(business_line.in_progress_tasks_type_counts).to eq(
+            task_type_counts_hash.except(%w(BoardGrantEffectuationTask Appeal))
           )
         end
       end
