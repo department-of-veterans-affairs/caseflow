@@ -60,7 +60,7 @@ const styles = css({
   '& th:last-child .cf-dropdown-filter': {
     left: '-231px',
   },
-   '& .unassigned-tab td:nth-child(3)': {
+  '& .unassigned-tab td:nth-child(3)': {
     fontWeight: 'bold',
   },
   '& .cf-table-wrapper': {
@@ -325,5 +325,6 @@ TranscriptionFileDispatchTable.propTypes = {
   selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func,
   openModal: PropTypes.func,
-  searchValue: PropTypes.string
+  searchValue: PropTypes.string,
+  className: PropTypes.string
 };
