@@ -15,9 +15,10 @@ const SavedSearches = () => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const savedSearchRows = useSelector((state) => state.savedSearch.fetchedSearches);
   const userSearches = savedSearchRows.userSearches;
-  const allSearches = savedSearchRows.searches;
-  const dispatch = useDispatch();
+  const allSearches = savedSearchRows.allSearches;
 
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
   }, []);

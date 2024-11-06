@@ -50,8 +50,7 @@ const savedSearchSlice = createSlice({
       }).
       addCase(fetchedSearches.fulfilled, (state, action) => {
         state.fetchedSearches.status = 'succeeded';
-        state.fetchedSearches.searches = action.payload.allSearches;
-        state.fetchedSearches.userSearches = action.payload.userSearches;
+        state.fetchedSearches = action.payload;
       }).
       addCase(fetchedSearches.rejected, (state, action) => {
         state.fetchedSearches.status = 'failed';
