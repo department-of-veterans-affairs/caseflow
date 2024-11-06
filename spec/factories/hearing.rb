@@ -36,7 +36,7 @@ FactoryBot.define do
     updated_by { adding_user }
     virtual_hearing { nil }
 
-    scheduled_in_timezone { nil }
+    # scheduled_in_timezone { nil }
 
     # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
     # be ready for distribution then the referring class must mark the transcription/evidence
