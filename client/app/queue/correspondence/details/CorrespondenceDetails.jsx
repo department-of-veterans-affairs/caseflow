@@ -447,7 +447,6 @@ const CorrespondenceDetails = (props) => {
 
   }, [selectedAppeals, initialSelectedAppeals]);
 
-
   useEffect(() => {
     dispatch(updateCorrespondenceInfo(correspondence));
     sortAppeals(initialSelectedAppeals);
