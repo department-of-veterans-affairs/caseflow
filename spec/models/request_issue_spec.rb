@@ -1342,15 +1342,6 @@ describe RequestIssue, :all_dbs do
         let(:nonrating_contested_issue_description) { "nonrating contested" }
         it { is_expected.to eq("nonrating contested") }
       end
-
-      context "when description contains unsafe characters" do
-        let(:request_issue) { nonrating_request_issue }
-        let(:nonrating_contested_issue_description) { "Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}" }
-
-        it "should sanitize characters" do
-          expect(request_issue.save).to eq true
-        end
-      end
     end
 
     context "when unidentified" do
@@ -1363,8 +1354,8 @@ describe RequestIssue, :all_dbs do
         build(:request_issue, contested_issue_description: "Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}")
       end
 
-      it "should sanitize characters" do
-        expect(request_issue.save).to eq true
+      it "should not be valid" do
+        expect(request_issue.valid?).to eq false
       end
     end
 
@@ -1373,8 +1364,8 @@ describe RequestIssue, :all_dbs do
         build(:request_issue, contested_issue_description: "Safe: 1234567890-=`~!@#$%^&*()_+[]{}\|;:")
       end
 
-      it "should save" do
-        expect(request_issue.save).to eq true
+      it "should be valid" do
+        expect(request_issue.valid?).to eq true
       end
     end
   end

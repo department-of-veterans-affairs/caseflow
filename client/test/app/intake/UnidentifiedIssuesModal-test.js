@@ -11,8 +11,8 @@ describe('UnidentifiedIssuesModal', () => {
   describe('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <UnidentifiedIssuesModal 
-        formType={formType} 
+        <UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData}
         onSkip={() => null} />
       );
@@ -37,8 +37,8 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal 
-        formType={formType} 
+      const wrapper = mount(<UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData} />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
@@ -48,20 +48,36 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} 
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
         intakeData={intakeData} />);
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 
       expect(submitBtn.prop('disabled')).toBe(true);
+    });
 
-      wrapper.setState({
-        description: 'blah blah',
-        disabled: false
-      });
+    it('enables when valid description entered', () => {
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
+        intakeData={intakeData} />);
 
-      // We need to find element again, or it won't appear updated
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+      // Simulate user input of valid characters
+      const descInput = wrapper.find('input[id="Transcribe the issue as it\'s written on the form"]');
+
+      descInput.simulate('change', { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
+
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(null);
+    });
+
+    it('disables when invalid description entered', () => {
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
+        intakeData={intakeData} />);
+
+      // Simulate user input of invalid characters
+      const descInput = wrapper.find('input[id="Transcribe the issue as it\'s written on the form"]');
+
+      descInput.simulate('change', { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
+
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
     });
   });
 });
