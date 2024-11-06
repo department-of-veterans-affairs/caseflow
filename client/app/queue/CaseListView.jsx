@@ -154,6 +154,7 @@ const mapStateToProps = (state, ownProps) => {
   const appeals = caseflowVeteranIds.flatMap(
     (id) => appealsByCaseflowVeteranId(state, { caseflowVeteranId: id })
   );
+
   const claimReviews = caseflowVeteranIds.flatMap(
     (id) => claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: id })
   );
