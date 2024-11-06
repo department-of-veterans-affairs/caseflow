@@ -10,7 +10,7 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
   def perform
     begin
       NationalHearingQueueEntry.refresh
-    rescue ActiveRecord::StatementTimeout => error
+    rescue StandardError => error
       if self.class.timeout_seconds == 30
         self.class.timeout_seconds = 2700
         # temporarily setting timeout to allow query to run
@@ -22,8 +22,6 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
       else
         log_error(error)
       end
-    rescue StandardError => error
-      log_error(error)
     ensure
       # Set Timeout Back
       if self.class.timeout_seconds != 30
