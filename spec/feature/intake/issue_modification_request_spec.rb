@@ -87,7 +87,7 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
            decision_date: withdrawal_request_issue.decision_date,
            request_issue: withdrawal_request_issue,
-           withdrawal_date: Time.zone.now - 1.day)
+           withdrawal_date: (Time.zone.now - 1.day).beginning_of_day)
   end
 
   let!(:modify_existing_modification_request) do

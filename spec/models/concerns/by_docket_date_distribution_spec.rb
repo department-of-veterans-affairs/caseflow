@@ -37,6 +37,11 @@ describe ByDocketDateDistribution, :all_dbs do
     create(:case_distribution_lever, :ama_hearing_docket_time_goals)
     create(:case_distribution_lever, :disable_legacy_non_priority)
     create(:case_distribution_lever, :disable_legacy_priority)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution
@@ -254,6 +259,44 @@ describe ByDocketDateDistribution, :all_dbs do
         nonpriority_affinity_date = nonpriority_stats[:affinity_date]
         expect(nonpriority_affinity_date).to have_key(:in_window)
         expect(nonpriority_affinity_date).to have_key(:out_of_window)
+      end
+    end
+
+    context "when individual docket statistics are toggled off" do
+      before do
+        FeatureToggle.enable!("disable_legacy_distribution_stats")
+        FeatureToggle.enable!("disable_direct_review_distribution_stats")
+        FeatureToggle.enable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.enable!("disable_hearing_distribution_stats")
+        FeatureToggle.enable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      after do
+        FeatureToggle.disable!("disable_legacy_distribution_stats")
+        FeatureToggle.disable!("disable_direct_review_distribution_stats")
+        FeatureToggle.disable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.disable!("disable_hearing_distribution_stats")
+        FeatureToggle.disable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      it "does not attempt to generate individual docket statistics" do
+        expect_any_instance_of(LegacyDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(DirectReviewDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(EvidenceSubmissionDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(HearingRequestDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(AojLegacyDocket).not_to receive(:affinity_date_count)
+
+        ama_statistics = @new_acd.send(:ama_statistics)
+
+        @new_acd.dockets.each_key do |sym|
+          expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
+          priority_stats = ama_statistics["#{sym}_priority_stats".to_sym]
+          expect(priority_stats).to be_empty
+
+          expect(ama_statistics).to have_key("#{sym}_stats".to_sym)
+          nonpriority_stats = ama_statistics["#{sym}_stats".to_sym]
+          expect(nonpriority_stats).to be_empty
+        end
       end
     end
 

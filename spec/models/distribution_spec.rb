@@ -15,6 +15,10 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :alternative_batch_size)
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
@@ -179,14 +183,17 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
+        .with(status: "completed", completed_at: Time.zone.now)
+        .exactly(1).times
+      expect(new_distribution).to receive(:update!)
+        .with(statistics: result_stats)
         .exactly(1).times
 
       new_distribution.distribute!
     end
 
     it "updates status to error if an error is thrown and sends slack notification" do
-      allow(new_distribution).to receive(:num_oldest_priority_appeals_for_judge_by_docket).and_raise(StandardError)
+      allow(new_distribution).to receive(:batch_size).and_raise(StandardError)
       expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
@@ -221,6 +228,14 @@ describe Distribution, :all_dbs do
         allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
+      end
+    end
+
+    context "distribution lever cache" do
+      it "caches lever properly" do
+        expect(CaseDistributionLever).to receive(:check_distribution_lever_cache).at_least(:once).and_call_original
+        new_distribution.distribute!
+        expect(Rails.cache.exist?("aoj_affinity_days_distribution_lever_cache")).to be false
       end
     end
   end

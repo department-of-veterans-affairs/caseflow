@@ -21,7 +21,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#latest_receipt_dates" do
-    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+    before { Seeds::CaseDistributionLevers.new.seed! }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution_requested) { create(:distribution, :completed, judge: judge) }
@@ -182,8 +182,38 @@ describe UpdateAppealAffinityDatesJob do
     end
   end
 
+  context "#process_legacy_appeals_which_need_affinity_updates" do
+    let(:hashes_array) do
+      [{ docket: "hearing", priority: true, receipt_date: Time.zone.now },
+       { docket: "direct_review", priority: true, receipt_date: Time.zone.now },
+       { docket: "legacy", priority: true, receipt_date: Time.zone.now }]
+    end
+
+    subject { described_class.new.send(:process_legacy_appeals_which_need_affinity_updates, hashes_array) }
+
+    it "processes only legacy appeals" do
+      expect_any_instance_of(described_class).to receive(:create_or_update_appeal_affinities).exactly(1).times
+      subject
+    end
+  end
+
+  context "#process_legacy_appeals_which_need_affinity_updates" do
+    let(:hashes_array) do
+      [{ docket: "hearing", priority: true, receipt_date: Time.zone.now },
+       { docket: "direct_review", priority: true, receipt_date: Time.zone.now },
+       { docket: "legacy", priority: true, receipt_date: Time.zone.now }]
+    end
+
+    subject { described_class.new.send(:process_legacy_appeals_which_need_affinity_updates, hashes_array) }
+
+    it "processes only legacy appeals" do
+      expect_any_instance_of(described_class).to receive(:create_or_update_appeal_affinities).exactly(1).times
+      subject
+    end
+  end
+
   context "#create_or_update_appeal_affinties" do
-    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+    before { Seeds::CaseDistributionLevers.new.seed! }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
@@ -212,6 +242,38 @@ describe UpdateAppealAffinityDatesJob do
     end
   end
 
+  context "#legacy_appeals_with_no_appeal_affinities" do
+    before { Seeds::CaseDistributionLevers.new.seed! }
+
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:distribution) { create(:distribution, :completed, judge: judge) }
+    let(:appeal_no_appeal_affinity) { create(:case) }
+    let(:appeal_with_appeal_affinity) { create(:case, :with_appeal_affinity) }
+    let(:appeal_with_appeal_affinity_no_start_date) { create(:case, :with_appeal_affinity, affinity_start_date: nil) }
+    let(:job) { described_class.new }
+    let(:appeal_no_affinity_hash) do
+      { "bfkey" => appeal_no_appeal_affinity.bfkey,
+        "bfd19" => appeal_no_appeal_affinity.bfd19 }
+    end
+    let(:appeal_with_affinity_hash) do
+      { "bfkey" => appeal_with_appeal_affinity.bfkey,
+        "bfd19" => appeal_with_appeal_affinity.bfd19 }
+    end
+    let(:appeal_with_affinity_no_start_date_hash) do
+      { "bfkey" => appeal_with_appeal_affinity_no_start_date.bfkey,
+        "bfd19" => appeal_with_appeal_affinity_no_start_date.bfd19 }
+    end
+
+    before { job.instance_variable_set(:@distribution_id, distribution.id) }
+
+    it "only returns appeals with no affinity records or affinity start dates" do
+      appeals = [appeal_with_affinity_hash, appeal_no_affinity_hash, appeal_with_affinity_no_start_date_hash]
+      result = job.send(:legacy_appeals_with_no_appeal_affinities, appeals)
+
+      expect(result.count).to eq 2
+    end
+  end
+
   context "#perform" do
     it "updates from distribution if provided a distribution_id" do
       expect_any_instance_of(described_class).to receive(:update_from_requested_distribution).and_return(true)
@@ -233,7 +295,7 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     context "full run" do
-      before { create(:case_distribution_lever, :request_more_cases_minimum) }
+      before { Seeds::CaseDistributionLevers.new.seed! }
 
       let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
       let!(:previous_distribution) { create(:distribution, :completed, :this_month, judge: judge) }
@@ -345,11 +407,30 @@ describe UpdateAppealAffinityDatesJob do
         create(:appeal, :hearing_docket, :with_post_intake_tasks)
       end
 
+      # legacy appeal distributed
+      let!(:distributed_legacy_case) do
+        legacy_appeal = create(:case, :tied_to_judge, :type_original, tied_judge: judge, bfd19: 3.weeks.ago)
+        create(:legacy_distributed_case, appeal: legacy_appeal, distribution: previous_distribution, priority: false)
+        legacy_appeal
+      end
+
+      # legacy appeals ready for distribution
+      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution, :type_original) }
+      let!(:legacy_appeal_no_appeal_affinity_no_start_date) do
+        create(:case, :ready_for_distribution, :type_original, :with_appeal_affinity, affinity_start_date: nil)
+      end
+      let!(:legacy_appeal_with_appeal_affinity) do
+        create(:case, :ready_for_distribution, :with_appeal_affinity, :type_original)
+      end
+      let!(:legacy_appeal_no_appeal_affinity_later_bfd19) do
+        create(:case, :ready_for_distribution, :type_original, bfd19: 1.week.ago)
+      end
+
       it "is successful and adds expected appeal affinity records or values" do
         described_class.perform_now(previous_distribution.id)
 
-        # Only 8 of the staged appeals should have an affinity
-        expect(AppealAffinity.count).to eq 8
+        # Only 11 of the staged appeals should have an affinity
+        expect(AppealAffinity.count).to eq 11
 
         # Validate that only the expected appeals are the ones that were updated
         expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
@@ -360,6 +441,9 @@ describe UpdateAppealAffinityDatesJob do
         expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
         expect(ready_appeal_hrd_priority_no_start_date.appeal_affinity).to_not be nil
         expect(ready_appeal_hrd_nonpriority_no_start_date.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity_no_start_date.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity_later_bfd19.appeal_affinity).to be nil
       end
     end
   end

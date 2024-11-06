@@ -1,42 +1,50 @@
 import React from 'react';
-import { mount } from 'enzyme';
-
-import Alert from 'app/components/Alert';
+import { render, screen} from '@testing-library/react';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { virtualHearing, defaultHearing } from 'test/data/hearings';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
-
-import { AddressLine } from 'app/hearings/components/details/Address';
-import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
-import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
-import TextField from 'app/components/TextField';
-import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
+import COPY from 'COPY';
+import { sprintf } from 'sprintf-js';
 
 const updateSpy = jest.fn();
+const hearingDayDate = '2025-01-01';
+
+const convertRegex = (str) => {
+  return new RegExp(str, 'i');
+}
+const cityStateZip = `${defaultHearing.appellantCity}, ${defaultHearing.appellantState} ${defaultHearing.appellantZip}`;
+const address = `${defaultHearing.appellantAddressLine1}`;
+const emailTextbox = "POA/Representative Email (for these notifications only) Optional";
+const veteranLabelEmail = /Veteran Email \(for these notifications only\)/i;
+const appellantLabelEmail = /Appellant Email \(for these notifications only\)/i;
+const veteranName = `${defaultHearing.veteranFirstName} ${defaultHearing.veteranLastName}`;
+const appellantName = `${defaultHearing.appellantFirstName} ${defaultHearing.appellantLastName}`;
 
 describe('Appellant', () => {
   test('Matches snapshot with default props', () => {
-    // Run the test
-    const appellantSection = mount(
+    const {asFragment} = render(
       <AppellantSection
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
     // Assertions
-    expect(appellantSection.find(AddressLine)).toHaveLength(1);
-    expect(appellantSection.find(HearingEmail)).toHaveLength(1);
-    expect(appellantSection.find(TextField)).toHaveLength(1);
-    expect(appellantSection).toMatchSnapshot();
+    expect(screen.getAllByText(convertRegex(veteranName)).length).toBe(2);
+    expect(screen.getByText(convertRegex(address))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(cityStateZip))).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Veteran' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Veteran Email (for these notifications only) Required' })).toBeInTheDocument();
+    expect(screen.getByLabelText(veteranLabelEmail)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Does not allow editing emails when read-only', () => {
-    // Run the test
-    const appellantSection = mount(
+    const {asFragment} = render(
       <AppellantSection
         readOnly
         appellantTitle="Veteran"
@@ -44,18 +52,18 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
-    // Ensure the emails are read-only
-    expect(appellantSection.find(TextField)).toHaveLength(0);
-    appellantSection.find(HearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
-    expect(appellantSection).toMatchSnapshot();
+    // Assertions
+    expect(screen.queryByRole('textbox', { name: emailTextbox })).toBeNull();
+    expect(screen.getByText(/None/i)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays timezone when showTimezoneField is passed as prop', () => {
-    // Run the test
-    const appellantSection = mount(
+    const {asFragment} = render(
       <AppellantSection
         showTimezoneField
         appellantTitle="Veteran"
@@ -63,54 +71,59 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
-    // Ensure the emails are read-only
-    expect(appellantSection.find(Timezone)).toHaveLength(1);
-    expect(appellantSection).toMatchSnapshot();
+    // Assertions
+    expect(screen.getByRole('textbox', { name: 'Veteran Email (for these notifications only) Required' })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays email alert when email is null', () => {
-    // Run the test
-    const appellantSection = mount(
+    const appellantTitle = "Veteran";
+    const {asFragment} = render(
       <AppellantSection
-        appellantTitle="Veteran"
+        appellantTitle={appellantTitle}
         virtualHearing={{ appellantEmail: null }}
         hearing={{ ...defaultHearing, appellantEmailAddress: null }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
         readOnly
         showMissingEmailAlert
       />
     );
 
-    // Ensure the alert displays
-    expect(appellantSection.find(Alert)).toHaveLength(1);
-    expect(appellantSection).toMatchSnapshot();
+    // Assertions
+    const alertMessage = sprintf(COPY.MISSING_EMAIL_ALERT_MESSAGE, appellantTitle);
+    expect(screen.getByText(convertRegex(alertMessage))).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays email alert when email is undefined', () => {
-    // Run the test
-    const appellantSection = mount(
+    const appellantTitle = "Veteran";
+    const {container, asFragment} = render(
       <AppellantSection
-        appellantTitle="Veteran"
+        appellantTitle={appellantTitle}
         // eslint-disable-next-line
         hearing={{ ...defaultHearing, appellantEmailAddress: undefined }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
         readOnly
         showMissingEmailAlert
       />
     );
 
-    // Ensure the alert displays
-    expect(appellantSection.find(Alert)).toHaveLength(1);
-    expect(appellantSection).toMatchSnapshot();
+    // Assertions
+    const alertMessage = sprintf(COPY.MISSING_EMAIL_ALERT_MESSAGE, appellantTitle);
+    expect(screen.getByText(convertRegex(alertMessage))).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays appellant information when appellant is not veteran', () => {
-    const appellantSection = mount(
+    const {container, asFragment} = render(
       <AppellantSection
         appellantTitle="Appellant"
         virtualHearing={virtualHearing.virtualHearing}
@@ -122,22 +135,20 @@ describe('Appellant', () => {
         }
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
-    expect(appellantSection.find(ReadOnly)).toHaveLength(3);
-    expect(appellantSection.text()).toContain('Appellant Name');
-    expect(appellantSection.text()).toContain(
-      `${defaultHearing.appellantFirstName} ${defaultHearing.appellantLastName}`
-    );
-    expect(appellantSection.text()).toContain('Relation to Veteran');
-    expect(appellantSection.text()).toContain(defaultHearing.appellantRelationship);
-    expect(appellantSection.text()).toContain('Appellant Mailing Address');
-    expect(appellantSection).toMatchSnapshot();
+    expect(screen.getByText(convertRegex("Appellant Name"))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex("Relation to Veteran"))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex("Appellant Mailing Address"))).toBeInTheDocument();
+    expect(screen.getAllByText(convertRegex(appellantName)).length).toBe(2);
+    expect(screen.getByText(convertRegex(defaultHearing.appellantRelationship))).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Does not display address when formFieldsOnly = true', () => {
-    const appellantSection = mount(
+    const {asFragment} = render(
       <AppellantSection
         formFieldsOnly
         appellantTitle="Appellant"
@@ -145,12 +156,12 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
-    expect(appellantSection.find(ReadOnly)).toHaveLength(0);
-    expect(appellantSection.find(AddressLine)).toHaveLength(0);
-    expect(appellantSection.find(HearingEmail)).toHaveLength(1);
-    expect(appellantSection).toMatchSnapshot();
+    expect(screen.queryByText(convertRegex(cityStateZip))).toBeNull();
+    expect(screen.getByLabelText(appellantLabelEmail)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

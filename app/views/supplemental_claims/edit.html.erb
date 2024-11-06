@@ -7,16 +7,20 @@
     userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
     userCanRequestIssueUpdates: current_user.can_request_for_issue_updates?,
     userIsVhaAdmin: current_user.vha_business_line_admin_user?,
+    isRemand: supplemental_claim.is_a?(Remand),
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: supplemental_claim.ui_hash,
     claimId: url_claim_id,
+    intakeFromVbms: supplemental_claim.from_decision_review_created_event?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
-      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
+      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+      removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user),
+      disableAmaEventing: FeatureToggle.enabled?(:disable_ama_eventing, user: current_user)
     }
   }) %>
 <% end %>

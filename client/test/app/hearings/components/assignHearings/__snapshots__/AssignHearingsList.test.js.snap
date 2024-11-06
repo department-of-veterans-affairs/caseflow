@@ -91,305 +91,6 @@ Object {
               <span
                 class="time-slot-card-label"
               >
-                1:30 AM MDT
-              </span>
-              
-              <br />
-              3:30 AM EDT
-            </p>
-          </div>
-        </div>
-        <div
-          class="usa-width-three-fourths"
-        >
-          <span
-            class="time-slot-card-label"
-          >
-            Bob Smith
-             
-            <span
-              style="margin: 0px 2px;"
-            >
-              ·
-            </span>
-             
-            Veteran ID: 500000003
-          </span>
-          <div
-            class="time-slot-details"
-          >
-            1 issue
-             
-            <span
-              style="margin: 0px 5px;"
-            >
-              ·
-            </span>
-             
-            <span
-              aria-describedby="badge-200628-4"
-              aria-label=""
-              currentitem="false"
-              data-css-2moai0=""
-              data-event="focus mouseenter"
-              data-event-off="mouseleave keydown"
-              data-for="badge-200628-4"
-              data-tip="true"
-              tabindex="0"
-            >
-              H
-            </span>
-            <span
-              data-css-1w1a50w=""
-            >
-              <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="badge-200628-4"
-                role="tooltip"
-              >
-                <style>
-                  
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                </style>
-                Hearing Request
-              </div>
-            </span>
-             
-            200628-4
-             
-            <span
-              style="margin: 0px 5px;"
-            >
-              ·
-            </span>
-             
-            <span
-              style="margin: 0px 5px;"
-            >
-              ·
-            </span>
-             
-            <span
-              aria-describedby="tooltip-id"
-              aria-label=""
-              currentitem="false"
-              data-event="focus mouseenter"
-              data-event-off="mouseleave keydown"
-              data-for="tooltip-id"
-              data-tip="true"
-              tabindex="0"
-            >
-              AMERICAN LEGION
-            </span>
-            <span
-              data-css-h1aqyj=""
-            >
-              <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="tooltip-id"
-                role="tooltip"
-              >
-                <style>
-                  
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                </style>
-                AMERICAN LEGION
-              </div>
-            </span>
-          </div>
-          <div
-            class="time-slot-details"
-          >
-            <span>
-              Original
-            </span>
-             
-            <span
-              style="margin: 0px 5px;"
-            >
-              ·
-            </span>
-             
-            <span>
-              Central
-            </span>
-             
-            <span
-              style="margin: 0px 5px;"
-            >
-              ·
-            </span>
-             
-            <a
-              href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
-              id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
-            >
-              View Case Details
-            </a>
-          </div>
-        </div>
-      </div>
-      <div
-        class="usa-grid time-slot-card"
-      >
-        <div
-          class="usa-width-one-fourth"
-        >
-          <div>
-            <p
-              class="time-slot-card-time"
-            >
-              <span
-                class="time-slot-card-label"
-              >
                 4:00 AM EDT
               </span>
             </p>
@@ -437,6 +138,7 @@ Object {
             </span>
             <span
               data-css-1iar5hk=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -553,6 +255,7 @@ Object {
             </span>
             <span
               data-css-h1aqyj=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -733,6 +436,7 @@ Object {
             </span>
             <span
               data-css-127pskq=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -849,6 +553,7 @@ Object {
             </span>
             <span
               data-css-h1aqyj=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -969,308 +674,309 @@ Object {
           </div>
         </div>
       </div>
+      <div
+        class="usa-grid time-slot-card"
+      >
+        <div
+          class="usa-width-one-fourth"
+        >
+          <div>
+            <p
+              class="time-slot-card-time"
+            >
+              <span
+                class="time-slot-card-label"
+              >
+                1:30 AM MDT
+              </span>
+              <br />
+              3:30 AM EDT
+            </p>
+          </div>
+        </div>
+        <div
+          class="usa-width-three-fourths"
+        >
+          <span
+            class="time-slot-card-label"
+          >
+            Bob Smith
+             
+            <span
+              style="margin: 0px 2px;"
+            >
+              ·
+            </span>
+             
+            Veteran ID: 500000003
+          </span>
+          <div
+            class="time-slot-details"
+          >
+            1 issue
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span
+              aria-describedby="badge-200628-4"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200628-4"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1w1a50w=""
+              data-testid="tooltip-testid"
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200628-4"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+             
+            200628-4
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span
+              aria-describedby="tooltip-id"
+              aria-label=""
+              currentitem="false"
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="tooltip-id"
+              data-tip="true"
+              tabindex="0"
+            >
+              AMERICAN LEGION
+            </span>
+            <span
+              data-css-h1aqyj=""
+              data-testid="tooltip-testid"
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="tooltip-id"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                AMERICAN LEGION
+              </div>
+            </span>
+          </div>
+          <div
+            class="time-slot-details"
+          >
+            <span>
+              Original
+            </span>
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span>
+              Central
+            </span>
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <a
+              href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
+              id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
+            >
+              View Case Details
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </body>,
   "container": <div>
-    <div
-      class="usa-grid time-slot-card"
-    >
-      <div
-        class="usa-width-one-fourth"
-      >
-        <div>
-          <p
-            class="time-slot-card-time"
-          >
-            <span
-              class="time-slot-card-label"
-            >
-              1:30 AM MDT
-            </span>
-            
-            <br />
-            3:30 AM EDT
-          </p>
-        </div>
-      </div>
-      <div
-        class="usa-width-three-fourths"
-      >
-        <span
-          class="time-slot-card-label"
-        >
-          Bob Smith
-           
-          <span
-            style="margin: 0px 2px;"
-          >
-            ·
-          </span>
-           
-          Veteran ID: 500000003
-        </span>
-        <div
-          class="time-slot-details"
-        >
-          1 issue
-           
-          <span
-            style="margin: 0px 5px;"
-          >
-            ·
-          </span>
-           
-          <span
-            aria-describedby="badge-200628-4"
-            aria-label=""
-            currentitem="false"
-            data-css-2moai0=""
-            data-event="focus mouseenter"
-            data-event-off="mouseleave keydown"
-            data-for="badge-200628-4"
-            data-tip="true"
-            tabindex="0"
-          >
-            H
-          </span>
-          <span
-            data-css-1w1a50w=""
-          >
-            <div
-              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-              data-id="tooltip"
-              id="badge-200628-4"
-              role="tooltip"
-            >
-              <style>
-                
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-              </style>
-              Hearing Request
-            </div>
-          </span>
-           
-          200628-4
-           
-          <span
-            style="margin: 0px 5px;"
-          >
-            ·
-          </span>
-           
-          <span
-            style="margin: 0px 5px;"
-          >
-            ·
-          </span>
-           
-          <span
-            aria-describedby="tooltip-id"
-            aria-label=""
-            currentitem="false"
-            data-event="focus mouseenter"
-            data-event-off="mouseleave keydown"
-            data-for="tooltip-id"
-            data-tip="true"
-            tabindex="0"
-          >
-            AMERICAN LEGION
-          </span>
-          <span
-            data-css-h1aqyj=""
-          >
-            <div
-              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-              data-id="tooltip"
-              id="tooltip-id"
-              role="tooltip"
-            >
-              <style>
-                
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-              </style>
-              AMERICAN LEGION
-            </div>
-          </span>
-        </div>
-        <div
-          class="time-slot-details"
-        >
-          <span>
-            Original
-          </span>
-           
-          <span
-            style="margin: 0px 5px;"
-          >
-            ·
-          </span>
-           
-          <span>
-            Central
-          </span>
-           
-          <span
-            style="margin: 0px 5px;"
-          >
-            ·
-          </span>
-           
-          <a
-            href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
-            id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
-          >
-            View Case Details
-          </a>
-        </div>
-      </div>
-    </div>
     <div
       class="usa-grid time-slot-card"
     >
@@ -1331,6 +1037,7 @@ Object {
           </span>
           <span
             data-css-1iar5hk=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1447,6 +1154,7 @@ Object {
           </span>
           <span
             data-css-h1aqyj=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1627,6 +1335,7 @@ Object {
           </span>
           <span
             data-css-127pskq=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1743,6 +1452,7 @@ Object {
           </span>
           <span
             data-css-h1aqyj=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1857,6 +1567,306 @@ Object {
           <a
             href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
             id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
+          >
+            View Case Details
+          </a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-grid time-slot-card"
+    >
+      <div
+        class="usa-width-one-fourth"
+      >
+        <div>
+          <p
+            class="time-slot-card-time"
+          >
+            <span
+              class="time-slot-card-label"
+            >
+              1:30 AM MDT
+            </span>
+            <br />
+            3:30 AM EDT
+          </p>
+        </div>
+      </div>
+      <div
+        class="usa-width-three-fourths"
+      >
+        <span
+          class="time-slot-card-label"
+        >
+          Bob Smith
+           
+          <span
+            style="margin: 0px 2px;"
+          >
+            ·
+          </span>
+           
+          Veteran ID: 500000003
+        </span>
+        <div
+          class="time-slot-details"
+        >
+          1 issue
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span
+            aria-describedby="badge-200628-4"
+            aria-label=""
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200628-4"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-1w1a50w=""
+            data-testid="tooltip-testid"
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200628-4"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+           
+          200628-4
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span
+            aria-describedby="tooltip-id"
+            aria-label=""
+            currentitem="false"
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="tooltip-id"
+            data-tip="true"
+            tabindex="0"
+          >
+            AMERICAN LEGION
+          </span>
+          <span
+            data-css-h1aqyj=""
+            data-testid="tooltip-testid"
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="tooltip-id"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              AMERICAN LEGION
+            </div>
+          </span>
+        </div>
+        <div
+          class="time-slot-details"
+        >
+          <span>
+            Original
+          </span>
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span>
+            Central
+          </span>
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <a
+            href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
+            id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
           >
             View Case Details
           </a>

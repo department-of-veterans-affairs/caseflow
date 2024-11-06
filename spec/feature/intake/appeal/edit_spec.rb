@@ -611,6 +611,11 @@ feature "Appeal Edit issues", :all_dbs do
             end
 
             step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+              evidence_submission_task = appeal2.tasks.find { |task| task.type == EvidenceSubmissionWindowTask.name }
+              distribution_task = appeal2.tasks.find { |task| task.type == DistributionTask.name }
+              # complete the distribution task so that a SpecialtyCaseTeamAssignTask can be created
+              evidence_submission_task.completed!
+              distribution_task.completed!
               click_button("Split appeal")
               expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
 

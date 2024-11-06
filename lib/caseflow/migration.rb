@@ -7,7 +7,7 @@
 # @note Migration with built-in timeout extensions for adding indexes
 class Caseflow::Migration < ActiveRecord::Migration[5.1]
   # version of last migration that inherits from this class (across 'primary' and 'etl' databases)
-  LAST_DESCENDANT_MIGRATION_VERSION = 20_240_525_120_005
+  LAST_DESCENDANT_MIGRATION_VERSION = 20_240_617_205_006
 
   def initialize(*)
     super

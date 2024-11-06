@@ -52,6 +52,7 @@ class HearingDay < CaseflowRecord
   before_create :assign_created_by_user
   after_update :update_children_records
   after_create :generate_link_on_create
+  before_destroy :soft_link_removal
 
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
@@ -136,6 +137,7 @@ class HearingDay < CaseflowRecord
     caseflow_and_vacols_hearings
   end
 
+  # :reek:BooleanParameter
   def to_hash(include_conference_link = false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
@@ -215,12 +217,21 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
-  # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
+  def scheduled_date_passed?
+    scheduled_for < Date.current
+  end
+
+  # over write of the .conference_link method from belongs_to :conference_link to add logic to create if not there
   def conference_link
-    @conference_link ||= find_or_create_conference_link!
+    @conference_link ||= scheduled_date_passed? ? nil : find_or_create_conference_link!
   end
 
   private
+
+  # called through the 'before_destroy' callback on the hearing_day object.
+  def soft_link_removal
+    ConferenceLink.where(hearing_day: self).find_each(&:soft_removal_of_link)
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
@@ -233,7 +244,7 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      this.conference_link
+      conference_link
     rescue StandardError => error
       log_error(error)
     end
@@ -279,13 +290,11 @@ class HearingDay < CaseflowRecord
     formatted_datetime_string
   end
 
-  # Method to get the associated conference link record if exists and if not create  new one
+  # Method to get the associated conference link records if they exist and if not create new ones
   def find_or_create_conference_link!
-    conference_link = ConferenceLink.find_by_hearing_day_id(id)
-    if conference_link.nil?
-      conference_link = ConferenceLink.create(hearing_day_id: id)
+    if FeatureToggle.enabled?(:pexip_conference_service)
+      PexipConferenceLink.find_or_create_by!(hearing_day: self)
     end
-    conference_link
   end
 
   class << self

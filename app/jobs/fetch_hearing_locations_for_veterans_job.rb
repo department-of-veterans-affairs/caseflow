@@ -8,6 +8,10 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
   QUERY_TRAVEL_BOARD_LIMIT = 100
   JOB_DURATION = 1.hour
 
+  discard_on(Caseflow::Error::VaDotGovServerError) do |job, exception|
+    Rails.logger.warn("Discarding #{job.class.name} #{job.job_id} failed with error: #{exception}")
+  end
+
   def create_schedule_hearing_tasks
     HearingTaskTreeInitializer.create_schedule_hearing_tasks
   end
@@ -68,6 +72,8 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
           sleep_before_retry_on_limit_error
 
           break
+        rescue Caseflow::Error::VaDotGovServerError => error
+          raise error
         rescue StandardError => error
           actionable = !NONACTIONABLE_ERRORS.include?(error.class)
           capture_exception(error: error, extra: { appeal_external_id: appeal.external_id, actionable: actionable })

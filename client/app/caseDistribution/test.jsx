@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -11,6 +12,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
+import Alert from 'app/components/Alert';
+import CollapsibleTable from './components/CollapsibleTable';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -19,8 +22,20 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingAod: false,
       isReseedingNonAod: false,
       isReseedingAmaDocketGoals: false,
-      isReseedingDocketPriority: false
+      isReseedingDocketPriority: false,
+      isReturnLegacyAppeals: false,
+      isFailReturnLegacyAppeals: false,
+      showLegacyAppealsAlert: false,
+      showAlert: false,
+      alertType: 'success',
     };
+  }
+
+  componentDidUpdate() {
+    // Delay of 5 seconds
+    setTimeout(() => {
+      this.setState({ showAlert: false, showLegacyAppealsAlert: false });
+    }, 5000);
   }
 
   reseedAod = () => {
@@ -28,11 +43,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingAod: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding Aod Hearing Held Appeals.',
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingAod: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
       });
     });
   };
@@ -42,11 +62,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_demo_non_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingNonAod: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding Non Aod Hearing Held Appeals.',
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingNonAod: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
       });
     });
   };
@@ -56,25 +81,74 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run-demo-ama-docket-goals').then(() => {
       this.setState({
         isReseedingAmaDocketGoals: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding Ama Docket Time Goal Non Priority Appeals.',
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingAmaDocketGoals: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
       });
     });
   };
 
   reseedDocketPriority = () => {
     this.setState({ isReseedingDocketPriority: true });
-    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_docket_priority').then(() => {
       this.setState({
         isReseedingDocketPriority: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding Docket Type Appeals.',
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingDocketPriority: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
+      });
+    });
+  };
+
+  reseedNonSSCAVLJAppeals = () => {
+    this.setState({ isReseedingNonSSCAVLJAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_avlj_appeals').then(() => {
+      this.setState({
+        isReseedingNonSSCAVLJAppeals: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding non-SSC AVLJ and Appeals.',
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingNonSSCAVLJAppeals: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
+      });
+    });
+  };
+
+  returnLegacyAppealsToBoard = () => {
+    this.setState({ isReturnLegacyAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board').then(() => {
+      this.setState({
+        isReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true,
+        legacyAppealsAlertType: 'success',
+        legacyAppealsAlertMsg: 'Successfully Completed Return Legacy Appeals To Board Job.',
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true,
+        legacyAppealsAlertType: 'error',
+        legacyAppealsAlertMsg: err
       });
     });
   };
@@ -135,6 +209,16 @@ class CaseDistributionTest extends React.PureComponent {
                             <li>
                               <a href="#distribution_status">
                                 <button className="btn btn-primary">Distribution Status</button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a>
+                            </li>
+                            <li>
+                              <a href="#log_of_most_recent_appeals">
+                                <button className="btn btn-primary">
+                                  Log of 15 most recent appeals moved to location 63
+                                </button>
                               </a>
                             </li>
                           </ul>
@@ -255,9 +339,31 @@ class CaseDistributionTest extends React.PureComponent {
                                 </Button>
                               </a>
                             </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download Appeals tied to Non-SSC AVLJs CSV</Button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download Appeals Tied to AVLJ and VLJ CSV</Button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download Loc 63 Appeals Last 48 hrs CSV
+                                </Button>
+                              </a>
+                            </li>
                           </ul>
                           <hr />
                           <h2 id="run_seeds">Run Seed Files</h2>
+                          { this.state.showAlert &&
+                            <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
+                          }
                           <ul>
                             <li>
                               <Button
@@ -291,10 +397,39 @@ class CaseDistributionTest extends React.PureComponent {
                                 loadingText="Reseeding Docket-type Seeds"
                               />
                             </li>
+                            <li>
+                              <Button
+                                onClick={this.reseedNonSSCAVLJAppeals}
+                                name="Run non-SSC AVLJ and Appeal Seeds"
+                                loading={this.state.isReseedingNonSSCAVLJAppeals}
+                                loadingText="Reseeding non-SSC AVLJ and Appeal Seeds"
+                              />
+                            </li>
                           </ul>
+                          <hr />
+                          <h2 id="case_movement">Case Movement</h2>
+                          { this.state.showLegacyAppealsAlert &&
+                            <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
+                              {this.state.legacyAppealsAlertMsg}
+                            </Alert>
+                          }
+                          <ul>
+                            <li>
+                              <Button classNames={['usa-button-case-movement']}
+                                onClick={this.returnLegacyAppealsToBoard}
+                                name="Run ReturnLegacyAppealsToBoard job"
+                                loading={this.state.isReturnLegacyAppeals}
+                                loadingText="Processing ReturnLegacyAppealsToBoard job"
+                              />
+                            </li>
+                          </ul>
+                          <hr />
+                          <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>
+                          <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
                           <hr />
                           <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
                         </div>
+
                       );
                     }}
                   />

@@ -3,21 +3,22 @@
 describe AppellantNotification do
   describe "class methods" do
     describe "self.handle_errors" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:template_name) { "Quarterly Notification" }
+      let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:current_user) { User.system_user }
       context "if appeal is nil" do
         let(:empty_appeal) {}
         it "reports the error" do
-          expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
+          expect { AppellantNotification.handle_errors(empty_appeal, template_name) }.to raise_error(
             AppellantNotification::NoAppealError
           )
         end
       end
 
       context "with no claimant listed" do
-        let(:appeal) { create(:appeal, number_of_claimants: 0) }
+        let(:appeal) { create(:appeal, :active, number_of_claimants: 0) }
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq(
             AppellantNotification::NoClaimantError.new(appeal.id).status
           )
         end
@@ -25,31 +26,42 @@ describe AppellantNotification do
 
       context "with no participant_id listed" do
         let(:claimant) { create(:claimant, participant_id: "") }
-        let(:appeal) { create(:appeal) }
+        let(:appeal) { create(:appeal, :active) }
         before do
           appeal.claimants = [claimant]
         end
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq(
             AppellantNotification::NoParticipantIdError.new(appeal.id).status
+          )
+        end
+      end
+
+      context "with an inactive appeal" do
+        let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
+        it "returns error message" do
+          appeal.root_task.completed!
+          expect { AppellantNotification.handle_errors(appeal, template_name) }.to raise_error(
+            AppellantNotification::InactiveAppealError
           )
         end
       end
 
       context "with no errors" do
         it "doesn't raise" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Success"
         end
       end
     end
 
     describe "veteran is deceased" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:substitute_appellant) { create(:appellant_substitution) }
+      let(:template_name) { "test" }
 
       it "with no substitute appellant" do
         appeal.veteran.update!(date_of_death: Time.zone.today)
-        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Failure Due to Deceased"
+        expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Failure Due to Deceased"
       end
 
       it "with substitute appellant" do
@@ -57,13 +69,13 @@ describe AppellantNotification do
         substitute_appellant.update!(source_appeal_id: appeal.id)
         substitute_appellant.send(:establish_substitution_on_same_appeal)
         appeal.update!(veteran_is_not_claimant: true)
-        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
+        expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Success"
       end
     end
 
     describe "self.create_payload" do
-      let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
-      let(:bad_appeal) { create(:appeal) }
+      let(:good_appeal) { create(:appeal, :active, number_of_claimants: 1) }
+      let(:bad_appeal) { create(:appeal, :active) }
       let(:bad_claimant) { create(:claimant, participant_id: "") }
       let(:template_name) { "test" }
 
@@ -148,14 +160,14 @@ describe AppellantNotification do
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(false)
       end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(true)
       end
     end
 
@@ -205,7 +217,7 @@ describe AppellantNotification do
       it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(false)
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
@@ -213,7 +225,7 @@ describe AppellantNotification do
         contested_appeal.contested_claim?
         contested_decision_document = contested_dispatch
           .send dispatch_func, contested_params
-        contested_decision_document.process!
+        contested_decision_document.process!(true)
       end
     end
   end
@@ -236,7 +248,7 @@ describe AppellantNotification do
           appeal: appeal_hearing,
           hearing_day_id: create(:hearing_day).id,
           hearing_location_attributes: {},
-          scheduled_time_string: "11:30am",
+          scheduled_time_string: "11:30 AM UTC",
           notes: "none"
         }
       end
@@ -570,7 +582,7 @@ describe AppellantNotification do
 
     # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
     describe "mail task" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
@@ -640,7 +652,7 @@ describe AppellantNotification do
     end
 
     context "Foia Colocated Tasks" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let!(:attorney) { create(:user) }
       let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney) }
@@ -691,7 +703,7 @@ describe AppellantNotification do
     end
 
     context "Privacy Act Tasks" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:attorney) { create(:user) }
       let(:current_user) { create(:user) }
@@ -929,6 +941,12 @@ describe AppellantNotification do
         let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
         let(:appeal_state) { create(:appeal_state, appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s) }
         let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_complete }
+        let(:appeal) { task.appeal }
+
+        before do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        end
+
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)

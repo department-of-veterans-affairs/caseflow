@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# This factory will create a DistributedCase with the required fields based on an appeal
-# It is currently only compatible with AMA appeals
 FactoryBot.define do
   factory :distributed_case do
     case_id { appeal.uuid }
@@ -17,6 +15,19 @@ FactoryBot.define do
 
     transient do
       appeal { create(:appeal, :assigned_to_judge) }
+    end
+
+    factory :legacy_distributed_case do
+      case_id { appeal.bfkey }
+      distribution { create(:distribution, judge: create(:user, :judge, :with_vacols_judge_record)) }
+      docket { LegacyDocket.docket_type }
+      docket_index { rand(1..100) }
+      priority { nil }
+      ready_at { appeal.bfdloout }
+      sct_appeal { false }
+      task { nil }
+      genpop { false }
+      genpop_query { "any" }
     end
   end
 end

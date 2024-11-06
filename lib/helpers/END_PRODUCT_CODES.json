@@ -115,6 +115,8 @@
   "930ASNRCPMC": "PMC Supplemental Claim Non-Rating Control 930",
   "930DONRPMC": "PMC AMA Difference of Opinion - NR",
   "930DORPMC": "PMC AMA Difference of Opinion - Rating",
+  "930ADONRPMC": "PMC AMA Difference of Opinion - NR",
+  "930ADORPMC": "PMC AMA Difference of Opinion - Rating",
   "930RC": "Rating Control",
   "930RCPMC": "PMC-Rating Control"
 }
