@@ -26,6 +26,8 @@ import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
 import { updateQueueTableCache } from '../caching/queueTableCache.slice';
+import { isActiveOrganizationVHA } from '../../queue/selectors';
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -137,6 +139,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     useReduxCache={this.props.useReduxCache}
     reduxCache={this.props.queueTableResponseCache}
     updateReduxCache={this.props.updateQueueTableCache}
+    isVhaOrg
   />;
 }
 
@@ -180,7 +183,8 @@ const mapStateToProps = (state) => ({
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
   organizationId: state.ui.activeOrganization.id,
-  queueTableResponseCache: state.caching.queueTable.cachedResponses
+  queueTableResponseCache: state.caching.queueTable.cachedResponses,
+  isVhaOrg: isActiveOrganizationVHA(state),
 });
 
 const mapDispatchToProps = (dispatch) => (

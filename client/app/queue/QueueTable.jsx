@@ -265,7 +265,7 @@ export class FooterRow extends React.PureComponent {
   }
 }
 
-class QueueTableUnConnected extends React.PureComponent {
+export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -371,7 +371,7 @@ class QueueTableUnConnected extends React.PureComponent {
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
     const filterParams = this.props.tabPaginationOptions?.['filter[]'] || [];
 
-    if (this.props?.businessLineUrl === 'vha' &&
+    if (this.props?.isVhaOrg &&
       currentTabName === 'completed' &&
       filterParams.length === 0) {
       this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
@@ -860,7 +860,7 @@ class QueueTableUnConnected extends React.PureComponent {
     const queryParams = new URLSearchParams(window.location.search);
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
 
-    const vhaCompletedTab = this.props?.businessLineUrl === 'vha' && currentTabName === 'completed';
+    const vhaCompletedTab = this.props?.isVhaOrg && currentTabName === 'completed';
 
     return (
       <div
@@ -881,14 +881,6 @@ class QueueTableUnConnected extends React.PureComponent {
     );
   }
 }
-
-const mapStateToProps = (state) => ({
-  businessLineUrl: state?.nonComp?.businessLineUrl
-});
-
-const QueueTable = connect(mapStateToProps)(QueueTableUnConnected);
-
-export default QueueTable;
 
 HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
