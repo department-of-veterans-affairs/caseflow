@@ -9,7 +9,6 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
       data-css-1ogvp9u=""
     >
       <div>
-        
         <div
           class="cf-loading-button-symbol cf-small-loader-symbol"
         >
@@ -123,6 +122,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -718,6 +718,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1405,6 +1406,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2065,6 +2067,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2660,6 +2663,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3378,6 +3382,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3973,6 +3978,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
         </span>
         <span
           data-css-1e67hgq=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
