@@ -97,6 +97,7 @@ import CorrespondenceReviewPackage from './correspondence/ReviewPackage/Correspo
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
+import CorrespondenceRemoveWaiveEvidenceModal from './components/CorrespondenceRemoveWaiveEvidence';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -753,6 +754,7 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceDetails = (props) => (
     <CorrespondenceDetails {...props.match.params}
       {...this.props}
+      autoTexts={this.props.autoTexts}
       correspondenceResponseLetters={this.props.correspondenceResponseLetters}
       correspondenceTypes={this.props.correspondenceTypes}
     />
@@ -762,6 +764,13 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceAssignTeamModal
       {...props.match.params}
       userOrganizations={this.props.organizations}
+    />
+  );
+
+  routedCorrespondenceRemoveWaiveEvidenceModal = (props) => (
+    <CorrespondenceRemoveWaiveEvidenceModal
+      {...props.match.params}
+      correspondence_uuid={this.props.correspondence_uuid}
     />
   );
 
@@ -1046,6 +1055,17 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
               render={this.routedCorrespondenceAssignTeamModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/appeals/:appealId/tasks/:taskId/' +
+            `(${TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.value
+            })`
+              }
+              title={`${PAGE_TITLES.REMOVE_WAIVE_EVIDENCE_WINDOW}`}
+              render={this.routedCorrespondenceRemoveWaiveEvidenceModal}
             />
 
             <PageRoute
@@ -1690,6 +1710,7 @@ QueueApp.propTypes = {
   userPermissions: PropTypes.array,
   configUrl: PropTypes.string,
   correspondenceResponseLetters: PropTypes.array,
+  correspondence_uuid: PropTypes.string,
   conferenceProvider: PropTypes.string,
   setMeetingType: PropTypes.string
 };

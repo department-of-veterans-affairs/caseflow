@@ -1640,5 +1640,7 @@
     }
   },
   "ALL_CORRESPONDENCES": "All Correspondence",
+  "CONFIRM_WAIVE_REMOVAL": "Confirm waive removal",
+  "WAIVE_REMOVAL_NOTE": "Once confirmed, the waive evidence window will be removed.",
   "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }

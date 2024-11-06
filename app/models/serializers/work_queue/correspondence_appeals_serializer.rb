@@ -31,32 +31,11 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.issues.length
   end
 
-  attribute :appeal do |object|
-    WorkQueue::AppealSerializer.new(object.appeal, params: { user: RequestStore[:current_user] })
-  end
-
-  attribute :task_added_data do |object|
-    # include waivable evidence window tasks
-    evidence_window_task = object.appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name)
-
-    tasks = object.tasks.uniq
-    tasks << evidence_window_task if evidence_window_task&.waivable?
-    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
-      params: { user: RequestStore[:current_user], role: "generic" },
-      tasks: tasks,
-      ama_serializer: WorkQueue::TaskSerializer
-    ).call
-  end
-
   attribute :status do |object|
     object.correspondence.status
   end
 
   attribute :assigned_to do |object|
     object.tasks[0]&.assigned_to
-  end
-
-  attribute :correspondence do |object|
-    object
   end
 end

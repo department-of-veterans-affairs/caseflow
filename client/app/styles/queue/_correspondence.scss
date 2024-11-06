@@ -526,6 +526,22 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin: 80px auto 50px 100px;
 }
 
+.checkbox-modal-size-corr-details {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding: 0;
+  width: 105%;
+  margin-bottom: 10px;
+
+  .cf-form-checkboxes{
+    margin-bottom: 0rem;
+    margin-top: 1rem;
+
+  }
+}
+
 .confirm-correspondence-view-border {
   border: 2px solid $color-gray-lighter;
   margin-bottom: 20px;
@@ -1073,7 +1089,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
 .task-selection-dropdown-box {
-  width: 45rem;
+  width: 100%;
   }
 
 .new-tasks-gray-border-styling {
@@ -1613,6 +1629,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   font-weight: bold;
 }
 
+.number-of-issues-header {
+  font-weight: bold;
+
+  span {
+    padding-left: 10px;
+  }
+}
+
 .correspondence-tasks-added {
   background-color: $color-gray-inverse-base;
   padding-left: 2%;
@@ -1640,6 +1664,27 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: block;
 }
 
+.tasks-added-text-alternate {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.tasks-added-text-second-alternate {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
+  .tasks-added-button-spacing{
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.case-details-header-badge,
 .case-details-badge {
   display: flex;
   width: fit-content;
@@ -1648,12 +1693,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   background-color: $color-white;
 }
 
+.case-details-header-badge {
+  flex-grow: unset;
+  margin: 12px 17px 12px 2px;
+}
+
 .link-icon-container {
   display: flex;
 }
 
 .tasks-added-details {
-  margin-left: 40px;
+  margin-left: 1%;
+}
+
+.tasks-added-waive-banner-alert {
+  margin-left: 1%;
+  width: 98%;
+}
+
+.waive-banner-alert .usa-alert.usa-alert-slim {
+  padding-top: 4px;
 }
 
 .grayLineStyling {
@@ -1732,3 +1791,95 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 0;
 }
 
+.add-task-modal-container {
+  .task-selection-dropdown-box {
+    margin-bottom: 1.5rem;
+  }
+
+  .task-selection-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .add-task-dropdown-style {
+    width: 100%;
+  }
+
+  .add-autotext-button {
+    margin-top: 1rem;
+    color: #0071bc;
+  }
+
+  .remove-task-button {
+    color: #e31c3d;
+    float: right;
+    margin-top: 1rem;
+  }
+
+}
+
+.select-container-styles {
+  margin-bottom: 1.5rem;
+}
+
+.new-tasks-gray-border-styling {
+  border: 1px solid #d6d7d9;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.gray-border {
+  border: 1px solid #d6d7d9;
+  padding: 1.5rem;
+}
+
+.margin-bottom-for-add-task-view {
+  margin-bottom: 2rem;
+}
+
+
+.add-task-dropdown-style {
+  /* Override the control (outer container) for the select dropdown */
+  .react-select__control {
+    border-color: black !important;
+    border-radius: 0 !important; /* Make the borders 90 degrees */
+    &:hover {
+      border-color: black !important; /* Black border on hover */
+    }
+  }
+
+  /* Adjust the dropdown menu styles */
+  .react-select__menu {
+    border-radius: 0 !important; /* Make the menu borders 90 degrees as well */
+  }
+
+  /* Set the color for each option */
+  .react-select__option {
+    color: black !important; /* Make the text of each option black */
+  }
+
+  /* Style the indicator separator */
+  .react-select__indicator-separator {
+    background-color: black !important;
+    width: 1px !important;
+    padding-bottom: 10px;
+  }
+
+  /* Style the dropdown indicator (arrow) */
+  .react-select__dropdown-indicator {
+    color: black !important; /* Make the arrow black */
+    &:hover {
+      color: black !important; /* Keep arrow black on hover */
+    }
+  }
+
+  /* Hover style for options */
+  .react-select__option--is-focused {
+    background-color: $color-gray-darker !important; /* Dark gray background on hover */
+    color: white !important; /* White text on hover */
+  }
+}
+
+.back-button {
+margin-left: 240px;
+}

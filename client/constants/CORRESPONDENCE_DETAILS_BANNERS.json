@@ -27,5 +27,16 @@
     "title": "Error",
     "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error message: %s).",
     "type": "error"
+  },
+
+  "completeTaskNotRelatedBanner": {
+    "title": "Success",
+    "message": "You have successfully created a %s task.",
+    "type": "success"
+  },
+
+  "evidenceWindowBanner": {
+    "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task.",
+    "type": "success"
   }
 }
