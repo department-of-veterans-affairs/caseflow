@@ -321,7 +321,7 @@ class DatePicker extends React.PureComponent {
 
   startDateErrorMessage = () => {
     if (this.state.noFutureDates && this.state.startDate && this.isDateInFuture(this.state.startDate)) {
-      return 'Date cannot be in the future.';
+      return COPY.DATE_PICKER_NO_FUTURE_DATES_ERROR_MESSAGE;
     }
 
     return '';
@@ -329,7 +329,7 @@ class DatePicker extends React.PureComponent {
 
   endDateErrorMessage = () => {
     if (this.state.noFutureDates && this.state.endDate && this.isDateInFuture(this.state.endDate)) {
-      return 'Date cannot be in the future.';
+      return COPY.DATE_PICKER_NO_FUTURE_DATES_ERROR_MESSAGE;
     }
 
     if (this.state.mode === 'between' && this.state.startDate !== '' && this.state.endDate !== '') {
@@ -337,7 +337,7 @@ class DatePicker extends React.PureComponent {
       const endDate = moment(`${this.state.endDate} 23:59:59`).valueOf();
 
       if (startDate >= endDate) {
-        return '"To" date cannot occur before the "From" date';
+        return COPY.DATE_PICKER_BETWEEN_DATES_ERROR_MESSAGE;
       }
     }
 
