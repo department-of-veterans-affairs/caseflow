@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
-import ErrorsFoundAndCorrectedModal from 'app/queue/components/ErrorsFoundAndCorrectedModal';
+import { ErrorsFoundAndCorrectedModal } from 'app/queue/components/ErrorsFoundAndCorrectedModal';
 
 describe('ErrorsFoundAndCorrectedModal', () => {
   const closeModal = jest.fn();
