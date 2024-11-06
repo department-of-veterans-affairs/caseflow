@@ -18,7 +18,8 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
 
         perform
       elsif self.class.timeout_seconds == 2700
-        log_error("Timeout was set to 2700 and job timed out. Error: #{error}")
+        Rails.logger.error("Timeout was set to 2700 and job timed out.")
+        log_error(error)
       else
         log_error(error)
       end
