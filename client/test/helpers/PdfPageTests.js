@@ -1,7 +1,14 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { documents } from '../data/documents';
 import { PdfPage } from '../../app/reader/PdfPage';
+import rootReducer from '../../app/reader/reducers';
+
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+
+const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
 export const pageMetricData = [
   'test',
@@ -67,111 +74,122 @@ export const recordMetricsArgs = [
   true
 ];
 
-export const pdfPageRenderTimeInMsEnabled = () => {
-  return shallow(
-    <PdfPage
-      documentId={documents[0].id}
-      metricsIdentifier="123456"
-      file={documents[0].content_url}
-      isPageVisible=""
-      pageIndex={1}
-      scale={1}
-      pdfDocument={{
-        _pdfInfo: {
+export const pdfPageRenderTimeInMsEnabled = (props) => {
+  const store = getStore();
+  return render(
+    <Provider store={store}>
+      <PdfPage
+        documentId={documents[0].id}
+        metricsIdentifier="123456"
+        file={documents[0].content_url}
+        isPageVisible=""
+        pageIndex={1}
+        scale={1}
+        pdfDocument={{
+          _pdfInfo: {
+            numPages: 1
+          },
+          _transport: {
+            destroyed: false,
+            pagePromises: {
+              _numPages: 1
+            }
+          },
+          getPage: jest.fn().mockReturnValue('test'),
           numPages: 1
-        },
-        _transport: {
-          destroyed: false,
-          pagePromises: {
-            _numPages: 1
-          }
-        },
-        getPage: jest.fn().mockReturnValue('test'),
-        numPages: 1
-      }}
-      featureToggles={{
-        metricsPdfStorePages: true,
-        pdfPageRenderTimeInMs: true,
-        metricsReaderRenderText: true
-      }}
-      page={{
-        cleanup: jest.fn(),
-        getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
-      }}
-      documentType="Test"
-      windowingOverscan=""
-    />
+        }}
+        featureToggles={{
+          metricsPdfStorePages: true,
+          pdfPageRenderTimeInMs: true,
+          metricsReaderRenderText: true
+        }}
+        page={{
+          cleanup: jest.fn(),
+          getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
+        }}
+        documentType="Test"
+        windowingOverscan=""
+        {...props}
+      />
+    </Provider >
+
   );
 };
 
 export const pdfPageRenderTimeInMsDisabled = () => {
-  return shallow(
-    <PdfPage
-      documentId={documents[0].id}
-      file={documents[0].content_url}
-      isPageVisible=""
-      pageIndex={1}
-      scale={1}
-      pdfDocument={{
-        _pdfInfo: {
+  const store = getStore();
+  return render(
+    <Provider store={store}>
+      <PdfPage
+        documentId={documents[0].id}
+        file={documents[0].content_url}
+        isPageVisible=""
+        pageIndex={1}
+        scale={1}
+        pdfDocument={{
+          _pdfInfo: {
+            numPages: 1
+          },
+          _transport: {
+            destroyed: false,
+            pagePromises: {
+              _numPages: 1
+            }
+          },
+          getPage: jest.fn().mockReturnValue('test'),
           numPages: 1
-        },
-        _transport: {
-          destroyed: false,
-          pagePromises: {
-            _numPages: 1
-          }
-        },
-        getPage: jest.fn().mockReturnValue('test'),
-        numPages: 1
-      }}
-      featureToggles={{
-        metricsPdfStorePages: true,
-        pdfPageRenderTimeInMs: false,
-        metricsReaderRenderText: true
-      }}
-      page={{
-        cleanup: jest.fn(),
-        getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
-      }}
-      documentType="Test"
-      windowingOverscan=""
-    />
+        }}
+        featureToggles={{
+          metricsPdfStorePages: true,
+          pdfPageRenderTimeInMs: false,
+          metricsReaderRenderText: true
+        }}
+        page={{
+          cleanup: jest.fn(),
+          getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
+        }}
+        documentType="Test"
+        windowingOverscan=""
+      />
+    </Provider>
   );
 };
 
 export const metricsPdfStorePagesDisabled = () => {
-  return shallow(
-    <PdfPage
-      documentId={documents[0].id}
-      file={documents[0].content_url}
-      isPageVisible=""
-      pageIndex={1}
-      scale={1}
-      pdfDocument={{
-        _pdfInfo: {
+  const store = getStore();
+  return render(
+    <Provider store={store}>
+      <PdfPage
+        documentId={documents[0].id}
+        file={documents[0].content_url}
+        isPageVisible=""
+        pageIndex={1}
+        scale={1}
+        pdfDocument={{
+          _pdfInfo: {
+            numPages: 1
+          },
+          _transport: {
+            destroyed: false,
+            pagePromises: {
+              _numPages: 1
+            }
+          },
+          getPage: jest.fn().mockReturnValue('test'),
           numPages: 1
-        },
-        _transport: {
-          destroyed: false,
-          pagePromises: {
-            _numPages: 1
-          }
-        },
-        getPage: jest.fn().mockReturnValue('test'),
-        numPages: 1
-      }}
-      featureToggles={{
-        metricsPdfStorePages: false,
-        pdfPageRenderTimeInMs: false,
-        metricsReaderRenderText: true
-      }}
-      page={{
-        cleanup: jest.fn(),
-        getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
-      }}
-      documentType="Test"
-      windowingOverscan=""
-    />
+        }}
+        featureToggles={{
+          metricsPdfStorePages: false,
+          pdfPageRenderTimeInMs: false,
+          metricsReaderRenderText: true
+        }}
+        page={{
+          cleanup: jest.fn(),
+          getViewport: jest.fn().mockImplementation(() => Promise.resolve({ data: {} }))
+        }}
+        documentType="Test"
+        windowingOverscan=""
+      />
+    </Provider>
   );
 };
