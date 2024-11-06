@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionFile < CaseflowRecord
+class TranscriptionFile < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
   belongs_to :transcription
@@ -43,12 +43,16 @@ class Hearings::TranscriptionFile < CaseflowRecord
       .joins("LEFT OUTER JOIN veterans ON
         veterans.file_number = appeals.veteran_file_number OR legacy_appeals.vbms_id ~ veterans.file_number")
       .joins("LEFT OUTER JOIN transcriptions ON transcriptions.id = transcription_files.transcription_id")
+      .joins("LEFT OUTER JOIN transcription_packages ON
+        transcription_packages.task_number = transcriptions.task_number")
   }
 
-  scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
+  scope :unassigned, lambda {
+    where("transcription_packages.status IS NULL")
+  }
 
   scope :completed, lambda {
-    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
+    where("transcription_packages.status IN ('Successful Retrieval (BOX)', 'Failed Retrieval (BOX)', 'Overdue')")
   }
 
   scope :filter_by_hearing_type, ->(values) { where("transcription_files.hearing_type IN (?)", values) }
@@ -241,7 +245,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
     transcription = Transcription.find_by(task_number: task_number)
     return unless transcription
 
-    transcription_files = Hearings::TranscriptionFile.where(transcription_id: transcription.id)
+    transcription_files = TranscriptionFile.where(transcription_id: transcription.id)
 
     transcription_files.each do |file|
       file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)
@@ -254,7 +258,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
     # look in VACOLS CORRES table for veterans names that match and return the IDs
     vacols_ids = MetricsService.record(
       "VACOLS: Get ID values from Correspondents for transcription dispatch search",
-      name: "Hearings::TranscriptionFile"
+      name: "TranscriptionFile"
     ) do
       VACOLS::Correspondent
         .where("(LOWER(snamef) || ' ' || LOWER(snamel)) LIKE :query", query: "%#{query.downcase.strip}%")

@@ -33,7 +33,7 @@ class TranscriptionPackage < CaseflowRecord
 
   scope :search, lambda { |search|
     # find transcription files that match the search
-    transcription_ids = Hearings::TranscriptionFile
+    transcription_ids = TranscriptionFile
       .filterable_values.search(search).pluck(:transcription_id)
     if transcription_ids.empty?
       transcription_ids = [-1]
