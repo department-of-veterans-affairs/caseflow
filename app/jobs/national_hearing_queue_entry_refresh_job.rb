@@ -15,7 +15,6 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
         self.class.timeout_seconds = 2700
         # temporarily setting timeout to allow query to run
         timeout_set(self.class.timeout_seconds)
-
         perform
       elsif self.class.timeout_seconds == 2700
         Rails.logger.error("Timeout was set to 2700 and job timed out.")
