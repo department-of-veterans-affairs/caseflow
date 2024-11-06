@@ -23,8 +23,11 @@ SELECT
   tasks.assigned_to_type AS assigned_to_type,
   tasks.assigned_at AS assigned_at,
   tasks.assigned_by_id AS assigned_by_id,
-  CURRENT_DATE - tasks.placed_on_hold_at::date AS days_on_hold,
-  tasks.closed_at::date - tasks.created_at::date AS days_waiting,
+  CASE
+  	WHEN tasks.status = 'on_hold' THEN CURRENT_DATE - tasks.placed_on_hold_at::date
+  	ELSE null
+  END AS days_on_hold,
+  COALESCE(tasks.closed_at::date, CURRENT_DATE) - tasks.assigned_at::date AS days_waiting,
   tasks.status AS task_status,
   CASE
     WHEN stream_type = 'court_remand'
@@ -97,8 +100,11 @@ SELECT
   tasks.assigned_to_type AS assigned_to_type,
   tasks.assigned_at AS assigned_at,
   tasks.assigned_by_id AS assigned_by_id,
-  CURRENT_DATE - tasks.placed_on_hold_at::date AS days_on_hold,
-  tasks.closed_at::date - tasks.created_at::date AS days_waiting,
+  CASE
+  	WHEN tasks.status = 'on_hold' THEN CURRENT_DATE - tasks.placed_on_hold_at::date
+  	ELSE null
+  END AS days_on_hold,
+  COALESCE(tasks.closed_at::date, CURRENT_DATE) - tasks.assigned_at::date AS days_waiting,
   tasks.status AS task_status,
   TRUE as schedulable
 FROM

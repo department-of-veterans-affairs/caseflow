@@ -2476,8 +2476,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
           CASE
               WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
@@ -2526,8 +2529,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
       true AS schedulable
      FROM ((((((legacy_appeals
