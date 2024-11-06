@@ -126,6 +126,8 @@ describe('VirtualHearingFields', () => {
       }
     );
 
+    const hearingMeetingType = amaHearing.judge.meetingType;
+
     // Assertions
     expect(screen.getByText('Webex Hearing')).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
