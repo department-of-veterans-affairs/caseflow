@@ -85,6 +85,11 @@ class RequestIssue < CaseflowRecord
     national_quality_error: "national_quality_error"
   }
 
+  enum disabled_benefit_types: {
+    compensation: "compensation",
+    pension: "pension"
+  }
+
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
@@ -102,6 +107,7 @@ class RequestIssue < CaseflowRecord
         "due to decision date being in the future")
     end
   end
+
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
@@ -576,8 +582,16 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
+  def benefit_type_disabled?
+    # Check disabled sync benefit type enum if request issue's benefit type is included
+    RequestIssue.disabled_benefit_types.value?(benefit_type)
+  end
+
   def sync_decision_issues!
     return if processed?
+
+    # exit if benefit type "compensation" or "pension"
+    return true if benefit_type_disabled?
 
     fail NotYetSubmitted unless submitted_and_ready?
 
