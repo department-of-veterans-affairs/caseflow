@@ -278,10 +278,104 @@ module Seeds
       create(:appeal, :evidence_submission_docket, :ready_for_distribution)
     end
 
-    def create_hearing_priority_not_genpop_cases; end
-    def create_hearing_priority_genpop_cases; end
-    def create_hearing_priority_not_ready_cases; end
-    def create_hearing_nonpriority_ready_cases; end
+    def create_hearing_priority_not_genpop_cases
+      tied_or_affinity_judges.each do |judge|
+        # aod age hearing in window
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+               tied_judge: judge)
+        # aod motion hearing in window
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_motion, :held_hearing_and_ready_to_distribute,
+               tied_judge: judge)
+
+        # cavc no hearing in window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
+        # cavc aod motion no hearing in window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_motion,
+               :cavc_ready_for_distribution, judge: judge)
+        # cavc aod age no hearing in window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_age,
+               :cavc_ready_for_distribution, judge: judge)
+
+        # cavc new hearing in window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
+        create_most_recent_hearing(appeal, judge)
+        # cavc aod motion new hearing in window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_motion,
+                        :cavc_ready_for_distribution, judge: judge)
+        create_most_recent_hearing(appeal, judge)
+        # cavc aod age new hearing in window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_age,
+                        :cavc_ready_for_distribution, judge: judge)
+        create_most_recent_hearing(appeal, judge)
+      end
+    end
+
+    def create_hearing_priority_genpop_cases
+      # aod hearing cancelled
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks, :cancelled_hearing_and_ready_to_distribute)
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_motion, :with_post_intake_tasks, :cancelled_hearing_and_ready_to_distribute)
+
+      tied_or_affinity_judges.each do |judge|
+        # aod hearing out of window
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+               :with_appeal_affinity, tied_judge: judge, affinity_start_date: 3.months.ago)
+
+        # cavc no hearing out of window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :cavc_ready_for_distribution, :with_appeal_affinity,
+               judge: judge, affinity_start_date: 3.months.ago)
+        # cavc new hearing out of window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :cavc_ready_for_distribution,
+                        :with_appeal_affinity, judge: judge, affinity_start_date: 3.months.ago)
+        create_most_recent_hearing(appeal, judge)
+
+        # cavc aod motion no hearing out of window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_motion,
+               :cavc_ready_for_distribution, :with_appeal_affinity, judge: judge, affinity_start_date: 3.months.ago)
+        # cavc aod age no hearing out of window
+        create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_age,
+               :cavc_ready_for_distribution, :with_appeal_affinity, judge: judge, affinity_start_date: 3.months.ago)
+
+        # cavc aod motion new hearing out of window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_motion,
+                        :cavc_ready_for_distribution, :with_appeal_affinity, judge: judge,
+                        affinity_start_date: 3.months.ago)
+        create_most_recent_hearing(appeal, judge)
+        # cavc aod age new hearing out of window
+        appeal = create(:appeal, :hearing_docket, :type_cavc_remand, :advanced_on_docket_due_to_age,
+                        :cavc_ready_for_distribution, :with_appeal_affinity, judge: judge,
+                        affinity_start_date: 3.months.ago)
+        create_most_recent_hearing(appeal, judge)
+      end
+    end
+
+    def create_hearing_priority_not_ready_cases
+      tied_or_affinity_judges.each do |judge|
+        # aod age
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age,
+               :with_distribution_task_and_schedule_hearing_child_task, :held_hearing,
+               tied_judge: judge)
+        # aod motion
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_motion,
+               :with_distribution_task_and_schedule_hearing_child_task, :held_hearing,
+               tied_judge: judge)
+        # cavc
+        create(:appeal, :cavc_response_window_open, judge: judge)
+        # cavc aod age
+        create(:appeal, :cavc_response_window_open, :advanced_on_docket_due_to_age, judge: judge)
+        # cavc aod motion
+        create(:appeal, :cavc_response_window_open, :advanced_on_docket_due_to_motion, judge: judge)
+      end
+    end
+
+    def create_hearing_nonpriority_ready_cases
+      create(:appeal, :hearing_docket, :with_post_intake_tasks, :cancelled_hearing_and_ready_to_distribute)
+
+      tied_or_affinity_judges.each do |judge|
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, tied_judge: judge)
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
+               tied_judge: judge, affinity_start_date: 3.months.ago)
+      end
+    end
 
     def create_legacy_priority_not_genpop_cases
       tied_or_affinity_judges.each do |judge|
@@ -418,6 +512,12 @@ module Seeds
         # no hearings AOJ affinity out of window
         create(:legacy_aoj_appeal, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 2.months.ago)
       end
+    end
+
+    def create_most_recent_hearing(appeal, judge)
+      most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+      hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+      hearing.update!(judge: judge)
     end
   end
 end

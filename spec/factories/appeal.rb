@@ -174,10 +174,11 @@ FactoryBot.define do
     trait :held_hearing do
       transient do
         adding_user { nil }
+        tied_judge { nil }
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: evaluator.tied_judge, appeal: appeal, adding_user: evaluator.adding_user)
       end
     end
 
