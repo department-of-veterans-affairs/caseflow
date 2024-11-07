@@ -81,7 +81,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
                                           correspondence_uuid: correspondence.uuid }
       expect(controller.view_assigns["response_header"]).to eq("You have successfully cancelled the intake form")
       expect(controller.view_assigns["response_message"]).to eq("#{veteran.name}'s "\
-        "correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment.")
+        "correspondence has been returned to the supervisor's queue for assignment.")
     end
 
     it "returns intake continue later response" do
