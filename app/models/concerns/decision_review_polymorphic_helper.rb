@@ -26,7 +26,7 @@ module DecisionReviewPolymorphicHelper
 
     private
 
-    def mapping_accosiation_and_scope
+    def mapping_association_and_scope
       # Specific association mappings that are uniquely different from the calculated class name to underscored symbol
       association_name_mapping = {
         "Appeal" => :ama_appeal,
