@@ -79,6 +79,8 @@ const NationalHearingQueueContainer = () => {
   };
 
   return (<>
+    { /* Alert goes here*/ }
+
     <h1>Testing NHQ</h1>
 
     { /* Cutoff date component(s) goes here. */ }
