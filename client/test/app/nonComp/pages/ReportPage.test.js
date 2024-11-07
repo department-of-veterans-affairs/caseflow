@@ -10,9 +10,11 @@ import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import { MemoryRouter as Router } from 'react-router-dom';
 import createNonCompStore from '../nonCompStoreCreator';
+import savedSearchesData from '../../../data/nonComp/savedSearchesData';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+import COPY from 'app/../COPY';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
@@ -42,7 +44,17 @@ describe('ReportPage', () => {
   };
 
   const clickOnReportType = async () => {
-    setup({ nonComp: { businessLineUrl: 'vha' } });
+    setup(
+      {
+        nonComp: {
+          businessLineUrl: 'vha'
+        },
+        savedSearch:
+        {
+          fetchedSearches:
+          { searches: [], userSearches: [] }
+        }
+      });
 
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
@@ -522,15 +534,16 @@ describe('ReportPage', () => {
   });
 
   describe('Save search', () =>{
-    beforeEach(clickOnReportType);
 
-    it('should enable Save search button', () => {
+    it('should enable Save search button', async () => {
+      await clickOnReportType();
       const saveSearch = screen.getByText('Save search');
 
       expect(saveSearch).not.toHaveClass('usa-button-disabled');
     });
 
-    it('should open Save your search model upon clicking', async () => {
+    it('should open Save your search model upon clicking when user search if no saved search is present', async () => {
+      await clickOnReportType();
 
       const saveSearch = screen.getByText('Save search');
 
@@ -539,7 +552,23 @@ describe('ReportPage', () => {
       await waitFor(() => {
         expect(screen.getByText('Save your search')).toBeTruthy();
         expect(screen.getByText('Search Parameters')).toBeTruthy();
-        expect(screen.getByText('Name this search')).toBeTruthy();
+        expect(screen.getByText('Name this search (Max 50 characters)')).toBeTruthy();
+        expect(screen.getByText('Description of search (Max 100 characters)')).toBeTruthy();
+      });
+    });
+
+    it('should open Limit reached Saved search modal when user search is more than equal to 10', async () => {
+      setup({ nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches });
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
+      const saveSearch = screen.getByText('Save search');
+
+      await fireEvent.click(saveSearch);
+
+      await waitFor(() => {
+        expect(screen.getByText(COPY.SAVE_LIMIT_REACH_TITLE)).toBeTruthy();
+        expect(screen.getByText(COPY.SAVE_LIMIT_REACH_MESSAGE)).toBeTruthy();
       });
     });
   });

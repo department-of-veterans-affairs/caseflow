@@ -6,6 +6,12 @@ const initialState = {
   error: null,
   message: null,
   selectedSearch: {},
+  fetchedSearches: {
+    error: null,
+    status: 'idle',
+    searches: [],
+    userSearches: []
+  },
   saveUserSearch: {}
 };
 
@@ -14,13 +20,37 @@ export const createSearch = createAsyncThunk(
   async({ organizationUrl, postData }, thunkApi) => {
     try {
       const url = `/decision_reviews/${organizationUrl}/searches`;
-      const response = await ApiUtil.post(url, { data: postData });
+      const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
 
       return thunkApi.fulfillWithValue(response.body);
     } catch (error) {
       console.error(error);
 
       return thunkApi.rejectWithValue(`Save search creation failed: ${error.message}`, { analytics: true });
+    }
+  });
+
+export const fetchedSearches = createAsyncThunk(
+  'savedSearch',
+  async ({ organizationUrl }, thunkApi) => {
+    try {
+      const url = `/decision_reviews/${organizationUrl}/searches.json`;
+
+      const response = await ApiUtil.get(url);
+
+      const searches = response.body;
+
+      const flattenSearchesData = {
+        allSearches: searches.all_searches.map(({ attributes, ...rest }) => ({ ...attributes, ...rest })),
+        userSearches: searches.user_searches.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }))
+      };
+
+      return thunkApi.fulfillWithValue(flattenSearchesData);
+
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Individual Report Failed: ${error.message}`, { analytics: true });
     }
   });
 
@@ -37,6 +67,18 @@ const savedSearchSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
+      addCase(fetchedSearches.pending, (state) => {
+        state.fetchedSearches.status = 'loading';
+      }).
+      addCase(fetchedSearches.fulfilled, (state, action) => {
+        state.fetchedSearches.status = 'succeeded';
+        state.fetchedSearches.searches = action.payload.allSearches;
+        state.fetchedSearches.userSearches = action.payload.userSearches;
+      }).
+      addCase(fetchedSearches.rejected, (state, action) => {
+        state.fetchedSearches.status = 'failed';
+        state.error = action.error.message;
+      }).
       addCase(createSearch.pending, (state) => {
         state.status = 'loading';
       }).

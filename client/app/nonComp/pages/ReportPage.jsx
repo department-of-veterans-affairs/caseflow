@@ -7,6 +7,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 import Alert from 'app/components/Alert';
+import ErrorAlert from 'app/intake/components/ErrorAlert';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';
@@ -23,10 +24,7 @@ import { timingSchema, TimingSpecification } from 'app/nonComp/components/Report
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-import { saveUserSearch } from '../../nonComp/actions/savedSearchSlice';
-// this should be removed once the real data is present in redux.
-import savedSearchesData from 'test/data/nonComp/savedSearchesData';
-
+import { saveUserSearch, fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
 import { get } from 'lodash';
 import COPY from 'app/../COPY';
 
@@ -336,9 +334,9 @@ const ReportPage = ({ history }) => {
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
-  const currentUserCssId = useSelector((state) => state.nonComp.currentUserCssId);
   const saveSearchStatus = useSelector((state) => state.savedSearch.status);
   const saveSearchAlertTitle = useSelector((state) => state.savedSearch.message);
+  const userSearches = useSelector((state) => state.savedSearch.fetchedSearches?.userSearches);
   const isCSVGenerating = csvGeneration === 'loading';
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
@@ -346,7 +344,7 @@ const ReportPage = ({ history }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const saveLimitCount = savedSearchesData.savedSearches.rows.filter((rows) => rows.userCssId === currentUserCssId).length;
+  const saveLimitCount = userSearches.length;
 
   const processConditionOptions = (condition, options) => {
     let formattedOptions;
@@ -426,6 +424,10 @@ const ReportPage = ({ history }) => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
+  }, []);
+
   return (<>
     { saveSearchStatus === 'succeeded' ?
       <Alert
@@ -433,6 +435,14 @@ const ReportPage = ({ history }) => {
         title={saveSearchAlertTitle}
         message={COPY.SEARCH_ALERT_DESCRIPTION}
         scrollOnAlert={false} /> :
+      null
+    }
+    { saveSearchStatus === 'failed' ?
+      <Alert title="Something went wrong" type="error">
+        If you continue to see this page, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </Alert> :
       null
     }
     <NonCompLayout

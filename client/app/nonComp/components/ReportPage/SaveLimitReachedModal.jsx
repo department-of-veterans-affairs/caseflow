@@ -2,8 +2,6 @@
 import React from 'react';
 import Modal from 'app/components/Modal';
 import COPY from 'app/../COPY';
-
-
 import PropTypes from 'prop-types';
 
 export const SaveLimitReachedModal = (props) => {
@@ -14,7 +12,7 @@ export const SaveLimitReachedModal = (props) => {
   };
 
   const submitForm = () => {
-    alert(1);
+    console.log('this will be updated in next ticket');
   };
 
   return (

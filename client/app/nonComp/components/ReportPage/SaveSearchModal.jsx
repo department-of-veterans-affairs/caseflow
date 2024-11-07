@@ -36,7 +36,7 @@ export const SaveSearchModal = (props) => {
       search: {
         name,
         description,
-        saved_search: saveSearchParams
+        savedSearch: saveSearchParams
       }
     };
 
@@ -55,7 +55,7 @@ export const SaveSearchModal = (props) => {
     find((reportTypeOptions) => reportTypeOptions.value === saveSearchParams.radioStatus)?.displayText;
 
   const reportTypeTitle = REPORT_TYPE_OPTIONS.
-    find((reportTypelabel) => reportTypelabel.value === saveSearchParams.reportType).label;
+    find((reportTypelabel) => reportTypelabel.value === saveSearchParams.reportType)?.label;
 
   // this method needs some refactoring
   const generateEventTypeList = () => {
@@ -214,10 +214,12 @@ export const SaveSearchModal = (props) => {
   const searchParameterFragment = () => {
     return <>
       <b>{COPY.SEARCH_PARAMETERS}</b>
-      {reportTypeFragment()}
-      {typeOfStatusReportFragment()}
-      {timingSpecificationFragment()}
-      {conditionsFragment()}
+      <ul>
+        {reportTypeFragment()}
+        {typeOfStatusReportFragment()}
+        {timingSpecificationFragment()}
+        {conditionsFragment()}
+      </ul>
     </>;
   };
 
