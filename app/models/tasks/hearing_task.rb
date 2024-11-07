@@ -21,6 +21,33 @@ class HearingTask < Task
     [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
+  def available_actions(user)
+    return [] unless user
+
+    if SpecialCaseMovementTeam.singleton.user_has_access?(user) && legacy_blocked_special_case_movement(user)
+      return [Constants.TASK_ACTIONS.LEGACY_BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
+    end
+
+    []
+  end
+
+  def actions_available?(user)
+    if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
+      return false unless appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user)
+    end
+
+    actions_allowable?(user)
+  end
+
+  def legacy_blocked_special_case_movement(user)
+    FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user) &&
+      appeal.tasks.open.where(type: HearingTask.name) && appeal.is_a?(LegacyAppeal)
+  end
+
+  def visible_blocking_tasks
+    descendants.reject(&:hide_from_case_timeline).select(&:open?)
+  end
+
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
       appeal: appeal,

@@ -288,6 +288,10 @@ class QueueApp extends React.PureComponent {
     <BlockedAdvanceToJudgeView {...props.match.params} />
   );
 
+  routedLegacyBlockedCaseMovement = (props) => (
+    <BlockedAdvanceToJudgeView isLegacy {...props.match.params} />
+  );
+
   routedAddCavcRemand = (props) => (
     <AddCavcRemandView {...props.match.params} />
   );
@@ -857,6 +861,13 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.value
                 }`}
               render={this.routedBlockedCaseMovement}
+            />
+
+            <Route
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LEGACY_BLOCKED_SPECIAL_CASE_MOVEMENT.value
+                }`}
+              render={this.routedLegacyBlockedCaseMovement}
             />
 
             <PageRoute
