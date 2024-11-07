@@ -1,39 +1,46 @@
 # frozen_string_literal: true
 
 class NationalHearingQueueEntryRefreshJob < CaseflowJob
-  @timeout_seconds = 30
+  def initialize
+    @timeout_seconds = 30
 
-  class << self
-    attr_accessor :timeout_seconds # provide class methods for reading/writing
+    super
   end
 
   def perform
     begin
-      NationalHearingQueueEntry.refresh
+      # NationalHearingQueueEntry.refresh
+
+      # For testing the timeout logic
+      ActiveRecord::Base.connection.execute("SELECT pg_sleep(45)")
+    rescue ActiveRecord::QueryCanceled => error
+      handle_timeout(error)
     rescue StandardError => error
-      if self.class.timeout_seconds == 30
-        self.class.timeout_seconds = 2700
-        # temporarily setting timeout to allow query to run
-        timeout_set(self.class.timeout_seconds)
-        perform
-      elsif self.class.timeout_seconds == 2700
-        Rails.logger.error("Timeout was set to 2700 and job timed out.")
-        log_error(error)
-      else
-        log_error(error)
-      end
+      log_error(error)
     ensure
       # Set Timeout Back
-      if self.class.timeout_seconds != 30
-        self.class.timeout_seconds = 30
-        timeout_set(self.class.timeout_seconds)
+      if @timeout_seconds != 30
+        timeout_set(30)
       end
     end
   end
 
   private
 
+  def handle_timeout(error)
+    if @timeout_seconds == 30
+      # temporarily setting timeout to allow query to run
+      timeout_set(2700)
+      perform
+    else
+      Rails.logger.error("Timeout was set to #{@timeout_seconds} seconds and job timed out.")
+      log_error(error)
+    end
+  end
+
   def timeout_set(seconds)
+    @timeout_seconds = 2700
+
     ActiveRecord::Base.connection.execute("SET statement_timeout = '#{seconds}s'")
   end
 end
