@@ -80,7 +80,8 @@ class HearingRequestDistributionQuery
             no_hearings_or_only_no_held_hearings << appeal
           elsif appeal.appeal_affinity&.affinity_start_date &&
                 ((appeal.aod? &&
-                  appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) ||
+                  appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days
+                                                                 .to_i.days.ago) ||
                 (appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_affinity_days.to_i.days.ago))
             no_hearings_or_only_no_held_hearings << appeal
           end
