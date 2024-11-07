@@ -37,6 +37,12 @@ const NationalHearingQueueContainer = () => {
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'all';
   const findTab = RECOGNIZED_TABS.findIndex((tabName) => tabName === currentTabName);
   const getTabByIndex = findTab === -1 ? 0 : findTab;
+  const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+  const tabPaginationOptions = {
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
+    [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
+    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: getParamsFilter,
+  };
 
   const generateTabs = () => RECOGNIZED_TABS.map((tabName) => {
     return {
@@ -54,7 +60,7 @@ const NationalHearingQueueContainer = () => {
           rowClassNames={() => 'borderless'}
           taskPagesApiEndpoint={`/national_hearing_queue?tab=${tabName}`}
           useTaskPagesApi
-          tabPaginationOptions={{}}
+          tabPaginationOptions={tabPaginationOptions}
 
           // These are new and I don't know what they're for yet
           // useReduxCache={this.props.useReduxCache}
@@ -65,6 +71,13 @@ const NationalHearingQueueContainer = () => {
     };
   });
 
+  // "Borrowing" this from the DR queue as well
+  const resetPageNumberOnTabChange = (value) => {
+    if (value !== getTabByIndex) {
+      tabPaginationOptions.page = 0;
+    }
+  };
+
   return (<>
     <h1>Testing NHQ</h1>
 
@@ -74,6 +87,7 @@ const NationalHearingQueueContainer = () => {
       name="nhq-tabwindow"
       tabs={generateTabs()}
       defaultPage={getTabByIndex || 0}
+      onChange={((value) => resetPageNumberOnTabChange(value))}
     />
   </>);
 };
