@@ -308,8 +308,8 @@ const mapStateToProps = (state, ownProps) => {
 
   // previousTaskAssignedOn comes from
   // eslint-disable-next-line max-len
-  // Legacy: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_tasks/judge_legacy_task.rb#L17
-  // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/judge_task.rb#L42
+  // Legacy: https://github.com/department-of-veterans-affairs/caseflow/blob/main/app/models/legacy_tasks/judge_legacy_task.rb#L17
+  // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/main/app/models/tasks/judge_task.rb#L42
   const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
 
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
@@ -319,12 +319,15 @@ const mapStateToProps = (state, ownProps) => {
     if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTask });
-    } else {
+    } else if (judgeDecisionReviewTask && judgeDecisionReviewTask.uniqueId) {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId
       });
+    } else {
+      console.error('Judge Decision Review Task or uniqueId is undefined');
+      attorneyChildrenTasks = [];
     }
   }
 

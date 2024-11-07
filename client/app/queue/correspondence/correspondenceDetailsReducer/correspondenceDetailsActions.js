@@ -32,6 +32,28 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
   });
 };
 
+export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
+    then((response) => {
+      JSON.stringify(`response ${response, 1, 1}`)
+      const responseTasks = JSON.parse(response.text).tasks.data;
+
+      // overwrite all correspondence_appeal_tasks in the store with values from response
+      const preparedTasks = prepareTasksForStore(responseTasks);
+
+      dispatch(onReceiveTasks({
+        amaTasks: preparedTasks
+      }));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
+
 export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
   return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload).
     then((response) => {
@@ -311,7 +333,9 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
 
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,
-        payload: correspondence
+        payload: {
+          correspondence
+        }
       });
     });
 };
@@ -417,4 +441,27 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
 
       console.error(errorMessage);
     });
+};
+
+export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dispatch) => {
+  if (expandedLinkedAppeals.find((id) => id === uuid)) {
+    const filteredList = expandedLinkedAppeals.filter((id) => id !== uuid);
+
+    dispatch({
+      type: ACTIONS.EXPANDED_LINKED_APPEALS,
+      payload: {
+        expandedLinkedAppeals: filteredList
+      }
+    });
+
+  } else {
+    expandedLinkedAppeals.push(uuid);
+
+    dispatch({
+      type: ACTIONS.EXPANDED_LINKED_APPEALS,
+      payload: {
+        expandedLinkedAppeals
+      }
+    });
+  }
 };

@@ -930,5 +930,93 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       safe_click "#decision-date"
       expect(page).to have_button("Add this issue", disabled: true)
     end
+
+    context "with a remand" do
+      let(:remand) { create(:remand_vha_task, assigned_at: 1.minute.ago) }
+
+      before do
+        remand.appeal.establish!
+      end
+
+      let(:edit_url) do
+        "/supplemental_claims/#{remand.appeal.uuid}/edit"
+      end
+
+      it "should not allow editing" do
+        visit edit_url
+
+        expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
+        expect(page).not_to have_css(".cf-select__control")
+        expect(page).to have_button("Establish", disabled: true)
+      end
+    end
+  end
+
+  context "when remove_comp_and_pen_intake is enabled and benefit type is compensation or pension" do
+    %w[pension compensation].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:supplemental_claim_disable) do
+          SupplementalClaim.create!(
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            benefit_type: benefit_type,
+            decision_review_remanded: decision_review_remanded,
+            veteran_is_not_claimant: true
+          )
+        end
+
+        let(:request_issue_disable) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: supplemental_claim_disable,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
+
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          supplemental_claim_disable.create_issues!([request_issue_disable])
+          supplemental_claim_disable.establish!
+          supplemental_claim_disable.reload
+          request_issue_disable.reload
+        end
+
+        after do
+          FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        end
+
+        it "Requested issues dropdown is disabled" do
+          visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
+
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
+          expect(page).to have_content(benefit_type.capitalize)
+        end
+
+        it "Edit claim label button is disabled" do
+          visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit claim label", disabled: true)
+        end
+
+        it "Add Issue button is disabled" do
+          visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
+
+          expect(page).to have_button("Add issue", disabled: true)
+        end
+
+        it "Edit contention title button is disabled" do
+          visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit contention title", disabled: true)
+        end
+      end
+    end
   end
 end

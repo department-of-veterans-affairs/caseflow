@@ -71,4 +71,23 @@ module CorrespondenceTaskHelpers
   def organizations_array_list
     @organizations_array_list ||= Constants::ORGANIZATION_NAMES.values
   end
+
+  def existing_apppeals_list(correspondence)
+    visit "/queue/correspondence/#{correspondence.uuid}/intake"
+    click_button("Continue")
+    existing_appeal_radio_options[:yes].click
+    using_wait_time(wait_time) do
+      page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
+    end
+    find("label", text: "Waive Evidence Window").click
+    find_by_id("waiveReason").fill_in with: "test waive note"
+    click_button("Continue")
+
+    click_button("Submit")
+    click_button("Confirm")
+    using_wait_time(wait_time) do
+      expect(page).to have_content("You have successfully submitted a correspondence record")
+    end
+    visit "/queue/correspondence/#{correspondence.uuid}"
+  end
 end

@@ -2,18 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { useHistory } from 'react-router';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
+  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
-import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { deleteAppeal, fetchAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -27,12 +26,13 @@ import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
+import Modal from 'app/components/Modal';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
+  const expandedLinkedAppeals = props.expandedLinkedAppeals;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
@@ -61,9 +61,10 @@ const CorrespondenceDetails = (props) => {
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [priorMailDisabled, setPriorMailDisabled] = useState(true);
+  const [appealsDisabled, setAppealsDisabled] = useState(true);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -133,7 +134,10 @@ const CorrespondenceDetails = (props) => {
         (key) => newState[key] !== originalStates[key]
       );
 
-      setDisableSubmitButton(!isAnyChanged);
+      const valueToButton = !isAnyChanged && appealsDisabled;
+
+      setDisableSubmitButton(valueToButton);
+      setPriorMailDisabled(!isAnyChanged);
 
       return newState;
     });
@@ -141,7 +145,7 @@ const CorrespondenceDetails = (props) => {
 
   // Function to handle the "Save Changes" button click, including the PATCH and POST request
   const handlepriorMailUpdate = async () => {
-  // Disable the button to prevent duplicate requests
+    // Disable the button to prevent duplicate requests
     setDisableSubmitButton(true);
 
     // Get the initial and current checkbox states
@@ -172,36 +176,45 @@ const CorrespondenceDetails = (props) => {
     };
 
     try {
-    // Helper function to check for success response
-      const isSuccess = (response) => response.ok;
+      // Helper function to check for success response
+      const isSuccess = (response) => response && response.ok;
 
-      // Send PATCH request to add checked relations if necessary
-      // If no checked items, POST is already successful
-      let patchSuccess = false;
+      // Send a PATCH request to update correspondence with the prepared data
+      const patchResponse = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
+        data: postData
+      });
 
-      const updateAppeals = (response) => {
-        const appealIds = response.body.related_appeals;
+      // Check if the PATCH request was successful
+      if (isSuccess(patchResponse)) {
+        const appealIds = patchResponse?.body?.relatedAppeals;
+        const correspondenceAppeals = patchResponse?.body?.correspondenceAppeals;
 
-        setSelectedAppeals(appealIds);
-        setInitialSelectedAppeals(appealIds);
-        sortAppeals(appealIds);
-        setAppealTableKey((key) => key + 1);
-      };
+        if (appealIds && correspondenceAppeals) {
+          // Clear existing appeals from the Redux store
+          Object.entries(props.appealsFromStore).forEach(([, value]) => {
+            dispatch(deleteAppeal(value.externalId));
+          });
 
-      // Send POST request to create relations
-      const patchResponse = await ApiUtil.patch(
-      `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-      { data: postData }
-      );
+          // Fetch updated appeal details for the correspondence
+          correspondenceAppeals.forEach((corAppeal) => {
+            dispatch(fetchAppealDetails(corAppeal.appealUuid));
+          });
 
-      // Check for general success status (any 2xx status)
-      patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse);
-      console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
+          // Fetch tasks related to the correspondence
+          dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
-      // Only show success banner if both PATCH and POST requests succeeded
-      if (patchSuccess) {
-        setShowSuccessBanner(true);
+          // Update selected appeals in state
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          sortAppeals(appealIds);
+          setAppealTableKey((key) => key + 1);
+
+          // Smoothly scroll to the top of the page
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Show a success banner after the update
+          setShowSuccessBanner(true);
+        }
       }
 
       // Sort the prior mail into linked (checked) and unlinked (unchecked) groups
@@ -213,13 +226,13 @@ const CorrespondenceDetails = (props) => {
         let sortOrder = 0;
 
         if (firstInState && secondInState) {
-        // Sort linked mail from most recent to oldest
+          // Sort linked mail from most recent to oldest
           sortOrder = new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
         } else if (!firstInState && !secondInState) {
-        // Sort unlinked mail from oldest to most recent
+          // Sort unlinked mail from oldest to most recent
           sortOrder = new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
         } else if (firstInState) {
-        // Ensure linked items come before unlinked items
+          // Ensure linked items come before unlinked items
           sortOrder = -1;
         } else if (secondInState) {
           sortOrder = 1;
@@ -273,6 +286,10 @@ const CorrespondenceDetails = (props) => {
 
     return returnSort;
   });
+
+  const onCancel = () => {
+    setShowModal(false);
+  };
 
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
@@ -338,6 +355,35 @@ const CorrespondenceDetails = (props) => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
 
+  const createLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals;
+    const cor = correspondenceInfo;
+
+    corAppeals.push(selectedAppeal);
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
+  };
+
+  const unlinkLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals.filter((appeal) => appeal.id !== selectedAppeal.id);
+    const cor = correspondenceInfo;
+
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+
+    const selectedAppealUuid = selectedAppeal.externalId;
+
+    if (expandedLinkedAppeals.find((linkedAppealUuid) => linkedAppealUuid === selectedAppealUuid)) {
+      dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, selectedAppealUuid));
+    }
+  };
+
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
       <div className="all-correspondences">
@@ -374,6 +420,9 @@ const CorrespondenceDetails = (props) => {
         setUnSelectedAppeals(filtedAppeals);
       }
       setSelectedAppeals([...selectedAppeals, appealId]);
+
+      // Create Linked Appeal in redux store
+      createLinkedAppeal(appealId);
     } else {
       if (selectedAppeals?.includes(appealId)) {
         const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
@@ -381,6 +430,8 @@ const CorrespondenceDetails = (props) => {
         setSelectedAppeals(filtedAppeals);
       }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+      // Unlink Linked Appeal in redux store
+      unlinkLinkedAppeal(appealId);
     }
   };
 
@@ -390,39 +441,31 @@ const CorrespondenceDetails = (props) => {
         return false;
       }
 
-      return initialSelectedAppeals.every((appeal) => selectedAppeals.includes(appeal));
+      return initialSelectedAppeals?.every((appeal) => selectedAppeals.includes(appeal));
     };
 
-    setDisableSubmitButton(isButtonDisabled());
+    const valueToSubmitButton = isButtonDisabled() && priorMailDisabled;
+
+    setDisableSubmitButton(valueToSubmitButton);
+    setAppealsDisabled(isButtonDisabled());
+
   }, [selectedAppeals, initialSelectedAppeals]);
 
   useEffect(() => {
-    sortAppeals(initialSelectedAppeals);
-  }, []);
-
-  useEffect(() => {
     dispatch(updateCorrespondenceInfo(correspondence));
+    sortAppeals(initialSelectedAppeals);
     // load appeals related to the correspondence into the store
-    const corAppealTasks = [];
 
     // return if appeals already loaded into store
     if (Object.keys(props.appealsFromStore).length > 0) {
       return;
     }
 
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-      corAppeal.taskAddedData.data.map((taskData) => {
-        corAppealTasks.push(taskData);
-      });
-
+    props.correspondence.correspondenceAppeals.forEach((corAppeal) => {
+      dispatch(fetchAppealDetails(corAppeal.appealUuid));
     });
-    // // load appeal tasks into the store
-    const preparedTasks = prepareTasksForStore(corAppealTasks);
 
-    dispatch(onReceiveTasks({
-      amaTasks: preparedTasks
-    }));
+    dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
   }, []);
 
@@ -495,23 +538,27 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
-          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-            <CorrespondenceAppealTasks
-              key={appealTaskKey + taskAdded.id}
-              task_added={taskAdded}
-              correspondence={props.correspondence}
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              appeal={taskAdded.appeal.data.attributes}
-              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
-              correspondence_uuid={props.correspondence_uuid}
-            />
-          )
+          {(props.correspondenceInfo.correspondenceAppeals) && (
+            <div>
+              {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
+                <CorrespondenceAppealTasks
+                  key={appealTaskKey + taskAdded.id}
+                  task_added={taskAdded}
+                  correspondence={props.correspondence}
+                  organizations={props.organizations}
+                  userCssId={props.userCssId}
+                  appealUuid={taskAdded.appealUuid || taskAdded.externalId}
+                  waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                  correspondence_uuid={props.correspondence_uuid}
+                />
+              ))}
+            </div>
           )}
         </div>
       </React.Fragment>
     );
   };
+
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
@@ -537,6 +584,7 @@ const CorrespondenceDetails = (props) => {
           handleClose={handleCloseModal}
           correspondence={props.correspondence}
           setIsTasksUnrelatedSectionExpanded= {setIsTasksUnrelatedSectionExpanded}
+          autoTexts= {props.autoTexts}
         />
       </div>
       <div className="toggleButton-plus-or-minus">
@@ -646,7 +694,10 @@ const CorrespondenceDetails = (props) => {
     setSelectedPriorMail(selectedCheckboxes);
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
-    setDisableSubmitButton(!isAnyCheckboxSelected);
+    const valueToButton = !isAnyCheckboxSelected && appealsDisabled;
+
+    setDisableSubmitButton(valueToButton);
+    setPriorMailDisabled(!isAnyCheckboxSelected);
   };
 
   const getDocumentColumns = (correspondenceRow) => {
@@ -817,21 +868,25 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const handleModalClose = () => {
-    if (isReturnToQueue) {
-      setShowModal(!showModal);
-    } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
-      window.location.href = '/queue/correspondence/team';
-    } else if (props.isInboundOpsUser) {
-      window.location.href = '/queue/correspondence/team';
+    if (disableSubmitButton) {
+      const redirectPath = props.isInboundOpsSuperuser || props.isInboundOpsSupervisor || props.isInboundOpsUser ?
+        '/queue/correspondence/team' : '/queue';
+
+      window.location.href = redirectPath;
     } else {
-      window.location.href = '/queue';
+      setShowModal(!showModal);
     }
+  };
+
+  const redirectToQueue = () => {
+    window.location.href = '/queue/correspondence/team';
   };
 
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
     } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
+      setDisableSubmitButton(true);
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -848,17 +903,32 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
-          const appealIds = resp.body.related_appeals;
+          const appealIds = resp.body.relatedAppeals;
+          const correspondenceAppeals = resp.body.correspondenceAppeals;
 
+          // Removes all entries in the queue.appeals redux store
+          Object.entries(props.appealsFromStore).forEach(
+            ([, value]) => dispatch(deleteAppeal((value.externalId)))
+          );
+
+          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+
+          correspondenceAppeals.forEach((corAppeal) => {
+            dispatch(fetchAppealDetails(corAppeal.appealUuid));
+          });
+
+          dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
+
+          props.updateCorrespondenceInfo(tempCor);
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
-          sortAppeals(appealIds);
           setAppealTableKey((key) => key + 1);
-          props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
           setDisableSubmitButton(true);
+
+          sortAppeals(appealIds);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -915,6 +985,30 @@ const CorrespondenceDetails = (props) => {
         />
       </AppSegment>
       <div className="margin-top-for-add-task-view">
+        { showModal &&
+          <Modal
+            title="Return to queue"
+            name="Show issue"
+            id="submit-correspondence-intake-modal"
+            closeHandler={onCancel}
+            buttons = {
+              [
+                {
+                  classNames: ['cf-modal-link', 'cf-btn-link'],
+                  name: 'Cancel',
+                  onClick: handleModalClose
+                },
+                {
+                  classNames: ['usa-button', 'usa-button-primary'],
+                  name: 'Confirm',
+                  onClick: redirectToQueue
+                }
+              ]
+            }
+          >
+            All unsaved changes made to this mail package record will be lost upon returning to your queue.
+          </Modal>
+        }
         <div className="cf-push-left">
           <Button
             name="Return to queue"
@@ -948,6 +1042,7 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
+  expandedLinkedAppeals: PropTypes.array,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
@@ -956,18 +1051,23 @@ CorrespondenceDetails.propTypes = {
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
   correspondence_uuid: PropTypes.string,
-  appealsFromStore: PropTypes.object
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  appealsFromStore: PropTypes.object,
+  deleteAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo
+    updateCorrespondenceInfo,
+    deleteAppeal,
+    updateExpandedLinkedAppeals,
   }, dispatch)
 );
 

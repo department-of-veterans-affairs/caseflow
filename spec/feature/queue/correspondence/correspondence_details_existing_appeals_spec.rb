@@ -33,22 +33,8 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
     end
 
     it "completes the evidence submission window task" do
-      visit "/queue/correspondence/#{@correspondence.uuid}/intake"
-      click_button("Continue")
-      existing_appeal_radio_options[:yes].click
-      using_wait_time(wait_time) do
-        page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
-      end
-      find("label", text: "Waive Evidence Window").click
-      find_by_id("waiveReason").fill_in with: "test waive note"
-      click_button("Continue")
-
-      click_button("Submit")
-      click_button("Confirm")
-      using_wait_time(wait_time) do
-        expect(page).to have_content("You have successfully submitted a correspondence record")
-      end
-      visit "/queue/correspondence/#{@correspondence.uuid}"
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[1].click
       click_dropdown(prompt: "Select an action", text: "Remove waive of evidence window")
       expect(page).to have_content("Confirm waive removal")
       expect(page).to have_content("Once confirmed, the waive evidence window will be removed.")
@@ -57,6 +43,43 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
         "The waive evidence window request has been removed from the " \
         "\"Evidence submission window\" task"
       )
+    end
+
+    it "validate return to queue modal confirm" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[0].click
+      page.all(".cf-form-checkbox")[1].click
+      find(".cf-btn-link", text: "Return to queue").click
+      expect(page).to have_selector("#submit-correspondence-intake-modal", visible: true)
+      expect(page).to have_content("Return to queue")
+      within("#submit-correspondence-intake-modal") do
+        click_button "Confirm"
+      end
+      expect(current_path).to eq("/queue/correspondence/team")
+    end
+
+    it "validate return to queue modal cancel" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[0].click
+      page.all(".cf-form-checkbox")[1].click
+      find(".cf-btn-link", text: "Return to queue").click
+      expect(page).to have_selector("#submit-correspondence-intake-modal", visible: true)
+      within("#submit-correspondence-intake-modal") do
+        click_button "Cancel"
+      end
+      expect(page).not_to have_selector("#submit-correspondence-intake-modal", visible: false)
+    end
+
+    it "validating the Instructional text update on Linked Appeals Gray Table" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[0].click
+      page.all(".cf-form-checkbox")[1].click
+      expect(page).to have_content("The linked appeal must be saved before tasks can be added.")
+      click_button "Save changes"
+      using_wait_time(wait_time) do
+        expect(page).to have_content("You have successfully saved changes to this page")
+        expect(page).not_to have_content("The linked appeal must be saved before tasks can be added.")
+      end
     end
   end
 end

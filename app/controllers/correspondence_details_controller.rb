@@ -130,8 +130,9 @@ class CorrespondenceDetailsController < CorrespondenceController
   def update_correspondence
     if correspondence_intake_processor.update_correspondence(intake_processor_params)
       render json: {
-        related_appeals: @correspondence.appeal_ids,
-        correspondence: serialized_correspondence
+        relatedAppeals: @correspondence.appeal_ids,
+        correspondence: serialized_correspondence,
+        correspondenceAppeals: serialized_correspondence_appeals
       }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
@@ -162,6 +163,17 @@ class CorrespondenceDetailsController < CorrespondenceController
       # return updated correspondence_appeal_tasks for the appeal
       render json: { tasks: json_appeal_tasks(tasks) }, status: :created
     end
+  end
+
+  # returns all correspondence appeals tasks to be loaded into the redux store
+  def correspondences_appeals_tasks
+    tasks = []
+    @correspondence.correspondence_appeals&.each do |cor_appeal|
+      result = appeals_tasks_for_frontend(cor_appeal)
+      tasks << result if result.present?
+    end
+
+    render json: { tasks: json_appeal_tasks(tasks.flatten!) }
   end
 
   private
@@ -220,6 +232,15 @@ class CorrespondenceDetailsController < CorrespondenceController
     { appeals_information: serialized_appeals }
   end
 
+  def serialized_correspondence_appeals
+    appeals = []
+    correspondence.correspondence_appeals.map do |appeal|
+      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+
+    appeals
+  end
+
   def create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
     eswt = EvidenceSubmissionWindowTask.create!(
       appeal: appeal,
@@ -246,7 +267,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def json_appeal_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: current_user, role: "generic" },
-      tasks: tasks,
+      tasks: tasks || [],
       ama_serializer: ama_serializer
     ).call
   end
