@@ -20,7 +20,11 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
     find_events("Veteran").select do |event_record|
       before_fn = event_record.info["before_data"]["file_number"]
       after_fn = event_record.info["record_data"]["file_number"]
-      Remediations::VeteranRecordRemediationService.new(before_fn, after_fn).remediate! if before_fn != after_fn
+      original_id = event_record.evented_record_id
+      dup_ids = Veteran.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
+      if before_fn != after_fn || dup_ids.size >= 1
+        Remediations::VeteranRecordRemediationService.new(before_fn, after_fn).remediate!
+      end
     end
   end
 
