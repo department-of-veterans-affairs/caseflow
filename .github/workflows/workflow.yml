@@ -90,6 +90,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: install node version
         uses: actions/setup-node@v4
