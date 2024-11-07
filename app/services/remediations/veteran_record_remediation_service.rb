@@ -18,7 +18,7 @@ class Remediations::VeteranRecordRemediationService
 
   def fix_vet_records
     # fixes file number
-    collections = FixfileNumberCollections.grab_collections(@before_fn)
+    collections = grab_collections(@before_fn)
     update_records!(collections, @after_fn)
   end
 
@@ -30,13 +30,11 @@ class Remediations::VeteranRecordRemediationService
       end
     end
   end
-end
 
-class FixfileNumberCollections
-  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
-  def self.grab_collections(before_fn)
+  def grab_collections(before_fn)
     ASSOCIATED_OBJECTS.map do |klass|
       FixFileNumberWizard::Collection.new(klass, before_fn)
     end
   end
 end
+
