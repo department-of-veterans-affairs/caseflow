@@ -28,6 +28,8 @@ class RequestIssue < CaseflowRecord
   # contested issue description pattern
   DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
 
+  SYNCING_DISABLED_BENEFIT_TYPES = %w[compensation pension].freeze
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy

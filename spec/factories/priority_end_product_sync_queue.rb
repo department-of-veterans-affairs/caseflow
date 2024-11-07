@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :priority_end_product_sync_queue do
-    end_product_establishment { create(:end_product_establishment, :active_hlr) }
+    end_product_establishment { create(:end_product_establishment, :active_hlr_with_education) }
 
     trait :pre_processing do
       status { "PRE_PROCESSING" }
