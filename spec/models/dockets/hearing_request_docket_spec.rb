@@ -214,6 +214,8 @@ describe HearingRequestDocket, :postgres do
       (1..20).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
     end
 
+    before { CaseDistributionLever.clear_distribution_lever_cache }
+
     context "when specialty_case_team_distribution feature toggle is enabled" do
       before do
         FeatureToggle.enable!(:specialty_case_team_distribution)
@@ -432,6 +434,7 @@ describe HearingRequestDocket, :postgres do
     let(:genpop) { "only_genpop" }
 
     before do
+      JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
       # Makes this judge team follow the batch_size calculation
       JudgeTeam.for_judge(requesting_judge_with_attorneys).add_user(requesting_judge_attorney)
       # This feature toggle being off will cause the query to not distribute tied cases
@@ -648,7 +651,6 @@ describe HearingRequestDocket, :postgres do
       context "toggle on" do
         before do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
-          JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
           CaseDistributionLever
             .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
             .update!(value: "30")
@@ -933,6 +935,7 @@ describe HearingRequestDocket, :postgres do
 
       context "levers are set to a numeric value" do
         it "distributes only appeals that are within the affinity window to the requesting judge" do
+          expect_any_instance_of(HearingRequestDistributionQuery).not_to receive(:only_genpop_appeals)
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_appeal_tied_to_judge_in_window.uuid,
              ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
@@ -954,6 +957,7 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes all appeals with an affinity to the requesting judge" do
+          expect_any_instance_of(HearingRequestDistributionQuery).not_to receive(:only_genpop_appeals)
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_appeal_tied_to_judge_in_window.uuid,
              ready_aod_appeal_tied_to_judge_out_of_window.uuid,
@@ -980,6 +984,7 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "does not distribute any appeals" do
+          expect_any_instance_of(HearingRequestDistributionQuery).not_to receive(:only_genpop_appeals)
           expect(subject.map(&:case_id)).to match_array([])
         end
       end
