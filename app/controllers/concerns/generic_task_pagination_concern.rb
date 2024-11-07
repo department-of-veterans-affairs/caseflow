@@ -17,9 +17,20 @@ module GenericTaskPaginationConcern
     task_count = task_list.size
     total_pages = (task_count / DEFAULT_TASKS_PER_PAGE.to_f).ceil
 
+    tasks = paginate_tasks(task_list)
+    serialized_tasks = if tasks.first.respond_to?(:serialize_task)
+                         tasks.map(&:serialize_task)
+                       else
+                         tasks.map do |entry|
+                           {
+                             attributes: entry.attributes
+                           }
+                         end
+                       end
+
     {
       tasks: {
-        data: paginate_tasks(task_list).map(&:serialize_task)
+        data: serialized_tasks
       },
       tasks_per_page: DEFAULT_TASKS_PER_PAGE,
       task_page_count: total_pages,
