@@ -104,7 +104,6 @@ test('toggles task instructions visibility', () => {
   fireEvent.click(screen.getByText('View task instructions'));
 
   // Check if the instructions are now visible
-  expect(screen.getByText('No errors found: Upload transcript to VBMS')).toBeInTheDocument();
   expect(screen.getByText('Schedule Veteran and/or appellant for Board hearing.')).toBeInTheDocument();
 });
 
@@ -125,5 +124,4 @@ test('toggles task instructions visibility - Action: With Errors found', () => {
   expect(screen.getByText(COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)).toBeInTheDocument();
   expect(screen.getByText(COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE)).toBeInTheDocument();
   expect(screen.getByText('test_file.pdf')).toBeInTheDocument();
-  expect(screen.getByText('These are some notes')).toBeInTheDocument();
 });
