@@ -1,44 +1,45 @@
 # frozen_string_literal: true
 
-# require "support/shared_context/sync_vet_remediations"
-
-# veteran_remediation_event_record <-- name this in the file
-
 RSpec.describe Remediations::VeteranRecordRemediationService do
-  include ActiveJob::TestHelper
+  describe "#remediate!" do
+    let(:before_fn) { "123456789" }
+    let(:after_fn) { "987654321" }
+    let(:service) { described_class.new(before_fn, after_fn) }
 
-  # include_context "sync_vet_remediations"
-
-  let(:vet_ids) { %w[1234 5678 9101 1213] }
-
-  describe ".initialize" do
-    it "exists" do
-      expect(vet_ids).to be_an(Array)
-      expect(vet_ids.first).to eq("1234")
-      expect(vet_ids.first).to be_a(String)
+    before do
+      allow(FixfileNumberCollections).to receive(:grab_collections).with(before_fn).and_return(collections)
+      allow(collections.first).to receive(:update!).with(after_fn)
     end
-  end
 
-  describe ".remediate" do
-    xit "remediates recoreds for a veterans with updated file numbers" do
-      # this test we will check the implemented logic to find and update records associated with veterans
-      # that have updated file numbers
-      # will check by file number and possibly other
+    context "when collections have records" do
+      let(:collection) { instance_double(FixFileNumberWizard::Collection, count: 2) }
+      let(:collections) { [collection] }
+
+      it "calls update on each collection" do
+        expect(collection).to receive(:update!).with(after_fn)
+        service.remediate!
+      end
     end
-  end
 
-  describe ".fix_vet" do
-    xit "fixes file number" do
+    context "when collections are empty" do
+      let(:collections) { [] }
+
+      it "does not raise an error and completes successfully" do
+        expect { service.remediate! }.not_to raise_error
+      end
     end
-  end
 
-  describe ".updated_veterans" do
-    xit "returns a Veteran object from event record" do
-    end
-  end
+    xcontext "when an error occurs during update" do
+      let(:collection) { instance_double(FixFileNumberWizard::Collection, count: 2) }
+      let(:collections) { [collection] }
 
-  describe ".update_records!" do
-    xit "updates incorrect file number assocations for a Veteran" do
+      before do
+        allow(collection).to receive(:update!).with(after_fn).and_raise(ActiveRecord::RecordInvalid.new("Invalid record"))
+      end
+
+      xit "raises an ActiveRecord::RecordInvalid error" do
+        expect { service.remediate! }.to raise_error(ActiveRecord::RecordInvalid)
+      end
     end
   end
 end
