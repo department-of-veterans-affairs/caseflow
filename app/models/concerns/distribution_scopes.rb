@@ -114,16 +114,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     end
   end
 
-  def non_genpop_with_case_distribution_lever(judge)
-    non_genpop_cavc_affinity_days_query = generate_non_genpop_cavc_affinity_days_lever_query(judge)
-    non_genpop_cavc_aod_affinity_days_query = generate_non_genpop_cavc_aod_affinity_days_lever_query(judge)
+  def non_genpop_with_case_distribution_lever(judge, docket_type)
+    non_genpop_cavc_affinity_days_query = generate_non_genpop_cavc_affinity_days_lever_query(judge, docket_type)
+    non_genpop_cavc_aod_affinity_days_query = generate_non_genpop_cavc_aod_affinity_days_lever_query(judge, docket_type)
 
     non_genpop_cavc_affinity_days_query.or(non_genpop_cavc_aod_affinity_days_query)
   end
 
-  def generate_non_genpop_cavc_affinity_days_lever_query(judge)
+  def generate_non_genpop_cavc_affinity_days_lever_query(judge, docket_type)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
-      non_genpop_for_judge(judge)
+      non_genpop_for_judge(judge, docket_type)
         .ama_non_aod_appeals
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
@@ -135,9 +135,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     end
   end
 
-  def generate_non_genpop_cavc_aod_affinity_days_lever_query(judge)
+  def generate_non_genpop_cavc_aod_affinity_days_lever_query(judge, docket_type)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      non_genpop_for_judge(judge, CaseDistributionLever.cavc_aod_affinity_days)
+      non_genpop_for_judge(judge, docket_type, CaseDistributionLever.cavc_aod_affinity_days)
         .ama_aod_appeals
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
@@ -207,12 +207,17 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
-  def non_genpop_for_judge(judge, lever_days = CaseDistributionLever.cavc_affinity_days)
-    genpop_base_query
+  def non_genpop_for_judge(judge, docket_type, lever_days = CaseDistributionLever.cavc_affinity_days)
+    result = genpop_base_query
       .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
              lever_days.days.ago)
-      .where("original_judge_task.assigned_to_id = ? OR
+
+    if docket_type == Constants.AMA_DOCKETS.hearing
+      result.where("original_judge_task.assigned_to_id = ? OR
         (appeals.stream_type != 'court_remand' and original_judge_task.id is null)", judge&.id)
+    else
+      result.where(original_judge_task: { assigned_to_id: judge&.id })
+    end
   end
 
   def non_genpop_by_affinity_start_date

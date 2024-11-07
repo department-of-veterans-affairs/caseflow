@@ -61,7 +61,7 @@ class HearingRequestDocket < Docket
 
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority, sct_appeals: sct_appeals
-    ).call
+    ).call.compact
   end
   # rubocop:enable Lint/UnusedMethodArgument
 
