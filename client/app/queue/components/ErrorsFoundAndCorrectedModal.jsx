@@ -18,7 +18,7 @@ import {
   taskById
 } from '../selectors';
 
-const ErrorsFoundAndCorrectedModal = (props) => {
+export const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isAnyFileSelected, setIsAnyFileSelected] = useState(false);
