@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_02_024601) do
+ActiveRecord::Schema.define(version: 2024_11_04_151218) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2151,7 +2151,6 @@ ActiveRecord::Schema.define(version: 2024_11_02_024601) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2473,6 +2472,13 @@ ActiveRecord::Schema.define(version: 2024_11_02_024601) do
               ELSE false
           END AS aod_indicator,
       tasks.id AS task_id,
+      tasks.assigned_to_id,
+      tasks.assigned_to_type,
+      tasks.assigned_at,
+      tasks.assigned_by_id,
+      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
+      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+      tasks.status AS task_status,
           CASE
               WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
               CASE
@@ -2516,6 +2522,13 @@ ActiveRecord::Schema.define(version: 2024_11_02_024601) do
               ELSE false
           END AS aod_indicator,
       tasks.id AS task_id,
+      tasks.assigned_to_id,
+      tasks.assigned_to_type,
+      tasks.assigned_at,
+      tasks.assigned_by_id,
+      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
+      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+      tasks.status AS task_status,
       true AS schedulable
      FROM ((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
