@@ -111,7 +111,8 @@ export const CorrespondenceReviewPackage = (props) => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
     } else {
-      let redirectUrl = props.userIsInboundOpsSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
+      const redirectUrl = props.userIsInboundOpsSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
+
       window.location.href = redirectUrl;
     }
   };
