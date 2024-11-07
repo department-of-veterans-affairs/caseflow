@@ -583,7 +583,6 @@ class RequestIssue < CaseflowRecord
   end
 
   def benefit_type_disabled?
-    # Check disabled sync benefit type enum if request issue's benefit type is included
     RequestIssue.disabled_benefit_types.value?(benefit_type)
   end
 
