@@ -253,7 +253,8 @@ class HearingRequestDistributionQuery
       .find { |t| t.is_a?(JudgeDecisionReviewTask) && t.status == Constants.TASK_STATUSES.completed }
       .assigned_to
 
-    self.class.ineligible_judges_id_cache.include?(judge.id)
+    self.class.ineligible_judges_id_cache.include?(judge.id) ||
+      JudgeTeam.judge_ids_with_exclude_appeals_from_affinity.include?(judge.id)
   end
 
   delegate :with_no_hearings, to: :base_relation
