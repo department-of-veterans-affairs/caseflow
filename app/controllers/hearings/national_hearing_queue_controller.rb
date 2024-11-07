@@ -17,15 +17,10 @@ class Hearings::NationalHearingQueueController < ApplicationController
 
   def allowed_params
     params.permit(
-      :task_id,
       :tab,
-      :sort_by,
-      :order,
       :search_query,
       { filter: [] },
-      :page,
-      :all
-    )
+      :page    )
   end
 
   def queue_entries
