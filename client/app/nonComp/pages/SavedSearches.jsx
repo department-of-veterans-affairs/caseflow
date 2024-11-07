@@ -18,7 +18,7 @@ const SavedSearches = () => {
   const allSearches = savedSearchRows.allSearches;
 
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
   }, []);
