@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/fix_file_number_wizard"
-# require_relative "../../lib/helpers/duplicate_veteran_checker"
-
 class PersonAndVeteranEventRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
@@ -14,16 +11,16 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
     setup_job
     find_events("Person").select do |event_record|
       original_id = event_record.evented_record_id
-      dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).where.not(id: original_id)
-      if dup_ids.size > 1
-        DuplicatePersonRemediationService.new(updated_person_id: original_id, duplicate_person_ids: dup_ids)
+      dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
+      if dup_ids.size >= 1
+        Remediations::DuplicatePersonRemediationService.new(updated_person_id: original_id, duplicate_person_ids: dup_ids)
           .remediate!
       end
     end
     find_events("Veteran").select do |event_record|
       before_fn = event_record.info["before_data"]["file_number"]
       after_fn = event_record.info["record_data"]["file_number"]
-      VeteranRecordRemedationService.new(before_fn, after_fn).remediate! if before_fn != after_fn
+      Remediations::VeteranRecordRemediationService.new(before_fn, after_fn).remediate! if before_fn != after_fn
     end
   end
 
