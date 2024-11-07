@@ -9,7 +9,7 @@ import { COLORS } from 'app/constants/AppConstants';
  */
 
 const SchedulableBadge = ({ taskId }) => {
-  const tooltipText = 'Indicates whether an appeal is eligible to have a hearing scheduled on its behalf.';
+  const tooltipText = 'This case is marked as "ready to be scheduled" for a hearing.';
 
   return <Badge
     name="schedulable"
