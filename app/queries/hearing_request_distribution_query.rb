@@ -75,12 +75,16 @@ class HearingRequestDistributionQuery
     no_hearings_or_only_no_held_hearings = []
     no_hearings_or_no_held_hearings.each do |appeal|
       if appeal.hearings.blank? || appeal.hearings.pluck(:disposition).exclude?("held")
-        if appeal.cavc? && appeal.appeal_affinity&.affinity_start_date &&
-           ((appeal.aod? &&
-             appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) ||
-           (appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_affinity_days.to_i.days.ago))
-          no_hearings_or_only_no_held_hearings << appeal
-        elsif !appeal.cavc?
+        if appeal.cavc?
+          if ineligible_or_excluded_original_judge(appeal)
+            no_hearings_or_only_no_held_hearings << appeal
+          elsif appeal.appeal_affinity&.affinity_start_date &&
+                ((appeal.aod? &&
+                  appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) ||
+                (appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_affinity_days.to_i.days.ago))
+            no_hearings_or_only_no_held_hearings << appeal
+          end
+        else
           no_hearings_or_only_no_held_hearings << appeal
         end
       end
@@ -238,6 +242,17 @@ class HearingRequestDistributionQuery
       end
 
     query
+  end
+
+  def ineligible_or_excluded_original_judge(appeal)
+    judge = appeal
+      .cavc_remand
+      .source_appeal
+      .tasks
+      .find { |t| t.is_a?(JudgeDecisionReviewTask) && t.status == Constants.TASK_STATUSES.completed }
+      .assigned_to
+
+    self.class.ineligible_judges_id_cache.include?(judge.id)
   end
 
   delegate :with_no_hearings, to: :base_relation
