@@ -1482,6 +1482,7 @@ describe RequestIssue, :all_dbs do
 
       let(:contested_decision_issue_id) do
         previous_contention
+        previous_request_issue.benefit_type = "fiduciary"
         previous_request_issue.sync_decision_issues!
         previous_request_issue.decision_issues.first.id
       end
@@ -2327,6 +2328,11 @@ describe RequestIssue, :all_dbs do
 
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
+
+    before do
+      request_issue.benefit_type = "fiduciary"
+    end
+
     subject { request_issue.sync_decision_issues! }
 
     context "when it has been processed" do
@@ -2383,6 +2389,10 @@ describe RequestIssue, :all_dbs do
                 rating_issue_reference_id: contested_rating_issue_reference_id
               )
             end
+
+            # before :each do
+            #   rating_request_issue.benefit_type = "fiduciary"
+            # end
 
             it "creates decision issues based on rating issues" do
               rating_request_issue.decision_sync_error = "previous error"
@@ -2446,6 +2456,10 @@ describe RequestIssue, :all_dbs do
               [{ reference_id: "xyz456", decision_text: "PTSD denied", contention_reference_id: "bad_id" }]
             end
 
+            # before :each do
+            # rating_request_issue.benefit_type = "fiduciary"
+            # end
+
             it "creates decision issues based on contention disposition" do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
@@ -2457,7 +2471,7 @@ describe RequestIssue, :all_dbs do
                 rating_profile_date: ratings.profile_date,
                 rating_promulgation_date: ratings.promulgation_date,
                 decision_review_id: review.id,
-                benefit_type: "compensation",
+                benefit_type: "fiduciary",
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
@@ -2500,7 +2514,7 @@ describe RequestIssue, :all_dbs do
             disposition: "allowed",
             decision_review_type: "HigherLevelReview",
             decision_review_id: review.id,
-            benefit_type: "compensation",
+            benefit_type: "fiduciary",
             end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
@@ -2591,7 +2605,7 @@ describe RequestIssue, :all_dbs do
               decision_date: 1.day.ago,
               end_product_establishment: epe,
               contention_reference_id: contention_hlr1.id,
-              benefit_type: review.benefit_type,
+              benefit_type: "fiduciary",
               decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
               decision_sync_submitted_at: original_decision_sync_submitted_at
             )
@@ -2606,7 +2620,7 @@ describe RequestIssue, :all_dbs do
               decision_date: 1.day.ago,
               end_product_establishment: epe,
               contention_reference_id: contention_hlr2.id,
-              benefit_type: review.benefit_type,
+              benefit_type: "fiduciary",
               decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
               decision_sync_submitted_at: original_decision_sync_submitted_at
             )
@@ -2621,7 +2635,7 @@ describe RequestIssue, :all_dbs do
               decision_date: 1.day.ago,
               end_product_establishment: epe2,
               contention_reference_id: contention_sc1.id,
-              benefit_type: review2.benefit_type,
+              benefit_type: "fiduciary",
               decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
               decision_sync_submitted_at: original_decision_sync_submitted_at
             )
