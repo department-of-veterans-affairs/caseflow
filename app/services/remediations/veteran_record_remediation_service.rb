@@ -37,4 +37,3 @@ class Remediations::VeteranRecordRemediationService
     end
   end
 end
-
