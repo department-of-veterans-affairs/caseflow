@@ -1,4 +1,5 @@
 import React from 'react';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import StringUtil from '../../util/StringUtil';
@@ -78,7 +79,7 @@ const NationalHearingQueueContainer = () => {
     }
   };
 
-  return (<>
+  return (<AppSegment filledBackground>
     { /* Alert goes here*/ }
 
     <h1>Testing NHQ</h1>
@@ -92,7 +93,7 @@ const NationalHearingQueueContainer = () => {
       defaultPage={getTabByIndex || 0}
       onChange={((value) => resetPageNumberOnTabChange(value))}
     />
-  </>);
+  </AppSegment>);
 };
 
 export default NationalHearingQueueContainer;
