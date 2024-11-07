@@ -307,6 +307,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     let(:range) { nil }
     let(:limit) { 10 }
     let(:bust_backlog) { false }
+    let!(:priority_tied_appeal) { create(:legacy_aoj_appeal, :aod, judge: vacols_judge) }
 
     before do
       FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
@@ -325,9 +326,11 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
 
     it "does not distribute non-ready or priority cases" do
+      expect(subject.count).to eq(3)
       expect(nonpriority_unready_case.reload.bfcurloc).to eq("57")
       expect(aod_ready_case.reload.bfcurloc).to eq("81")
       expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+      expect(priority_tied_appeal.reload.bfcurloc).to eq("81")
     end
 
     context "when limited" do
@@ -494,6 +497,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
   context ".distribute_priority_appeals" do
     let(:genpop) { "any" }
     let(:limit) { 10 }
+    let!(:nonpriority_tied_appeal) { create(:legacy_aoj_appeal, judge: vacols_judge) }
 
     subject { VACOLS::AojCaseDocket.distribute_priority_appeals(judge, genpop, limit) }
 
@@ -501,11 +505,14 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       expect(subject.count).to eq(2)
       expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      expect(nonpriority_tied_appeal.reload.bfcurloc).to eq("81")
     end
 
     it "does not distribute non-ready or nonpriority cases" do
+      expect(subject.count).to eq(2)
       expect(aod_case_unready_due_to_location.reload.bfcurloc).to eq("55")
       expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      expect(nonpriority_tied_appeal.reload.bfcurloc).to eq("81")
     end
 
     context "when limited" do
@@ -856,6 +863,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # verify that no nonpriority appeals are unintentionally included in priority distributions
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true).count).to eq(0)
         # {FOR LEVER BEING INFINITE:}
         aoj_lever.update!(value: "infinite")
         CaseDistributionLever.clear_distribution_lever_cache
@@ -876,6 +886,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c34
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
+        # verify that no nonpriority appeals are unintentionally included in priority distributions
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true).count).to eq(0)
+
         # {FOR LEVER BEING OMIT:}
         aoj_lever.update!(value: "omit")
         CaseDistributionLever.clear_distribution_lever_cache
@@ -884,6 +897,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             c1, c2, c3, c4, c5, c6, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33
           ]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # verify that no nonpriority appeals are unintentionally included in priority distributions
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true).count).to eq(0)
       end
     end
 
@@ -1048,6 +1064,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
         # {FOR LEVER BEING INFINITE:}
         aoj_cavc_lever.update!(value: "infinite")
         CaseDistributionLever.clear_distribution_lever_cache
@@ -1057,6 +1076,8 @@ describe VACOLS::AojCaseDocket, :all_dbs do
           .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
 
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
         # ensure that excluded judge recieves their tied cases which would not go to default judge
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(excl_judge_caseflow, "any", 100, true)
           .map { |c| c["bfkey"] }.sort)
@@ -1072,6 +1093,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             c1, c2, c3, c4, c5, c6, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33
           ]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
       end
     end
 
@@ -1206,6 +1230,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
           ]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
 
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
+
         # {FOR LEVER BEING INFINITE:}
         aoj_aod_lever.update!(value: "infinite")
         CaseDistributionLever.clear_distribution_lever_cache
@@ -1220,6 +1247,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca18, ca19, ca20, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30, ca34
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
+
         # {FOR LEVER BEING OMIT:}
         aoj_aod_lever.update!(value: "omit")
         CaseDistributionLever.clear_distribution_lever_cache
@@ -1229,6 +1259,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30, ca31, ca32, ca33
           ]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # verify that no priority appeals are unintentionally included in nonpriority distributions
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(tied_judge_caseflow, "any", 100, nil, false, true).count).to eq(0)
       end
     end
 
