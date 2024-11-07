@@ -16,7 +16,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
   end
 
   attribute :stream_type do |object|
-    object.appeal.stream_type
+    object.appeal.type
   end
 
   attribute :appeal_uuid do |object|
