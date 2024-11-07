@@ -131,6 +131,7 @@ const DocumentViewer = (props) => {
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
+              progressBarOptions={props.progressBarOptions}
               onrequestCancel={() => props.history.push(props.documentPathBase)}
             />
           </div>
@@ -167,7 +168,8 @@ DocumentViewer.propTypes = {
   showPdf: PropTypes.func,
   match: PropTypes.object,
   zoomLevel: PropTypes.number,
-  onZoomChange: PropTypes.func
+  onZoomChange: PropTypes.func,
+  progressBarOptions: PropTypes.object,
 };
 
 export default DocumentViewer;

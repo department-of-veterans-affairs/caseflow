@@ -23,7 +23,8 @@ const PdfDocument = ({
   setIsDocumentLoadError,
   setNumPages,
   onrequestCancel,
-  zoomLevel }) => {
+  zoomLevel,
+  progressBarOptions }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ const PdfDocument = ({
     loadedBytes: 0,
     totalBytes: 0,
   });
+  const fileSize = doc.file_size;
 
   const containerStyle = {
     width: '100%',
@@ -130,19 +132,26 @@ const PdfDocument = ({
         timeout: true,
         responseType: 'arraybuffer',
         onProgress: ({ loaded }) => {
-          const percentage = ProgressBarUtil.calculateProgress({ loaded, file_size: doc.file_size });
+          const percentage = ProgressBarUtil.calculateProgress({ loaded, fileSize });
           const enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
-          const downloadSpeed = (loaded / (enlapsedTime / 1000)).toFixed(0);
+          const downloadSpeed = Number((loaded / (enlapsedTime)).toFixed(0));
+          const shouldShow = ProgressBarUtil.shouldShowProgressBar({
+            enlapsedTime,
+            downloadSpeed,
+            percentage,
+            loaded,
+            fileSize,
+            progressBarOptions
+          });
 
-          const shouldShow = ProgressBarUtil.shouldShowProgressBar(enlapsedTime, downloadSpeed, percentage, loaded, doc.file_size);
-          if (!showProgressBarRef.current && shouldShow){
+          if (!showProgressBarRef.current && shouldShow) {
             showProgressBarRef.current = true;
           }
 
           setProgressData({
             progressPercentage: percentage,
             loadedBytes: loaded,
-            totalBytes: doc.file_size,
+            totalBytes: fileSize,
           });
         },
         cancellableRequest: ({ request }) => {
@@ -229,7 +238,7 @@ const PdfDocument = ({
     <div id="pdfContainer" style={containerStyle}>
       {showProgressBarRef.current && (
         <ProgressBar
-          progressPercentage={progressData.progressPercentage}
+          progressPercentage={Number(progressData.progressPercentage)}
           loadedBytes={progressData.loadedBytes}
           totalBytes={progressData.totalBytes}
           handleCancelRequest={handleCancelRequest}
@@ -270,6 +279,7 @@ PdfDocument.propTypes = {
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
   onrequestCancel: PropTypes.func,
+  progressBarOptions: PropTypes.object,
 };
 
 export default PdfDocument;

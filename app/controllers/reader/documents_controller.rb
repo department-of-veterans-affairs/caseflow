@@ -11,7 +11,8 @@ class Reader::DocumentsController < Reader::ApplicationController
             appealDocuments: documents,
             annotations: annotations,
             manifestVbmsFetchedAt: manifest_vbms_fetched_at,
-            manifestVvaFetchedAt: manifest_vva_fetched_at
+            manifestVvaFetchedAt: manifest_vva_fetched_at,
+            progressBarOptions: progress_bar_options
           }
         end
       end
@@ -80,5 +81,16 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def appeal_id
     params[:appeal_id]
+  end
+
+  def progress_bar_options
+    @progress_bar_options ||= {
+      delayBeforeProgressBar: redis_instance.get("delay_before_progress_bar")&.to_i,
+      showProgressBarThreshold: redis_instance.get("show_progress_bar_threshold")&.to_i
+    }
+  end
+
+  def redis_instance
+    @redis_instance ||= Redis.new
   end
 end

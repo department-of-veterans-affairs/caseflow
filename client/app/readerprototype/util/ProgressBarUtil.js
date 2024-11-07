@@ -1,28 +1,37 @@
 // Below are customizable values that determine wait times for document loading
 // and are then used to decide whether or not we show the progress bar
 
-const minimumInitialWait = 1000; // Inital wait time in milliseconds
-const significantAdditionalWait = 3; // time in seconds
+// times are in milliseconds
+const delayBeforeProgressBarDefaultValue = 1000;
+const showProgressBarThresholdDefaultValue = 3000;
 
 // Function to calculate download progress as the document loads
-const calculateProgress = ({ loaded, file_size }) => {
+const calculateProgress = ({ loaded, fileSize }) => {
   let percentage = 0;
-  if (file_size > 0) {
-    percentage = ((loaded / file_size) * 100).toFixed(0);
+
+  if (fileSize > 0) {
+    percentage = ((loaded / fileSize) * 100).toFixed(0);
   }
-  return percentage;
+
+  return Number(percentage);
 };
 
 // Function to check if the progress bar should be shown
-// Returns a boolean based on params passed in and the 2 variables we set at the
-// top of this util file (minimumInitialWait, significantAdditionalWait)
-const shouldShowProgressBar = (enlapsedTime, downloadSpeed, percentage, loaded, file_size) => {
-  if (percentage < 100 && enlapsedTime > minimumInitialWait) {
-    const projectedEndTime = (file_size - loaded) / downloadSpeed;
-    if (projectedEndTime > significantAdditionalWait) {
+// Returns a boolean based on params passed in and the 2 variables passed in as progressBarOptions
+// top of this util file has default values for if not present (delayBeforeProgressBar, showProgressBarThreshold)
+const shouldShowProgressBar = ({ enlapsedTime, downloadSpeed, percentage, loaded, fileSize, progressBarOptions }) => {
+
+  const delayBeforeProgressBar = progressBarOptions.delayBeforeProgressBar || delayBeforeProgressBarDefaultValue;
+  const showProgressBarThreshold = progressBarOptions.showProgressBarThreshold || showProgressBarThresholdDefaultValue;
+
+  if (percentage < 100 && enlapsedTime > delayBeforeProgressBar) {
+    const projectedEndTime = (fileSize - loaded) / downloadSpeed;
+
+    if (projectedEndTime > showProgressBarThreshold) {
       return true;
     }
   }
+
   return false;
 };
 

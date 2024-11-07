@@ -25,7 +25,8 @@
       pdfPageRenderTimeInMs: FeatureToggle.enabled?(:pdf_page_render_time_in_ms, user: current_user),
       prefetchDisabled: FeatureToggle.enabled?(:prefetch_disabled, user: current_user),
       readerSearchImprovements: FeatureToggle.enabled?(:reader_search_improvements, user: current_user),
-      readerPrototype: FeatureToggle.enabled?(:reader_prototype, user: current_user)
+      readerPrototype: FeatureToggle.enabled?(:reader_prototype, user: current_user),
+      readerProgressBar: FeatureToggle.enabled?(:reader_progress_bar, user: current_user)
     },
     buildDate: build_date
   }) %>

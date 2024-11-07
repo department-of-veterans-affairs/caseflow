@@ -34,7 +34,11 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.state = {
       isCommentLabelSelected: false,
-      zoomLevel: 100
+      zoomLevel: 100,
+      progressBarOptions: {
+        delayBeforeProgressBar: null,
+        showProgressBarThreshold: null
+      }
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
@@ -88,6 +92,15 @@ export class DecisionReviewer extends React.PureComponent {
     this.setState({ zoomLevel: newZoomLevel });
   };
 
+  updateProgressBarOptions = ({ delayBeforeProgressBar, showProgressBarThreshold }) => {
+    this.setState({
+      progressBarOptions: {
+        delayBeforeProgressBar,
+        showProgressBarThreshold
+      }
+    });
+  };
+
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -97,6 +110,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
+      setProgressBarOptions={this.updateProgressBarOptions}
       featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
@@ -142,13 +156,16 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
+      setProgressBarOptions={this.updateProgressBarOptions}
       featureToggles={this.props.featureToggles}>
       <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
         zoomLevel={this.state.zoomLevel}
+        featureToggles={this.props.featureToggles}
         onZoomChange={this.updateZoomLevel}
+        progressBarOptions={this.state.progressBarOptions}
         {...props}
       />
     </ReaderLoadingScreen>

@@ -165,8 +165,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       query(options.query).
       timeout(timeoutSettings).
-      on('error', (err) => errorHandling(url, err, 'GET', options)).
-      on('abort', () => console.log('## User Cancelled, should I log this?\n'));
+      on('error', (err) => errorHandling(url, err, 'GET', options));
 
     if (typeof options.onProgress === 'function') {
       promise.on('progress', (event) => {
