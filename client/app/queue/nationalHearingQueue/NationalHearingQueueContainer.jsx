@@ -68,6 +68,8 @@ const NationalHearingQueueContainer = () => {
   return (<>
     <h1>Testing NHQ</h1>
 
+    { /* Cutoff date component(s) goes here. */ }
+
     <TabWindow
       name="nhq-tabwindow"
       tabs={generateTabs()}
