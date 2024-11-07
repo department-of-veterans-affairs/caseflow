@@ -18,6 +18,8 @@ class Remediations::DuplicatePersonRemediationService
     find_and_update_records
   end
 
+  private
+
   def find_and_update_records
     dup_persons = Person.where(id: @duplicate_person_ids)
     og_person = Person.find_by(id: @updated_person_id)
