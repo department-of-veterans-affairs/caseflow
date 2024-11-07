@@ -341,6 +341,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
              vacols_case: case2)
     end
 
+    let(:ama_hearing_task) { ama_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
 
@@ -359,6 +362,11 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
 
+      # rubocop:disable Rails/TimeZone
+      ama_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
+      legacy_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
+      # rubocop:enable Rails/TimeZone
+
       NationalHearingQueueEntry.refresh
 
       expect(
@@ -366,7 +374,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal_id, :appeal_type,
           :hearing_request_type, :receipt_date, :external_id,
           :appeal_stream, :docket_number, :aod_indicator,
-          :task_id, :schedulable
+          :task_id, :schedulable, :assigned_to_id,
+          :assigned_by_id, :days_on_hold, :days_waiting,
+          :task_status
         )
       ).to match_array [
         [
@@ -379,7 +389,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           ama_with_sched_task.stream_docket_number,
           false,
           ama_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
-          false
+          false,
+          ama_hearing_task.assigned_to_id,
+          ama_hearing_task.assigned_by_id,
+          ((Time.zone.now - ama_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((ama_hearing_task.closed_at - ama_hearing_task.created_at) / 60 / 60 / 24).floor,
+          ama_hearing_task.status
         ],
         [
           legacy_with_sched_task.id,
@@ -391,7 +406,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           VACOLS::Folder.find_by_ticknum(case1.bfkey).tinum,
           false,
           legacy_with_sched_task.tasks.find_by_type("ScheduleHearingTask").id,
-          true
+          true,
+          legacy_hearing_task.assigned_to_id,
+          legacy_hearing_task.assigned_by_id,
+          ((Time.zone.now - legacy_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((legacy_hearing_task.closed_at - legacy_hearing_task.created_at) / 60 / 60 / 24).floor,
+          legacy_hearing_task.status
         ]
       ]
 
