@@ -4,12 +4,12 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
   let(:job) { described_class.new }
 
   # Mocking external services and data
-  let(:event_record_person) {
+  let(:event_record_person) do
     instance_double("EventRecord", evented_record_id: 1, evented_record_type: "Person", evented_record: person)
-  }
-  let(:event_record_veteran) {
+  end
+  let(:event_record_veteran) do
     instance_double("EventRecord", evented_record_id: 2, evented_record_type: "Veteran", info: event_info)
-  }
+  end
 
   let(:person) { instance_double("Person", id: 1, ssn: "123-45-6789") }
   let(:person_duplicate) { instance_double("Person", id: 2, ssn: "123-45-6789") }
@@ -63,7 +63,8 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
 
       it "does not call remediation service if file_number is the same" do
         # Modify event_info to make file numbers match
-        allow(event_record_veteran).to receive(:info).and_return({ "before_data" => { "file_number" => "V1234" }, "record_data" => { "file_number" => "V1234" } })
+        allow(event_record_veteran).to receive(:info)
+          .and_return({ "before_data" => { "file_number" => "V1234" }, "record_data" => { "file_number" => "V1234" } })
         expect(veteran_remediation_service).not_to receive(:remediate!)
         job.perform
       end
