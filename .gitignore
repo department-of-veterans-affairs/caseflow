@@ -62,8 +62,8 @@ node_modules
 # Oracle instant client
 ci-bin/circle_docker_container/instant*
 
-docker-bin/oracle_libs/*
-oracle_libs/*
+# docker-bin/oracle_libs/*
+# oracle_libs/*
 
 config/build_version.yml
 
