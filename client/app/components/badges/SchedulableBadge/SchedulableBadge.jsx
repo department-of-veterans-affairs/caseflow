@@ -9,7 +9,7 @@ import { COLORS } from 'app/constants/AppConstants';
  */
 
 const SchedulableBadge = ({ taskId }) => {
-  const tooltipText = 'Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.';
+  const tooltipText = 'Indicates whether an appeal is eligible to have a hearing scheduled on its behalf.';
 
   return <Badge
     name="schedulable"
