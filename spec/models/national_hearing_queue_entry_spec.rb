@@ -363,8 +363,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       expect(NationalHearingQueueEntry.count).to eq 0
 
       # rubocop:disable Rails/TimeZone
-      ama_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now)
-      legacy_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now)
+      ama_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
+      legacy_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
       # rubocop:enable Rails/TimeZone
 
       NationalHearingQueueEntry.refresh
