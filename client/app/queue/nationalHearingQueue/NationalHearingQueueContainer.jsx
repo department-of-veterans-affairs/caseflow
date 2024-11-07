@@ -26,7 +26,7 @@ const NationalHearingQueueContainer = () => {
       valueFunction: (row) => row.appealType
     },
     {
-      header: 'Docker Number',
+      header: 'Docket Number',
       align: 'left',
       valueFunction: (row) => row.appeal.docketNumber
     }
