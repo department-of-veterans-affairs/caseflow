@@ -118,6 +118,8 @@ jobs:
       # We run yarn install after loading the cache to update any dependencies if their version is different
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Save Yarn Cache
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
