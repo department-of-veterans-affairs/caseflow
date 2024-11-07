@@ -13,8 +13,6 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
-  attr_accessor :reference_id
-
   # Pagination for VBMS API
   paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
 
