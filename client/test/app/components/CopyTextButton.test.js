@@ -1,5 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { axe } from 'jest-axe';
 
@@ -16,7 +17,7 @@ describe('CopyTextButton', () => {
   const setup = (props) => {
 
     const utils = render(
-      <CopyTextButton {...props} />
+      <CopyTextButton {...defaults} {...props} />
     );
 
     const button = utils.getByRole('button');
@@ -24,24 +25,9 @@ describe('CopyTextButton', () => {
     return { ...utils, button };
   };
 
-  describe('Button', () => {
-    it('is enabled', async() => {
-      const { button } = setup(defaults);
-
-      expect(button).toBeEnabled();
-    });
-    it('is disabled', async() => {
-      const text = 'some text';
-      const label = 'Label';
-      const { button } = setup({ text, label });
-
-      expect(button).toBeDisabled();
-    });
-  });
-
   describe('aria-label', () => {
     it('passes a11y testing', async () => {
-      const { container } = setup(defaults);
+      const { container } = setup();
 
       const results = await axe(container);
 

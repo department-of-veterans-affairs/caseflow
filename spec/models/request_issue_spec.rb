@@ -1348,6 +1348,26 @@ describe RequestIssue, :all_dbs do
       let(:request_issue) { unidentified_issue }
       it { is_expected.to eq("an unidentified issue") }
     end
+
+    context "when description contains unsafe characters" do
+      let(:request_issue) do
+        build(:request_issue, contested_issue_description: "Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}")
+      end
+
+      it "should not be valid" do
+        expect(request_issue.valid?).to eq false
+      end
+    end
+
+    context "when description contains safe characters" do
+      let(:request_issue) do
+        build(:request_issue, contested_issue_description: "Safe: 1234567890-=`~!@#$%^&*()_+[]{}\|;:")
+      end
+
+      it "should be valid" do
+        expect(request_issue.valid?).to eq true
+      end
+    end
   end
 
   context "#contention_text" do

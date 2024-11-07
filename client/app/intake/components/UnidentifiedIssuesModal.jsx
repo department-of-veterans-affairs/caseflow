@@ -9,6 +9,7 @@ import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
 import Alert from 'app/components/Alert';
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
+import descriptionValidator from '../../util/validators/DescriptionValidator';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class UnidentifiedIssuesModal extends React.Component {
       verifiedUnidentifiedIssue: false,
       userIsVhaAdmin: props.intakeData.userIsVhaAdmin,
       isTaskInProgress: props.intakeData.taskInProgress,
-      benefitType: props.intakeData.benefitType
+      benefitType: props.intakeData.benefitType,
+      descriptionError: ''
     };
   }
 
@@ -49,14 +51,10 @@ class UnidentifiedIssuesModal extends React.Component {
     this.props.onSubmit({ currentIssue });
   };
 
-  isDescriptionValid = (description) => {
-    // make sure description has some characters in it
-    return (/[a-zA-Z]+/).test(description);
-  };
-
   onDescriptionChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      descriptionError: descriptionValidator()(value)
     });
   };
 
@@ -90,7 +88,7 @@ class UnidentifiedIssuesModal extends React.Component {
 
   saveDisabled = () => {
 
-    const descriptionIsValid = this.isDescriptionValid(this.state.description);
+    const descriptionIsValid = Boolean(this.state.description) && Boolean(!this.state.descriptionError);
     const decisionDateIsValid = Boolean(this.state.decisionDate) && !this.errorOnDecisionDate(this.state.decisionDate);
     const isDecisionDateRequired = this.vhaHlrOrSC() && this.state.userIsVhaAdmin && this.state.isTaskInProgress;
     const notes = this.state.notes;
@@ -101,9 +99,8 @@ class UnidentifiedIssuesModal extends React.Component {
 
     // if Decision date is not required then we need to verify if there is any error in the decision date field
     // this.errorOnDecisionDate returns null if no error is present.
-    return isDecisionDateRequired ?
-      !(descriptionIsValid && decisionDateIsValid) :
-      !(descriptionIsValid && !this.errorOnDecisionDate(this.state.decisionDate));
+    return !descriptionIsValid ||
+      (isDecisionDateRequired ? !decisionDateIsValid : this.errorOnDecisionDate(this.state.decisionDate));
   }
 
   getModalButtons() {
@@ -193,6 +190,7 @@ class UnidentifiedIssuesModal extends React.Component {
             strongLabel
             value={this.state.description}
             onChange={this.onDescriptionChange}
+            errorMessage={this.state.descriptionError}
           />
           {this.getDecisionDate()}
           <TextField name="Notes"

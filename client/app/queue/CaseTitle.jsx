@@ -52,7 +52,7 @@ class CaseTitle extends React.PureComponent {
       <CaseTitleScaffolding heading={this.props.titleHeader === '' ? appeal.veteranFullName : this.props.titleHeader}>
         <React.Fragment>
           Veteran ID:&nbsp;
-          <CopyTextButton text={appeal.veteranFileNumber} textToCopy={appeal.veteranFileNumber} label="Veteran ID" />
+          <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
         </React.Fragment>
 
         { !this.props.hideCaseView &&

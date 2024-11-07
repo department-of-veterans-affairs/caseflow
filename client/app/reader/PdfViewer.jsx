@@ -275,7 +275,6 @@ export class PdfViewer extends React.Component {
           title="Share Comment">
           <CopyTextButton
             text={`${location.origin}${location.pathname}?annotation=${this.props.shareAnnotationModalIsOpenFor}`}
-            textToCopy={`${location.origin}${location.pathname}?annotation=${this.props.shareAnnotationModalIsOpenFor}`}
             label="Link to annotation"
           />
         </Modal>}
