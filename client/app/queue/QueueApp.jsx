@@ -112,6 +112,7 @@ import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 import ErrorsFoundAndCorrectedModal from './components/ErrorsFoundAndCorrectedModal';
+import CancelReviewTranscriptTaskModal from './components/CancelReviewTranscriptTaskModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -693,6 +694,14 @@ class QueueApp extends React.PureComponent {
   routedErrorsFoundAndCorrectedModal = (props) => (
     <ErrorsFoundAndCorrectedModal
       modalType="errors_found_and_corrected"
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
+  );
+
+  routedCancelReviewTranscriptTaskModal = (props) => (
+    <CancelReviewTranscriptTaskModal
+      modalType="cancel_review_transcript_task"
       {...props.match.params}
       closeModal={() => props.history.goBack()}
     />
@@ -1401,6 +1410,13 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Transcript Errors found and Corrected | Caseflow"
               render={this.routedErrorsFoundAndCorrectedModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_REVIEW_TRANSCRIPT_TASK.value
+                }`}
+              title="Cancel Review Transcript Task | Caseflow"
+              render={this.routedCancelReviewTranscriptTaskModal}
             />
             <PageRoute
               exact

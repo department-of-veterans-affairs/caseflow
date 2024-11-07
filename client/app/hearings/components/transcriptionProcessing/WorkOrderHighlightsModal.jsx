@@ -30,7 +30,10 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
       border: 'none',
       borderBottom: '1px solid',
       borderColor: COLORS.GREY_LIGHT
-    }
+    },
+    '& td:nth-child(3)': {
+      fontWeight: 'bold',
+    },
   });
 
   /**

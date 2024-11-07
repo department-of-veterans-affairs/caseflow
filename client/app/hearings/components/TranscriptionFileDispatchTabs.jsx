@@ -154,6 +154,7 @@ export const tabConfig = (
           statusFilter={['Unassigned']}
           selectFilesForPackage={selectFilesForPackage}
           searchValue={search.value}
+          className="unassigned-tab"
         />
       </div>
     </>

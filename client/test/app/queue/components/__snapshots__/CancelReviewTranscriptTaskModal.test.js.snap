@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkOrderHighlights matches snapshot 1`] = `
+exports[`CancelReviewTranscriptTaskModal renders correctly 1`] = `
 <div>
   <section
     aria-describedby="modal_id-desc"
@@ -16,7 +16,7 @@ exports[`WorkOrderHighlights matches snapshot 1`] = `
     >
       <button
         class="cf-modal-close"
-        id="Order-contents-of-work-order-#BVA-2024-0012-button-id-close"
+        id="Cancel-task-button-id-close"
         type="button"
       >
         <span
@@ -49,49 +49,69 @@ exports[`WorkOrderHighlights matches snapshot 1`] = `
           id="modal_id-title"
           style="flex: 1;"
         >
-          Order contents of work order #BVA-2024-0012
+          Cancel task
         </h1>
         <div
           data-css-2flkvz=""
         >
           <p>
-            There are (
-            0
-            ) appeals in this task order:
+            Cancelling this task will permanently remove it from the case's active tasks.
           </p>
-          <table
-            data-css-16wdn9t=""
-            style="margin: auto; width: 100%;"
+          <div
+            class="comment-size-container"
           >
-            <tr>
-              <th />
-              <th
-                style="font-weight: bold;"
+            <div
+              class="cf-form-textarea"
+            >
+              <label
+                class="question-label"
+                for="cf-form-textarea"
               >
-                Docket Number
-              </th>
-              <th
-                style="font-weight: bold;"
-              >
-                Case Details
-              </th>
-            </tr>
-          </table>
+                <span>
+                  Please provide context and instructions for this action
+                </span>
+              </label>
+              <textarea
+                id="cf-form-textarea"
+                name="Please provide context and instructions for this action"
+              />
+            </div>
+          </div>
         </div>
       </div>
-      
+      <div
+        class="cf-modal-divider"
+      />
       <div
         class="cf-modal-controls"
       >
-        <span>
-          <button
-            class="usa-button usa-button-primary cf-push-right usa-button"
-            id="Order-contents-of-work-order-#BVA-2024-0012-button-id-0"
-            type="button"
+        <div>
+          <span
+            class="cf-push-right"
           >
-            Close
-          </button>
-        </span>
+            <span>
+              <button
+                class="cf-submit usa-button-disabled usa-button"
+                disabled=""
+                type="button"
+              >
+                Cancel task
+              </button>
+            </span>
+          </span>
+          <span
+            class="cf-push-left"
+          >
+            <span>
+              <button
+                class="cf-submit cf-btn-link usa-button"
+                type="button"
+              >
+                Cancel
+              </button>
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   </section>

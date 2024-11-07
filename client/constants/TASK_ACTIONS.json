@@ -555,6 +555,6 @@
   },
   "CANCEL_REVIEW_TRANSCRIPT_TASK": {
     "label": "Cancel task",
-    "value": ""
+    "value": "modal/cancel_review_transcript_task"
   }
 }
