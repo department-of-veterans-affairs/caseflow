@@ -37,9 +37,9 @@ module Seeds
       create_ready_cavc_appeals_with_new_hearing(10, find_judge("READYCAVCWNH"), 22.days.ago, 22.days.ago)
 
       create_ready_cavc_appeals(10, find_judge("READYCAVCAOD"), 10.days.ago, 10.days.ago, true)
-      reate_ready_cavc_appeals(10, find_judge("READYCAVCAOD"), 22.days.ago, 22.days.ago, true)
+      create_ready_cavc_appeals(10, find_judge("READYCAVCAOD"), 22.days.ago, 22.days.ago, true)
 
-      create_ready_cavc_appeals_with_new_hearing(1, find_judge("READYCAVCWNHAOD"), 10.days.ago, 10.days.ago, true)
+      create_ready_cavc_appeals_with_new_hearing(10, find_judge("READYCAVCWNHAOD"), 10.days.ago, 10.days.ago, true)
       create_ready_cavc_appeals_with_new_hearing(10, find_judge("READYCAVCWNHAOD"), 22.days.ago, 22.days.ago, true)
     end
 

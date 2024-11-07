@@ -10,7 +10,7 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def call # rubocop:disable Metrics/CyclomaticComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
@@ -106,6 +106,7 @@ class HearingRequestDistributionQuery
     query
   end
 
+  # rubocop:disable Metrics/MethodLength: Method has too many lines
   def generate_not_genpop_non_aod_cavc_query(base_relation)
     query =
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
@@ -131,7 +132,9 @@ class HearingRequestDistributionQuery
 
     query
   end
+  # rubocop:enable Metrics/MethodLength: Method has too many lines
 
+  # rubocop:disable Metrics/MethodLength: Method has too many lines
   def generate_not_genpop_aod_cavc_query(base_relation)
     query =
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
@@ -157,6 +160,7 @@ class HearingRequestDistributionQuery
 
     query
   end
+  # rubocop:enable Metrics/MethodLength: Method has too many lines
 
   def generate_ama_not_genpop_aod_hearing_query(base_relation)
     query =

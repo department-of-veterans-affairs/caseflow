@@ -840,11 +840,11 @@ describe HearingRequestDocket, :postgres do
 
       let!(:ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_in_window) do
         create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago,
-          affinity_start_date: 10.days.ago)
+                                 affinity_start_date: 10.days.ago)
       end
       let!(:ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_out_of_window) do
         create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago,
-          affinity_start_date: 22.days.ago)
+                                 affinity_start_date: 22.days.ago)
       end
 
       let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_in_window) do
@@ -886,8 +886,7 @@ describe HearingRequestDocket, :postgres do
              ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
              ready_cavc_appeal_tied_to_requesting_judge_with_new_hearing_in_window.uuid,
              ready_cavc_aod_appeal_tied_to_requesting_judge_in_window.uuid,
-             ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_in_window.uuid
-            ]
+             ready_cavc_aod_appeal_tied_to_requesting_judge_with_new_hearing_in_window.uuid]
           )
         end
       end
