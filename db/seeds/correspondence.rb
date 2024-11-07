@@ -135,12 +135,8 @@ module Seeds
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
         (0..35).each do |i|
-          if i%3 == 0
-            appeal = create(:appeal, veteran: veteran)
-            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          elsif i%3 == 1
+          if i%5 == 1
             appeal = create(:appeal, :with_decision_issue, :type_cavc_remand, veteran: veteran)
-            # , stream_type: Constants.AMA_STREAM_TYPES.court_remand
             creation_params = {
               source_appeal_id: appeal.id,
               cavc_decision_type: "remand",
@@ -158,7 +154,7 @@ module Seeds
             }
             CavcRemand.create!(creation_params)
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          elsif i%3 == 2
+          elsif i%5 == 2
             appeal = create(:appeal, :advanced_on_docket_due_to_age, veteran: veteran)
 
             AdvanceOnDocketMotion.create!(
@@ -169,8 +165,10 @@ module Seeds
               appeal: appeal
               )
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          else
+            appeal = create(:appeal, veteran: veteran)
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           end
-
         end
         veterans << veteran
       end
