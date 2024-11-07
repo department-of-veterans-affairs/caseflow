@@ -42,7 +42,7 @@ const NationalHearingQueueContainer = () => {
     return {
       label: StringUtil.titleCase(tabName),
       page: <>
-        <div>All cases owned by the National Hearings Scheduling team.</div>
+        <div>All cases owned by the National Hearings Scheduling team.</div><br />
         <QueueTable
           // Eventually these columns need to differ between tabs
           columns={getTableColumns()}
