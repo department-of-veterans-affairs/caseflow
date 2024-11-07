@@ -172,7 +172,7 @@ module CorrespondenceControllerConcern
     else
       @response_header = "You have successfully saved the intake form"
       @response_message = "You can continue from step three of the intake form for #{vet.name}'s "\
-      "correspondence (ID: #{correspondence.id}) at a later date."
+      "correspondence at a later date."
     end
     @response_type = "success"
   end
