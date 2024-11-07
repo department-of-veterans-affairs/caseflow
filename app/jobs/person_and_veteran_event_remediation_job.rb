@@ -20,30 +20,16 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           .remediate!
       end
     end
-    find_and_update_veteran_records
+    find_events("Veteran").select do |event_record|
+      before_fn = event_record.info["before_data"]["file_number"]
+      after_fn = event_record.info["record_data"]["file_number"]
+      VeteranRecordRemedationService.new(before_fn, after_fn).remediate! if before_fn != after_fn
+    end
   end
 
   private
 
   def find_events(event_type)
     EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
-  end
-
-  def find_and_update_veteran_records
-    # grabs array of event records for veteran objects
-    event_records = find_events("Veteran")
-
-    found_record_ids = []
-    event_records.each do |event_record|
-      if event_record[info][before_data][file_number] != event_record[info][record_data][file_number]
-        found_record_ids << event_record.evented_record_id
-      else
-        event_record[info][before_data].empty?
-        false
-      end
-    end
-    # kickoff veteran record remediation job
-    # wrap with rescue block
-    VeteranRecordRemedationService.new(found_record_ids).remediate
   end
 end
