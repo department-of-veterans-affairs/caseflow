@@ -42,10 +42,10 @@ class HearingRequestDistributionQuery
     non_aod_cavc_query = generate_not_genpop_non_aod_cavc_query(base_relation)
     aod_cavc_query = generate_not_genpop_aod_cavc_query(base_relation)
 
-    [ama_non_aod_hearing_query.or(ama_aod_hearing_query), non_aod_cavc_query, aod_cavc_query].flatten.uniq
+    [ama_non_aod_hearing_query.or(ama_aod_hearing_query), non_aod_cavc_query, aod_cavc_query].flatten
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength]
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
@@ -75,13 +75,20 @@ class HearingRequestDistributionQuery
     no_hearings_or_only_no_held_hearings = []
     no_hearings_or_no_held_hearings.each do |appeal|
       if appeal.hearings.blank? || appeal.hearings.pluck(:disposition).exclude?("held")
-        no_hearings_or_only_no_held_hearings << appeal
+        if appeal.cavc? &&
+           ((appeal.aod? &&
+             appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) ||
+           (appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_affinity_days.to_i.days.ago))
+          no_hearings_or_only_no_held_hearings << appeal
+        elsif !appeal.cavc?
+          no_hearings_or_only_no_held_hearings << appeal
+        end
       end
     end
 
     [*result, *no_hearings_or_only_no_held_hearings].uniq
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     query =
@@ -109,20 +116,20 @@ class HearingRequestDistributionQuery
   # rubocop:disable Metrics/MethodLength: Method has too many lines
   def generate_not_genpop_non_aod_cavc_query(base_relation)
     query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
         base_relation
           .with_no_hearings
           .with_cavc_appeals
           .tied_to_distribution_judge(judge)
           .ama_non_aod_appeals
-          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+          .affinitized_ama_affinity_cases(CaseDistributionLever.cavc_affinity_days)
+      elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .with_no_hearings
           .with_cavc_appeals
           .tied_to_distribution_judge(judge)
           .ama_non_aod_appeals
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+      elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .with_no_hearings
           .with_cavc_appeals
@@ -137,20 +144,20 @@ class HearingRequestDistributionQuery
   # rubocop:disable Metrics/MethodLength: Method has too many lines
   def generate_not_genpop_aod_cavc_query(base_relation)
     query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
         base_relation
           .with_no_hearings
           .with_cavc_appeals
           .tied_to_distribution_judge(judge)
           .ama_aod_appeals
-          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
+          .affinitized_ama_affinity_cases(CaseDistributionLever.cavc_aod_affinity_days)
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .with_no_hearings
           .with_cavc_appeals
           .tied_to_distribution_judge(judge)
           .ama_aod_appeals
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .with_no_hearings
           .with_cavc_appeals
