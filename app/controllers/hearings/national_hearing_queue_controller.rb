@@ -3,9 +3,6 @@
 class Hearings::NationalHearingQueueController < ApplicationController
   include GenericTaskPaginationConcern
 
-  # We don't need this
-  SORT_COLUMN_MAPPINGS = {}.freeze
-
   def index
     respond_to do |format|
       format.html { render "national_hearing_queue/index" }
