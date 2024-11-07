@@ -57,9 +57,6 @@ describe "SyncDecidedAppealsHelper" do
       clean_up_after_threads
     end
 
-    # Clean up parallel threads
-    # after(:each) { clean_up_after_threads }
-
     # VACOLS record's decision date will be set to simulate a decided appeal
     # decision_mailed will be set to false for the AppealState to verify the method
     # functionality
