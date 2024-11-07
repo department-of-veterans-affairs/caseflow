@@ -9,10 +9,8 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
 
   def perform
     begin
-      # NationalHearingQueueEntry.refresh
+      NationalHearingQueueEntry.refresh
 
-      # For testing the timeout logic
-      ActiveRecord::Base.connection.execute("SELECT pg_sleep(45)")
     rescue ActiveRecord::QueryCanceled => error
       handle_timeout(error)
     rescue StandardError => error
@@ -30,7 +28,7 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
   def handle_timeout(error)
     if @timeout_seconds == 30
       # temporarily setting timeout to allow query to run
-      timeout_set(2700)
+      self.timeout_set(2700)
       perform
     else
       Rails.logger.error("Timeout was set to #{@timeout_seconds} seconds and job timed out.")
@@ -39,7 +37,7 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
   end
 
   def timeout_set(seconds)
-    @timeout_seconds = 2700
+    @timeout_seconds = seconds
 
     ActiveRecord::Base.connection.execute("SET statement_timeout = '#{seconds}s'")
   end
