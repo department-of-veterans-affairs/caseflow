@@ -86,7 +86,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         it "returns a 409 status and error message" do
           post :decision_review_completed, params: { event_id: event_id }
           expect(response).to have_http_status(:conflict)
-          expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
+          expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed Record already exists in Caseflow" })
         end
       end
 

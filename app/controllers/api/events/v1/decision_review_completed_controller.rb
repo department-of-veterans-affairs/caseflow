@@ -54,11 +54,11 @@ class Api::Events::V1::DecisionReviewCompletedController < Api::ApplicationContr
     consumer_event_id = drc_params[:event_id]
     claim_id = drc_params[:claim_id]
     headers = request.headers
-    consumer_and_claim_ids = { consumer_event_id: consumer_event_id,  reference_id: claim_id }
+    consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
     ::Events::DecisionReviewCompleted.complete!(consumer_and_claim_ids, headers, drc_params)
     render json: { message: "DecisionReviewCopletedEvent successfully processed" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
-    render json: { message: error.message + "Record already exists in Caseflow" }, status: :conflict
+    render json: { message: error.message + " Record already exists in Caseflow" }, status: :conflict
   rescue StandardError => error
     render json: { message: error.message }, status: :unprocessable_entity
   end
