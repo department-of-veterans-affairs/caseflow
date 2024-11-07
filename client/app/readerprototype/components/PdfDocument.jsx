@@ -9,21 +9,25 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
 import _ from 'lodash';
 import ReaderFooter from './ReaderFooter';
 import { setDocumentLoadError } from '../../reader/Pdf/PdfActions';
+import R2PdfPage from '../R2PdfPage';
+import { scaleSelector } from '../selectors';
 
 const PdfDocument = ({
   currentPage,
   doc,
-  rotateDeg,
   setCurrentPage,
   isVisible,
   showPdf,
-  zoomLevel }) => {
+  featureToggles,
+  rotation,
+  scale,
+}) => {
 
   if (!isVisible) {
     return null;
@@ -123,7 +127,7 @@ const PdfDocument = ({
 
     pdfMetrics.current.getStartTime = new Date().getTime();
 
-    return ApiUtil.get(doc.content_url, requestOptions). //todo setIsDocumentLoadError here
+    return ApiUtil.get(doc.content_url, requestOptions). // todo setIsDocumentLoadError here
       then((resp) => {
         pdfMetrics.current.getEndTime = new Date().getTime();
         loadingTaskRef.current = getDocument({ data: resp.body, pdfBug: true, verbosity: 0 });
@@ -201,19 +205,17 @@ const PdfDocument = ({
           <DocumentLoadError doc={doc} />
         ) : (
           pdfPages.map((page, index) => (
-            <Page
-              setCurrentPage={setCurrentPage}
-              scale={zoomLevel}
-              page={page}
-              rotation={rotateDeg}
-              key={`doc-${doc.id}-page-${index}`}
-              renderItem={(childProps) => (
-                <Layer isCurrentPage={currentPage === page.pageNumber}
-                  documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-                  <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
-                </Layer>
-              )}
-              setRenderingMetrics={handleRenderingMetrics}
+            <R2PdfPage
+              key={`${doc.content_url}-${index}`}
+              pageResult={page}
+              documentId={doc.id}
+              file={doc.content_url}
+              pageIndex={index}
+              isFileVisible
+              scale={scale}
+              pdfDocument={pdfDocumentRef.current}
+              featureToggles={featureToggles}
+              rotation={rotation}
             />
           ))
         )}
@@ -243,6 +245,9 @@ PdfDocument.propTypes = {
   zoomLevel: PropTypes.number,
   isVisible: PropTypes.bool,
   showPdf: PropTypes.func,
+  featureToggles: PropTypes.object,
+  rotation: PropTypes.number,
+  scale: PropTypes.number,
 };
 
 export default PdfDocument;
