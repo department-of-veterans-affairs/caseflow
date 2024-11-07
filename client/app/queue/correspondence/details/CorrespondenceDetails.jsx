@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { useHistory } from 'react-router';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -146,7 +145,7 @@ const CorrespondenceDetails = (props) => {
 
   // Function to handle the "Save Changes" button click, including the PATCH and POST request
   const handlepriorMailUpdate = async () => {
-  // Disable the button to prevent duplicate requests
+    // Disable the button to prevent duplicate requests
     setDisableSubmitButton(true);
 
     // Get the initial and current checkbox states
@@ -177,62 +176,45 @@ const CorrespondenceDetails = (props) => {
     };
 
     try {
-    // Helper function to check for success response
-      const isSuccess = (response) => response.ok;
+      // Helper function to check for success response
+      const isSuccess = (response) => response && response.ok;
 
-      // Send PATCH request to add checked relations if necessary
-      // If no checked items, POST is already successful
-      let patchSuccess = false;
+      // Send a PATCH request to update correspondence with the prepared data
+      const patchResponse = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
+        data: postData
+      });
 
-      const updateAppeals = (response) => {
-        const appealIds = response.body.related_appeals;
+      // Check if the PATCH request was successful
+      if (isSuccess(patchResponse)) {
+        const appealIds = patchResponse?.body?.relatedAppeals;
+        const correspondenceAppeals = patchResponse?.body?.correspondenceAppeals;
 
-        setSelectedAppeals(appealIds);
-        setInitialSelectedAppeals(appealIds);
-        sortAppeals(appealIds);
-        setAppealTableKey((key) => key + 1);
-      };
+        if (appealIds && correspondenceAppeals) {
+          // Clear existing appeals from the Redux store
+          Object.entries(props.appealsFromStore).forEach(([, value]) => {
+            dispatch(deleteAppeal(value.externalId));
+          });
 
-      // Send POST request to create relations
-      const patchResponse = await ApiUtil.patch(
-      `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-      { data: postData }
-      ).
-        then((resp) => {
-          const appealIds = resp.body.related_appeals;
-          const correspondenceAppeals = resp.body.correspondence_appeals;
-
-          if (Object.keys(props.appealsFromStore).length < 1) {
-            return;
-          }
-
-          // Removes all entries in the queue.appeals redux store
-          Object.entries(props.appealsFromStore).forEach(
-            ([, value]) => dispatch(deleteAppeal((value.externalId)))
-          );
-
-          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
-          correspondenceAppeals.map((corAppeal) => {
+          // Fetch updated appeal details for the correspondence
+          correspondenceAppeals.forEach((corAppeal) => {
             dispatch(fetchAppealDetails(corAppeal.appealUuid));
           });
+
+          // Fetch tasks related to the correspondence
           dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
+          // Update selected appeals in state
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
+          setAppealTableKey((key) => key + 1);
 
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
+          // Smoothly scroll to the top of the page
+          window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Check for general success status (any 2xx status)
-      patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse);
-      console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
-
-      // Only show success banner if both PATCH and POST requests succeeded
-      if (patchSuccess) {
-        setShowSuccessBanner(true);
+          // Show a success banner after the update
+          setShowSuccessBanner(true);
+        }
       }
 
       // Sort the prior mail into linked (checked) and unlinked (unchecked) groups
@@ -244,13 +226,13 @@ const CorrespondenceDetails = (props) => {
         let sortOrder = 0;
 
         if (firstInState && secondInState) {
-        // Sort linked mail from most recent to oldest
+          // Sort linked mail from most recent to oldest
           sortOrder = new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
         } else if (!firstInState && !secondInState) {
-        // Sort unlinked mail from oldest to most recent
+          // Sort unlinked mail from oldest to most recent
           sortOrder = new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
         } else if (firstInState) {
-        // Ensure linked items come before unlinked items
+          // Ensure linked items come before unlinked items
           sortOrder = -1;
         } else if (secondInState) {
           sortOrder = 1;
@@ -474,7 +456,7 @@ const CorrespondenceDetails = (props) => {
       return;
     }
 
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+    props.correspondence.correspondenceAppeals.forEach((corAppeal) => {
       dispatch(fetchAppealDetails(corAppeal.appealUuid));
     });
 
@@ -898,6 +880,7 @@ const CorrespondenceDetails = (props) => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
     } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
+      setDisableSubmitButton(true);
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -914,8 +897,8 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
-          const appealIds = resp.body.related_appeals;
-          const correspondenceAppeals = resp.body.correspondence_appeals;
+          const appealIds = resp.body.relatedAppeals;
+          const correspondenceAppeals = resp.body.correspondenceAppeals;
 
           // Removes all entries in the queue.appeals redux store
           Object.entries(props.appealsFromStore).forEach(
@@ -924,7 +907,7 @@ const CorrespondenceDetails = (props) => {
 
           // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
 
-          correspondenceAppeals.map((corAppeal) => {
+          correspondenceAppeals.forEach((corAppeal) => {
             dispatch(fetchAppealDetails(corAppeal.appealUuid));
           });
 
