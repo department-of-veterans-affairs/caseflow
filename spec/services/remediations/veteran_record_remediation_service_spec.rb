@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-
-describe Remediations::VeteranRecordRemediationService do
+RSpec.describe Remediations::VeteranRecordRemediationService do
   let(:before_fn) { "12345" }
   let(:after_fn) { "54321" }
   let(:vet_record_service) { described_class.new(before_fn, after_fn) }
@@ -56,7 +55,6 @@ describe Remediations::VeteranRecordRemediationService do
     end
   end
 end
-
 
 # -------------------------
 
