@@ -5,34 +5,25 @@ require_relative "../../../lib/helpers/fix_file_number_wizard"
 class Remediations::VeteranRecordRemediationService
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
-  def initialize(vet_ids)
-    @vet_ids = vet_ids
+  def initialize(before_fn, after_fn)
+    @before_fn = before_fn
+    @after_fn = after_fn
   end
 
   def remediate!
-    # in this method we will implement some logic to find and update records associated
-    # with veterans that have updated file numbers
-    # will check by file number and possibly other
-    updated_veterans.map do |veteran|
-      fix_vet(veteran)
-    end
+    fix_vet_records
   end
 
   private
 
-  def fix_vet(veteran)
-    # fixes file numebr
-    collections = FixfileNumberCollections.get_collections(veteran)
-    update_records!(collections, veteran.file_number)
-  end
-
-  def updated_veterans
-    @vet_ids.map do |id|
-      Veteran.find(id)
-    end
+  def fix_vet_records
+    # fixes file number
+    collections = FixfileNumberCollections.grab_collections(@before_fn)
+    update_records!(collections, @after_fn)
   end
 
   def update_records!(collections, file_number)
+    # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
         collection.update!(file_number)
@@ -40,11 +31,12 @@ class Remediations::VeteranRecordRemediationService
     end
   end
 end
+
 class FixfileNumberCollections
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
-  def self.get_collections(veteran)
+  def self.grab_collections(before_fn)
     ASSOCIATED_OBJECTS.map do |klass|
-      FixFileNumberWizard::Collection.new(klass, veteran.ssn)
+      FixFileNumberWizard::Collection.new(klass, before_fn)
     end
   end
 end
