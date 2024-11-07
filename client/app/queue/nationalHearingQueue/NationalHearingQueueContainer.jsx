@@ -41,24 +41,27 @@ const NationalHearingQueueContainer = () => {
   const generateTabs = () => RECOGNIZED_TABS.map((tabName) => {
     return {
       label: StringUtil.titleCase(tabName),
-      page: <QueueTable
-        // Eventually these columns need to differ between tabs
-        columns={getTableColumns()}
-        rowObjects={[]}
-        getKeyForRow={(row, object) => object.task_id}
-        enablePagination
-        // onHistoryUpdate={this.props.onHistoryUpdate}
-        // preserveFilter={this.props.preserveQueueFilter}
-        rowClassNames={() => 'borderless'}
-        taskPagesApiEndpoint={`/national_hearing_queue?tab=${tabName}`}
-        useTaskPagesApi
-        tabPaginationOptions={{}}
+      page: <>
+        <div>All cases owned by the National Hearings Scheduling team.</div>
+        <QueueTable
+          // Eventually these columns need to differ between tabs
+          columns={getTableColumns()}
+          rowObjects={[]}
+          getKeyForRow={(row, object) => object.task_id}
+          enablePagination
+          // onHistoryUpdate={this.props.onHistoryUpdate}
+          // preserveFilter={this.props.preserveQueueFilter}
+          rowClassNames={() => 'borderless'}
+          taskPagesApiEndpoint={`/national_hearing_queue?tab=${tabName}`}
+          useTaskPagesApi
+          tabPaginationOptions={{}}
 
-        // These are new and I don't know what they're for yet
-        // useReduxCache={this.props.useReduxCache}
-        // reduxCache={this.props.queueTableResponseCache}
-        // updateReduxCache={this.props.updateQueueTableCache}
-      />
+          // These are new and I don't know what they're for yet
+          // useReduxCache={this.props.useReduxCache}
+          // reduxCache={this.props.queueTableResponseCache}
+          // updateReduxCache={this.props.updateQueueTableCache}
+        />
+      </>
     };
   });
 
