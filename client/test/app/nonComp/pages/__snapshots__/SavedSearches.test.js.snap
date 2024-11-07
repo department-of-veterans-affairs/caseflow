@@ -73,11 +73,9 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
             >
               <div>
                 <span>
-                  
                   <span>
                     My saved searches
                   </span>
-                  
                 </span>
               </div>
             </button>
@@ -92,11 +90,9 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
             >
               <div>
                 <span>
-                  
                   <span>
                     All saved searches
                   </span>
-                  
                 </span>
               </div>
             </button>
@@ -112,6 +108,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
             >
               <div
                 class="cf-table-wrapper"
+                data-testid="queue-table-data-testid"
               >
                 <div
                   class="cf-pagination"
@@ -183,6 +180,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                   fill-rule="nonzero"
                                 >
                                   <g
+                                    data-testid="topColorGroup"
                                     fill="#d6d7d9"
                                     transform="translate(2.000000, 1.000000)"
                                   >
@@ -195,6 +193,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                     </g>
                                   </g>
                                   <g
+                                    data-testid="bottomColorGroup"
                                     fill="#d6d7d9"
                                     transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                                   >
@@ -248,6 +247,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                   fill-rule="nonzero"
                                 >
                                   <g
+                                    data-testid="topColorGroup"
                                     fill="#0071bc"
                                     transform="translate(2.000000, 1.000000)"
                                   >
@@ -260,6 +260,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                     </g>
                                   </g>
                                   <g
+                                    data-testid="bottomColorGroup"
                                     fill="#d6d7d9"
                                     transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                                   >
@@ -312,6 +313,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                   fill-rule="nonzero"
                                 >
                                   <g
+                                    data-testid="topColorGroup"
                                     fill="#d6d7d9"
                                     transform="translate(2.000000, 1.000000)"
                                   >
@@ -324,6 +326,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                                     </g>
                                   </g>
                                   <g
+                                    data-testid="bottomColorGroup"
                                     fill="#d6d7d9"
                                     transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                                   >
