@@ -5,6 +5,7 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import StringUtil from '../../util/StringUtil';
 
 import QueueTable from '../QueueTable';
+import SchedulableBadge from '../../components/badges/SchedulableBadge/SchedulableBadge';
 import TabWindow from '../../components/TabWindow';
 
 const NationalHearingQueueContainer = () => {
@@ -14,7 +15,11 @@ const NationalHearingQueueContainer = () => {
     {
       header: 'Priority Number',
       align: 'left',
-      valueFunction: (row) => row.priorityQueueNumber
+      valueFunction: (row) => <>
+        {row.priorityQueueNumber} {row.schedulable && (
+          <><br /><SchedulableBadge taskId={row.taskId} /></>
+        )}
+      </>
     },
     {
       header: 'Appeal ID',

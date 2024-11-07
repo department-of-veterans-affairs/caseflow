@@ -171,7 +171,8 @@ const taskAttributesFromRawTask = (task) => {
     veteranParticipantId: task.attributes.veteran_participant_id,
     veteranSSN: task.attributes.veteran_ssn,
     appeal_receipt_date: task.attributes.appeal_receipt_date,
-    priorityQueueNumber: task.attributes.priority_queue_number
+    priorityQueueNumber: task.attributes.priority_queue_number,
+    schedulable: task.attributes.schedulable
   };
 };
 
