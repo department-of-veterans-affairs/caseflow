@@ -6,5 +6,6 @@ class RequestIssuesCompleteEvent
     @parser = parser
     @review = review
     @epe = epe
+    @user = user
   end
 end
