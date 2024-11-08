@@ -110,7 +110,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      setProgressBarOptions={this.updateProgressBarOptions}
+      progressBarOptions={this.updateProgressBarOptions}
       featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
@@ -156,7 +156,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      setProgressBarOptions={this.updateProgressBarOptions}
+      progressBarOptions={this.updateProgressBarOptions}
       featureToggles={this.props.featureToggles}>
       <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}

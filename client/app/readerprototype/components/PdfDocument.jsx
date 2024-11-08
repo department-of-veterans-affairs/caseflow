@@ -220,10 +220,8 @@ const PdfDocument = ({
   }, [doc.id]);
 
   useEffect(() => {
-
     return () => {
       if (requestRef.current) {
-
         requestRef.current.abort();
         showProgressBarRef.current = false;
       }

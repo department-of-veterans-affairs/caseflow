@@ -170,16 +170,13 @@ const httpMethods = {
     if (typeof options.onProgress === 'function') {
       promise.on('progress', (event) => {
         const loaded = event.loaded;
-
         options.onProgress({ loaded });
       });
     }
 
     if (typeof options.cancellableRequest === 'function') {
       const pendingRequest = promise;
-
       options.cancellableRequest({ request: pendingRequest });
-
     }
 
     if (options.responseType) {

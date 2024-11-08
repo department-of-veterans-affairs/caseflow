@@ -199,7 +199,6 @@ describe('ApiUtil', () => {
         onProgress: onProgressMock,
         responseType: 'arraybuffer'
       };
-
       const req = ApiUtil.get('/foo', options);
 
       // Simulate 2 progress events
@@ -214,7 +213,6 @@ describe('ApiUtil', () => {
 
     test('does not set up progress handler when onProgress is not provided', () => {
       const req = ApiUtil.get('/foo');
-
       const progressCall = req.on.mock.calls.find(call => call[0] === 'progress');
       expect(progressCall).toBeUndefined();
     });
@@ -225,7 +223,6 @@ describe('ApiUtil', () => {
       };
 
       const req = ApiUtil.get('/foo', options);
-
       expect(req.responseType).toHaveBeenCalledWith('arraybuffer');
     });
   });

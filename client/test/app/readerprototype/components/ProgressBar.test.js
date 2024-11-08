@@ -28,22 +28,22 @@ describe('tests for ProgressBar component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly', () => {
+  test('renders correctly', () => {
     const { container } = render(<ProgressBar {...progressProps} />);
     expect(container).toMatchSnapshot();
   });
 
-  it('displays percentage', () => {
+  test('displays percentage', () => {
     const { getByText } = render(<ProgressBar {...progressProps} />);
     expect(getByText('50% downloaded')).toBeInTheDocument();
   });
 
-  it('displays loaded and total bytes', () => {
+  test('displays loaded and total bytes', () => {
     const { getByText } = render(<ProgressBar {...progressProps} />);
     expect(getByText('100 MB of 200 MB')).toBeInTheDocument();
   });
 
-  it('calls handleCancelRequest on click of cancel button', () => {
+  test('calls handleCancelRequest on click of cancel button', () => {
     const { getByText } = render(<ProgressBar {...progressProps} />);
     const cancelButton = getByText('Cancel');
     fireEvent.click(cancelButton);
@@ -89,17 +89,17 @@ describe('tests for ProgressBar integration with PdfDocument', () => {
     }
   );
 
-  it('renders', async () => {
+  test('renders', async () => {
     const { container } = await get.render();
     expect(container).toMatchSnapshot();
   });
 
-  it('hides progress bar after document loads', async () => {
+  test('hides progress bar after document loads', async () => {
     const { queryByText } = await get.render();
     await waitFor(() => expect(queryByText('Downloading document...')).not.toBeInTheDocument());
   });
 
-  it('renders document', async () => {
+  test('renders document', async () => {
     const { container } = await get.render();
     await waitFor(() => expect(container).toMatchSnapshot());
   });

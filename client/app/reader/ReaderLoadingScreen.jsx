@@ -28,7 +28,7 @@ export class ReaderLoadingScreen extends React.Component {
         const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt, progressBarOptions } = returnedObject;
 
         if (this.props.featureToggles.readerProgressBar) {
-          this.props.setProgressBarOptions(progressBarOptions);
+          this.props.progressBarOptions(progressBarOptions);
         }
 
         this.props.onReceiveDocs(documents, this.props.vacolsId);
@@ -73,7 +73,7 @@ ReaderLoadingScreen.propTypes = {
   onReceiveManifests: PropTypes.func,
   vacolsId: PropTypes.string,
   featureToggles: PropTypes.object,
-  setProgressBarOptions: PropTypes.func,
+  progressBarOptions: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
