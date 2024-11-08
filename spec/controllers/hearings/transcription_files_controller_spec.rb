@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Hearings::TranscriptionFilesController do
+RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
   describe "GET download_transcription_file" do
     let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
 
@@ -48,9 +48,14 @@ RSpec.describe Hearings::TranscriptionFilesController do
     let!(:hearing_1) { create(:hearing, appeal: appeal_1, hearing_day: hearing_day_1) }
     let!(:hearing_2) { create(:hearing, appeal: appeal_2, hearing_day: hearing_day_2) }
     let!(:hearing_3) { create(:hearing, appeal: appeal_3, hearing_day: hearing_day_3) }
+
     let!(:legacy_hearing_1) { create(:legacy_hearing, hearing_day: hearing_day_4) }
 
     let!(:advance_on_docket_motion_1) { create(:advance_on_docket_motion, granted: true, appeal: hearing_2.appeal) }
+
+    let!(:transcription_package_1) { create(:transcription_package, task_number: "BVA2025001") }
+
+    let!(:transcription_1) { create(:transcription, task_number: "BVA2025001") }
 
     let!(:transcription_file_1) { create(:transcription_file, hearing: hearing_1, file_status: file_status_uploaded) }
     let!(:transcription_file_2) { create(:transcription_file, hearing: hearing_2, file_status: file_status_uploaded) }
@@ -62,7 +67,17 @@ RSpec.describe Hearings::TranscriptionFilesController do
         docket_number: "search-test"
       )
     end
-    let!(:transcription_file_4) { create(:transcription_file, hearing: hearing_3, file_status: file_status_retrieval) }
+
+    let!(:transcription_file_4) do
+      create(
+        :transcription_file,
+        hearing: hearing_3,
+        file_status: file_status_retrieval,
+        transcription_id: transcription_1.id,
+        date_returned_box: Time.zone.now + 16.days,
+        date_upload_box: Time.zone.now + 12.days
+      )
+    end
 
     let(:transcription_response_1) do
       {
@@ -74,7 +89,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_1.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: transcription_file_1.file_status
       }
     end
 
@@ -88,7 +103,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_2.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_2.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: transcription_file_2.file_status
       }
     end
 
@@ -103,7 +118,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: legacy_hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_3.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: transcription_file_3.file_status
       }
     end
 
@@ -118,7 +133,45 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
-        fileStatus: file_status_retrieval
+        fileStatus: transcription_file_4.file_status
+      }
+    end
+
+    let(:transcription_response_4_completed) do
+      {
+        id: transcription_file_4.id,
+        externalAppealId: appeal_3.uuid,
+        docketNumber: transcription_file_4.docket_number,
+        caseDetails: "#{transcription_file_4.hearing.appeal.appellant_or_veteran_name} " \
+          "(#{transcription_file_4.hearing.appeal.veteran_file_number})",
+        isAdvancedOnDocket: false,
+        caseType: "Original",
+        hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
+        hearingType: transcription_file_4.hearing_type,
+        fileStatus: transcription_file_4.file_status,
+        workOrder: transcription_1.task_number,
+        expectedReturnDate: transcription_package_1.expected_return_date.to_formatted_s(:short_date),
+        returnDate: transcription_file_4.date_returned_box.to_formatted_s(:short_date),
+        contractor: transcription_package_1.contractor.name
+      }
+    end
+
+    let(:transcription_response_4_all) do
+      {
+        id: transcription_file_4.id,
+        externalAppealId: appeal_3.uuid,
+        docketNumber: transcription_file_4.docket_number,
+        caseDetails: "#{transcription_file_4.hearing.appeal.appellant_or_veteran_name} " \
+          "(#{transcription_file_4.hearing.appeal.veteran_file_number})",
+        isAdvancedOnDocket: false,
+        caseType: "Original",
+        hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
+        hearingType: transcription_file_4.hearing_type,
+        fileStatus: transcription_file_4.file_status,
+        workOrder: transcription_1.task_number,
+        uploadDate: transcription_file_4.date_upload_box.to_formatted_s(:short_date),
+        returnDate: transcription_file_4.date_returned_box.to_formatted_s(:short_date),
+        contractor: transcription_package_1.contractor.name
       }
     end
 
@@ -154,7 +207,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
       expect(response.body).to eq(expected_response)
     end
 
-    it "filters by tab" do
+    it "filters by unassigned tab" do
       get :transcription_file_tasks, params: { tab: "Unassigned" }
 
       expected_response = {
@@ -164,6 +217,38 @@ RSpec.describe Hearings::TranscriptionFilesController do
         },
         tasks_per_page: 15,
         total_task_count: 3
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by completed tab and adds extra fields" do
+      get :transcription_file_tasks, params: { tab: "Completed" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_4_completed]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by all files tab and adds extra fields" do
+      get :transcription_file_tasks, params: { page_size: 1, tab: "All" }
+
+      expected_response = {
+        task_page_count: 4,
+        tasks: {
+          data: [transcription_response_4_all]
+        },
+        tasks_per_page: 1,
+        total_task_count: 4
       }.to_json
 
       expect(response.status).to eq(200)
@@ -187,11 +272,6 @@ RSpec.describe Hearings::TranscriptionFilesController do
       expect(response.status).to eq(200)
       expect(response.body).to eq(expected_response)
     end
-
-    # 4 = 06/30/2007
-    # 3 = 01/17/2024
-    # 2 = 05/14/2020
-    # 1 = 01/19/2014
 
     it "filters by hearing dates between dates" do
       filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "between,2000-01-01,2015-12-31" })
@@ -295,6 +375,24 @@ RSpec.describe Hearings::TranscriptionFilesController do
         },
         tasks_per_page: 15,
         total_task_count: 3
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by status" do
+      filter = Rack::Utils.build_query({ col: "statusColumn", val: file_status_retrieval })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_4]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
       }.to_json
 
       expect(response.status).to eq(200)
