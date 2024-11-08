@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< Updated upstream
 ActiveRecord::Schema.define(version: 2024_11_04_151218) do
-=======
-ActiveRecord::Schema.define(version: 2024_11_04_122031) do
->>>>>>> Stashed changes
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2155,8 +2151,6 @@ ActiveRecord::Schema.define(version: 2024_11_04_122031) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-<<<<<<< Updated upstream
-=======
   create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
@@ -2197,7 +2191,6 @@ ActiveRecord::Schema.define(version: 2024_11_04_122031) do
     t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
->>>>>>> Stashed changes
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2526,8 +2519,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_122031) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
           CASE
               WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
@@ -2576,8 +2572,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_122031) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
       true AS schedulable
      FROM ((((((legacy_appeals
