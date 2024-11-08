@@ -71,7 +71,7 @@ const AddTaskModalCorrespondenceDetails = ({
       return 'Loading...';
     }
 
-    return isSecondPage ? 'Submit' : 'Next';
+    return isSecondPage ? 'Add task' : 'Next';
   };
 
   const allClearAndClose = () => {

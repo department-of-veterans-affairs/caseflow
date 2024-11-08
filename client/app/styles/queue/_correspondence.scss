@@ -513,6 +513,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   min-width: 750px;
 }
 
+.cf-modal-body {
+  color: $color-black;
+}
+
 .checkbox-modal-size {
   display: flex;
   flex-direction: column;
