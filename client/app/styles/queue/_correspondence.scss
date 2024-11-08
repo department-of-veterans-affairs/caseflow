@@ -514,6 +514,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   min-width: 750px;
 }
 
+.cf-modal-body {
+  color: $color-black;
+}
+
 .checkbox-modal-size {
   display: flex;
   flex-direction: column;
@@ -534,12 +538,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   max-height: 60vh;
   padding: 0;
   width: 105%;
-  margin-bottom: 10px;
+  margin-bottom: -15px;
 
-  .cf-form-checkboxes{
+  .cf-form-checkboxes {
     margin-bottom: 0rem;
     margin-top: 1rem;
+  }
 
+  .cf-form-checkbox {
+    padding-top: 5px;
   }
 }
 
@@ -1640,6 +1647,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-details-alert-banner {
   padding-right: 30px;
 }
+.correspondence-details-alert-banner-inner {
+
+  .usa-alert-text {
+    line-height: 0.8 !important
+  }
+
+}
 
 .tasks-added-container {
   border: 1px solid $color-cream;
@@ -1775,7 +1789,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .grayLineStyling {
   width: 5px;
-  background: $color-gray;
+  background: $color-gray-lighter;
   margin: auto;
   position: absolute;
   top: 30px;
@@ -1865,8 +1879,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .task-selection-title {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    color: $color-black;
+    margin-bottom: 0.6rem;
   }
 
   .add-task-dropdown-style {
@@ -1907,10 +1921,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 
 .add-task-dropdown-style {
+
   /* Override the control (outer container) for the select dropdown */
   .react-select__control {
     border-color: black !important;
     border-radius: 0 !important; /* Make the borders 90 degrees */
+    height: 50px !important; /* Set the height of the select component to 50px */
+    display: flex;
+    align-items: center; /* Vertically center content in the control */
     &:hover {
       border-color: black !important; /* Black border on hover */
     }
@@ -1923,19 +1941,27 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   /* Set the color for each option */
   .react-select__option {
-    color: black !important; /* Make the text of each option black */
+    color: $color-black !important; /* Make the text of each option black */
   }
 
   /* Style the indicator separator */
   .react-select__indicator-separator {
     background-color: black !important;
     width: 1px !important;
-    padding-bottom: 10px;
+    margin: 0 6px; /* Keep consistent spacing around separator */
+    height: 48px;
   }
 
   /* Style the dropdown indicator (arrow) */
   .react-select__dropdown-indicator {
     color: black !important; /* Make the arrow black */
+    padding-right: 15px;
+    padding-bottom: 12px;
+    display: flex;
+    justify-content: center; /* Center the arrow horizontally */
+    align-items: center; /* Center the arrow vertically */
+    font-size: 5rem !important; /* Increase the size of the dropdown indicator */
+    font: bold;
     &:hover {
       color: black !important; /* Keep arrow black on hover */
     }
@@ -1945,6 +1971,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .react-select__option--is-focused {
     background-color: $color-gray-darker !important; /* Dark gray background on hover */
     color: white !important; /* White text on hover */
+  }
+
+  .react-select__option--is-selected {
+    background-color: $color-gray-darker;
+    color: white !important; /* White text on hover */
+  }
+
+  /* Set the value container (where selected option text is displayed) */
+  .react-select__value-container {
+    padding: 0 8px; /* Add padding to keep the text aligned */
+    line-height: 50px; /* Adjust line-height for vertical centering within the 50px height */
+    position: unset;
   }
 }
 
