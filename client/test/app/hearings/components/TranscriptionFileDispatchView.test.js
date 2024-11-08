@@ -93,6 +93,17 @@ const mockCompletedTranscriptionFilesResponse = {
   },
 };
 
+const mockSearchResponse = {
+  body: {
+    task_page_count: 1,
+    tasks: {
+      data: [],
+    },
+    tasks_per_page: 2,
+    total_task_count: 33,
+  },
+};
+
 const mockLockedResponse = {
   body: [
     {
@@ -146,11 +157,36 @@ describe('TranscriptionFileDispatch', () => {
         '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
       ).
       mockResolvedValue(mockCompletedTranscriptionFilesResponse);
+
     when(ApiUtil.get).
       calledWith(
         '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
       ).
       mockResolvedValue(mockCompletedTranscriptionFilesResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&search=unassigned&page=1'
+      ).
+      mockResolvedValue(mockSearchResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_packages/transcription_package_tasks?tab=Assigned&search=assigned&page=1'
+      ).
+      mockResolvedValue(mockSearchResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=Completed&search=completed&page=1'
+      ).
+      mockResolvedValue(mockSearchResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&search=all&page=1'
+      ).
+      mockResolvedValue(mockSearchResponse);
   });
 
   afterEach(() => {
@@ -266,4 +302,105 @@ describe('TranscriptionFileDispatch', () => {
 
     expect(results).toHaveNoViolations();
   });
+
+  it('allows search from the unassigned tab', async () => {
+    const { container } = setup();
+
+    const tabs = container.querySelectorAll('.cf-tab');
+
+    // click to open tab
+    userEvent.click(tabs[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText(
+        'Search by Docket Number, Claimant Name or File Number')).toBeInTheDocument();
+
+      const search = container.querySelector('.cf-search-input-with-close');
+
+      userEvent.type(search, 'unassigned{enter}');
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getAllByText('Viewing 1-0 of 33 total')[0]
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('allows search from the assigned tab', async () => {
+    const { container } = setup();
+
+    const tabs = container.querySelectorAll('.cf-tab');
+
+    // click to open tab
+    userEvent.click(tabs[1]);
+
+    await waitFor(() => {
+      expect(screen.getByText(
+        'Search by Work Order, Claimant Name, Docket Number and File Number')).toBeInTheDocument();
+
+      const search = container.querySelector('.cf-search-input-with-close');
+
+      userEvent.type(search, 'assigned{enter}');
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getAllByText('Viewing 1-0 of 33 total')[0]
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('allows search from the completed tab', async () => {
+    const { container } = setup();
+
+    const tabs = container.querySelectorAll('.cf-tab');
+
+    // click to open tab
+    userEvent.click(tabs[2]);
+
+    await waitFor(() => {
+      expect(screen.getByText(
+        'Search by Work Order or Docket Number')).toBeInTheDocument();
+
+      const search = container.querySelector('.cf-search-input-with-close');
+
+      userEvent.type(search, 'completed{enter}');
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getAllByText('Viewing 1-0 of 33 total')[0]
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('allows search from the all tab', async () => {
+    const { container } = setup();
+
+    const tabs = container.querySelectorAll('.cf-tab');
+
+    // click to open tab
+    userEvent.click(tabs[3]);
+
+    await waitFor(() => {
+
+      expect(screen.getByText(
+        'All transcription owned by the Transcription team:')).toBeInTheDocument();
+
+      expect(screen.getByText(
+        'Search by Work Order or Docket Number')).toBeInTheDocument();
+
+      const search = container.querySelector('.cf-search-input-with-close');
+
+      userEvent.type(search, 'all{enter}');
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getAllByText('Viewing 1-0 of 33 total')[0]
+      ).toBeInTheDocument()
+    );
+  });
+
 });

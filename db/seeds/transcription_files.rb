@@ -10,18 +10,21 @@ module Seeds
           hearingType: 'LegacyHearing',
           fileType: 'vtt',
           fileName: 'transcript.vtt'
-        },
-        {
+        },{
+          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
+          hearingType: 'Hearing',
+          fileType: 'rtf',
+          fileName: 'transcript.csv'
+        },{
+          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
+          hearingType: 'LegacyHearing',
+          fileType: 'csv',
+          fileName: 'transcript.csv'
+        },{
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
           hearingType: 'Hearing',
           fileType: 'rtf',
           fileName: 'transcript.rtf'
-        },
-        {
-          fileStatus: 'conversion_success',
-          hearingType: 'Hearing',
-          fileType: 'csv',
-          fileName: 'transcript.csv'
         },
       ]
 
