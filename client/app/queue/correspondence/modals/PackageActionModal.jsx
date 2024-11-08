@@ -93,24 +93,7 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
-    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
-      data.instructions.push(textInputReason);
-    }
-
-    if (radioValue && radioValue !== 'Other') {
-      data.instructions.push(radioValue);
-    }
-
-    if (
-      (isOtherOption ||
-        packageActionModal === 'removePackage' ||
-        packageActionModal === 'reassignPackage' ||
-        packageActionModal === 'splitPackage') &&
-      textInputReason !== ''
-    ) {
-      data.instructions.push(textInputReason);
-    }
-
+    // Add textInputReason if necessary for certain actions
     if (
       (packageActionModal === 'removePackage' ||
         packageActionModal === 'reassignPackage' ||
@@ -120,20 +103,30 @@ const PackageActionModal = (props) => {
       data.instructions.push(textInputReason);
     }
 
-    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
-      props.closeHandler(null);
-      if (response.ok) {
-        if (packageActionModal === 'removePackage') {
-          props.setTaskInstructions(textInputReason);
-        }
-        props.updateLastAction(packageActionModal);
-        history.replace('/queue/correspondence/');
-      }
+    if (radioValue && radioValue !== 'Other') {
+      data.instructions.push(radioValue);
     }
-    ).
-      catch(() => {
+
+    // Add textInputReason if isOtherOption is true
+    if (isOtherOption && textInputReason !== '' && !data.instructions.includes(textInputReason)) {
+      data.instructions.push(textInputReason);
+    }
+
+    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data })
+      .then((response) => {
+        props.closeHandler(null);
+        if (response.ok) {
+          if (packageActionModal === 'removePackage') {
+            props.setTaskInstructions(textInputReason);
+          }
+          props.updateLastAction(packageActionModal);
+          history.replace('/queue/correspondence/');
+        }
+      })
+      .catch(() => {
         console.error('Review Package Action already exists');
       });
+
     setTextInputReason('');
   };
 
