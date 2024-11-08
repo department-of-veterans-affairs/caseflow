@@ -176,6 +176,5 @@ Rails.application.configure do
   ENV["STATSD_ENV"] = "test"
 
   config.sqs_create_queues = true
-  # config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'
-  config.sqs_endpoint = 'http://localhost:4566'
+  config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'
 end
