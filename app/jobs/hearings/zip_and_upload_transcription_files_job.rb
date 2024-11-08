@@ -87,7 +87,7 @@ module Hearings
     end
 
     def create_and_upload_transcription_file(hearing, file_path)
-      Hearings::TranscriptionFile.create!(
+      TranscriptionFile.create!(
         file_name: File.basename(file_path),
         hearing_id: hearing.id,
         hearing_type: hearing.class.name,

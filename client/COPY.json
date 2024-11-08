@@ -1595,7 +1595,7 @@
   "TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_DESCRIPTION": "Hearing audio files owned by the Transcription team that are unassigned to a contractor:",
   "TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH": "Search by Docket Number, Claimant Name or File Number",
   "TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_PROMPT": "Please select the files you would like to dispatch for transcription:",
-  "TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH": "Search by Work Order",
+  "TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH": "Search by Work Order, Claimant Name, Docket Number and File Number",
   "TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_DESCRIPTION": "Work orders owned by the Transcription team that have been sent to a contractor:",
   "TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH": "Search by Work Order or Docket Number",
   "TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_DESCRIPTION": "Work orders owned by the Transcription team that have been returned from a contractor:",

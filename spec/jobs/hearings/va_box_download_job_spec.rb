@@ -36,11 +36,11 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
 
   # # see data setup in Fakes::VaBoxService for expectations
   it "call job to download file and upload to S3 and create/update in transciption_table" do
-    expect(Hearings::TranscriptionFile.count).to eq 0
+    expect(TranscriptionFile.count).to eq 0
 
     subject
 
-    expect(Hearings::TranscriptionFile.count).to eq file_info.count
+    expect(TranscriptionFile.count).to eq file_info.count
     expect(hearing.transcription_files.count).to eq 1
 
     # TODO: Add similar tests for the legacy hearing
