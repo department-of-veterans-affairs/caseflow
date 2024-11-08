@@ -38,6 +38,8 @@ describe "SyncDecidedAppealsHelper" do
       expect(decided_appeal_state.reload.decision_mailed).to eq true
       expect(undecided_appeal_state.reload.decision_mailed).to eq false
       expect(missing_vacols_case_appeal_state.reload.decision_mailed).to eq false
+
+      clean_up_after_threads
     end
 
     it "catches standard errors", bypass_cleaner: true do
@@ -51,10 +53,9 @@ describe "SyncDecidedAppealsHelper" do
       expect(Rails.logger).to receive(:error)
 
       expect { subject.sync_decided_appeals }.to raise_error(StandardError)
-    end
 
-    # Clean up parallel threads
-    after(:each) { clean_up_after_threads }
+      clean_up_after_threads
+    end
 
     # VACOLS record's decision date will be set to simulate a decided appeal
     # decision_mailed will be set to false for the AppealState to verify the method
