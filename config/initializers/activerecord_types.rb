@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Rails.application.config.to_prepare do
+Rails.application.config.before_initialize do
   # Custom column types, particularly for VACOLS
 
   class AsciiString < ActiveRecord::Type::Text
