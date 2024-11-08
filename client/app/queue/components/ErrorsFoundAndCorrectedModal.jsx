@@ -5,8 +5,20 @@ import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import FileUpload from '../../components/FileUpload';
 import TextareaField from '../../components/TextareaField';
+import COPY from '../../../COPY';
+import { sprintf } from 'sprintf-js';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestPatch } from '../uiReducer/uiActions';
+import { withRouter } from 'react-router-dom';
+import { setAppealAttrs } from '../QueueActions';
 
-const ErrorsFoundAndCorrectedModal = (props) => {
+import {
+  appealWithDetailSelector,
+  taskById
+} from '../selectors';
+
+export const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isAnyFileSelected, setIsAnyFileSelected] = useState(false);
@@ -36,18 +48,39 @@ const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const requestParams = {
-      file_info: {
-        file: selectedFile.file,
-        file_name: selectedFile.fileName
-      },
-      task_info: {
-        instructions: notes,
-        task_id: props.taskId
-      }
+    const { task, appeal } = props;
+
+    const formatInstructions = () => {
+      return [
+        COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+        COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE,
+        notes,
+        selectedFile.fileName
+      ];
+    };
+
+    const requestParams = () => {
+      return {
+        data: {
+          task: {
+            instructions: formatInstructions()
+          },
+          file_info: {
+            file: selectedFile.file,
+            file_name: selectedFile.fileName
+          },
+        }
+      };
+    };
+
+    const successMsg = {
+      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
     };
 
     // setLoading(true);
+
+    return props.requestPatch(`/tasks/${task.taskId}
+      /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
   };
 
   const handleFileChange = (file) => {
@@ -114,8 +147,31 @@ const ErrorsFoundAndCorrectedModal = (props) => {
 
 ErrorsFoundAndCorrectedModal.propTypes = {
   closeModal: PropTypes.func,
-  taskId: PropTypes.string
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+    type: PropTypes.string,
+  }),
+  requestPatch: PropTypes.func,
+  appeal: PropTypes.shape({
+    veteranFullName: PropTypes.string
+  }),
+  appealId: PropTypes.string,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
 };
 
-export default ErrorsFoundAndCorrectedModal;
+const mapStateToProps = (state, ownProps) => ({
+  error: state.ui.messages.error,
+  appeal: appealWithDetailSelector(state, ownProps),
+  task: taskById(state, { taskId: ownProps.taskId })
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestPatch,
+  setAppealAttrs
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ErrorsFoundAndCorrectedModal));
 

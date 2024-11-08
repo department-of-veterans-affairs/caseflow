@@ -203,6 +203,8 @@ class TasksController < ApplicationController
     )
   end
 
+  def error_found_upload_transcription_to_vbms; end
+
   private
 
   def send_initial_notification_letter

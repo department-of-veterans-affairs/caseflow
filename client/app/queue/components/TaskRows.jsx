@@ -301,7 +301,6 @@ class TaskRows extends React.PureComponent {
     // instructions[0] - task details text
     // instructions[1] - task action chosen by user
     // instructions[2] - task notes from user
-
     const divStyle = { marginTop: '1rem' };
 
     return (
@@ -315,6 +314,12 @@ class TaskRows extends React.PureComponent {
         <hr></hr>
         <div style={{ ...divStyle, marginBottom: '1rem' }}>
           <b>{instructions[1]}</b>
+          { instructions.size === 4 &&
+            <div>
+              <small>SELECTED FILE</small>
+              <p>{instructions[3]}</p>
+            </div>
+          }
         </div>
         <div style={divStyle}>
           <small>DETAILS</small>
