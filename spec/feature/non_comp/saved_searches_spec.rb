@@ -5,6 +5,8 @@ feature "Saved Searches", :postgres do
   let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
   let(:vha_saved_searches_url) { "/decision_reviews/vha/searches" }
 
+  let(:vha_decision_review_url) { "/decision_reviews/vha/report" }
+
   before do
     User.stub = user
     non_comp_org.add_user(user)
@@ -20,6 +22,72 @@ feature "Saved Searches", :postgres do
       click_link "Back to Generate task report"
       expect(current_url).to include("/decision_reviews/vha/report")
       expect(current_url).not_to include("searches")
+    end
+  end
+
+  context "admin user should be able to save search" do
+    before do
+      User.stub = user
+      non_comp_org.add_user(user)
+      OrganizationsUser.make_user_admin(user, non_comp_org)
+      visit vha_decision_review_url
+    end
+
+    it "should be able to  save user searches" do
+      step "open Save search modal" do
+        expect(page).to have_button("Save search", disabled: true)
+        click_dropdown(text: "Status")
+
+        expect(page).to have_button("Save search")
+
+        click_button "Save search"
+
+        expect(page).to have_text("Save your search")
+        expect(page).to have_text("Search Parameters")
+      end
+
+      step "fill required field" do
+        expect(page).to have_button("Save search", disabled: true)
+
+        fill_in "Name this search (Max 50 characters)", with: "My first Search"
+        expect(page).to have_button("Save search", disabled: false)
+      end
+
+      step "fill description field and click save search" do
+        fill_in "Description of search (Max 100 characters)", with: "This is the search description"
+
+        within ".cf-modal-body" do
+          click_button "Save search"
+        end
+      end
+
+      step "verify success alert" do
+        expect(current_url).to include("/decision_reviews/vha/report")
+        expect(page).to have_text("My first Search has been saved.")
+        expect(page).to have_text("To view your saved searches, click on the \"View saved searches\" button.")
+      end
+    end
+  end
+
+  context "admin user should see limited reach modal if user saved search is 10 or more" do
+    before do
+      User.stub = user
+      non_comp_org.add_user(user)
+      OrganizationsUser.make_user_admin(user, non_comp_org)
+      user_searches
+      visit vha_decision_review_url
+    end
+    let(:user_searches) { create_list(:saved_search, 10, user: user) }
+
+    it "should navigate to Limit Reached Modal" do
+      click_dropdown(text: "Status")
+
+      expect(page).to have_button("Save search")
+
+      click_button "Save search"
+
+      expect(page).to have_content(COPY::SAVE_LIMIT_REACH_TITLE)
+      expect(page).to have_content(COPY::SAVE_LIMIT_REACH_MESSAGE)
     end
   end
 end

@@ -7,7 +7,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 import Alert from 'app/components/Alert';
-import ErrorAlert from 'app/intake/components/ErrorAlert';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';

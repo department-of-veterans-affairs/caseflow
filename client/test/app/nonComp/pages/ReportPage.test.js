@@ -571,5 +571,35 @@ describe('ReportPage', () => {
         expect(screen.getByText(COPY.SAVE_LIMIT_REACH_MESSAGE)).toBeTruthy();
       });
     });
+
+    describe('Alert message', () => {
+      it('should display a successful Alert banner', async() => {
+        setup(
+          {
+            nonComp: { businessLineUrl: 'vha' },
+            savedSearch: {
+              message: 'First Search has been saved.',
+              status: 'succeeded',
+              fetchedSearches: savedSearchesData.savedSearches.fetchedSearches,
+            }
+          });
+
+        expect(screen.getByText('First Search has been saved.')).toBeTruthy();
+      });
+
+      it('should display a Something is wrong message when error', async() => {
+        setup(
+          {
+            nonComp: { businessLineUrl: 'vha' },
+            savedSearch: {
+              message: 'First Search has been saved.',
+              status: 'failed',
+              fetchedSearches: savedSearchesData.savedSearches.fetchedSearches,
+            }
+          });
+
+        expect(screen.getByText('Something went wrong')).toBeTruthy();
+      });
+    });
   });
 });
