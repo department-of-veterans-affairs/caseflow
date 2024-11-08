@@ -22,11 +22,11 @@ export const SaveLimitReachedModal = (props) => {
           name: 'Cancel',
           onClick: handleCancel
         },
-        { classNames: ['usa-button'],
+        { classNames: ['usa-button', 'cf_add_margin'],
           name: 'Delete',
           onClick: submitForm
         },
-        { classNames: ['usa-button', 'usa-button-secondary', 'cf_add_margin'],
+        { classNames: ['usa-button', 'usa-button-secondary'],
           name: 'View saved searches',
           onClick: submitForm
         }
