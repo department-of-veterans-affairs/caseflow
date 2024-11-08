@@ -88,12 +88,12 @@ export const DetailsHeader = (
 
   return (
     <React.Fragment>
-      <div {...headerContainerStyling}>
+      <div {...headerContainerStyling} data-testid="details-header">
         <h1 className="cf-margin-bottom-0" {...headerStyling}>
           {`${veteranFirstName} ${veteranLastName}'s Hearing Details`}
         </h1>
         <div>
-          Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />
+          Veteran ID: <CopyTextButton text={veteranFileNumber} textToCopy={veteranFileNumber} label="Veteran ID" />
         </div>
         <div style={{ display: 'inline-flex' }}>
           <MstBadge appeal={hearing} />

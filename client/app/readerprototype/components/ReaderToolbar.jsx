@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-
 import Button from '../../components/Button';
 import Link from '../../components/Link';
 import { DownloadIcon } from '../../components/icons/DownloadIcon';
@@ -10,8 +9,7 @@ import { LeftChevronIcon } from '../../components/icons/LeftChevronIcon';
 import { RotateIcon } from '../../components/icons/RotateIcon';
 import { SearchIcon } from '../../components/icons/SearchIcon';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
-
-import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
+import { CATEGORIES } from '../util/readerConstants';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -40,6 +38,15 @@ const ReaderToolbar = ({
       return;
     }
     toggleSearchBar(true);
+  };
+
+  const handleClickDocumentTypeLink = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
+  };
+
+  const openDownloadLink = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+    window.open(`${doc.content_url}?type=${doc.type}&download=true`);
   };
 
   return (
@@ -81,7 +88,7 @@ const ReaderToolbar = ({
         <Button
           name="zoomOut"
           classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => setZoomOutLevel()}
+          onClick={setZoomOutLevel}
           disabled={disableZoomOut}
           ariaLabel="zoom out"
         >
@@ -90,7 +97,7 @@ const ReaderToolbar = ({
         <Button
           name="zoomIn"
           classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => setZoomInLevel()}
+          onClick={setZoomInLevel}
           disabled={disableZoomIn}
           ariaLabel="zoom in"
         >
@@ -99,7 +106,7 @@ const ReaderToolbar = ({
         <Button
           name="zoomReset"
           classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => resetZoomLevel()}
+          onClick={resetZoomLevel}
           ariaLabel="fit to screen"
         >
           <FitToScreenIcon />
@@ -107,7 +114,7 @@ const ReaderToolbar = ({
         <Button
           name="rotation"
           classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => rotateDocument()}
+          onClick={rotateDocument}
           ariaLabel="rotate document"
         >
           <RotateIcon />
@@ -131,14 +138,14 @@ const ReaderToolbar = ({
           <SearchIcon />
         </Button>
         {!showSideBar &&
-          (<span>
+          <span>
             <Button
               name="open sidebar menu"
               classNames={['cf-pdf-button']}
-              onClick={() => toggleSideBar()}>
+              onClick={toggleSideBar}>
               <strong> Open menu </strong>
             </Button>
-          </span>)
+          </span>
         }
       </div>
     </div>
