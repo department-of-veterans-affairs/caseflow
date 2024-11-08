@@ -85,11 +85,6 @@ class RequestIssue < CaseflowRecord
     national_quality_error: "national_quality_error"
   }
 
-  enum disabled_benefit_types: {
-    compensation: "compensation",
-    pension: "pension"
-  }
-
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
@@ -582,8 +577,12 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
+  def disabled_benefit_types
+    Constants::DISABLED_BENEFIT_TYPES
+  end
+
   def benefit_type_disabled?
-    RequestIssue.disabled_benefit_types.value?(benefit_type)
+    disabled_benefit_types.value?(benefit_type)
   end
 
   def sync_decision_issues!
