@@ -74,6 +74,16 @@ const AddTaskModalCorrespondenceDetails = ({
     return isSecondPage ? 'Submit' : 'Next';
   };
 
+  const allClearAndClose = () => {
+    setTaskContent('');
+    setAdditionalContent('');
+    setSelectedTaskType(null);
+    setIsTasksUnrelatedSectionExpanded(true);
+    setIsSecondPage(false);
+    setAutoTextSelections([]);
+    handleClose();
+  };
+
   // Handles toggling of auto-text checkboxes
   const handleToggleCheckbox = (checkboxText) => {
     setAutoTextSelections((prevSelections) => {
@@ -111,13 +121,7 @@ const AddTaskModalCorrespondenceDetails = ({
       await dispatch(addTaskNotRelatedToAppeal(correspondence, newTask));
 
       // Resets fields and state after submission
-      setTaskContent('');
-      setAdditionalContent('');
-      setSelectedTaskType(null);
-      setIsTasksUnrelatedSectionExpanded(true);
-      setIsSecondPage(false);
-      setAutoTextSelections([]);
-      handleClose();
+      allClearAndClose();
     } catch (error) {
       console.error('Error while adding task:', error);
     } finally {
@@ -137,7 +141,7 @@ const AddTaskModalCorrespondenceDetails = ({
     <Modal
       // Dynamic title for each page
       title={isSecondPage ? 'Add autotext to task' : 'Add task to correspondence'}
-      closeHandler={handleClose}
+      closeHandler={allClearAndClose}
       confirmButton={
         <Button
           // "Submit" on second page, "Next" on first page
@@ -150,7 +154,7 @@ const AddTaskModalCorrespondenceDetails = ({
       cancelButton={
         isSecondPage ? (
           <div className="action-buttons">
-            <Button linkStyling onClick={handleClose} disabled={isLoading}>
+            <Button linkStyling onClick={allClearAndClose} disabled={isLoading}>
               Cancel
             </Button>
             <Button classNames={['usa-button-secondary', 'back-button']} onClick={handleBack} disabled={isLoading}>
@@ -158,7 +162,7 @@ const AddTaskModalCorrespondenceDetails = ({
             </Button>
           </div>
         ) : (
-          <Button linkStyling onClick={handleClose} disabled={isLoading}>
+          <Button linkStyling onClick={allClearAndClose} disabled={isLoading}>
             Cancel
           </Button>
         )
