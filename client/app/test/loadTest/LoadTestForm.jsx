@@ -33,7 +33,7 @@ export default function LoadTestForm(props) {
     });
     const payload = JSON.stringify({
       data: {
-        scenarios: [],
+        scenarios: currentState.scenarios,
         user: {
           user: {
             station_id: currentState.user.user.station_id,

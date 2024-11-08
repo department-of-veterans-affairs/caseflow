@@ -6,15 +6,33 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import PropTypes from 'prop-types';
+// import { current } from '@reduxjs/toolkit';
 
 export default function ScenarioConfiguration(props) {
-  const [isChecked, scenarioIsChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
 
-  let scenario = props.scenario;
-  let targetType = props.targetType;
+  const scenario = props.scenario;
+  const targetType = props.targetType;
+  const currentState = props.currentState;
+  const updateState = props.updateState;
 
-  const onChangeHandle = () => {
-    scenarioIsChecked(!isChecked);
+  const handleScenarioSelect = (chosenScenario) => {
+    let updatedSelections = currentState.scenarios;
+
+    if (updatedSelections.find((selection) => selection === chosenScenario)) {
+      updatedSelections.splice(updatedSelections.indexOf(chosenScenario), 1);
+      setChecked(false);
+    } else {
+      updatedSelections.push(chosenScenario);
+      setChecked(true);
+    }
+
+    updateState(
+      {
+        ...currentState,
+        scenarios: updatedSelections
+      }
+    );
   };
 
   return (
@@ -22,12 +40,10 @@ export default function ScenarioConfiguration(props) {
       <Checkbox
         label={scenario}
         name={scenario}
-        onChange={() => {
-          onChangeHandle();
-        }}
-        value={isChecked}
+        onChange={() => handleScenarioSelect(scenario)}
+        isChecked={checked}
       />
-      {isChecked && targetType.length > 0 &&
+      {checked && targetType.length > 0 &&
         (<div className="load-test-checkbox-hidden-content">
           <SearchableDropdown
             name={`${scenario}-target-type`}
@@ -50,5 +66,7 @@ export default function ScenarioConfiguration(props) {
 
 ScenarioConfiguration.propTypes = {
   scenario: PropTypes.string,
-  targetType: PropTypes.array
+  targetType: PropTypes.array,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };
