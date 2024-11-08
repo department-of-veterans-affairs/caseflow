@@ -125,7 +125,6 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
     }]
   end
 
-
   subject { described_class.new(headers, payload) }
 
   describe "attributes" do
