@@ -308,10 +308,15 @@ const CorrespondenceDetails = (props) => {
         valueFunction: (correspondenceObj) => (
           <span className="va-package-document-type-item">
             <p>
-              <a href={`/queue/correspondence/${correspondenceObj.uuid}`} rel="noopener noreferrer" target="_blank">
-                <b>{correspondenceObj.nod ? 'NOD' : 'Non-NOD'}</b>
+              <a
+                  href={`/queue/correspondence/${correspondenceObj.uuid}`}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="external-link-icon-a"
+              >
+                {correspondenceObj.nod ? 'NOD' : 'Non-NOD'}
                 <span className="external-link-icon-wrapper">
-                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </span>
               </a>
             </p>
@@ -488,7 +493,7 @@ const CorrespondenceDetails = (props) => {
         </div>
         <div className="correspondence-existing-appeals">
           <div className="left-section">
-            <h2>Existing appeals</h2>
+            <h2>Existing Appeals</h2>
             <div className="correspondence-details-view-documents">
               <a
                 rel="noopener noreferrer"
@@ -513,7 +518,7 @@ const CorrespondenceDetails = (props) => {
             </Button>
           </div>
         </div>
-        <div className="collapse-section-container">
+        <div className="collapse-section-container existing-appeals-table">
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
               <p className="correspondence-details-p">
@@ -527,6 +532,7 @@ const CorrespondenceDetails = (props) => {
                 taskRelatedAppealIds={selectedAppeals}
                 initialAppealIds={initialSelectedAppeals}
                 enableTopPagination
+                linkOpensInNewTab
                 userAccess={userAccess}
                 checkboxOnChange={appealCheckboxOnChange}
               />
@@ -558,7 +564,7 @@ const CorrespondenceDetails = (props) => {
 
     <div className="correspondence-existing-appeals">
       <div className="left-section">
-        <h2>Tasks not related to an appeal</h2>
+        <h2>Task not related to an Appeal</h2>
 
         {isAdminNotLoggedIn() ?
           '' :
@@ -956,19 +962,19 @@ const CorrespondenceDetails = (props) => {
             />
           </div>
       }
-      <AppSegment filledBackground extraClassNames="app-segment-cd-details">
+      <AppSegment filledBackground extraClassNames="app-segment-cd-details correspondence-details-page">
         <div className="correspondence-details-header">
           <h1> {correspondence?.veteranFullName} </h1>
-          <div className="copy-id">
+          <div className="copy-id unwrap-text">
             <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
               label="copy-id"
               text={props.correspondence.veteranFileNumber}
             />
           </div>
-          <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
+          <p className="unwrap-text"><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{correspondenceInfo.status}</p>
+          <p className="last-item unwrap-text"><b>Record status: </b>{correspondenceInfo.status}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }

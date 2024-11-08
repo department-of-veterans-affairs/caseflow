@@ -12,6 +12,7 @@ import {
   updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
+import { renderLegacyAppealType, statusLabel } from 'app/queue/utils';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
@@ -117,7 +118,7 @@ const CorrespondenceAppealTasks = (props) => {
     <>
       <div className="correspondence-existing-appeals">
         <div className="left-section">
-          <h2>Linked appeal:</h2>
+          <h2>Linked Appeal:</h2>
           <div className="case-details-header-badge">
             <DocketTypeBadge name={props.task_added.appealType} />
             <CaseDetailsLink
@@ -149,38 +150,44 @@ const CorrespondenceAppealTasks = (props) => {
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
               <p className="task-added-header">DOCKET NUMBER</p>
-              <span className="case-details-badge">
-                <DocketTypeBadge name={props.task_added.appealType} />
-                <CaseDetailsLink
-                  appeal={props.task_added?.appealUuid ?
-                    { externalId: props.task_added?.appealUuid } : { externalId: props.task_added?.externalId }}
-                  getLinkText={() => props.task_added.docketNumber}
-                  task={props.task_added}
-
-                  linkOpensInNewTab
-                />
-              </span>
+              <div className="task-added-value">
+                <span className="case-details-badge">
+                  <DocketTypeBadge name={props.task_added.appealType} />
+                  <CaseDetailsLink
+                    appeal={props.task_added?.appealUuid ?
+                      { externalId: props.task_added?.appealUuid } : { externalId: props.task_added?.externalId }}
+                    getLinkText={() => props.task_added.docketNumber}
+                    task={props.task_added}
+                    linkOpensInNewTab
+                  />
+                </span>
+              </div>
 
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPELLANT NAME</p>
-              <p>{veteranFullName}</p>
+              <p className="task-added-value">{veteranFullName}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPEAL STREAM TYPE</p>
-              <p>{props.task_added.streamType}</p>
+              <p className="stream-type task-added-value">{renderLegacyAppealType({
+                aod: props.task_added.aod,
+                type: props.task_added.caseType
+              })}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">NUMBER OF ISSUES</p>
-              <p>{props.task_added.numberOfIssues}</p>
+              <p className="task-added-value">{props.task_added.numberOfIssues}</p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">STATUS</p>
-              <p>{props.task_added.status}</p>
+              <p className="task-added-value">
+                {props.task_added.withdrawn === true ? 'Withdrawn' : statusLabel(props.task_added)}
+              </p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">ASSIGNED TO</p>
-              <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
+              <p className="task-added-value">{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
             </div>
 
           </div>

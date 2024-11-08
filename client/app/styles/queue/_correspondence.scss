@@ -34,6 +34,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .external-link-icon-a {
   color: $color-blue;
+  font-weight: bold;
 }
 
 .external-link-icon-wrapper {
@@ -1345,6 +1346,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 30px;
 }
 
+.correspondence-response-letters {
+  .cf-modal-divider {
+    padding-bottom: 0;
+  }
+
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
+.cf-modal-body {
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
 .new-letter-container {
   display: inline-block;
   padding: 2rem;
@@ -1367,10 +1388,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .details-page-letter-container {
   float: left;
-  height: 540px;
   width: 100%;
-  overflow: auto;
-  padding: 18px;
   position: relative;
 }
 
@@ -1488,6 +1506,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .last-item {
     margin-left: auto;
+  }
+
+  .unwrap-text {
+    min-width: 215px;
   }
 }
 
@@ -1641,6 +1663,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .task-added-header {
   font-weight: bold;
+  font-size: 15px;
+  padding-right: 1.5rem;
+  margin-bottom: 12px;
 }
 
 .number-of-issues-header {
@@ -1664,10 +1689,21 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .corr-tasks-added-col {
   flex-direction: column;
   width: 15%;
+  padding: 0 1.5rem 0 0;
+  //display: inline-block;
+
+  .stream-type {
+    text-transform: capitalize;
+  }
+}
+.corr-tasks-added-col:not(:last-child) .task-added-value{
+  border-right: 2px solid #ccc;
+  margin-right: 3%;
+  padding-right: 1.5rem;
 }
 
 .first-row {
-  padding-right: 3%;
+  //padding-right: 3%;
   flex-wrap: nowrap;
   min-width: fit-content;
 }
@@ -1705,11 +1741,33 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-grow: 1;
   padding: 3px;
   background-color: $color-white;
+  min-width: 166px;
 }
 
 .case-details-header-badge {
   flex-grow: unset;
   margin: 12px 17px 12px 2px;
+
+  a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .cf-pdf-external-link-icon {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.existing-appeals-table {
+  a {
+    color: $color-blue;
+    .cf-pdf-external-link-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
 }
 
 .link-icon-container {
@@ -1803,6 +1861,16 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   text-align: left;
   padding-left: 0;
   padding-top: 0;
+}
+
+.correspondence-details-page {
+  .cf-modal-body {
+    .cf-modal-controls {
+      .cf-btn-link {
+        padding-left: 0;
+      }
+    }
+  }
 }
 
 .add-task-modal-container {
