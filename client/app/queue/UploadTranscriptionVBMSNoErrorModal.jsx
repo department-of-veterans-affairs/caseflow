@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import TextareaField from '../components/TextareaField';
 
-import { highlightInvalidFormItems, requestPatch } from './uiReducer/uiActions';
-import { setAppealAttrs, onReceiveAmaTasks } from './QueueActions';
+import { requestPatch } from './uiReducer/uiActions';
+import { setAppealAttrs } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -24,41 +25,43 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      instructions: '',
+      notes: '',
     };
   }
 
-  validateForm = () => Boolean(this.state.instructions);
+  validateForm = () => Boolean(this.state.notes);
 
-  prependUrlToInstructions = () => {
-    return this.state.instructions;
+  formatInstructions = () => {
+    return [
+      COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+      COPY.UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE,
+      this.state.notes
+    ];
   };
 
   buildPayload = () => {
     return {
       data: {
         task: {
-          instructions: this.prependUrlToInstructions()
+          instructions: this.formatInstructions()
         }
       }
     };
   }
 
   submit = () => {
-    const { task } = this.props;
+    const { task, appeal } = this.props;
     const payload = this.buildPayload();
 
-    return this.props.requestPatch(`/tasks/${task.taskId}/upload_transcription_to_vbms`, payload).
-      then((response) => {
-        this.props.onReceiveAmaTasks({ amaTasks: response.body.tasks.data });
-      }).
-      catch(() => {
-        // handle the error from the frontend
-      });
+    const successMsg = {
+      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
+    };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}/upload_transcription_to_vbms`, payload, successMsg);
   }
 
   actionForm = () => {
-    const { instructions } = this.state;
+    const { notes } = this.state;
 
     return <React.Fragment>
       <div>
@@ -66,9 +69,9 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <TextareaField
             name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
-            onChange={(value) => this.setState({ instructions: value })}
+            onChange={(value) => this.setState({ notes: value })}
             placeholder= "This is the reason this is being put on hold."
-            value={instructions} />
+            value={notes} />
         </div>
       </div>
     </React.Fragment>;
@@ -90,13 +93,14 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
 }
 
 UploadTranscriptionVBMSNoErrorModal.propTypes = {
+  appeal: PropTypes.shape({
+    veteranFullName: PropTypes.string
+  }),
   appealId: PropTypes.string,
   error: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  highlightInvalidFormItems: PropTypes.func,
-  onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
   setAppealAttrs: PropTypes.func,
   task: PropTypes.shape({
@@ -112,9 +116,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  highlightInvalidFormItems,
   requestPatch,
-  onReceiveAmaTasks,
   setAppealAttrs
 }, dispatch);
 

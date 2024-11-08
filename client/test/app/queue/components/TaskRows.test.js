@@ -1,6 +1,10 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import TaskRows from '../../../../app/queue/components/TaskRows';
+import COPY from '../../../../COPY';
+import {
+  completedReviewPackageTaskWithErrorsFoundData
+} from '../../../data/queue/taskLists/index';
 
 const reviewTranscriptTask = {
   uniqueId: '8115',
@@ -100,6 +104,24 @@ test('toggles task instructions visibility', () => {
   fireEvent.click(screen.getByText('View task instructions'));
 
   // Check if the instructions are now visible
-  expect(screen.getByText('No errors found: Upload transcript to VBMS')).toBeInTheDocument();
   expect(screen.getByText('Schedule Veteran and/or appellant for Board hearing.')).toBeInTheDocument();
+});
+
+test('toggles task instructions visibility - Action: With Errors found', () => {
+
+  render(<TaskRows taskList={[completedReviewPackageTaskWithErrorsFoundData]} appeal={{}} />);
+
+  // Check if the instructions are initially hidden
+  expect(screen.queryByText(COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)).not.toBeInTheDocument();
+  expect(screen.queryByText(COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE)).not.toBeInTheDocument();
+  expect(screen.queryByText('test_file.pdf')).not.toBeInTheDocument();
+  expect(screen.queryByText('These are some notes')).not.toBeInTheDocument();
+
+  // Click the toggle button
+  fireEvent.click(screen.getByText('View task instructions'));
+
+  // Check if the instructions are now visible
+  expect(screen.getByText(COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)).toBeInTheDocument();
+  expect(screen.getByText(COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE)).toBeInTheDocument();
+  expect(screen.getByText('test_file.pdf')).toBeInTheDocument();
 });
