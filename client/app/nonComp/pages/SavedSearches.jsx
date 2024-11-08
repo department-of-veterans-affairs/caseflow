@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Link from 'app/components/Link';
 import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
@@ -9,29 +9,33 @@ import { COLORS } from 'app/constants/AppConstants';
 import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
 import TabWindow from 'app/components/TabWindow';
 import SearchTable from 'app/queue/components/SearchTable';
-import savedSearchesData from 'test/data/nonComp/savedSearchesData';
+import { fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
 
 const SavedSearches = () => {
-
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
-  const currentUserCssId = useSelector((state) => state.nonComp.currentUserCssId);
+  const savedSearchRows = useSelector((state) => state.savedSearch.fetchedSearches);
+  const userSearches = savedSearchRows.userSearches;
+  const allSearches = savedSearchRows.allSearches;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
+  }, []);
 
   const ALL_TABS = [
     {
       key: 'my_saved_searches',
       label: 'My saved searches',
-      // this section will later changed to backend call
       page: <SearchTable
-        eventRows={savedSearchesData.savedSearches.rows.filter((rows) => rows.userCssId === currentUserCssId)}
-        searchPageApiEndPoint
+        eventRows={userSearches}
       />
     },
     {
       key: 'all_saved_searches',
       label: 'All saved searches',
       page: <SearchTable
-        eventRows={savedSearchesData.savedSearches.rows}
-        searchPageApiEndPoint
+        eventRows={allSearches}
       />
     }
   ];

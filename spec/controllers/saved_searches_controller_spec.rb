@@ -97,7 +97,7 @@ describe SavedSearchesController, :postgres, type: :controller do
           subject
 
           expect(response.status).to eq 200
-          expect(JSON.parse(response.body)["all_searches"].count).to eq(6)
+          expect(JSON.parse(response.body)["all_searches"].count).to eq(16)
           expect(JSON.parse(response.body)["user_searches"].count).to eq(5)
         end
       end
