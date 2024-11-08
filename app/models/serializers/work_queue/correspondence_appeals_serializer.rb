@@ -46,4 +46,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
   attribute :aod do |object|
     object.appeal.aod?
   end
+  attribute :withdrawn do |object|
+    object.appeal.withdrawn?
+  end
 end

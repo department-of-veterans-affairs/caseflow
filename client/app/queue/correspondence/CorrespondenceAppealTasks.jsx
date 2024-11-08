@@ -12,7 +12,7 @@ import {
   updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
-import { renderLegacyAppealType } from 'app/queue/utils';
+import { renderLegacyAppealType, statusLabel } from 'app/queue/utils';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
@@ -181,7 +181,9 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">STATUS</p>
-              <p className="task-added-value">{props.task_added.status}</p>
+              <p className="task-added-value">
+                {props.task_added.withdrawn === true ? 'Withdrawn' : statusLabel(props.task_added)}
+              </p>
             </div>
             <div className="corr-tasks-added-col">
               <p className="task-added-header">ASSIGNED TO</p>
