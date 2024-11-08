@@ -25,6 +25,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
       allow(parser).to receive(:end_product_establishment_last_synced_at).and_return(last_synced_at)
       allow(parser).to receive(:end_product_establishment_code).and_return("some_end_product_code")
+      allow(parser).to receive(:end_product_establishment_reference_id).and_return(EndProductEstablishment.last.reference_id)
       allow(parser).to receive(:veteran_participant_id).and_return("some_participant_id")
     end
   end
@@ -60,6 +61,41 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(issue).to receive(:ri_vacols_sequence_id).and_return("some_sequence_id")
       allow(issue).to receive(:ri_type).and_return("some_type")
       allow(issue).to receive(:ri_edited_description).and_return("Edited description")
+    end
+  end
+
+  let(:valid_parser_issue) do
+    instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser).tap do |issue|
+      allow(issue).to receive(:ri_reference_id).and_return("some_reference_id")
+      allow(issue).to receive(:ri_original_caseflow_request_issue_id).and_return(nil)
+      allow(issue).to receive(:ri_benefit_type).and_return("some_benefit_type")
+      allow(issue).to receive(:ri_closed_at).and_return(last_synced_at)
+      allow(issue).to receive(:ri_closed_status).and_return(:ineligible)
+      allow(issue).to receive(:ri_contested_issue_description).and_return("some_description")
+      allow(issue).to receive(:ri_contention_reference_id).and_return("some_contention_id")
+      allow(issue).to receive(:ri_contested_rating_issue_diagnostic_code).and_return("some_diagnostic_code")
+      allow(issue).to receive(:ri_contested_rating_decision_reference_id).and_return("some_decision_id")
+      allow(issue).to receive(:ri_contested_rating_issue_profile_date).and_return(Time.zone.today)
+      allow(issue).to receive(:ri_contested_rating_issue_reference_id).and_return("some_issue_id")
+      allow(issue).to receive(:ri_contested_decision_issue_id).and_return(nil)
+      allow(issue).to receive(:ri_decision_date).and_return(Time.zone.today)
+      allow(issue).to receive(:ri_ineligible_due_to_id).and_return(RequestIssue.first.id)
+      allow(issue).to receive(:ri_ineligible_reason).and_return(:untimely)
+      allow(issue).to receive(:ri_is_unidentified).and_return(false)
+      allow(issue).to receive(:ri_unidentified_issue_text).and_return("some_text")
+      allow(issue).to receive(:ri_nonrating_issue_category).and_return("some_category")
+      allow(issue).to receive(:ri_nonrating_issue_description).and_return("some_description")
+      allow(issue).to receive(:ri_nonrating_issue_bgs_id).and_return("some_bgs_id")
+      allow(issue).to receive(:ri_nonrating_issue_bgs_source).and_return("some_source")
+      allow(issue).to receive(:ri_ramp_claim_id).and_return("some_claim_id")
+      allow(issue).to receive(:ri_rating_issue_associated_at).and_return(last_synced_at)
+      allow(issue).to receive(:ri_untimely_exemption).and_return(false)
+      allow(issue).to receive(:ri_untimely_exemption_notes).and_return("some_notes")
+      allow(issue).to receive(:ri_vacols_id).and_return("some_vacols_id")
+      allow(issue).to receive(:ri_vacols_sequence_id).and_return("some_sequence_id")
+      allow(issue).to receive(:ri_type).and_return("some_type")
+      allow(issue).to receive(:ri_edited_description).and_return("Edited description")
+      allow(issue).to receive(:ri_veteran_participant_id).and_return("some_participant_id")
     end
   end
 
@@ -351,6 +387,43 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(subject.attempted_at).to eq(parser.end_product_establishment_last_synced_at)
       expect(subject.submitted_at).to eq(parser.end_product_establishment_last_synced_at)
       expect(subject.processed_at).to eq(parser.end_product_establishment_last_synced_at)
+    end
+  end
+
+  describe "#update_request_issue!" do
+    context "when epe is nil" do
+      it "does not update end_product_establishment_id with epe id" do
+        request_issue = existing_request_issue
+        event = described_class.new(
+          review: review,
+          user: user,
+          parser: parser,
+          event: event,
+          epe: epe
+        )
+        event.update_request_issue!(request_issue, valid_parser_issue, nil)
+
+        request_issue.reload
+        expect(request_issue.end_product_establishment_id).to eq(request_issue.end_product_establishment_id)
+      end
+    end
+
+    context "when epe is provided" do
+      it "updates end_product_establishment_id with epe id" do
+        request_issue = existing_request_issue
+
+        event = described_class.new(
+          review: review,
+          user: user,
+          parser: parser,
+          event: event,
+          epe: epe
+        )
+        event.update_request_issue!(request_issue, valid_parser_issue, epe)
+
+        request_issue.reload
+        expect(request_issue.end_product_establishment_id).to eq(epe.id)
+      end
     end
   end
 end

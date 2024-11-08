@@ -431,6 +431,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
       end
     end
 
+    it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
+      visit "higher_level_reviews/#{ep_claim_id}/edit"
+
+      click_intake_add_issue
+
+    end
+
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
       visit "higher_level_reviews/#{ep_claim_id}/edit"
 

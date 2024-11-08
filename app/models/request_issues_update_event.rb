@@ -94,7 +94,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
-  def update_request_issue!(request_issue, parser_issue)
+  def update_request_issue!(request_issue, parser_issue, epe = nil)
     request_issue.update(
       ineligible_reason: parser_issue.ri_ineligible_reason,
       closed_at: parser_issue.ri_closed_at,
@@ -124,7 +124,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       untimely_exemption: parser_issue.ri_untimely_exemption,
       untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
       benefit_type: parser_issue.ri_benefit_type,
-      veteran_participant_id: parser_issue.ri_veteran_participant_id
+      veteran_participant_id: parser_issue.ri_veteran_participant_id,
+      end_product_establishment_id: epe&.id || request_issue.end_product_establishment_id
     )
   end
   # rubocop:enable Metrics/MethodLength
@@ -173,7 +174,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
       before_data = request_issue.attributes
-      update_request_issue!(request_issue, parser_issue)
+      epe = EndProductEstablishment.find_by(
+        reference_id: @parser.end_product_establishment_reference_id
+      )
+      update_request_issue!(request_issue, parser_issue, epe)
       request_issue.update(
         contention_removed_at: nil
       )
