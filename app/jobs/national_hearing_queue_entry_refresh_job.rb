@@ -10,7 +10,6 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
   def perform
     begin
       NationalHearingQueueEntry.refresh
-
     rescue ActiveRecord::QueryCanceled => error
       handle_timeout(error)
     rescue StandardError => error
