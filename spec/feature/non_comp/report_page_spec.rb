@@ -41,7 +41,7 @@ feature "NonComp Report Page", :postgres do
     expect(page).to have_button("Save search")
   end
 
-  it "when Saved search button is clicked, it should open Save search modal when saved search is less than 10" do
+  it "when user search is < 10, should open save search modal" do
     click_dropdown(text: "Status")
     expect(page).to have_button("Save search")
     click_button "Save search"

@@ -2,33 +2,15 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import ApiUtil from '../../util/ApiUtil';
 
 const initialState = {
-  status: 'idle',
-  error: null,
-  message: null,
   selectedSearch: {},
   fetchedSearches: {
     error: null,
     status: 'idle',
-    searches: [],
-    userSearches: []
+    searches: {},
+    userSearches: {}
   },
   saveUserSearch: {}
 };
-
-export const createSearch = createAsyncThunk(
-  'posts/createSearch',
-  async({ organizationUrl, postData }, thunkApi) => {
-    try {
-      const url = `/decision_reviews/${organizationUrl}/searches`;
-      const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
-
-      return thunkApi.fulfillWithValue(response.body);
-    } catch (error) {
-      console.error(error);
-
-      return thunkApi.rejectWithValue(`Save search creation failed: ${error.message}`, { analytics: true });
-    }
-  });
 
 export const fetchedSearches = createAsyncThunk(
   'savedSearch',
@@ -54,6 +36,21 @@ export const fetchedSearches = createAsyncThunk(
     }
   });
 
+export const createSearch = createAsyncThunk(
+  'posts/createSearch',
+  async({ organizationUrl, postData }, thunkApi) => {
+    try {
+      const url = `/decision_reviews/${organizationUrl}/searches`;
+      const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
+
+      return thunkApi.fulfillWithValue(response.body);
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Save search creation failed: ${error.message}`, { analytics: true });
+    }
+  });
+
 const savedSearchSlice = createSlice({
   name: 'savedSearch',
   initialState,
@@ -72,8 +69,7 @@ const savedSearchSlice = createSlice({
       }).
       addCase(fetchedSearches.fulfilled, (state, action) => {
         state.fetchedSearches.status = 'succeeded';
-        state.fetchedSearches.searches = action.payload.allSearches;
-        state.fetchedSearches.userSearches = action.payload.userSearches;
+        state.fetchedSearches = action.payload;
       }).
       addCase(fetchedSearches.rejected, (state, action) => {
         state.fetchedSearches.status = 'failed';
@@ -90,6 +86,7 @@ const savedSearchSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
+
   },
 });
 
