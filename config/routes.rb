@@ -263,11 +263,11 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
-  scope path: '/national_hearing_queue' do
-    get "/cutoff_date", to: "hearings/national_hearing_queue#cutoff_date"
-    post "/cutoff_date", to: "hearings/national_hearing_queue#update_cutoff_date"
+  scope module: 'hearings/national_hearing_queue', path: '/national_hearing_queue' do
+    get "/cutoff_date", action: "cutoff_date"
+    post "/cutoff_date", action: "update_cutoff_date"
     # Put this one last since it's a catch-all.
-    get "/(*params)", to: "hearings/national_hearing_queue#index"
+    get "/(*params)", action: "index"
   end
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
