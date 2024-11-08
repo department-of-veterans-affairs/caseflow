@@ -126,19 +126,19 @@ export const SaveSearchModal = (props) => {
     let timingSpecificationValue;
 
     switch (timingRange) {
-      case 'between':
-        timingSpecificationValue = `Between ${startDate} to ${endDate}`;
-        break;
-      case 'after':
-        timingSpecificationValue = `After ${startDate}`;
-        break;
-      case 'before':
-        timingSpecificationValue = `Before ${startDate}`;
-        break;
-      default:
-        timingSpecificationValue = TIMING_SPECIFIC_OPTIONS.
-          find((timingSpec) => timingSpec.value === timingRange)?.label;
-        break;
+    case 'between':
+      timingSpecificationValue = `Between ${startDate} to ${endDate}`;
+      break;
+    case 'after':
+      timingSpecificationValue = `After ${startDate}`;
+      break;
+    case 'before':
+      timingSpecificationValue = `Before ${startDate}`;
+      break;
+    default:
+      timingSpecificationValue = TIMING_SPECIFIC_OPTIONS.
+        find((timingSpec) => timingSpec.value === timingRange)?.label;
+      break;
     }
 
     return <>

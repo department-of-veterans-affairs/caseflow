@@ -12,7 +12,7 @@ export const SaveLimitReachedModal = (props) => {
   };
 
   const submitForm = () => {
-    console.log('this will be updated in next ticket');
+    // console.log('this will be updated in next ticket');
   };
 
   return (
