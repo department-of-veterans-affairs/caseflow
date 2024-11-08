@@ -171,8 +171,8 @@ const CorrespondenceAppealTasks = (props) => {
             <div className="corr-tasks-added-col">
               <p className="task-added-header">APPEAL STREAM TYPE</p>
               <p className="stream-type task-added-value">{renderLegacyAppealType({
-                aod: props.task_added.appeal.data.attributes.aod,
-                type: props.task_added.streamType
+                aod: props.task_added.aod,
+                type: props.task_added.caseType
               })}</p>
             </div>
             <div className="corr-tasks-added-col">
