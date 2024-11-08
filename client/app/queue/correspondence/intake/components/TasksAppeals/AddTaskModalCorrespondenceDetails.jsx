@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
-import { maxWidthFormInput, ninetySixWidthFormInput } from '../../../../../hearings/components/details/style';
+import { maxWidthFormInput, corrDetailsModal } from '../../../../../hearings/components/details/style';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
@@ -181,8 +181,7 @@ const AddTaskModalCorrespondenceDetails = ({
               label="Selected autotext"
               value={additionalContent}
               onChange={updateAdditionalContent}
-              classNames={['task-selection-dropdown-box-corr-details']}
-              styling={ninetySixWidthFormInput}
+              styling={corrDetailsModal}
             />
           </div>
         ) : (

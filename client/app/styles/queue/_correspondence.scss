@@ -533,12 +533,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   max-height: 60vh;
   padding: 0;
   width: 105%;
-  margin-bottom: 10px;
+  margin-bottom: -15px;
 
-  .cf-form-checkboxes{
+  .cf-form-checkboxes {
     margin-bottom: 0rem;
     margin-top: 1rem;
+  }
 
+  .cf-form-checkbox {
+    padding-top: 5px;
   }
 }
 
@@ -1847,7 +1850,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .add-task-dropdown-style {
 
-  margin-bottom: 30px;
   /* Override the control (outer container) for the select dropdown */
   .react-select__control {
     border-color: black !important;
@@ -1867,7 +1869,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   /* Set the color for each option */
   .react-select__option {
-    color: $color-gray-darker !important; /* Make the text of each option black */
+    color: $color-black !important; /* Make the text of each option black */
   }
 
   /* Style the indicator separator */

@@ -13,9 +13,10 @@ export const maxWidthFormInput = css({
   display: 'block',
   maxWidth: '100%'
 });
-export const ninetySixWidthFormInput = css({
+export const corrDetailsModal = css({
   display: 'block',
-  maxWidth: '96%'
+  maxWidth: '95.5%',
+  paddingTop: '20px'
 });
 
 export const flexParent = css({
