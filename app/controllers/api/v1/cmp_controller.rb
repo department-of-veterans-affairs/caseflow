@@ -8,7 +8,7 @@ class Api::V1::CmpController < Api::ApplicationController
   end
 
   def document
-    new_document = CmpDocument.new(document_params)
+    new_document = CmpDocument.new(cmp_document_params)
 
     if new_document.save
       render json: { message: "CMP document successfully created" }, status: :ok
@@ -22,7 +22,7 @@ class Api::V1::CmpController < Api::ApplicationController
 
   private
 
-  def document_params
+  def cmp_document_params
     {
       cmp_document_id: params[:documentId],
       cmp_document_uuid: params[:documentUuid],
