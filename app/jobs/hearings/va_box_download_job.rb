@@ -35,7 +35,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def update_database(current_information, file_status)
-    transcription_records = Hearings::TranscriptionFile.where(
+    transcription_records = TranscriptionFile.where(
       hearing_id: current_information["id"].to_i,
       hearing_type: current_information["hearing_type"],
       file_type: current_information["file_type"]
@@ -111,7 +111,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def add_transcription_file_record(current_information, file_status, aws_link, transcription_id)
-    Hearings::TranscriptionFile.create!(
+    TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
       docket_number: current_information["docket_number"],

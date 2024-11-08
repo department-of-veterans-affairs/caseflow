@@ -16,8 +16,6 @@ module Seeds
         "Failed Retrieval (BOX)"
       ]
 
-
-
       year = '2040'
       transcription_files_per_transcription = [1, 2]
       hearings_per_package = [1, 2, 3]
@@ -51,10 +49,6 @@ module Seeds
         transcription_package_legacy_hearings = []
 
         (0..hearings_count).each do
-
-          # create transcription which could have multiple transcription files
-          transcription = Transcription.create!(task_number: task_number)
-
           # pick either a hearing or legacy hearing to add to the package
           if hearing_index % 2
             hearing = hearings[hearing_index]
@@ -63,6 +57,9 @@ module Seeds
             hearing = legacy_hearings[hearing_index]
             transcription_package_legacy_hearings << hearing
           end
+
+          # create transcription which could have multiple transcription files
+          transcription = Transcription.create!(task_number: task_number, hearing: hearing)
 
           transcription_files_count =
             transcription_files_per_transcription[transcription_file_index % transcription_files_per_transcription.length]
