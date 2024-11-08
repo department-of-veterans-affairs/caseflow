@@ -526,9 +526,9 @@ class TaskRows extends React.PureComponent {
             {completedOrCancelledReviewTranscriptTask(task) ?
               this.taskInstructionDetailsItem(task.instructions) :
               (!establishmentTask(task) &&
-            <dt style={{ width: '100%' }}>
-              {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
-            </dt>)
+              <dt style={{ width: '100%' }}>
+                {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+              </dt>)
             }
             {!completedOrCancelledReviewTranscriptTask(task) &&
               <dd style={{ width: '100%' }}>
