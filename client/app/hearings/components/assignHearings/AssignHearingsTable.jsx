@@ -304,6 +304,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         useTaskPagesApi
         taskPagesApiEndpoint={`${TASKS_ENDPOINT}${qs}`}
         enablePagination
+        prepareTasks
         tabPaginationOptions={tabPaginationOptions}
         styling={docketStyle}
       />
