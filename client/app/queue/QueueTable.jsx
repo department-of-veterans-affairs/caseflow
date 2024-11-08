@@ -834,6 +834,7 @@ export default class QueueTable extends React.PureComponent {
         ref={(div) => {
           this.elementForFocus = div;
         }}
+        data-testid="queue-table-data-testid"
       >
         <FilterSummary
           filteredByList={this.state.filteredByList}
@@ -878,7 +879,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
   tabPaginationOptions: PropTypes.shape({
-    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
