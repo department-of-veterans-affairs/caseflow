@@ -10,6 +10,35 @@ class Hearings::NationalHearingQueueController < ApplicationController
     end
   end
 
+  def cutoff_date
+    # Date will come from a table that hasn't been created yet
+
+    # user_can_edit will be true/false depending on if the current_user
+    #  is in the group of approved cutoff date updaters.
+    render json: { cutoff_date: Date.new(2019, 12, 31), user_can_edit: true }
+  end
+
+  def update_cutoff_date
+    # Permissions check first - in a before_action, probably.
+
+    permitted_params = params.permit(:cutoff_date)
+
+    unless permitted_params["cutoff_date"]
+      # Validate validity of date
+      #  - Must be an actual date
+      #  - Must be today or in the past
+      # Return an error if these conditions are met (not currently implemented)
+
+      Rails.logger.info("Updating the cutoff date to #{permitted_params['cutoff_date']}")
+
+      return render status: :ok
+    end
+
+    render json: { error: "A cutoff date was not provided" },
+           status: :bad_request,
+           content_type: "application/json"
+  end
+
   private
 
   def allowed_params
@@ -17,7 +46,8 @@ class Hearings::NationalHearingQueueController < ApplicationController
       :tab,
       :search_query,
       { filter: [] },
-      :page    )
+      :page
+    )
   end
 
   def queue_entries
