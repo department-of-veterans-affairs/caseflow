@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# This class was created with the assumption that the logic for the Complete event would be
+#  very similar to that of the Update event, and it will need to be adjusted in the future.
 class Events::DecisionReviewCompleted
   include RedisMutex::Macro
   class << self
@@ -18,7 +20,7 @@ class Events::DecisionReviewCompleted
 
       # key => "EndProductEstablishment:reference_id" aka "claim ID"
       # Use the consumer_event_id to retrieve/create the Event object
-      event = DecisionReviewUpdatedEvent.find_or_create_by(reference_id: consumer_event_id)
+      event = DecisionReviewCompletedEvent.find_or_create_by(reference_id: consumer_event_id)
 
       RedisMutex.with_lock("EndProductEstablishment:#{claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do

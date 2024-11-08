@@ -20,7 +20,7 @@ describe Events::DecisionReviewCompleted do
   let(:end_product_establishment) do
     double("EndProductEstablishment", source: review)
   end
-  subject { described_class.update!(params, headers, payload) }
+  subject { described_class.complete!(params, headers, payload) }
 
   before do
     allow(DecisionReviewCompletedEvent).to receive(:find_or_create_by)
@@ -31,8 +31,6 @@ describe Events::DecisionReviewCompleted do
       .with(event: event, css_id: parser.css_id, station_id: parser.station_id).and_return(user)
     allow(EndProductEstablishment).to receive(:find_by)
       .with(reference_id: parser.end_product_establishment_reference_id).and_return(end_product_establishment)
-    # allow(Events::DecisionReviewCompleted::CompleteInformalConference).to receive(:process!)
-    #   .with(event: event, parser: parser).and_return(nil)
     allow(Events::DecisionReviewCompleted::CompleteClaimReview).to receive(:process!)
       .with(event: event, parser: parser).and_return(nil)
     allow(Events::DecisionReviewCompleted::CompleteEndProductEstablishment).to receive(:process!)
@@ -42,7 +40,7 @@ describe Events::DecisionReviewCompleted do
       .and_return(double("RequestIssuesCompleteEvent", perform!: nil))
   end
 
-  describe ".update!" do
+  describe ".Complete!" do
     subject { described_class.complete!(params, headers, payload) }
 
     context "when lock acquisition fails" do
@@ -68,80 +66,17 @@ describe Events::DecisionReviewCompleted do
       end
     end
 
-    # it "finds or creates an event" do
-    #   expect(DecisionReviewCompletedEvent).to receive(:find_or_create_by).with(reference_id: consumer_event_id)
-    #   subject
-    # end
-
-    # it "creates a user" do
-    #   expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event)
-    #     .with(event: event, css_id: parser.css_id, station_id: parser.station_id)
-    #   subject
-    # end
-
-    it "finds an end product establishment" do
-      expect(EndProductEstablishment).to receive(:find_by)
-        .with(reference_id: parser.end_product_establishment_reference_id)
+    it "completes claim review" do
+      expect(Events::DecisionReviewCompleted::CompleteClaimReview).to receive(:process!)
+        .with(event: event, parser: parser)
       subject
     end
 
-    it "updates claim review" do
-      expect(Events::DecisionReviewCompleted::UpdateClaimReview).to receive(:process!).with(event: event, parser: parser)
-      subject
-    end
-
-    # it "updates end product establishment" do
-    #   expect(Events::DecisionReviewCompleted::UpdateEndProductEstablishment).to receive(:process!)
-    #     .with(event: event, parser: parser)
-    #   subject
-    # end
-
-    it "updates request issues" do
-      expect(RequestIssuesUpdateEvent).to receive(:new)
+    it "completes request issues" do
+      expect(RequestIssuesCompleteEvent).to receive(:new)
         .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
-        .and_return(double("RequestIssuesUpdateEvent", perform!: nil))
+        .and_return(double("RequestIssuesCompleteEvent", perform!: nil))
       subject
     end
-
-    # it "updates the event" do
-    #   expect(event).to receive(:update!)
-    #   subject
-    # end
-  end
-
-  context "when a StandardError occurs" do
-    let(:standard_error) { StandardError.new("Lions, tigers, and bears, OH MY!") }
-
-    before do
-      allow(RequestIssuesUpdateEvent).to receive(:new)
-        .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
-        .and_raise(standard_error)
-      allow(Rails.logger).to receive(:error)
-    end
-
-    it "the error is logged" do
-      expect(Rails.logger).to receive(:error) do |message|
-        expect(message).to include(standard_error.message)
-      end
-      expect { described_class.update!(params, headers, payload) }
-        .to raise_error(standard_error)
-    end
-
-    it "logs the error and updates the event" do
-      expect(Rails.logger).to receive(:error).with(/#{standard_error}/)
-
-      expect { described_class.update!(params, headers, payload) }
-        .to raise_error(standard_error)
-    end
-
-    # it "records an error at the event level" do
-    #   expect { described_class.update!(params, headers, payload) }
-    #     .to raise_error(standard_error)
-    #   expect(event.error).to eq("#{standard_error.class} : #{standard_error.message}")
-    #   expect(event.info["failed_claim_id"]).to eq(claim_id)
-    #   expect(event.info["error"]).to eq(standard_error.message)
-    #   expect(event.info["error_class"]).to eq("StandardError")
-    #   expect(event.info["error_backtrace"]).to be_present
-    # end
   end
 end

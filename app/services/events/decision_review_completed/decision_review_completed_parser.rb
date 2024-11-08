@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 # Parser Class that will be used to extract out datapoints from headers & payload for use with
-# DecisionReviewUpdated and it's service Classes
+# DecisionReviewCompleted and it's service Classes
+
+# This class was created with the assumption that the logic for the Complete event would be
+#  very similar to that of the Update event, and it will need to be adjusted in the future.
 class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
   include Events::VeteranExtractorInterface
   include ParserHelper
@@ -158,14 +161,6 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
   def claim_time
     @payload.dig(:claim_time)
   end
-
-  # def catror_username
-  #   @payload.dig(:catror_username)
-  # end
-
-  # def catror_application
-  #   @payload.dig(:catror_application)
-  # end
 
   def auto_remand
     @payload.dig(:auto_remand)

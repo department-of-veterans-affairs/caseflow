@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
   include ParserHelper
   attr_reader :issue
