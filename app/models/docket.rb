@@ -212,12 +212,12 @@ class Docket
 
   # :reek:ControlParameter
   def only_non_genpop_appeals_for_push_job(scope, judge)
-    scope.non_genpop_with_case_distribution_lever(judge)
+    scope.non_genpop_with_case_distribution_lever(judge, docket_type)
   end
 
   def adjust_for_affinity(scope, not_affinity, judge = nil)
     if judge.present?
-      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge, docket_type))
     elsif not_affinity
       scope
     else
