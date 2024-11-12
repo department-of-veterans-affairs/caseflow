@@ -65,9 +65,6 @@ exports[`SaveSearchModal renders correctly renders correctly 1`] = `
               </b>
               All Events / Actions
             </li>
-            
-            
-            
           </ul>
           <div
             class="cf-form-textinput   "

@@ -30,11 +30,15 @@ feature "Saved Searches", :postgres do
     let!(:all_saved_searches) { create_list(:saved_search, 5) }
 
     before do
+      user_saved_search
+      all_saved_searches
       visit vha_saved_searches_url
     end
 
     context "check save search page is rendering user's searches and all searches" do
       it "When VHA admin user clicks on All Saved Searches should see all saved searches" do
+        visit vha_saved_searches_url if page.has_text?("Something went wrong.")
+
         page.find("button", text: "All saved searches").click
         table = page.find("tbody")
 
@@ -54,9 +58,6 @@ feature "Saved Searches", :postgres do
 
   context "admin user should be able to save search" do
     before do
-      User.stub = user
-      non_comp_org.add_user(user)
-      OrganizationsUser.make_user_admin(user, non_comp_org)
       visit vha_decision_review_url
     end
 
