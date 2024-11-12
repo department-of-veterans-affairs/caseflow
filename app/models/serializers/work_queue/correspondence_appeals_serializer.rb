@@ -38,4 +38,15 @@ class WorkQueue::CorrespondenceAppealsSerializer
   attribute :assigned_to do |object|
     object.tasks[0]&.assigned_to
   end
+
+  attribute :case_type do |object|
+    object.appeal.type
+  end
+
+  attribute :aod do |object|
+    object.appeal.aod?
+  end
+  attribute :withdrawn do |object|
+    object.appeal.withdrawn?
+  end
 end

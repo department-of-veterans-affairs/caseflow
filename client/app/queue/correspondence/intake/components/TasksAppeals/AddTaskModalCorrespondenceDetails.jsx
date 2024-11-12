@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../../../components/Modal';
@@ -8,7 +9,7 @@ import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
-import { maxWidthFormInput, ninetySixWidthFormInput } from '../../../../../hearings/components/details/style';
+import { maxWidthFormInput, corrDetailsModal } from '../../../../../hearings/components/details/style';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
@@ -43,7 +44,11 @@ const AddTaskModalCorrespondenceDetails = ({
   // Filters task type options based on unrelated tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
     return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
-      filter((option) => !unrelatedTaskList.some((existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase())).
+      filter((option) =>
+        !unrelatedTaskList.some(
+          (existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase()
+        )
+      ).
       map((option) => ({ value: option.value, label: option.label }));
   };
 
@@ -52,7 +57,8 @@ const AddTaskModalCorrespondenceDetails = ({
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [unrelatedTaskList]);
 
-  // Submit disabled if task type is not selected, the page is loading, or task content and additional are not filled out
+  // Submit disabled if task type is not selected,
+  // the page is loading, or task content and additional are not filled out
   const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
 
   // Handle task type selection, stores the selected task type
@@ -63,6 +69,25 @@ const AddTaskModalCorrespondenceDetails = ({
 
   // Updates additional content on the second page
   const updateAdditionalContent = (newContent) => setAdditionalContent(newContent);
+
+  // Helper function to determine the button text
+  const getButtonText = () => {
+    if (isLoading) {
+      return 'Loading...';
+    }
+
+    return isSecondPage ? 'Add task' : 'Next';
+  };
+
+  const allClearAndClose = () => {
+    setTaskContent('');
+    setAdditionalContent('');
+    setSelectedTaskType(null);
+    setIsTasksUnrelatedSectionExpanded(true);
+    setIsSecondPage(false);
+    setAutoTextSelections([]);
+    handleClose();
+  };
 
   // Handles toggling of auto-text checkboxes
   const handleToggleCheckbox = (checkboxText) => {
@@ -101,13 +126,7 @@ const AddTaskModalCorrespondenceDetails = ({
       await dispatch(addTaskNotRelatedToAppeal(correspondence, newTask));
 
       // Resets fields and state after submission
-      setTaskContent('');
-      setAdditionalContent('');
-      setSelectedTaskType(null);
-      setIsTasksUnrelatedSectionExpanded(true);
-      setIsSecondPage(false);
-      setAutoTextSelections([]);
-      handleClose();
+      allClearAndClose();
     } catch (error) {
       console.error('Error while adding task:', error);
     } finally {
@@ -123,24 +142,32 @@ const AddTaskModalCorrespondenceDetails = ({
     return null;
   }
 
+  let buttonText = 'Next';
+
+  if (isLoading) {
+    buttonText = 'Loading...';
+  } else if (isSecondPage) {
+    buttonText = 'Submit';
+  }
+
   return (
     <Modal
       // Dynamic title for each page
       title={isSecondPage ? 'Add autotext to task' : 'Add task to correspondence'}
-      closeHandler={handleClose}
+      closeHandler={allClearAndClose}
       confirmButton={
         <Button
           // "Submit" on second page, "Next" on first page
           onClick={isSecondPage ? handleSubmit : handleNext}
           disabled={isSecondPage ? isSubmitDisabled : false}
         >
-          {isLoading ? 'Loading...' : isSecondPage ? 'Submit' : 'Next'}
+          {getButtonText()}
         </Button>
       }
       cancelButton={
         isSecondPage ? (
           <div className="action-buttons">
-            <Button linkStyling onClick={handleClose} disabled={isLoading}>
+            <Button linkStyling onClick={allClearAndClose} disabled={isLoading}>
               Cancel
             </Button>
             <Button classNames={['usa-button-secondary', 'back-button']} onClick={handleBack} disabled={isLoading}>
@@ -148,7 +175,7 @@ const AddTaskModalCorrespondenceDetails = ({
             </Button>
           </div>
         ) : (
-          <Button linkStyling onClick={handleClose} disabled={isLoading}>
+          <Button linkStyling onClick={allClearAndClose} disabled={isLoading}>
             Cancel
           </Button>
         )
@@ -171,8 +198,7 @@ const AddTaskModalCorrespondenceDetails = ({
               label="Selected autotext"
               value={additionalContent}
               onChange={updateAdditionalContent}
-              classNames={['task-selection-dropdown-box-corr-details']}
-              styling={ninetySixWidthFormInput}
+              styling={corrDetailsModal}
             />
           </div>
         ) : (
@@ -186,6 +212,7 @@ const AddTaskModalCorrespondenceDetails = ({
               className="add-task-dropdown-style"
               onChange={updateTaskType}
               value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
+              isSearchable={false}
             />
             <TextareaField
               name="content"

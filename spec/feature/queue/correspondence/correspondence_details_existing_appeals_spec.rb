@@ -69,5 +69,17 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       end
       expect(page).not_to have_selector("#submit-correspondence-intake-modal", visible: false)
     end
+
+    it "validating the Instructional text update on Linked Appeals Gray Table" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[0].click
+      page.all(".cf-form-checkbox")[1].click
+      expect(page).to have_content("The linked appeal must be saved before tasks can be added.")
+      click_button "Save changes"
+      using_wait_time(wait_time) do
+        expect(page).to have_content("You have successfully saved changes to this page")
+        expect(page).not_to have_content("The linked appeal must be saved before tasks can be added.")
+      end
+    end
   end
 end
