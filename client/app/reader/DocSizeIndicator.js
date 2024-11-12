@@ -15,7 +15,7 @@ const DocSizeIndicator = (props) => {
 
 const LARGE_FILE_SIZE_THRESHOLD = 30 * 1024 * 1024; // 30 MB in bytes
 
-const DocSizeIndicator = ({n filesize }) => {
+const DocSizeIndicator = ({ filesize }) => {
   const isLargeFile = fileSize > LARGE_FILE_SIZE_THRESHOLD;
 
   return (
