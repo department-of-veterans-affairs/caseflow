@@ -112,18 +112,17 @@ const PackageActionModal = (props) => {
       data.instructions.push(textInputReason);
     }
 
-    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data })
-      .then((response) => {
-        props.closeHandler(null);
-        if (response.ok) {
-          if (packageActionModal === 'removePackage') {
-            props.setTaskInstructions(textInputReason);
-          }
-          props.updateLastAction(packageActionModal);
-          history.replace('/queue/correspondence/');
+    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
+      props.closeHandler(null);
+      if (response.ok) {
+        if (packageActionModal === 'removePackage') {
+          props.setTaskInstructions(textInputReason);
         }
-      })
-      .catch(() => {
+        props.updateLastAction(packageActionModal);
+        history.replace('/queue/correspondence/');
+      }
+    }).
+      catch(() => {
         console.error('Review Package Action already exists');
       });
 
