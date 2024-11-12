@@ -1602,6 +1602,9 @@ GEM
     foreman (0.87.2)
     formatador (0.2.5)
     fuzzy_match (2.1.0)
+    fx (0.8.0)
+      activerecord (>= 6.0.0)
+      railties (>= 6.0.0)
     get_process_mem (0.2.7)
       ffi (~> 1.0)
     git (1.13.2)
@@ -2174,6 +2177,7 @@ DEPENDENCIES
   fasterer
   foreman
   fuzzy_match
+  fx (~> 0.8.0)
   govdelivery-tms
   guard-rspec
   holidays (~> 6.4)
