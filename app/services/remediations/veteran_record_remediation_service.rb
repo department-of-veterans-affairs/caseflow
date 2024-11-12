@@ -11,32 +11,31 @@ class Remediations::VeteranRecordRemediationService
   end
 
   def remediate!
-    # check for dup
-    # if dup exists run fix_vet_records on
-    # run dup_fix if @before_fn == @after_fn : fix_vet_records
-    # Check for duplicates based on the file number
     real_v = Veteran.find_by_file_number(@after_fn)
-    dups = Veteran.where(ssn: real_v.ssn).reject { |v| v.id == real_v.id }
+    @dups = Veteran.where(ssn: real_v.ssn).reject { |v| v.id == real_v.id }
 
-    if dups.any?
+    if @dups.any?
       # If there are duplicates, run dup_fix on @after_fn
       dup_fix(@after_fn)
     else
       # Otherwise, fix veteran records normally
       fix_vet_records
     end
-    # dup_fix(@after_fn) ? @before_fn == @after_fn : fix_vet_records
   end
 
   private
 
   def dup_fix(file_number)
-    real_v = Veteran.find_by_file_number(file_number)
-    dups = Veteran.where(ssn: real_v.ssn).reject { |v| v.id == real_v.id }
-    duplicate_veterans_collections = dups.flat_map { |dup| grab_collections(dup.file_number) }
-    update_records!(duplicate_veterans_collections, file_number)
-    # may need to fix intakes with veteran id
-    # destroy dup
+    # should we run the base transaction nested like this or is that bad practice?
+    ActiveRecord::Base.transaction do
+      duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
+      update_records!(duplicate_veterans_collections, file_number)
+      # @dups.each(&:destroy!)
+      @dups.each do |dup|
+        dup.destroy!
+      end
+      # may need to fix intakes with veteran id
+    end
   end
 
   def fix_vet_records
@@ -49,6 +48,7 @@ class Remediations::VeteranRecordRemediationService
     # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
+        # binding.pry
         collection.update!(file_number)
       end
     end
