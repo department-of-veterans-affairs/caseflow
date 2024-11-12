@@ -44,6 +44,8 @@ class Reader::DocumentsController < Reader::ApplicationController
   delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
 
   def documents
+    max_wait_time = ENV["MAX_WAIT_LOAD_TIME"] || 15
+
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
       .each_with_object({}) do |document_view, object|
@@ -57,6 +59,7 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = tags_by_doc_id[document.id].to_a
         object[:file_size] = document.file_size
+        object[:max_wait_time] = max_wait_time
       end
     end
   end

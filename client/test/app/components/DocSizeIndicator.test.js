@@ -23,7 +23,7 @@ it('shows a file size warning when file size is large', () => {
   const downloadSpeedInBytes = connectionSpeed * 125000;
   const fileSize = downloadSpeedInBytes * 16;
 
-  const { getByTitle } = render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} />);
+  const { getByTitle } = render(<DocSizeIndicator docSize={fileSize} browserSpeedInBytes={downloadSpeedInBytes} warningThreshold={1} />);
 
   expect(getByTitle('Large File Warning')).toBeInTheDocument();
 });

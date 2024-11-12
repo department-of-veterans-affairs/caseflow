@@ -32,6 +32,7 @@ class AppealsController < ApplicationController
                    ).search_call
                  end
 
+
         render_search_results_as_json(result)
       end
     end

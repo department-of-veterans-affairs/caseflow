@@ -9,16 +9,17 @@ const DocSizeIndicator = (props) => {
   const downloadTime = documentDownloadTime(props.docSize, props.browserSpeedInBytes);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div data-warning-threshold={props.warningThreshold} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {filesize(props.docSize, { round: 1 })}&nbsp;
-      {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
+      {downloadTime > props.warningThreshold ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
     </div>
   );
 };
 
 DocSizeIndicator.propTypes = {
   docSize: PropTypes.number.isRequired,
-  browserSpeedInBytes: PropTypes.number.isRequired
+  browserSpeedInBytes: PropTypes.number.isRequired,
+  warningThreshold: PropTypes.number.isRequired
 };
 
 export default DocSizeIndicator;
