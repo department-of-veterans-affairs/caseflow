@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_12_210759) do
+ActiveRecord::Schema.define(version: 2024_11_12_213951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2479,6 +2479,26 @@ ActiveRecord::Schema.define(version: 2024_11_12_210759) do
       	RETURN legacy_case_ids;
       END
       $function$
+  SQL
+  create_function :brieffs_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.brieffs_awaiting_hearing_scheduling()
+       RETURNS SETOF brieff_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+
+        RETURN QUERY
+          EXECUTE format(
+            'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
+            legacy_case_ids
+          );
+      END $function$
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
