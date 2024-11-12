@@ -309,10 +309,10 @@ const CorrespondenceDetails = (props) => {
           <span className="va-package-document-type-item">
             <p>
               <a
-                  href={`/queue/correspondence/${correspondenceObj.uuid}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className="external-link-icon-a"
+                href={`/queue/correspondence/${correspondenceObj.uuid}`}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="external-link-icon-a"
               >
                 {correspondenceObj.nod ? 'NOD' : 'Non-NOD'}
                 <span className="external-link-icon-wrapper">
