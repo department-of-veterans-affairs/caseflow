@@ -12,6 +12,8 @@ import {
   updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
+import AddRelatedTaskModalCorrespondenceDetails from
+  './intake/components/TasksAppeals/AddRelatedTaskModalCorrespondenceDetails';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
@@ -48,17 +50,15 @@ const CorrespondenceAppealTasks = (props) => {
     }
   }, [waiveEvidenceAlertBanner, appeal]);
 
-  // ---===Future Add Task Modal Usage===---
-
-  // const [isAddTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isAddTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   const handleAddTaskModalOpen = () => {
-    // setIsTaskModalOpen(true);
+    setIsTaskModalOpen(true);
   };
 
-  // const handleAddTaskModalClose = () => {
-  //   setIsTaskModalOpen(false);
-  // };
+  const handleAddTaskModalClose = () => {
+    setIsTaskModalOpen(false);
+  };
 
   const renderTaskButton = () => {
     return (
@@ -205,6 +205,17 @@ const CorrespondenceAppealTasks = (props) => {
               <span className="tasks-added-text-alternate">
                 There are no tasks on this appeal. The linked appeal must be saved before tasks can be added.</span>}
           </div>
+          {isAddTaskModalOpen &&
+            <AddRelatedTaskModalCorrespondenceDetails
+              title="Add Task"
+              isOpen={isAddTaskModalOpen}
+              handleClose={handleAddTaskModalClose}
+              correspondence={props.correspondenceInfo}
+              appeal={appeal}
+              tasks={tasks}
+              // autoTexts= {props.autoTexts}
+            />
+          }
         </div>
       )}
     </>
