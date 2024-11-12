@@ -40,7 +40,7 @@ import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
 import ReactSelectDropdown from '../components/ReactSelectDropdown';
-import { connection, megaBitsToBytes } from './utils/network';
+import { megaBitsToBytes } from './utils/network';
 
 const NUMBER_OF_COLUMNS = 6;
 const receiptDateFilterStates = {
@@ -52,7 +52,10 @@ const receiptDateFilterStates = {
 
 };
 
-// This is temporarily here. Will be moved to a utility file.
+// This needs to be called here and not from a util file. This is because the value of the
+// connection.downlink is not static and needs to be calculated at runtime.
+
+const connection = (navigator.connection || navigator.mozConnection || navigator.webkitConnection || 1);
 const mbpsToBps = megaBitsToBytes(connection.downlink);
 
 export const getRowObjects = (documents, annotationsPerDocument) => {

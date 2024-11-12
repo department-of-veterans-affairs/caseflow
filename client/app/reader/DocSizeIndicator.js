@@ -9,7 +9,7 @@ const DocSizeIndicator = (props) => {
   const downloadTime = documentDownloadTime(props.docSize, props.browserSpeedInBytes);
 
   return (
-    <div data-warning-threshold={props.warningThreshold} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div data-warning-threshold={props.warningThreshold} data-bandwidth={filesize(props.browserSpeedInBytes)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {filesize(props.docSize, { round: 1 })}&nbsp;
       {downloadTime > props.warningThreshold ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
     </div>
