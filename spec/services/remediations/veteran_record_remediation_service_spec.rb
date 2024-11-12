@@ -12,7 +12,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
       AvailableHearingLocations => "veteran_file_number",
       BgsPowerOfAttorney => "file_number",
       Document => "file_number",
-      EndProductEstablishment => "reference_id",
+      EndProductEstablishment => "veteran_file_number",
       Form8 => "file_number",
       HigherLevelReview => "veteran_file_number",
       Intake => "veteran_file_number",
@@ -34,8 +34,8 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
       end
     end
 
-    let(:mock_veteran) { instance_double("Veteran", ssn: "123-45-6789", id: 1, file_number: before_fn) }
-    let(:duplicate_veteran) { instance_double("Veteran", ssn: "123-45-6789", id: 2, file_number: before_fn) }
+    let(:mock_veteran) { instance_double("Veteran", ssn: "123456789", id: 1, file_number: before_fn) }
+    let(:duplicate_veteran) { instance_double("Veteran", ssn: "123456789", id: 2, file_number: before_fn) }
 
     before do
       # Stub Veteran.find_by_file_number to handle both before_fn and after_fn
@@ -43,7 +43,10 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
       allow(Veteran).to receive(:find_by_file_number).with(after_fn).and_return(mock_veteran)
 
       # Stub Veteran.where to return mock_veteran and duplicate_veteran for the same SSN
-      allow(Veteran).to receive(:where).with(ssn: "123-45-6789").and_return([mock_veteran, duplicate_veteran])
+      allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran, duplicate_veteran])
+
+      # Stub destroy! on duplicate_veteran to prevent failure
+      allow(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
       # Allow grab_collections to return mock classes
       allow(vet_record_service).to receive(:grab_collections).with(before_fn).and_return(mock_classes)
@@ -61,6 +64,9 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
           end
         end
 
+        # talk to raymond about this
+        expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
+
         vet_record_service.remediate!
 
         # Verify that all mock instances' file numbers are updated
@@ -74,7 +80,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     context "when there are no duplicate veterans" do
       before do
         # Ensure no duplicates exist for the `before_fn`
-        allow(Veteran).to receive(:where).with(ssn: "123-45-6789").and_return([mock_veteran])
+        allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran])
       end
 
       it "does not run dup_fix and updates file_number normally" do
