@@ -78,7 +78,7 @@ const CorrespondenceResponseLetters = (props) => {
           <table className="response-letter-table-borderless-no-background gray-border">
             <tbody>
               <tr>
-                <td className="response-letter-table-borderless-first-item">
+                <td className="response-letter-table-borderless-first-item" colSpan={4}>
                   <strong>Letter Response Expiration:</strong>
                   <span className="response-letter-table-borderless">
                     {letter.days_left}
