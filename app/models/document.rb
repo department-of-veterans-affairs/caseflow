@@ -145,7 +145,7 @@ class Document < CaseflowRecord
   end
 
   def file_size
-    File.size(default_path) rescue 0 #|| 0
+    File.size(default_path) || 0
   end
 
   def file_name
