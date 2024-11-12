@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_12_172400) do
+ActiveRecord::Schema.define(version: 2024_11_12_210759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
