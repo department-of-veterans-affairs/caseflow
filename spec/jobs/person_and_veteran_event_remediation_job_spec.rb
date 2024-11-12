@@ -8,12 +8,12 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
     instance_double("EventRecord", evented_record_id: 1, evented_record_type: "Person", evented_record: person)
   end
   let(:event_record_veteran) do
-    instance_double("EventRecord", evented_record_id: 2, evented_record_type: "Veteran", info: event_info)
+    instance_double("EventRecord", evented_record_id: 2, evented_record_type: "Veteran", info: event_info, evented_record: veteran)
   end
 
-  let(:person) { instance_double("Person", id: 1, ssn: "123-45-6789") }
-  let(:person_duplicate) { instance_double("Person", id: 2, ssn: "123-45-6789") }
-  let(:veteran_record) { instance_double("Veteran", file_number: "V1234") }
+  let(:person) { instance_double("Person", id: 1, ssn: "123456789") }
+  let(:person_duplicate) { instance_double("Person", id: 2, ssn: "123456789") }
+  let(:veteran) { instance_double("Veteran", id: 2, file_number: "V1234", ssn: "123456789") }
 
   let(:event_info) { { "before_data" => { "file_number" => "V1234" }, "record_data" => { "file_number" => "V12345" } } }
 
@@ -25,17 +25,17 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
     allow(RequestStore.store).to receive(:[]=)
     allow(User).to receive(:system_user).and_return(User.new) # Assuming there's a system_user
 
-    # Mocking find_events to return an array with our event_record_person
+    # Mocking find_events to return an array with our event_record_person and event_record_veteran
     allow(job).to receive(:find_events).with("Person").and_return([event_record_person])
-
-    # Mock Person.where to return duplicates
-    allow(Person).to receive(:where).with(ssn: "123-45-6789").and_return([person, person_duplicate])
-    allow(Remediations::DuplicatePersonRemediationService).to receive(:new).and_return(duplicate_person_service)
-    allow(duplicate_person_service).to receive(:remediate!)
-
-    # Mocking find_events to return an array with our event_record_veteran
     allow(job).to receive(:find_events).with("Veteran").and_return([event_record_veteran])
 
+    # Mock Person.where to return duplicates
+    allow(Person).to receive(:where).with(ssn: "123456789").and_return([person, person_duplicate])
+    allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([veteran])
+
+
+    allow(Remediations::DuplicatePersonRemediationService).to receive(:new).and_return(duplicate_person_service)
+    allow(duplicate_person_service).to receive(:remediate!)
     allow(Remediations::VeteranRecordRemediationService).to receive(:new).and_return(veteran_remediation_service)
     allow(veteran_remediation_service).to receive(:remediate!)
   end
@@ -49,7 +49,7 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
 
       it "does not call remediation service if no duplicates are found" do
         # Modify the mock to return only the original person
-        allow(Person).to receive(:where).with(ssn: "123-45-6789").and_return([person])
+        allow(Person).to receive(:where).with(ssn: "123456789").and_return([person])
         expect(duplicate_person_service).not_to receive(:remediate!)
         job.perform
       end
