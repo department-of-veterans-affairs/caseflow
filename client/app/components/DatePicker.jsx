@@ -116,6 +116,7 @@ export const datePickerFilterValue = (rowValue, filterValues) => {
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last7') {
+        // use this
         const startDate = moment().subtract(7, 'days').
           valueOf();
         const endDate = moment();

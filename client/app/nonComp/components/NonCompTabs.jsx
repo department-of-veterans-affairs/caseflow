@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -10,6 +10,7 @@ import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
+import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -25,11 +26,50 @@ const NonCompTabsUnconnected = (props) => {
 
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
   const queryParams = new URLSearchParams(window.location.search);
+
+  console.log(queryParams.values(), 'queryparams');
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
   const defaultSortColumn = currentTabName === 'completed' ? 'completedDateColumn' : 'daysWaitingColumn';
   const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+  console.log(getParamsFilter, 'getParamsFilter');
+
+  // if isVhaBusinessLine
+  // and if getParamsFilter does not contain "col=completedDateColumn"
+  // and this is first load (so useEffect)
+  // then getParamsFilter.push("col=completedDateColumn&val=last7,2024-11-05,") but with current dates (see comment in DatePicker)
+
+  useEffect(() => {
+    const completedDateFilter = getParamsFilter.find((value) => value.includes('col=completedDateColumn'));
+
+    console.log(getParamsFilter, 'before');
+
+    if (isVhaBusinessLine && !completedDateFilter) {
+      const dateFormat = 'YYYY-MM-DD'
+      const startDate = moment().subtract(7, 'days').
+        format(dateFormat);
+
+      getParamsFilter.push(`col=completedDateColumn&val=last7,${startDate},`);
+      // setFilter(`col=completedDateColumn&val=last7,${startDate},`)
+      // window.history.replaceState(null, null, `col%3DcompletedDateColumn%26val%3Dlast7%2C2024-11-05%2C`);
+
+      // const url = new URL(urlString);
+      // url.set("col", "completedDateColumn")
+      // url.set("last7", "startDate")
+      // console.log(window.location.search, 'window.location.search')
+
+      // window.location.search = `${window.location.search}&col=completedDateColumn&val=last7,${startDate},`
+    }
+
+    console.log(getParamsFilter, 'after');
+  }, [currentTabName]);
+
+  console.log(getParamsFilter, 'getParamsFilter outside useEffect adn after');
+
+
   // Read from the url get params and the local filter. The get params should override the local filter.
   const filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+  console.log(filter, 'filter')
   const tabPaginationOptions = {
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
@@ -51,6 +91,8 @@ const NonCompTabsUnconnected = (props) => {
 
   const buildCompletedTabDescriptionFromFilter = (filters) => {
     const completedDateFilter = filters.find((value) => value.includes('col=completedDateColumn'));
+
+    console.log(completedDateFilter, 'completedDateFilter');
 
     if (!isVhaBusinessLine) {
       return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
