@@ -11,7 +11,7 @@ shared_examples "a validates required params are not null #document endpoint" do
 
   let(:post_data) do
     {
-      dateOfReceipt: 1.day.ago,
+      dateOfReceipt: 1.day.ago.strftime(Date::DATE_FORMATS[:csv_date]),
       documentId: SecureRandom.uuid,
       documentUuid: SecureRandom.uuid,
       nonVbmsDocTypeName: Faker::Internet.username(specifier: 8),
@@ -48,7 +48,7 @@ describe Api::V1::CmpController, type: :request do
   describe "#document" do
     let!(:cmp_document_id) { SecureRandom.uuid }
     let!(:cmp_document_uuid) { SecureRandom.uuid }
-    let!(:date_of_receipt) { 1.day.ago }
+    let!(:date_of_receipt) { 1.day.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
     let!(:packet_uuid) { SecureRandom.uuid }
     let!(:doctype_name) { Faker::Internet.username(specifier: 8) }
     let!(:vbms_doctype_id) { Faker::Number.within(range: 1..10) }
@@ -81,11 +81,7 @@ describe Api::V1::CmpController, type: :request do
         expect(cmp_document.cmp_document_id).to eq(cmp_document_id)
         expect(cmp_document.cmp_document_uuid).to eq(cmp_document_uuid)
         expect(cmp_document.packet_uuid).to eq(packet_uuid)
-        # Ruby Time object maintains greater precision than the database does.
-        # When the value is read back from the database, it’s only preserved to microsecond precision,
-        # while the in-memory representation is precise to nanoseconds.
-        # https://stackoverflow.com/a/20403290
-        expect(cmp_document.date_of_receipt).to be_within(1.second).of date_of_receipt
+        expect(cmp_document.date_of_receipt.strftime(Date::DATE_FORMATS[:csv_date])).to eq date_of_receipt
         expect(cmp_document.doctype_name).to eq(doctype_name)
         expect(cmp_document.vbms_doctype_id).to eq(vbms_doctype_id)
       end
