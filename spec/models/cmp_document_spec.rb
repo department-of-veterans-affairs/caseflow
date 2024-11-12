@@ -9,6 +9,10 @@ RSpec.describe CmpDocument, type: :model do
 
   it { should belong_to(:cmp_mail_packet).optional }
 
-  it { should allow_value(Time.current).for(:date_of_receipt) }
+  it { should allow_value(Time.current.strftime(Date::DATE_FORMATS[:csv_date])).for(:date_of_receipt) }
+  it { should_not allow_value("19900101").for(:date_of_receipt) }
   it { should_not allow_value("not really a date").for(:date_of_receipt) }
+
+  it { should allow_value(Faker::Number.within(range: 1..100).to_s).for(:vbms_doctype_id) }
+  it { should_not allow_value("not really an integer").for(:vbms_doctype_id) }
 end
