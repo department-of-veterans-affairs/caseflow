@@ -22,15 +22,17 @@ export default {
           name: 'Search Name',
           description: 'Search Description is interesting to be done. Long Desciption goes here. how long is too long',
           createdAt: '2024-10-21T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
           saved_params: {
             report_type: 'event_type_action',
             timing: {
               range: 'after',
               start_date: '2024-10-07T06:00:00.000Z'
             }
+          },
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
           }
         },
         {
@@ -38,9 +40,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-10-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             events: {
@@ -61,9 +65,11 @@ export default {
           name: 'Search Name3',
           description: 'Search Description3 is interesting to be done.',
           createdAt: '2024-10-12T06:00:00.000Z',
-          userId: 13,
-          userCssId: 'VHAADMIN2',
-          userFullName: 'VHAADMIN2',
+          user: {
+            id: 13,
+            cssId: 'VHAADMIN2',
+            fullName: 'VHAADMIN2',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -77,9 +83,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-13T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -93,9 +101,11 @@ export default {
           name: 'Search Name',
           description: 'Search Description is interesting to be done.',
           createdAt: '2024-07-10T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -109,9 +119,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-07-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -125,9 +137,11 @@ export default {
           name: 'Search Name3',
           description: 'Search Description3 is interesting to be done.',
           createdAt: '2024-07-12T06:00:00.000Z',
-          userId: 13,
-          userCssId: 'VHAADMIN2',
-          userFullName: 'VHAADMIN2',
+          user: {
+            id: 13,
+            cssId: 'VHAADMIN2',
+            fullName: 'VHAADMIN2',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -141,9 +155,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-13T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -157,9 +173,11 @@ export default {
           name: 'Search Name',
           description: 'Search Description is interesting to be done.',
           createdAt: '2024-07-16T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -173,9 +191,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-07-21T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -189,9 +209,11 @@ export default {
           name: 'Search Name3',
           description: 'Search Description3 is interesting to be done.',
           createdAt: '2024-07-15T06:00:00.000Z',
-          userId: 13,
-          userCssId: 'VHAADMIN2',
-          userFullName: 'VHAADMIN2',
+          user: {
+            id: 13,
+            cssId: 'VHAADMIN2',
+            fullName: 'VHAADMIN2',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -205,9 +227,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-11T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -221,9 +245,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-13T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -237,9 +263,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-13T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -253,9 +281,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-23T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -269,9 +299,11 @@ export default {
           name: 'Search Name4',
           description: 'Search Description4 is interesting to be done.',
           createdAt: '2024-07-23T06:00:00.000Z',
-          userId: 14,
-          userCssId: 'VHAADMIN3',
-          userFullName: 'VHAADMIN3',
+          user: {
+            id: 14,
+            cssId: 'VHAADMIN3',
+            fullName: 'VHAADMIN3',
+          },
           saved_params: {
             report_type: 'event_type_action',
             timing: {
@@ -285,9 +317,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-10-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             events: {
@@ -308,9 +342,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-10-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             events: {
@@ -331,9 +367,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-10-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             events: {
@@ -354,9 +392,11 @@ export default {
           name: 'Search Name2',
           description: 'Search Description2 is interesting to be done.',
           createdAt: '2024-10-11T06:00:00.000Z',
-          userId: 12,
-          userCssId: 'VHAADMIN',
-          userFullName: 'VHAADMIN',
+          user: {
+            id: 12,
+            cssId: 'VHAADMIN',
+            fullName: 'VHAADMIN',
+          },
           saved_params: {
             report_type: 'event_type_action',
             events: {
@@ -378,9 +418,11 @@ export default {
         name: 'Search Name2',
         description: 'Search Description2 is interesting to be done.',
         createdAt: '2024-07-21T06:00:00.000Z',
-        userId: 12,
-        userCssId: 'VHAADMIN',
-        userFullName: 'VHAADMIN',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -394,9 +436,11 @@ export default {
         name: 'Search Name3',
         description: 'Search Description3 is interesting to be done.',
         createdAt: '2024-07-15T06:00:00.000Z',
-        userId: 13,
-        userCssId: 'VHAADMIN2',
-        userFullName: 'VHAADMIN2',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -410,9 +454,11 @@ export default {
         name: 'Search Name4',
         description: 'Search Description4 is interesting to be done.',
         createdAt: '2024-07-11T06:00:00.000Z',
-        userId: 14,
-        userCssId: 'VHAADMIN3',
-        userFullName: 'VHAADMIN3',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -426,9 +472,11 @@ export default {
         name: 'Search Name4',
         description: 'Search Description4 is interesting to be done.',
         createdAt: '2024-07-13T06:00:00.000Z',
-        userId: 14,
-        userCssId: 'VHAADMIN3',
-        userFullName: 'VHAADMIN3',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -442,9 +490,11 @@ export default {
         name: 'Search Name4',
         description: 'Search Description4 is interesting to be done.',
         createdAt: '2024-07-13T06:00:00.000Z',
-        userId: 14,
-        userCssId: 'VHAADMIN3',
-        userFullName: 'VHAADMIN3',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -458,9 +508,11 @@ export default {
         name: 'Search Name4',
         description: 'Search Description4 is interesting to be done.',
         createdAt: '2024-07-23T06:00:00.000Z',
-        userId: 14,
-        userCssId: 'VHAADMIN3',
-        userFullName: 'VHAADMIN3',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -474,9 +526,11 @@ export default {
         name: 'Search Name4',
         description: 'Search Description4 is interesting to be done.',
         createdAt: '2024-07-23T06:00:00.000Z',
-        userId: 14,
-        userCssId: 'VHAADMIN3',
-        userFullName: 'VHAADMIN3',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           timing: {
@@ -490,9 +544,11 @@ export default {
         name: 'Search Name2',
         description: 'Search Description2 is interesting to be done.',
         createdAt: '2024-10-11T06:00:00.000Z',
-        userId: 12,
-        userCssId: 'VHAADMIN',
-        userFullName: 'VHAADMIN',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           events: {
@@ -513,32 +569,11 @@ export default {
         name: 'Search Name2',
         description: 'Search Description2 is interesting to be done.',
         createdAt: '2024-10-11T06:00:00.000Z',
-        userId: 12,
-        userCssId: 'VHAADMIN',
-        userFullName: 'VHAADMIN',
-        saved_params: {
-          report_type: 'event_type_action',
-          events: {
-            0: 'added_decision_date',
-            1: 'added_issue',
-            2: 'added_issue_no_decision_date',
-            3: 'claim_created',
-            4: 'claim_closed'
-          },
-          timing: {
-            range: 'after',
-            start_date: '2024-10-07T06:00:00.000Z'
-          }
-        }
-      },
-      {
-        id: 19,
-        name: 'Search Name2',
-        description: 'Search Description2 is interesting to be done.',
-        createdAt: '2024-10-11T06:00:00.000Z',
-        userId: 12,
-        userCssId: 'VHAADMIN',
-        userFullName: 'VHAADMIN',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           events: {
@@ -559,9 +594,11 @@ export default {
         name: 'Search Name2',
         description: 'Search Description2 is interesting to be done.',
         createdAt: '2024-10-11T06:00:00.000Z',
-        userId: 12,
-        userCssId: 'VHAADMIN',
-        userFullName: 'VHAADMIN',
+        user: {
+          id: 12,
+          cssId: 'VHAADMIN',
+          fullName: 'VHAADMIN',
+        },
         saved_params: {
           report_type: 'event_type_action',
           events: {

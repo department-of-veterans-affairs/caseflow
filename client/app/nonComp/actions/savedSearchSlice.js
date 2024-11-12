@@ -6,8 +6,8 @@ const initialState = {
   fetchedSearches: {
     error: null,
     status: 'idle',
-    searches: {},
-    userSearches: {}
+    searches: [],
+    userSearches: []
   },
   saveUserSearch: {}
 };
@@ -86,7 +86,6 @@ const savedSearchSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
-
   },
 });
 

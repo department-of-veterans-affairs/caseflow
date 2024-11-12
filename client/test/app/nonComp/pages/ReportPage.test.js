@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
@@ -602,3 +604,4 @@ describe('ReportPage', () => {
     });
   });
 });
+/* eslint-enable max-lines */
