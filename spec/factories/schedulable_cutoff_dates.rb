@@ -2,9 +2,12 @@
 
 FactoryBot.define do
   factory :schedulable_cutoff_date do
-    id { "" }
-    created_at { "2024-11-07 13:55:59" }
-    cutoff_date { "2024-11-07" }
-    created_by_id { "1" }
+    id { 1 }
+    created_at { Time.zone.now }
+    cutoff_date { Time.zone.today + 30.days }
+    created_by_id do
+      create(:appeal)
+      appeal.id
+    end
   end
 end
