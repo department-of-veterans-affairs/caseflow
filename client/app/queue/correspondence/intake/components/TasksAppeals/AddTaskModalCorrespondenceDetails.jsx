@@ -142,14 +142,6 @@ const AddTaskModalCorrespondenceDetails = ({
     return null;
   }
 
-  let buttonText = 'Next';
-
-  if (isLoading) {
-    buttonText = 'Loading...';
-  } else if (isSecondPage) {
-    buttonText = 'Submit';
-  }
-
   return (
     <Modal
       // Dynamic title for each page
