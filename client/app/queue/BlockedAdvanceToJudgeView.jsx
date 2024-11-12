@@ -101,7 +101,6 @@ class BlockedAdvanceToJudgeView extends React.Component {
     //   }, successMessage);
     // }
 
-
     const payload = {
       data: {
         tasks: [

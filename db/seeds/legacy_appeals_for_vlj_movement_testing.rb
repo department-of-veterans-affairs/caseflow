@@ -42,14 +42,66 @@ module Seeds
       doesnot_qualify = create_scenario_1_veteran(first_name: "DoesNot", last_name: "Qualify")
 
       2.times do
-        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(:case, :aod, :type_original, bfcorlid: "#{hearblock_one.file_number}S", case_issues: create_list(:case_issue, 1, :compensation)))
-        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(:case, :type_original, bfcorlid: "#{hearblock_two.file_number}S", case_issues: create_list(:case_issue, 2, :compensation)))
-        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(:case, :aod, :type_original, bfcorlid: "#{hearblock_three.file_number}S", case_issues: create_list(:case_issue, 2, :compensation)))
+        # HearBlock One
+        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
+          :case,
+          :aod,
+          :type_original,
+          bfcorlid: "#{hearblock_one.file_number}S",
+          case_issues: create_list(:case_issue, 1, :compensation)
+          ))
+
+        # HearBlock Two
+        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
+          :case,
+          :type_original,
+          bfcorlid: "#{hearblock_two.file_number}S",
+          case_issues: create_list(:case_issue, 2, :compensation)
+          ))
+
+        # HearBlock Three
+        create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
+          :case,
+          :aod,
+          :type_original,
+          bfcorlid: "#{hearblock_three.file_number}S",
+          case_issues: create_list(:case_issue, 2, :compensation)
+        ))
       end
-      create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(:case, :type_cavc_remand, bfcorlid: "#{hearblock_cavc.file_number}S", case_issues: create_list(:case_issue, 1, :compensation)))
-      create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(:case, :type_original, bfcorlid: "#{hearblock_four.file_number}S", case_issues: create_list(:case_issue, 1, :compensation)))
-      create(:legacy_appeal, :with_active_ihp_colocated_task, :with_veteran, vacols_case: create(:case, :aod, :type_original, bfcorlid: "#{hearnon_block.file_number}S", case_issues: create_list(:case_issue, 1, :compensation)))
-      create(:legacy_appeal, :with_veteran, vacols_case: create(:case, :type_original, bfcurloc: "83", bfcorlid: "#{doesnot_qualify.file_number}S", case_issues: create_list(:case_issue, 1, :compensation)))
+
+      # HearBlock CAVC
+      create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
+        :case,
+        :type_cavc_remand,
+        bfcorlid: "#{hearblock_cavc.file_number}S",
+        case_issues: create_list(:case_issue, 1, :compensation)
+      ))
+
+      # HearBlock Four
+      create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
+        :case,
+        :type_original,
+        bfcorlid: "#{hearblock_four.file_number}S",
+        case_issues: create_list(:case_issue, 1, :compensation)
+      ))
+
+      # HearNon Block
+      create(:legacy_appeal, :with_active_ihp_colocated_task, :with_veteran, vacols_case: create(
+        :case,
+        :aod,
+        :type_original,
+        bfcorlid: "#{hearnon_block.file_number}S",
+        case_issues: create_list(:case_issue, 1, :compensation)
+      ))
+
+      # DoesNot Qualify
+      create(:legacy_appeal, :with_veteran, vacols_case: create(
+        :case,
+        :type_original,
+        bfcurloc: "83",
+        bfcorlid: "#{doesnot_qualify.file_number}S",
+        case_issues: create_list(:case_issue, 1, :compensation)
+      ))
     end
   end
 end
