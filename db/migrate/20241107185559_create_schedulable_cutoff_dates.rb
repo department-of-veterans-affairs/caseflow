@@ -4,7 +4,7 @@ class CreateSchedulableCutoffDates < ActiveRecord::Migration[6.1]
       t.date :cutoff_date
       t.bigint :created_by_id, null: false, references: [:users, :id]
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 
