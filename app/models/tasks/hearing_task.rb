@@ -33,7 +33,8 @@ class HearingTask < Task
 
   def actions_available?(user)
     if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
-      return false unless appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user)
+      return false unless appeal.is_a?(LegacyAppeal) &&
+                          FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user)
     end
 
     actions_allowable?(user)
