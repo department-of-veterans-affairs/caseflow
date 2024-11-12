@@ -39,8 +39,13 @@ class QueueFlowPage extends React.PureComponent {
     return true;
   });
 
-  cancelAttorneyCheckoutMsg = () => {
+  cancelAttorneyCheckoutMsg = (isLegacyAppeal) => {
+    if (!isLegacyAppeal) {
+      return COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_AMA;
+    }
+
     return COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES;
+
   }
 
   withUnblockedTransition = (callback = _.noop) => {
@@ -173,7 +178,7 @@ class QueueFlowPage extends React.PureComponent {
           onClick: this.cancelFlow
         }]}
         closeHandler={() => this.props.hideModal('cancelCheckout')}>
-        {this.cancelAttorneyCheckoutMsg()}
+        {this.cancelAttorneyCheckoutMsg(this.props.isLegacyAppeal)}
       </Modal>
     </div>}
     <AppSegment filledBackground>
