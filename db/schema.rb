@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_04_151218) do
+ActiveRecord::Schema.define(version: 2024_11_12_172400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2459,6 +2459,28 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 
+  create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
+       RETURNS text
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+      	SELECT string_agg(DISTINCT format($$'%s'$$, vacols_id), ',')
+      	INTO legacy_case_ids
+      	FROM legacy_appeals
+      	JOIN tasks ON tasks.appeal_type = 'LegacyAppeal' and tasks.appeal_id = legacy_appeals.id
+      	WHERE
+      	  tasks.type = 'ScheduleHearingTask'
+      	  AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
+      	GROUP BY tasks.type;
+
+      	RETURN legacy_case_ids;
+      END
+      $function$
+  SQL
+
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
@@ -2476,8 +2498,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
           CASE
               WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
@@ -2526,8 +2551,11 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
       tasks.assigned_to_type,
       tasks.assigned_at,
       tasks.assigned_by_id,
-      (CURRENT_DATE - (tasks.placed_on_hold_at)::date) AS days_on_hold,
-      ((tasks.closed_at)::date - (tasks.created_at)::date) AS days_waiting,
+          CASE
+              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+              ELSE NULL::integer
+          END AS days_on_hold,
+      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
       true AS schedulable
      FROM ((((((legacy_appeals
