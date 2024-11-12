@@ -4,24 +4,19 @@ import { filesize } from 'filesize';
 import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 import { ICON_SIZES } from '../constants/AppConstants';
 
-
-const DocSizeIndicator = (props) => {
-  const downloadTime = props.docSize / props.browserSpeedInBytes
-
-  return (
-    <span>{filesize(props.docSize)} {downloadTime > 15 ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}</span>
-  );
-};
-
 const LARGE_FILE_SIZE_THRESHOLD = 30 * 1024 * 1024; // 30 MB in bytes
 
-const DocSizeIndicator = ({ filesize }) => {
-  const isLargeFile = fileSize > LARGE_FILE_SIZE_THRESHOLD;
+const DocSizeIndicator = ({ docSize, browserSpeedInBytes }) => {
+  const downloadTime = docSize / browserSpeedInBytes;
+  const isLargeFile = docSize > LARGE_FILE_SIZE_THRESHOLD;
 
   return (
-    <div className="doc-size-indicator">
-      {isLargeFile && <SizeWarningIcon size={24} className="large-file-warning" />}
-    </div>
+    <span>
+      {filesize(docSize)}
+      {downloadTime > 15 && isLargeFile && (
+        <SizeWarningIcon size={ICON_SIZES.SMALL} />
+      )}
+    </span>
   );
 };
 
