@@ -45,7 +45,7 @@ describe "gather_vacols_ids_of_hearing_schedulable_legacy_appeals" do
       # Validate proper formatting
       expect(subject.scan(/'\d*'/).size).to eq desired_vacols_ids.size
 
-      expect(subject.gsub('\'', '').split(',')).to match_array(desired_vacols_ids)
+      expect(subject.delete("'").split(",")).to match_array(desired_vacols_ids)
     end
   end
 end
