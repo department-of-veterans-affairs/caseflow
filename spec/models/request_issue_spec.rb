@@ -2390,10 +2390,6 @@ describe RequestIssue, :all_dbs do
               )
             end
 
-            # before :each do
-            #   rating_request_issue.benefit_type = "fiduciary"
-            # end
-
             it "creates decision issues based on rating issues" do
               rating_request_issue.decision_sync_error = "previous error"
               subject
@@ -2455,10 +2451,6 @@ describe RequestIssue, :all_dbs do
             let(:issues) do
               [{ reference_id: "xyz456", decision_text: "PTSD denied", contention_reference_id: "bad_id" }]
             end
-
-            # before :each do
-            # rating_request_issue.benefit_type = "fiduciary"
-            # end
 
             it "creates decision issues based on contention disposition" do
               subject
