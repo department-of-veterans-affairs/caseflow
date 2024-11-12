@@ -2,7 +2,7 @@
 
 module Seeds
   class LegacyAppealsForVljMovementTesting < Base
-    def initialze
+    def initialize
       RequestStore[:current_user] = User.system_user
     end
 
