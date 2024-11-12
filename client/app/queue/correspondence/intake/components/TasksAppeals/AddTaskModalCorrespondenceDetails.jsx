@@ -10,6 +10,7 @@ import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 import { maxWidthFormInput, corrDetailsModal } from '../../../../../hearings/components/details/style';
+import COPY from "../../../../../../COPY.json";
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
@@ -208,7 +209,7 @@ const AddTaskModalCorrespondenceDetails = ({
             />
             <TextareaField
               name="content"
-              label="Provide context and instructions on this task"
+              label={COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
               value={taskContent}
               onChange={updateTaskContent}
               classNames={['task-selection-dropdown-box']}
