@@ -4,7 +4,7 @@ module ProdtestOnlyConcern
   extend ActiveSupport::Concern
 
   included do
-    # before_action :prodtest_only
+    before_action :prodtest_only
   end
 
   # Only accessible from prod-test environment

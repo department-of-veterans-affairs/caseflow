@@ -20,14 +20,24 @@ class Test::LoadTestApiController < Api::ApplicationController
   end
 
   def target
-    params.require(:target_type)
-    render json: {
-      data_type: params[:target_type],
-      data: data_for_testing
-    }
+    begin
+      params.require(:target_type)
+      render json: {
+        data_type: params[:target_type],
+        data: data_for_testing
+      }
+    rescue ActiveRecord::RecordNotFound
+      render json: {
+        message: "Data returned nil when trying to find #{params[:target_type]}"
+      }, status: :not_found
+    end
   end
 
   private
+
+  def load_test_user
+    User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
+  end
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
@@ -90,7 +100,7 @@ class Test::LoadTestApiController < Api::ApplicationController
       user_requirement.require([:station_id])
       user_requirement.require([:regional_office])
     end
-    user = user.presence || User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
+    user = user.presence || load_test_user
     save_user_params(user, params[:user])
 
     grant_or_deny_functions(params[:user][:functions])
@@ -129,14 +139,25 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: organizations
   # Response: None
   def add_user_to_org(organizations, user)
-    organizations.select { |organization| organization[:admin] == true }.each do |org|
+    remove_user_from_all_organizations
+
+    organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
       OrganizationsUser.make_user_admin(user, organization)
     end
-    organizations.select { |organization| organization[:admin] == false }.each do |org|
+    organizations.select { |organization| organization[:admin] == false || "false" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
+    end
+  end
+
+  # Private: Method to remove user from all organizations before adding back to only relevant orgs for this test run
+  # Params: None
+  # Response: None
+  def remove_user_from_all_organizations
+    Organization.all.each do |organization|
+      OrganizationsUser.remove_user_from_organization(load_test_user, organization)
     end
   end
 
