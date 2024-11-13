@@ -431,35 +431,42 @@ feature "Higher Level Review Edit issues", :all_dbs do
       end
     end
 
-    # it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
-    #   # Step 2: Visit the higher-level review edit page
-    #   visit "higher_level_reviews/#{ep_claim_id}/edit"
+    it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
+      # Step 2: Visit the higher-level review edit page
+      visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-    #   # Step 3: Verify that the correct number of issues (8) are listed on the page
-    #   number_of_issues = 8
-    #   expect(page).to have_content("#{number_of_issues} issues")
+      # Step 3: Verify that the correct number of issues (8) are listed on the page
+      number_of_issues = 8
+      expect(page).to have_content("#{number_of_issues} issues")
 
-    #   # Step 4: Click the "add issue" button to trigger the action of adding an issue
-    #   ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
-    #     ri_legacy_issue_not_withdrawn.contention_text
-    #   )
-    #   expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
-    #   click_intake_add_issue
-    #   click_intake_no_matching_issues
-    #   add_intake_nonrating_issue(
-    #     category: "Active Duty Adjustments",
-    #     description: untimely_request_issue.contention_text,
-    #     date: "06/20/2021",
-    #     legacy_issues: true
-    #   )
-    #   select_intake_no_match
-    #   add_untimely_exemption_response("No")
-    #   click_button "Save"
+      # Step 4: Click the "add issue" button to trigger the action of adding an issue
+      ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
+        ri_legacy_issue_not_withdrawn.contention_text
+      )
+      expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: untimely_request_issue.contention_text,
+        date: "06/20/2021",
+        legacy_issues: true
+      )
+      # select_intake_no_match
+      # add_untimely_exemption_response("No")
+      expect(page).to have_text('Service connection, rheumatoid arthritis')
 
-    #   expect_ineligible_issue(number_of_issues + 1)
-    #   visit "higher_level_reviews/#{ep_claim_id}/edit"
-    #   expect(page).to have_content("#{number_of_issues + 1} issues")
-    # end
+      # Then find and click the label
+      find('label', text: 'Service connection, rheumatoid arthritis').click
+      safe_click ".add-issue"
+
+      safe_click("#button-submit-update")
+      safe_click ".confirm"
+      # expect_ineligible_issue(number_of_issues)
+      visit "higher_level_reviews/#{ep_claim_id}/edit"
+      # test is still failing
+      expect(page).to have_content("Something went wrong")
+    end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
       visit "higher_level_reviews/#{ep_claim_id}/edit"

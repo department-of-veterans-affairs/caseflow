@@ -95,6 +95,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # rubocop:disable Metrics/MethodLength
   def update_request_issue!(request_issue, parser_issue)
+    binding.pry
     request_issue.update(
       ineligible_reason: parser_issue.ri_ineligible_reason,
       closed_at: parser_issue.ri_closed_at,
