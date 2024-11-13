@@ -24,7 +24,6 @@ const DocumentViewer = (props) => {
   const [numPages, setNumPages] = useState(null);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const showSideBar = useSelector(showSideBarSelector);
   const dispatch = useDispatch();
 
@@ -148,23 +147,15 @@ const DocumentViewer = (props) => {
                   doc={doc}
                   key={file}
                   isFileVisible={doc.content_url === file}
-                  isDocumentLoadError={isDocumentLoadError}
                   rotateDeg={rotateDeg}
-                  setIsDocumentLoadError={setIsDocumentLoadError}
+                  setCurrentPage={setCurrentPage}
                   setNumPages={setNumPages}
+                  showPdf={props.showPdf}
                   zoomLevel={props.zoomLevel}
                 />
               )
             )}
           </div>
-          <ReaderFooter
-            currentPage={currentPage}
-            docId={doc.id}
-            isDocumentLoadError={isDocumentLoadError}
-            numPages={numPages}
-            setCurrentPage={() => setCurrentPage()}
-            showPdf={props.showPdf}
-          />
         </div>
         {showSideBar && (
           <ReaderSidebar

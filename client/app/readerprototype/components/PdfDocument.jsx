@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Layer from './Comments/Layer';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
@@ -12,28 +12,34 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import _ from 'lodash';
+import ReaderFooter from './ReaderFooter';
 
 const PdfDocument = ({
   currentPage,
   doc,
-  isDocumentLoadError,
   isFileVisible,
   rotateDeg,
-  setIsDocumentLoadError,
+  setCurrentPage,
   setNumPages,
+  showPdf,
   zoomLevel }) => {
 
   if (!isFileVisible) {
     return null;
   }
 
-  const [pdfDoc, setPdfDoc] = useState(null);
-  const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
-  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
+
+  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
+  const [pdfPages, setPdfPages] = useState([]);
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
+
   const metricsLoggedRef = useRef(metricsLogged);
+  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
+  const pdfjsDocumentRef = useRef(null);
+  const pdfjsLoadingTaskRef = useRef(null);
 
   const containerStyle = {
     width: '100%',
@@ -103,61 +109,66 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
-  useEffect(() => {
-    const getDocData = async () => {
-      pdfMetrics.current.renderedPageCount = 0;
-      pdfMetrics.current.renderedTimeTotal = 0;
-      setPdfDoc(null);
-      setPdfPages([]);
-      setAllPagesRendered(false);
-      setMetricsLogged(false);
-      const requestOptions = {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      };
+  const requestOptions = {
+    cache: true,
+    withCredentials: true,
+    timeout: true,
+    responseType: 'arraybuffer',
+  };
 
-      pdfMetrics.current.getStartTime = new Date().getTime();
-      const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
-        return response.body;
+  const getPdfjsDocument = async (url) => {
+    pdfMetrics.current.renderedPageCount = 0;
+    pdfMetrics.current.renderedTimeTotal = 0;
+    setPdfPages([]);
+    setAllPagesRendered(false);
+    setMetricsLogged(false);
+
+    pdfMetrics.current.getStartTime = new Date().getTime();
+    pdfjsLoadingTaskRef.current = await ApiUtil.get(url, requestOptions).
+      then((response) => {
+        return getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
       }).
-        catch((error) => {
-          console.error(`ERROR with document API: ${error}`);
-          setIsDocumentLoadError(true);
-        });
+      catch((error) => {
+        console.error(`ERROR with fetching doc from document API: ${error}`);
+        setIsDocumentLoadError(true);
+        throw error;
+      });
 
-      pdfMetrics.current.getEndTime = new Date().getTime();
-      const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
+    pdfMetrics.current.getEndTime = new Date().getTime();
+    await pdfjsLoadingTaskRef.current.promise.
+      then((pdfDocument) => {
+        if (!pdfDocument) {
+          return setIsDocumentLoadError(true);
+        }
+        pdfjsDocumentRef.current = pdfDocument;
+        setNumPages(pdfjsDocumentRef.current.numPages);
+      }).
+      catch((err) => {
+        console.error(`ERROR with pdfjs: ${err}`);
 
-      if (docProxy) {
-        setPdfDoc(docProxy);
-        setNumPages(docProxy.numPages);
-      }
-    };
+        return null;
+      });
+  };
 
-    getDocData().catch((error) => {
-      console.error(`ERROR with getting doc data: ${error}`);
+  const getPages = (pdfDocument) => {
+    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+
+      return pdfDocument.getPage(index + 1);
     });
+
+    Promise.all(promises).
+      then((values) => {
+        setPdfPages(values);
+      });
+  };
+
+  useMemo(() => {
+    getPdfjsDocument(doc.content_url);
   }, [doc.content_url]);
 
-  useEffect(() => {
-    const pageArray = [];
-
-    if (!pdfDoc) {
-      return;
-    }
-    const getPdfData = async () => {
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i);
-
-        pageArray.push(page);
-      }
-      setPdfPages(pageArray);
-    };
-
-    getPdfData();
-  }, [pdfDoc]);
+  useMemo(() => {
+    getPages(pdfjsDocumentRef.current);
+  }, [pdfjsDocumentRef.current]);
 
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));
@@ -183,25 +194,35 @@ const PdfDocument = ({
   }, [metricsLogged]);
 
   return (
-    <div id="pdfContainer" style={containerStyle}>
-      {isDocumentLoadError ?
-        (<DocumentLoadError doc={doc} />) :
-        (pdfPages.map((page, index) => (
-          <Page
-            scale={zoomLevel}
-            page={page}
-            rotation={rotateDeg}
-            key={`doc-${doc.id}-page-${index}`}
-            renderItem={(childProps) => (
-              <Layer isCurrentPage={currentPage === page.pageNumber}
-                documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-                <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
-              </Layer>
-            )}
-            setRenderingMetrics={handleRenderingMetrics}
-          />
-        )))}
-    </div>
+    <>
+      <div id="pdfContainer" style={containerStyle}>
+        {isDocumentLoadError ?
+          (<DocumentLoadError doc={doc} />) :
+          (pdfPages.map((page, index) => (
+            <Page
+              scale={zoomLevel}
+              page={page}
+              rotation={rotateDeg}
+              key={`doc-${doc.id}-page-${index}`}
+              renderItem={(childProps) => (
+                <Layer isCurrentPage={currentPage === page.pageNumber}
+                  documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+                  <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
+                </Layer>
+              )}
+              setRenderingMetrics={handleRenderingMetrics}
+            />
+          )))}
+      </div>
+      <ReaderFooter
+        currentPage={currentPage}
+        docId={doc.id}
+        isDocumentLoadError={isDocumentLoadError}
+        numPages={pdfPages.length}
+        setCurrentPage={setCurrentPage}
+        showPdf={showPdf}
+      />
+    </>
   );
 };
 
@@ -213,11 +234,11 @@ PdfDocument.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
   }),
-  isDocumentLoadError: PropTypes.bool,
   isFileVisible: PropTypes.bool,
   rotateDeg: PropTypes.string,
-  setIsDocumentLoadError: PropTypes.func,
+  setCurrentPage: PropTypes.func,
   setNumPages: PropTypes.func,
+  showPdf: PropTypes.func,
   zoomLevel: PropTypes.number,
 };
 
