@@ -2492,7 +2492,6 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
         INTO legacy_case_ids
         FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
 
-
         RETURN QUERY
           EXECUTE format(
             'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
