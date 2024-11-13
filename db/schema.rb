@@ -2499,11 +2499,16 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
         INTO legacy_case_ids
         FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
 
-        RETURN QUERY
-          EXECUTE format(
-            'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
-            legacy_case_ids
-          );
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_brieff WHERE 1 = 0';
       END $function$
   SQL
 
