@@ -30,10 +30,7 @@ class Remediations::VeteranRecordRemediationService
     ActiveRecord::Base.transaction do
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      # @dups.each(&:destroy!)
-      @dups.each do |dup|
-        dup.destroy!
-      end
+      @dups.each(&:destroy!)
       # may need to fix intakes with veteran id
     end
   end
@@ -48,7 +45,6 @@ class Remediations::VeteranRecordRemediationService
     # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
-        # binding.pry
         collection.update!(file_number)
       end
     end
