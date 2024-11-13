@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
-import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
@@ -42,9 +41,7 @@ const DocumentViewer = (props) => {
   // and refactor getPrefetchFiles() without using lodash
   const getPrefetchFiles = () => _.compact(_.map([prevDoc, nextDoc], 'content_url'));
 
-  const files = props.featureToggles.prefetchDisabled ?
-    [doc.content_url] :
-    [...getPrefetchFiles(), doc.content_url];
+  const files = [...getPrefetchFiles(), doc.content_url];
 
   useEffect(() => {
     setShowSearchBar(false);
