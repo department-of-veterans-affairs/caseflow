@@ -9,7 +9,6 @@ BEGIN
   INTO legacy_case_ids
   FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
 
-
   RETURN QUERY
     EXECUTE format(
       'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
