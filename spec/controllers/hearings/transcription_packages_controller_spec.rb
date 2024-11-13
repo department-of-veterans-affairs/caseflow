@@ -91,7 +91,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_2.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_2.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_2.contractor.name,
-        status: "Successful Upload (BOX)"
+        status: transcription_package_2.status
       }
     end
 
@@ -103,7 +103,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_3.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_3.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_3.contractor.name,
-        status: "Successful Upload (BOX)"
+        status: transcription_package_3.status
       }
     end
 
@@ -189,6 +189,24 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
 
     it "filters by contractor name" do
       filter = Rack::Utils.build_query({ col: "contractorColumn", val: "Contractor One" })
+
+      get :transcription_package_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_4, package_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by status" do
+      filter = Rack::Utils.build_query({ col: "statusColumn", val: "Overdue" })
 
       get :transcription_package_tasks, params: { filter: [filter] }
 
