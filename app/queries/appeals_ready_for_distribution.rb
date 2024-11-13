@@ -73,9 +73,9 @@ class AppealsReadyForDistribution
       target_distro_date: "N/A",
       days_before_goal_date: "N/A",
       hearing_judge: appeal["vlj_id"],
-      hearing_date: appeal["hearing_date"],
+      hearing_date: appeal["hearing_date"]&.to_date,
       original_judge: legacy_original_deciding_judge(appeal),
-      prior_decision_date: appeal["bfdpdcn"],
+      prior_decision_date: appeal["bfdpdcn"]&.to_date,
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
       affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
