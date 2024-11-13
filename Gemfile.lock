@@ -1710,6 +1710,7 @@ GEM
     mime-types-data (3.2019.1009)
     mini_histogram (0.3.1)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.7)
     minitest (5.19.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
@@ -1729,7 +1730,8 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.5-arm64-darwin)
+    nokogiri (1.15.5)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -1848,7 +1850,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
-    puma (6.4.3)
+    puma (5.6.4)
       nio4r (~> 2.0)
     racc (1.7.3)
     rack (2.2.6.4)
@@ -2132,7 +2134,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  arm64-darwin-21
+  ruby
 
 DEPENDENCIES
   aasm (= 4.11.0)
