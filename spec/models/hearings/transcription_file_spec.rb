@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Hearings::TranscriptionFile do
+describe TranscriptionFile do
   let(:file) { create(:transcription_file) }
   let(:uploaded_file) { create(:transcription_file, :uploaded) }
 
@@ -95,7 +95,7 @@ describe Hearings::TranscriptionFile do
 
     it "searches on docket number" do
       query = tf_1.docket_number
-      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+      @transcription_files = TranscriptionFile.filterable_values.search(query)
 
       expect(@transcription_files.length).to be(1)
       expect(@transcription_files[0].id).to eq(tf_1.id)
@@ -103,7 +103,7 @@ describe Hearings::TranscriptionFile do
 
     it "searches on people first and last name" do
       query = tf_2.hearing.appeal.claimant.person.first_name + " " + tf_2.hearing.appeal.claimant.person.last_name
-      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+      @transcription_files = TranscriptionFile.filterable_values.search(query)
 
       expect(@transcription_files.length).to be(1)
       expect(@transcription_files[0].id).to eq(tf_2.id)
@@ -111,7 +111,7 @@ describe Hearings::TranscriptionFile do
 
     it "searches on veterans first and last name" do
       query = tf_3.hearing.appeal.veteran.first_name + " " + tf_3.hearing.appeal.veteran.last_name
-      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+      @transcription_files = TranscriptionFile.filterable_values.search(query)
 
       expect(@transcription_files.length).to be(1)
       expect(@transcription_files[0].id).to eq(tf_3.id)
@@ -119,7 +119,7 @@ describe Hearings::TranscriptionFile do
 
     it "searches on veterans file number" do
       query = tf_4.hearing.appeal.veteran.file_number
-      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+      @transcription_files = TranscriptionFile.filterable_values.search(query)
 
       expect(@transcription_files.length).to be(1)
       expect(@transcription_files[0].id).to eq(tf_4.id)
@@ -127,7 +127,7 @@ describe Hearings::TranscriptionFile do
 
     it "searches on task_number" do
       query = "BVA2024002"
-      @transcription_files = Hearings::TranscriptionFile.filterable_values.search(query)
+      @transcription_files = TranscriptionFile.filterable_values.search(query)
 
       expect(@transcription_files.length).to be(1)
       expect(@transcription_files[0].id).to eq(tf_2.id)
