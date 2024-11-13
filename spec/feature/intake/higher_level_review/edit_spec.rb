@@ -432,10 +432,45 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
+      # Step 2: Visit the higher-level review edit page
       visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-      click_intake_add_issue
+      # Step 3: Verify that the correct number of issues (8) are listed on the page
+      number_of_issues = 8
+      expect(page).to have_content("#{number_of_issues} issues")
 
+      # Step 4: Click the "add issue" button to trigger the action of adding an issue
+      ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
+        ri_legacy_issue_not_withdrawn.contention_text
+      )
+      expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: untimely_request_issue.contention_text,
+        date: "06/20/2021",
+        legacy_issues: true
+      )
+      select_intake_no_match
+      add_untimely_exemption_response("No")
+      expect_ineligible_issue(number_of_issues + 1)
+      expect(page).to have_content(
+        "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
+      )
+      save_and_open_page
+
+      click_button "Save"
+
+      # Step 6: Verify that the ineligible issue was added successfully and the user is still on the edit page
+      expect(page).to have_content("Ineligible issue")
+      expect(page).to have_content("#{number_of_issues + 1} issues")  # Ensure the number of issues is updated
+
+      # Step 7: Ensure the user can return to the edit page after adding the issue
+      # This step assumes that after saving the issue, the user is still on the edit page,
+      # or you can add another navigation step to go back to the edit page explicitly.
+      visit "higher_level_reviews/#{ep_claim_id}/edit"  # Navigate back to the edit page
+      expect(page).to have_content("#{number_of_issues + 1} issues")  # Ensure the number of issues remains intact
     end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
