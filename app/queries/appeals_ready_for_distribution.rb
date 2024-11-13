@@ -75,7 +75,7 @@ class AppealsReadyForDistribution
       hearing_judge: appeal["vlj_id"],
       hearing_date: appeal["hearing_date"],
       original_judge: legacy_original_deciding_judge(appeal),
-      prior_decision_date: "not yet implemented",
+      prior_decision_date: appeal["bfdpdcn"],
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
       affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
@@ -90,6 +90,7 @@ class AppealsReadyForDistribution
   def self.ama_rows(appeals, docket, sym)
     appeals.map do |appeal|
       hearing = appeal.hearings.where(disposition: "held").max_by(&:scheduled_for)
+      original_judge_task = ama_cavc_original_judge_task(appeal) if appeal.cavc?
 
       {
         docket_number: appeal.docket_number,
@@ -102,8 +103,8 @@ class AppealsReadyForDistribution
         days_before_goal_date: appeal.aod || appeal.cavc ? "N/A" : days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing&.judge&.css_id,
         hearing_date: hearing&.scheduled_for,
-        original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
-        prior_decision_date: "not yet implemented",
+        original_judge: original_judge_task&.assigned_to&.css_id,
+        prior_decision_date: original_judge_task&.closed_at,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s,
         affinity_start_date: appeal.appeal_affinity&.affinity_start_date
@@ -141,11 +142,10 @@ class AppealsReadyForDistribution
     target_date - docket.start_distribution_prior_to_goal.try(:value).to_i.days
   end
 
-  def self.ama_cavc_original_deciding_judge(appeal)
+  def self.ama_cavc_original_judge_task(appeal)
     source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
 
     Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
-      &.assigned_to&.css_id
   end
 
   def self.legacy_original_deciding_judge(appeal)
