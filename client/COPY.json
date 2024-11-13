@@ -1535,5 +1535,7 @@
   "DATE_PICKER_DROPDOWN_7": "Last 7 days",
   "DATE_PICKER_DROPDOWN_30": "Last 30 days",
   "DATE_PICKER_DROPDOWN_365": "Last 365 days",
-  "DATE_PICKER_DROPDOWN_ALL": "View All"
+  "DATE_PICKER_DROPDOWN_ALL": "View All",
+  "DATE_PICKER_NO_FUTURE_DATES_ERROR_MESSAGE": "Date cannot be in the future.",
+  "DATE_PICKER_BETWEEN_DATES_ERROR_MESSAGE": "\"To\" date cannot occur before the \"From\" date"
 }
