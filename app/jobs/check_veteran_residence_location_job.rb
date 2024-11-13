@@ -33,12 +33,14 @@ class CheckVeteranResidenceLocationJob < CaseflowJob
     end
   end
 
+  private
+
   def retrieve_veterans
     begin
       # Retrieves all the Veteran entries where there is no residence information,
       # or where the residence information was last checked over a week ago
       check_veteran_residence = Veteran.where(state_of_residence: nil, country_of_residence: nil).or(
-        Veteran.where("residence_location_last_checked_at >= ?", 1.week.ago)
+        Veteran.where("residence_location_last_checked_at <= ?", 1.week.ago)
       ).limit(RESIDENCE_LOCATION_PROCESS_LIMIT)
 
       check_veteran_residence
