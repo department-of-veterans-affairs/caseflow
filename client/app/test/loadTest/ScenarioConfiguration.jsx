@@ -25,12 +25,9 @@ export default function ScenarioConfiguration(props) {
 
   const handleScenarioSelect = (chosenScenario) => {
     const currentSelections = currentState.scenarios;
-    let updatedSelections = currentState.scenarios.map((selection) =>
-      Object.keys(selection)[0]
-    );
 
-    if (updatedSelections.find((selection) => selection === chosenScenario)) {
-      currentSelections.splice(updatedSelections.indexOf(chosenScenario), 1);
+    if (scenariosArray.find((selection) => selection === chosenScenario)) {
+      currentSelections.splice(scenariosArray.indexOf(chosenScenario), 1);
       setChecked(false);
     } else {
       currentSelections.push({ [chosenScenario]: {} });
