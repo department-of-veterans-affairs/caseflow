@@ -34,7 +34,6 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
     allow(Person).to receive(:where).with(ssn: "123456789").and_return([person, person_duplicate])
     allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([veteran])
 
-
     allow(Remediations::DuplicatePersonRemediationService).to receive(:new).and_return(duplicate_person_service)
     allow(duplicate_person_service).to receive(:remediate!)
     allow(Remediations::VeteranRecordRemediationService).to receive(:new).and_return(veteran_remediation_service)
