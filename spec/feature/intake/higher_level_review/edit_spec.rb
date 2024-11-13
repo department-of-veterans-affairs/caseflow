@@ -462,9 +462,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       safe_click("#button-submit-update")
       safe_click ".confirm"
-      # expect_ineligible_issue(number_of_issues)
       visit "higher_level_reviews/#{ep_claim_id}/edit"
-      # test is still failing
       expect(page).not_to have_content("Something went wrong")
     end
 
