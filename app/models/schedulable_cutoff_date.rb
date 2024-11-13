@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class SchedulableCutoffDate < ApplicationRecord
+class SchedulableCutoffDate < CaseflowRecord
 end
