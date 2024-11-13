@@ -15,5 +15,6 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       expect(dup_person_service).to receive(:find_and_update_records)
       dup_person_service.remediate!
     end
+    # it destroys the duplicates
   end
 end
