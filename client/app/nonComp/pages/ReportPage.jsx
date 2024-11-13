@@ -202,9 +202,12 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
   const [value, setValue] = React.useState({});
 
   const onCheckboxClick = ({ option, val }) => {
-    value[option.id] = val;
-    field.onChange(value);
-    setValue(value);
+    const valueCopy = { ...value };
+
+    // this was necessary as without this it wouldn't let value to get updated in Saved search.
+    valueCopy[option.id] = val;
+    field.onChange(valueCopy);
+    setValue(valueCopy);
   };
 
   const messageStyling = css({

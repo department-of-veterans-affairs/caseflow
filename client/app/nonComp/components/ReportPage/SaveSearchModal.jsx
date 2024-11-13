@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from 'app/components/Modal';
 import COPY from 'app/../COPY';
@@ -20,11 +19,9 @@ import {
   RADIO_STATUS_REPORT_TYPE_OPTIONS,
   TIMING_SPECIFIC_OPTIONS,
   CONDITION_DROPDOWN_LIST
-
 } from 'constants/REPORT_TYPE_CONSTANTS';
 
-export const SaveSearchModal = (props) => {
-  const { setShowModal } = props;
+export const SaveSearchModal = ({ setShowModal }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const saveSearchParams = useSelector((state) => state.savedSearch.saveUserSearch);
@@ -57,12 +54,13 @@ export const SaveSearchModal = (props) => {
   const reportTypeTitle = REPORT_TYPE_OPTIONS.
     find((reportTypelabel) => reportTypelabel.value === saveSearchParams.reportType)?.label;
 
-  // this method needs some refactoring
   const generateEventTypeList = () => {
     if (saveSearchParams?.radioEventAction === 'all_events_action') {
       return '';
     }
-    const userSelectedEvent = Object.keys(saveSearchParams.specificEventType);
+    const userSelectedEvent = Object.keys(saveSearchParams.specificEventType).
+      filter((key) => saveSearchParams.specificEventType[key] === true);
+
     const flattenEventList = Object.values(SPECIFIC_EVENT_OPTIONS[0]).flatMap((obj) => Object.values(obj));
     const filteredEvent = flattenEventList.filter((obj) => userSelectedEvent.includes(obj.id));
 
@@ -75,7 +73,9 @@ export const SaveSearchModal = (props) => {
     if (saveSearchParams?.radioStatus === 'all_statuses') {
       return '';
     }
-    const userSelectedStatus = Object.keys(saveSearchParams.specificStatus);
+    const userSelectedStatus = Object.keys(saveSearchParams.specificStatus).
+      filter((key) => saveSearchParams.specificStatus[key] === true);
+
     const filteredStatus = SPECIFIC_STATUS_OPTIONS.filter((obj) => userSelectedStatus.includes(obj.id));
 
     const statusList = filteredStatus.map((obj) => obj.label).join(', ');
@@ -192,23 +192,22 @@ export const SaveSearchModal = (props) => {
   };
 
   const conditionsFragment = () => {
-    if (Object.keys(saveSearchParams).includes('conditions')) {
-
-      const conditionList = saveSearchParams?.conditions;
-
-      return <>
-        {
-          conditionList.map((conditionObj) =>
-            <li>
-              {conditionTitle(conditionObj)}
-              {conditionBody(conditionObj)}
-            </li>
-          )
-        }
-      </>;
+    if (!Object.keys(saveSearchParams).includes('conditions')) {
+      return '';
     }
 
-    return '';
+    const conditionList = saveSearchParams?.conditions;
+
+    return <>
+      {
+        conditionList.map((conditionObj) =>
+          <li>
+            {conditionTitle(conditionObj)}
+            {conditionBody(conditionObj)}
+          </li>
+        )
+      }
+    </>;
   };
 
   const searchParameterFragment = () => {

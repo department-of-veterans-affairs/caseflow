@@ -1,11 +1,9 @@
-
 import React from 'react';
 import Modal from 'app/components/Modal';
 import COPY from 'app/../COPY';
 import PropTypes from 'prop-types';
 
-export const SaveLimitReachedModal = (props) => {
-  const { setShowLimitModal } = props;
+export const SaveLimitReachedModal = ({ setShowLimitModal }) => {
 
   const handleCancel = () => {
     setShowLimitModal(false);
@@ -13,6 +11,10 @@ export const SaveLimitReachedModal = (props) => {
 
   const submitForm = () => {
     // console.log('this will be updated in next ticket');
+  };
+
+  const handleRedirect = () =>{
+    // this will be handle in another ticket;
   };
 
   return (
@@ -28,12 +30,12 @@ export const SaveLimitReachedModal = (props) => {
         },
         { classNames: ['usa-button', 'usa-button-secondary'],
           name: 'View saved searches',
-          onClick: submitForm
+          onClick: handleRedirect
         }
       ]}
       closeHandler={handleCancel}
     >
-      <p> {COPY.SAVE_LIMIT_REACH_MESSAGE}</p>
+      <p>{COPY.SAVE_LIMIT_REACH_MESSAGE}</p>
     </Modal>);
 };
 
