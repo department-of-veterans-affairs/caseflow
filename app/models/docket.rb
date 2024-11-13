@@ -92,8 +92,8 @@ class Docket
     ).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
-    ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, genpop: nil)
+    ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge, genpop: genpop).limit(num).map(&:receipt_date)
   end
 
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)

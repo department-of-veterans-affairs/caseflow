@@ -1066,7 +1066,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".priority_distributions_this_month_for_all_judges" do
     let(:batch_size) { 20 }
     let!(:judge_with_no_priority_distributions) do
-      create(:user, :judge, :with_vacols_judge_record) do |judge|
+      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         create(
           :distribution,
           judge: judge,

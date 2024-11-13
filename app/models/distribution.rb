@@ -37,7 +37,7 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      priority_push? ? priority_push_distribution(limit) : requested_distribution
+      priority_push? ? priority_push_distribution(limit) : requested_distribution(limit)
 
       # update status and time before generating the statistics to reduce amount of time a user waits for cases
       update!(status: "completed", completed_at: Time.zone.now)

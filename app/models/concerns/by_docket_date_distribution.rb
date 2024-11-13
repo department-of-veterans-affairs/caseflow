@@ -18,19 +18,21 @@ module ByDocketDateDistribution
     @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
-    distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
+    genpop = 'not_genpop' if limit.nil?
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push", genpop: genpop)
     @appeals
   end
 
-  def requested_distribution
+  def requested_distribution(limit)
     @appeals = []
     @rem = batch_size
     @nonpriority_iterations = 0
     @request_priority_count = priority_target
 
+    genpop = 'not_genpop' if limit.nil?
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = priority_target.clamp(0, @rem)
-    distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request")
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request", genpop: genpop)
 
     # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
     # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
@@ -40,10 +42,10 @@ module ByDocketDateDistribution
     @appeals
   end
 
-  def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
-    num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
+  def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request", genpop: nil)
+    num_oldest_priority_appeals_for_judge_by_docket(self, limit, genpop: genpop).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
-        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
+        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style, genpop: genpop)
       end
     end
   end
@@ -173,12 +175,12 @@ module ByDocketDateDistribution
     end
   end
 
-  def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
+  def num_oldest_priority_appeals_for_judge_by_docket(distribution, num, genpop: nil)
     return {} unless num > 0
 
     mapped_dockets = dockets.flat_map do |sym, docket|
       docket.age_of_n_oldest_priority_appeals_available_to_judge(
-        distribution.judge, num
+        distribution.judge, num, genpop: genpop
       ).map { |age| [age, sym] }
     end
 

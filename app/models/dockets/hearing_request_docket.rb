@@ -34,18 +34,20 @@ class HearingRequestDocket < Docket
     ).call.count
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, genpop: nil)
     hearing_distribution_query(
       base_relation: ready_priority_nonpriority_appeals(
         priority: true,
         ready: true,
-        judge: judge
-      ).limit(num), genpop: "only_genpop", judge: judge
+        judge: judge,
+        genpop: genpop
+      ).limit(num), genpop: genpop || "only_genpop", judge: judge
     ).call.flatten.map(&:receipt_date)
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "only_genpop", limit: 1, style: "push")
+    genpop ||= "only_genpop"
     query_args = { priority: priority, genpop: genpop, ready: true, judge: distribution.judge }
     base_relation = ready_priority_nonpriority_appeals(query_args).limit(limit)
 

@@ -43,7 +43,7 @@ class AojLegacyDocket < LegacyDocket
       end
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, genpop: nil)
     return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
 
     LegacyAppeal.aoj_appeal_repository.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
