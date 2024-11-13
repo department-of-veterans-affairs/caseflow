@@ -8,13 +8,11 @@ module Seeds
     end
 
     def seed!
-      # place seed method calls here
       scenario_6_seeds
     end
 
     private
 
-    # place seed methods below
     def initial_scenario_6_id_values
       @scenario_6_file_number ||= 700_000_000
       @scenario_6_participant_id ||= 530_000_000
