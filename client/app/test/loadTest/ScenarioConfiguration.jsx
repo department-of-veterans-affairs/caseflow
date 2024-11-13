@@ -1,13 +1,10 @@
 /* eslint-disable max-lines, max-len */
 
 import React, { useState } from 'react';
-
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import PropTypes from 'prop-types';
-// import { current } from '@reduxjs/toolkit';
-
 export default function ScenarioConfiguration(props) {
   const [checked, setChecked] = useState(false);
 
@@ -15,22 +12,52 @@ export default function ScenarioConfiguration(props) {
   const targetType = props.targetType;
   const currentState = props.currentState;
   const updateState = props.updateState;
+  const scenariosArray = currentState.scenarios.map((selection) =>
+    Object.keys(selection)[0]
+  );
+  const nullCheck = (target) => {
+    if (target === null) {
+      return null;
+    }
+
+    return target.value;
+  };
 
   const handleScenarioSelect = (chosenScenario) => {
-    let updatedSelections = currentState.scenarios;
+    const currentSelections = currentState.scenarios;
+    let updatedSelections = currentState.scenarios.map((selection) =>
+      Object.keys(selection)[0]
+    );
 
     if (updatedSelections.find((selection) => selection === chosenScenario)) {
-      updatedSelections.splice(updatedSelections.indexOf(chosenScenario), 1);
+      currentSelections.splice(updatedSelections.indexOf(chosenScenario), 1);
       setChecked(false);
     } else {
-      updatedSelections.push(chosenScenario);
+      currentSelections.push({ [chosenScenario]: {} });
       setChecked(true);
     }
 
     updateState(
       {
         ...currentState,
-        scenarios: updatedSelections
+        scenarios: currentSelections
+      }
+    );
+  };
+
+  const handleTargetSelect = (chosenTarget, associatedScenario) => {
+    let currentScenarios = currentState.scenarios;
+
+    if (chosenTarget === null) {
+      currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: {} };
+    } else {
+      currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: { targetType: chosenTarget } };
+    }
+
+    updateState(
+      {
+        ...currentState,
+        scenarios: currentScenarios
       }
     );
   };
@@ -49,6 +76,7 @@ export default function ScenarioConfiguration(props) {
             name={`${scenario}-target-type`}
             label="Target Type"
             options={targetType}
+            onChange={(event) => handleTargetSelect(nullCheck(event), scenario)}
             isClearable
           />
           <br />
