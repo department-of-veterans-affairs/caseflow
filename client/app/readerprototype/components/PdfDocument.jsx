@@ -17,10 +17,16 @@ const PdfDocument = ({
   currentPage,
   doc,
   isDocumentLoadError,
+  isFileVisible,
   rotateDeg,
   setIsDocumentLoadError,
   setNumPages,
   zoomLevel }) => {
+
+  if (!isFileVisible) {
+    return null;
+  }
+
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -115,7 +121,11 @@ const PdfDocument = ({
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         return response.body;
-      });
+      }).
+        catch((error) => {
+          console.error(`ERROR with document API: ${error}`);
+          setIsDocumentLoadError(true);
+        });
 
       pdfMetrics.current.getEndTime = new Date().getTime();
       const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
@@ -128,7 +138,6 @@ const PdfDocument = ({
 
     getDocData().catch((error) => {
       console.error(`ERROR with getting doc data: ${error}`);
-      setIsDocumentLoadError(true);
     });
   }, [doc.content_url]);
 
@@ -175,22 +184,23 @@ const PdfDocument = ({
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      {isDocumentLoadError && <DocumentLoadError doc={doc} />}
-      {pdfPages.map((page, index) => (
-        <Page
-          scale={zoomLevel}
-          page={page}
-          rotation={rotateDeg}
-          key={`doc-${doc.id}-page-${index}`}
-          renderItem={(childProps) => (
-            <Layer isCurrentPage={currentPage === page.pageNumber}
-              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
-            </Layer>
-          )}
-          setRenderingMetrics={handleRenderingMetrics}
-        />
-      ))}
+      {isDocumentLoadError ?
+        (<DocumentLoadError doc={doc} />) :
+        (pdfPages.map((page, index) => (
+          <Page
+            scale={zoomLevel}
+            page={page}
+            rotation={rotateDeg}
+            key={`doc-${doc.id}-page-${index}`}
+            renderItem={(childProps) => (
+              <Layer isCurrentPage={currentPage === page.pageNumber}
+                documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+                <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
+              </Layer>
+            )}
+            setRenderingMetrics={handleRenderingMetrics}
+          />
+        )))}
     </div>
   );
 };
@@ -204,6 +214,7 @@ PdfDocument.propTypes = {
     type: PropTypes.string,
   }),
   isDocumentLoadError: PropTypes.bool,
+  isFileVisible: PropTypes.bool,
   rotateDeg: PropTypes.string,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,

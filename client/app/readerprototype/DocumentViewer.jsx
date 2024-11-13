@@ -16,6 +16,8 @@ import { getRotationDeg } from './util/documentUtil';
 import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 import { showSideBarSelector } from './selectors';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { getFilteredDocuments } from '../reader/selectors';
+import _ from 'lodash';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,7 +29,23 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
+  const docList = useSelector(getFilteredDocuments);
+  const doc = docList.find((x) => x.id === currentDocumentId);
+
+  if (!doc) {
+    return;
+  }
+
+  const currentDocIndex = docList.indexOf(doc);
+  const prevDoc = docList?.[currentDocIndex - 1];
+  const nextDoc = docList?.[currentDocIndex + 1];
+  // note - remove the redundant logic (above) from ReaderFooter and pass as props to ReaderFooter
+  // and refactor getPrefetchFiles() without using lodash
+  const getPrefetchFiles = () => _.compact(_.map([prevDoc, nextDoc], 'content_url'));
+
+  const files = props.featureToggles.prefetchDisabled ?
+    [doc.content_url] :
+    [...getPrefetchFiles(), doc.content_url];
 
   useEffect(() => {
     setShowSearchBar(false);
@@ -123,15 +141,21 @@ const DocumentViewer = (props) => {
           />
           {showSearchBar && <ReaderSearchBar />}
           <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
-            <PdfDocument
-              currentPage={currentPage}
-              doc={doc}
-              isDocumentLoadError={isDocumentLoadError}
-              rotateDeg={rotateDeg}
-              setIsDocumentLoadError={setIsDocumentLoadError}
-              setNumPages={setNumPages}
-              zoomLevel={props.zoomLevel}
-            />
+            {files.map((file) =>
+              (
+                <PdfDocument
+                  currentPage={currentPage}
+                  doc={doc}
+                  key={file}
+                  isFileVisible={doc.content_url === file}
+                  isDocumentLoadError={isDocumentLoadError}
+                  rotateDeg={rotateDeg}
+                  setIsDocumentLoadError={setIsDocumentLoadError}
+                  setNumPages={setNumPages}
+                  zoomLevel={props.zoomLevel}
+                />
+              )
+            )}
           </div>
           <ReaderFooter
             currentPage={currentPage}
