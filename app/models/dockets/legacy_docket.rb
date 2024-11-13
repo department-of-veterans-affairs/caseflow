@@ -74,11 +74,13 @@ class LegacyDocket < Docket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, _genpop: nil)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, genpop: nil)
     return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
 
     LegacyAppeal.repository.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)

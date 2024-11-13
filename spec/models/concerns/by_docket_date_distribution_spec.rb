@@ -72,23 +72,23 @@ describe ByDocketDateDistribution, :all_dbs do
     it "calls each method and returns the array of objects received from each method" do
       # distribute all priority appeals from all dockets
       expect(@new_acd).to receive(:num_oldest_priority_appeals_for_judge_by_docket)
-        .with(@new_acd, @new_acd.batch_size)
+        .with(@new_acd, @new_acd.batch_size, genpop: nil)
         .and_return(priority_count_hash)
 
       expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:legacy])
+        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:legacy], genpop: nil)
         .and_return(add_object_to_return_array(priority_count_hash[:legacy]))
 
       expect_any_instance_of(DirectReviewDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:direct_review])
+        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:direct_review], genpop: nil)
         .and_return(add_object_to_return_array(priority_count_hash[:direct_review]))
 
       expect_any_instance_of(EvidenceSubmissionDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:evidence_submission])
+        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:evidence_submission], genpop: nil)
         .and_return(add_object_to_return_array(priority_count_hash[:evidence_submission]))
 
       expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:hearing])
+        .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:hearing], genpop: nil)
         .and_return(add_object_to_return_array(priority_count_hash[:hearing]))
 
       # priority_push_distribution is private so .send is used to directly call it
@@ -127,13 +127,13 @@ describe ByDocketDateDistribution, :all_dbs do
         .and_return(add_object_to_return_array(nonpriority_count_hash[:hearing]))
 
       # requested_distribution is private so .send is used to directly call it
-      return_array = @new_acd.send :requested_distribution
+      return_array = @new_acd.send :requested_distribution, nil
       expect(return_array.count).to eq(@new_acd.batch_size)
     end
 
     it "will limit to 10 nonpriority iterations if not enough cases exist to reach the batch size" do
       by_docket_date_distribution_module = @new_acd
-      return_array = by_docket_date_distribution_module.send :requested_distribution
+      return_array = by_docket_date_distribution_module.send :requested_distribution, nil
 
       # @nonpriority_iterations is limited to 10 in the by_docket_date_distribution file
       expect(by_docket_date_distribution_module.instance_variable_get(:@nonpriority_iterations))
@@ -150,25 +150,26 @@ describe ByDocketDateDistribution, :all_dbs do
 
     it "calls each docket and sorts the return values if num > 0" do
       expect_any_instance_of(LegacyDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd.judge, @new_acd.batch_size, genpop: nil)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
       expect_any_instance_of(DirectReviewDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd.judge, @new_acd.batch_size, genpop: nil)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
       expect_any_instance_of(EvidenceSubmissionDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd.judge, @new_acd.batch_size, genpop: nil)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
       expect_any_instance_of(HearingRequestDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd.judge, @new_acd, @new_acd.batch_size, genpop: nil)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
       return_array = @new_acd.send(
         :num_oldest_priority_appeals_for_judge_by_docket,
         @new_acd,
-        @new_acd.batch_size
+        @new_acd.batch_size,
+        genpop: nil
       )
       expect(return_array).to eq(priority_count_hash)
     end

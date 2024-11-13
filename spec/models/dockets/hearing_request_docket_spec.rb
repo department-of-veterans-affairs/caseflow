@@ -197,7 +197,7 @@ describe HearingRequestDocket, :postgres do
 
   context "when the distribution contains Specialty Case Team appeals" do
     subject do
-      HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit)
+      HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: nil)
     end
 
     let(:distribution_judge) { create(:user, last_login_at: Time.zone.now) }
