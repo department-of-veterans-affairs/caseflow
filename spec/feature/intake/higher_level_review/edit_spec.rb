@@ -465,7 +465,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # expect_ineligible_issue(number_of_issues)
       visit "higher_level_reviews/#{ep_claim_id}/edit"
       # test is still failing
-      expect(page).to have_content("Something went wrong")
+      expect(page).not_to have_content("Something went wrong")
     end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
