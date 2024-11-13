@@ -211,7 +211,8 @@ QueueFlowPage.propTypes = {
   showModal: PropTypes.func,
   hideModal: PropTypes.func,
   checkoutStagedAppeal: PropTypes.func,
-  resetDecisionOptions: PropTypes.func
+  resetDecisionOptions: PropTypes.func,
+  isLegacyAppeal: PropTypes.bool
 };
 
 QueueFlowPage.defaultProps = {
