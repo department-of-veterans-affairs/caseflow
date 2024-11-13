@@ -8,7 +8,8 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
     instance_double("EventRecord", evented_record_id: 1, evented_record_type: "Person", evented_record: person)
   end
   let(:event_record_veteran) do
-    instance_double("EventRecord", evented_record_id: 2, evented_record_type: "Veteran", info: event_info, evented_record: veteran)
+    instance_double("EventRecord", evented_record_id: 2, evented_record_type: "Veteran", info: event_info,
+                                   evented_record: veteran)
   end
 
   let(:person) { instance_double("Person", id: 1, ssn: "123456789") }
