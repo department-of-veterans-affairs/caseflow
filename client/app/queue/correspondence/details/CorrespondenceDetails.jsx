@@ -215,7 +215,6 @@ const CorrespondenceDetails = (props) => {
     }
 
     return true;
-
   };
 
   priorMail.sort((first, second) => {

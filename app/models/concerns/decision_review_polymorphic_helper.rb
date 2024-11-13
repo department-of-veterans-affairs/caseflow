@@ -8,11 +8,7 @@ module DecisionReviewPolymorphicHelper
       belongs_to association_name, polymorphic: true
 
       # Specific association mappings that are uniquely different from the calculated class name to underscored symbol
-      association_name_mapping = {
-        "Appeal" => :ama_appeal,
-        "Hearing" => :ama_hearing,
-        "Correspondence" => :correspondence
-      }
+      association_name_mapping = { "Appeal" => :ama_appeal, "Hearing" => :ama_hearing, "Correspondence" => :correspondence }
       scope_mapping = {
         "Appeal" => :ama,
         "LegacyAppeal" => :legacy,
