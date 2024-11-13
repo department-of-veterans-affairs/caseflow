@@ -120,10 +120,11 @@ module Seeds
       # Case 7: Wqjudge Control (priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case,
-        :ready_for_distribution,
+        :assigned,
         :aod,
         bfcorlid: "#{wqjudge_control.file_number}S",
-        case_issues: create_list(:case_issue, 1, :compensation)
+        user: User.find_by_css_id("BVAOTRANTOW"),
+        assigner: User.find_by_css_id("BVAGSPORER")
       ))
     end
 
