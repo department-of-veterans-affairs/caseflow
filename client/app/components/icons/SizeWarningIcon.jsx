@@ -5,7 +5,9 @@ import { ICON_SIZES } from '../../constants/AppConstants';
 export const SizeWarningIcon = (props) => {
   const { size, className } = props;
 
-  return <svg aria-title="Large File Warning" title="Large File Warning" xmlns="http://www.w3.org/2000/svg" height={size}
+  return <svg aria-title="Large File Warning"
+    title="Large File Warning" xmlns="http://www.w3.org/2000/svg"
+    height={size}
     viewBox="0 0 512 512" className={className}>
     <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216
     368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40
