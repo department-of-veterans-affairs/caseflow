@@ -15,7 +15,7 @@ describe "brieffs_awaiting_hearing_scheduling" do
     expect(subject.to_a.pluck("bfkey")).to match_array(desired_vacols_ids)
   end
 
-  it "the return type has all of the same columns as the source table", bypass_cleaner: true do
-    expect(VACOLS::Case.columns.map(&:name)).to match_array(subject.first.keys)
+  it "the return type has all of the same columns and analogous types as the source table", bypass_cleaner: true do
+    expect(VACOLS::Case.columns.map(&:name)).to match_array(subject.fields)
   end
 end
