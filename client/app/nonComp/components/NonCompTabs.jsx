@@ -66,6 +66,10 @@ const NonCompTabsUnconnected = (props) => {
 
         const formattedEndDate = endDate ? formatDateStr(endDate) : '';
 
+        if (mode === 'all') {
+          return COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
+        }
+
         // Object that defines how to build the string based on the mode
         const completedDateFilterModeHandlers = {
           before: `Before ${formattedStartDate}`,

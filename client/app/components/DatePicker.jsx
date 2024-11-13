@@ -242,23 +242,30 @@ class DatePicker extends React.PureComponent {
   clearFilter = () => {
     const { onChange } = this.props;
 
-    if (this.props.settings?.additionalOptions) {
-      this.updateMode('all');
+    // if (this.props.settings?.additionalOptions) {
+    //   this.updateMode('clear');
 
-      if (onChange) {
-        onChange(`all,${this.state.startDate},`, true);
-      }
+    //   if (onChange) {
+    //     onChange(`clear,${this.state.startDate},`, true);
+    //   }
 
-      this.hideDropdown();
-    } else {
-      this.setState({ mode: '', startDate: '', endDate: '' });
+    //   this.hideDropdown();
+    // } else {
+    //   this.setState({ mode: '', startDate: '', endDate: '' });
 
-      if (onChange) {
-        onChange('', true);
-      }
+    //   if (onChange) {
+    //     onChange('', true);
+    //   }
 
-      this.hideDropdown();
+    //   this.hideDropdown();
+    // }
+    this.setState({ mode: 'clear', startDate: '', endDate: '' });
+
+    if (onChange) {
+      onChange('', true);
     }
+
+    this.hideDropdown();
 
   }
 

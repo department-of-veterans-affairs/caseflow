@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
@@ -373,7 +372,10 @@ export default class QueueTable extends React.PureComponent {
 
     if (this.props?.isVhaOrg &&
       currentTabName === 'completed' &&
-      filterParams.length === 0) {
+      filterParams.length === 0 &&
+      _.isEmpty(previousState.filteredByList?.closedAt) &&
+       !previousState.filteredByList?.clear
+    ) {
       this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
     }
 

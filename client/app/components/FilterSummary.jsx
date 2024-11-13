@@ -28,7 +28,8 @@ const FilterSummary = ({ filteredByList, clearFilteredByList, vhaCompletedTab })
   const clearAllFiltersLink = <button
     onClick={() => {
       if (vhaCompletedTab) {
-        clearFilteredByList({ closedAt: [`all,${moment().subtract(300, 'years')}`] });
+        // clearFilteredByList({ closedAt: [`all,${moment().subtract(300, 'years')}`] });
+        clearFilteredByList({ clear: true });
       } else {
         clearFilteredByList({});
       }

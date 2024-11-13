@@ -8,7 +8,7 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_veteran_record_access, only: [:show]
   before_action :verify_business_line, only: [:index, :generate_report]
   before_action :verify_task, only: [:show, :history, :update]
-  before_action :ensure_date_completed, only: [:index]
+  # before_action :ensure_date_completed, only: [:index]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -171,6 +171,8 @@ class DecisionReviewsController < ApplicationController
   def ensure_date_completed
     return unless business_line.is_a? VhaBusinessLine
     return unless allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym] == "completed"
+
+    byebug
 
     unless params[:filter]&.any? { |s| s.include?("completedDateColumn") }
       last7 = "col=completedDateColumn&val=last7,#{Time.zone.now - 7.days},"
