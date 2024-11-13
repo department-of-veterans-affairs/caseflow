@@ -99,6 +99,41 @@ describe('NonratingRequestIssueModal', () => {
       submitBtn = screen.getByRole('button', { name: /Add this issue/i });
       expect(submitBtn).not.toBeDisabled();
     });
+
+    it('does not disable button when valid description entered', () => {
+      const { container, rerender } = setup();
+
+      let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).toBeDisabled();
+
+      rerender(
+        <NonratingRequestIssueModal
+          {...defaultProps}
+          category={{
+            label: 'Apportionment',
+            value: 'Apportionment'
+          }}
+          decisionDate={'2019-06-01'}
+          dateError={false}
+          description={''}
+        />
+      );
+
+      let issueCategoryInput = screen.getByRole('combobox', { name: /Issue category/i });
+      userEvent.click(issueCategoryInput); // open the dropdown menu
+      userEvent.type(issueCategoryInput, 'Apportionment{enter}'); // select the option
+
+      // Fill out Decision Date
+      let decisionDateInput = container.querySelector('input[id="decision-date"]');
+      fireEvent.change(decisionDateInput, { target: { value: '2019-06-01' } });
+
+      // Fill out Issue description
+      let inputElement = container.querySelector('input[id="Issue description"]');
+      fireEvent.change(inputElement, { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
+
+      submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).not.toBeDisabled();
+    });
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
