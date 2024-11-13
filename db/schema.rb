@@ -1772,6 +1772,13 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "schedulable_cutoff_dates", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "created_by_id", null: false
+    t.date "cutoff_date"
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
