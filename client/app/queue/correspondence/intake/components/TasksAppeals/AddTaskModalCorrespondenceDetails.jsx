@@ -10,7 +10,7 @@ import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 import { maxWidthFormInput, corrDetailsModal } from '../../../../../hearings/components/details/style';
-import COPY from "../../../../../../COPY.json";
+import COPY from '../../../../../../COPY';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
