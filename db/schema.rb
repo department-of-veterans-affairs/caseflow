@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_04_151218) do
+ActiveRecord::Schema.define(version: 2024_11_12_172400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1772,6 +1772,13 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "schedulable_cutoff_dates", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "created_by_id", null: false
+    t.date "cutoff_date"
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
@@ -2461,6 +2468,28 @@ ActiveRecord::Schema.define(version: 2024_11_04_151218) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+
+  create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
+       RETURNS text
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+      	SELECT string_agg(DISTINCT format($$'%s'$$, vacols_id), ',')
+      	INTO legacy_case_ids
+      	FROM legacy_appeals
+      	JOIN tasks ON tasks.appeal_type = 'LegacyAppeal' and tasks.appeal_id = legacy_appeals.id
+      	WHERE
+      	  tasks.type = 'ScheduleHearingTask'
+      	  AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
+      	GROUP BY tasks.type;
+
+      	RETURN legacy_case_ids;
+      END
+      $function$
+  SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       SELECT appeals.id AS appeal_id,
