@@ -5,9 +5,7 @@ class CmpDocument < ApplicationRecord
 
   validates :cmp_document_id,
             :cmp_document_uuid,
-            :date_of_receipt,
             :packet_uuid,
-            :vbms_doctype_id,
             presence: true
 
   validates :vbms_doctype_id, numericality: { only_integer: true }
@@ -23,9 +21,16 @@ class CmpDocument < ApplicationRecord
       return
     end
 
-    # Validates dateOfReceipt is in yyyy-mm-dd (csv_date) format.
+    # For yyyy-mm-dd format:
+    # Require non-zero first digit; require the exact number of digits for each.
+    if !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
+      errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
+      return
+    end
+
+    # Validates dateOfReceipt is in yyyy-mm-dd (csv_date) format and is parsable to a valid date
     DateTime.strptime(before_val, Date::DATE_FORMATS[:csv_date])
   rescue Date::Error
-    errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
+    errors.add(:date_of_receipt, "date_of_receipt must be a valid date")
   end
 end
