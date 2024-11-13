@@ -1,0 +1,21 @@
+meta {
+  name: 200 API Token
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/token?consumer_name=test-consumer
+  body: none
+  auth: none
+}
+
+params:query {
+  consumer_name: test-consumer
+}
+
+tests {
+  test("Successful API Token POST", function() {
+    expect(res.status).to.equal(200);
+  });
+}
