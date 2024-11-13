@@ -28,6 +28,9 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   private
 
+  def client
+    @client ||= Redis.new
+  end
   def appeal
     @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
   end
@@ -44,7 +47,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
 
   def documents
-    max_wait_time = ENV["MAX_WAIT_LOAD_TIME"] || 15
+    max_wait_time = client.get("MAX_WAIT_LOAD_TIME") || 15
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)

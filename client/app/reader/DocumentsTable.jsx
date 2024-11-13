@@ -710,7 +710,7 @@ class DocumentsTable extends React.Component {
             File Size
           </div>
         ),
-        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size} browserSpeedInBytes={mbpsToBps} warningThreshold={doc.max_wait_time} />,
+        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size} browserSpeedInBytes={mbpsToBps} warningThreshold={parseInt(doc.max_wait_time, 10)} />,
       },
     ];
   };
