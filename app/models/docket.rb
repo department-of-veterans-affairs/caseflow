@@ -93,7 +93,13 @@ class Docket
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num, genpop: nil)
-    ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge, genpop: genpop).limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(
+      priority: true,
+      ready: true,
+      judge: judge,
+      genpop: genpop
+    ).limit(num)
+      .map(&:receipt_date)
   end
 
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)

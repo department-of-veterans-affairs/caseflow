@@ -18,7 +18,7 @@ module ByDocketDateDistribution
     @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
-    genpop = 'not_genpop' if limit.nil?
+    genpop = "not_genpop" if limit.nil?
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push", genpop: genpop)
     @appeals
   end
@@ -29,7 +29,7 @@ module ByDocketDateDistribution
     @nonpriority_iterations = 0
     @request_priority_count = priority_target
 
-    genpop = 'not_genpop' if limit.nil?
+    genpop = "not_genpop" if limit.nil?
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = priority_target.clamp(0, @rem)
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request", genpop: genpop)
@@ -43,9 +43,19 @@ module ByDocketDateDistribution
   end
 
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request", genpop: nil)
-    num_oldest_priority_appeals_for_judge_by_docket(self, limit, genpop: genpop).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_priority_appeals_for_judge_by_docket(
+      self,
+      limit,
+      genpop: genpop
+    ).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
-        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style, genpop: genpop)
+        dockets[docket].distribute_appeals(
+          self,
+          limit: number_of_appeals_to_distribute,
+          priority: true,
+          style: style,
+          genpop: genpop
+        )
       end
     end
   end
