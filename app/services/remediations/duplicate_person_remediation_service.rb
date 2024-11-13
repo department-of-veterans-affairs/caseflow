@@ -21,13 +21,15 @@ class Remediations::DuplicatePersonRemediationService
   private
 
   def find_and_update_records
-    dup_persons = Person.where(id: @duplicate_person_ids)
-    og_person = Person.find_by(id: @updated_person_id)
+    ActiveRecord::Base.transaction do
+      dup_persons = Person.where(id: @duplicate_person_ids)
+      og_person = Person.find_by(id: @updated_person_id)
 
-    ASSOCIATIONS.each do |klass|
-      update_found_records(klass, dup_persons, og_person)
+      ASSOCIATIONS.each do |klass|
+        update_found_records(klass, dup_persons, og_person)
+      end
+      # destroy dup_person
     end
-    # destroy dup_person
   end
 
   def update_found_records(klass, dup_persons, og_person)
