@@ -13,7 +13,7 @@ export const SaveLimitReachedModal = ({ setShowLimitModal }) => {
     // console.log('this will be updated in next ticket');
   };
 
-  const handleRedirect = () =>{
+  const handleRedirect = () => {
     // this will be handle in another ticket;
   };
 

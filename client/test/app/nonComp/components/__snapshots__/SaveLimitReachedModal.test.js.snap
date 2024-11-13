@@ -55,7 +55,6 @@ exports[`SaveLimitReachModal renders correctly renders correctly 1`] = `
           data-css-2flkvz=""
         >
           <p>
-             
             You've reached the max limit of 10 saved searches. Please select a search to delete before proceeding.
           </p>
         </div>
