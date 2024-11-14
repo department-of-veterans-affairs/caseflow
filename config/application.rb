@@ -121,6 +121,15 @@ module CaseflowCertification
     # Default as of 6.1: 0.15
     config.active_job.retry_jitter = 0
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rails 7.0 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # `stylesheet_link_tag` view helper will not render the media attribute by default.
+    # Default (original): true
+    # Default as of 7.0: false
+    config.action_view.apply_stylesheet_media_default = true
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
