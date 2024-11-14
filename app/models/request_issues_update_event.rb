@@ -93,7 +93,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     newly_withdrawn_issues
   end
 
-  # rubocop:disable Metrics/MethodLength Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def update_request_issue!(request_issue, parser_issue)
     request_issue.update(
       ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -128,7 +129,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       end_product_establishment_id: @epe&.id || request_issue.end_product_establishment_id
     )
   end
-  # rubocop:enable Metrics/MethodLength Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   # Set the closed_at date and closed_status for removed issues based on the event data
   def update_removed_issues!
