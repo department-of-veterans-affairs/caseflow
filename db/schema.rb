@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_12_213951) do
+ActiveRecord::Schema.define(version: 2024_11_13_210338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2465,7 +2465,44 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+          declare
+            string_claim_id varchar(25);
+            epe_id integer;
+          begin
+            if (NEW."EP_CODE" LIKE '04%'
+                OR NEW."EP_CODE" LIKE '03%'
+                OR NEW."EP_CODE" LIKE '93%'
+                OR NEW."EP_CODE" LIKE '68%')
+                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
 
+              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
+
+              select id into epe_id
+              from end_product_establishments
+              where (reference_id = string_claim_id
+              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
+
+              if epe_id > 0
+              then
+                if not exists (
+                  select 1
+                  from priority_end_product_sync_queue
+                  where end_product_establishment_id = epe_id
+                ) then
+                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
+                  values (now(), epe_id, now());
+                end if;
+              end if;
+            end if;
+            return null;
+          end;
+        $function$
+  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2499,12 +2536,33 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
         INTO legacy_case_ids
         FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
 
-        RETURN QUERY
-          EXECUTE format(
-            'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
-            legacy_case_ids
-          );
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_brieff WHERE 1 = 0';
       END $function$
+  SQL
+  create_function :gather_bfcorkeys_of_hearing_schedulable_legacy_cases, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.gather_bfcorkeys_of_hearing_schedulable_legacy_cases()
+       RETURNS text
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	bfcorkey_ids text;
+      BEGIN
+      	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
+      	INTO bfcorkey_ids
+      	FROM brieffs_awaiting_hearing_scheduling();
+
+      	RETURN bfcorkey_ids;
+      END
+      $function$
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL

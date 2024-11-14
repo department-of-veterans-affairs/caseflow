@@ -9,7 +9,6 @@ BEGIN
 	INTO bfcorkey_ids
 	FROM brieffs_awaiting_hearing_scheduling();
 
-
 	RETURN bfcorkey_ids;
 END
 $func$;
