@@ -75,6 +75,7 @@ export const vhaTaskCompletedDateColumn = () => {
       buttons: false,
       position: 'right',
       additionalOptions: true,
+      noFutureDates: true,
     },
     columnName: 'closedAt',
     valueName: 'closedAt',
