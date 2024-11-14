@@ -1,4 +1,4 @@
-class AddPolymorphicAppealAssociationToNotificationsTable < ActiveRecord::Migration[6.1]
+class AddPolymorphicAppealAssociationToNotificationsTable < Caseflow::Migration
   disable_ddl_transaction!
 
   def change
