@@ -127,7 +127,7 @@ const DocumentViewer = (props) => {
             toggleSideBar={() => dispatch(togglePdfSidebar())}
             zoomLevel={props.zoomLevel}
           />
-          {showSearchBar && <ReaderSearchBar />}
+          {showSearchBar && <ReaderSearchBar file={doc.filename} />}
           <div className="cf-pdf-scroll-view">
             <PdfDocument
               currentPage={currentPage}
@@ -138,7 +138,6 @@ const DocumentViewer = (props) => {
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
-              isSearching={showSearchBar}
             />
           </div>
           <ReaderFooter

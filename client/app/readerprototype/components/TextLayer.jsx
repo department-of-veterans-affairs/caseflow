@@ -1,24 +1,25 @@
+import Mark from 'mark.js';
 import * as PDFJS from 'pdfjs-dist';
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getRelativeIndex, getSearchTerm } from '../../reader/selectors';
 import usePageVisibility from '../hooks/usePageVisibility';
 
 // Similar to the behavior in Page.jsx, we need to manipulate height and width
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
 const TextLayer = memo((props) => {
-  // isSearching is used to trigger a re-render so that the text layer is searchable for all pages
-  // eslint-disable-next-line no-unused-vars
-  const { page, zoomLevel, rotation, isSearching } = props;
-
+  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch } = props;
+  const relativeIndex = useSelector(getRelativeIndex);
+  const textLayerRef = useRef(null);
+  const isVisible = usePageVisibility(textLayerRef);
+  const markInstanceRef = useRef(null);
   // We need to prevent multiple renderings of text to prevent doubling up. Without
   // tracking this, the search bar will report double the number of found instances
   const [hasRenderedText, setHasRenderedText] = useState(false);
+  const searchTerm = useSelector(getSearchTerm);
   const scale = zoomLevel / 100;
-  const viewport = page.getViewport({ scale: 1 });
-  const textLayerRef = useRef(null);
-  const textContentRef = useRef(null);
-  const isVisible = usePageVisibility(textLayerRef);
 
   let positionX = 0;
   let positionY = 0;
@@ -47,28 +48,46 @@ const TextLayer = memo((props) => {
   };
 
   useEffect(() => {
-    const getPageText = () => {
-      page.getTextContent().then((result) => {
-        textContentRef.current = result;
-      });
+    const renderText = async () => {
+      if (textLayerRef.current && textContent && !hasRenderedText && isVisible) {
+        await PDFJS.renderTextLayer({
+          textContent,
+          container: textLayerRef.current,
+          viewport,
+          textDivs: [],
+        });
+
+        setHasRenderedText(true);
+      }
     };
 
-    if (textLayerRef.current && !textContentRef.current && !hasRenderedText) {
-      getPageText();
-    }
-  }, [textLayerRef.current]);
+    renderText();
+  }, [textLayerRef.current, textContent, hasRenderedText, isVisible]);
 
   useEffect(() => {
-    if (textLayerRef.current && textContentRef.current && !hasRenderedText) {
-      PDFJS.renderTextLayer({
-        textContent: textContentRef.current,
-        container: textLayerRef.current,
-        viewport,
-        textDivs: [],
+    if (hasRenderedText && searchTerm) {
+      if (!markInstanceRef.current) {
+        markInstanceRef.current = new Mark(textLayerRef.current);
+      }
+      const markInstance = markInstanceRef.current;
+
+      markInstance.unmark();
+      markInstance.mark(searchTerm, {
+        separateWordSearch: false,
+        done: () => {
+          const marks = textLayerRef.current.getElementsByTagName('mark');
+
+          marks.forEach((mark, index) => {
+            mark.classList.remove('highlighted');
+            if (index === relativeIndex && hasSearchMatch) {
+              mark.classList.add('highlighted');
+              // mark.scrollIntoView({ block: 'center' });
+            }
+          });
+        }
       });
-      setHasRenderedText(true);
     }
-  }, [textLayerRef.current, textContentRef.current, hasRenderedText, isVisible]);
+  }, [hasRenderedText, searchTerm, relativeIndex, hasSearchMatch]);
 
   return (
     <div
@@ -80,10 +99,11 @@ const TextLayer = memo((props) => {
 });
 
 TextLayer.propTypes = {
-  page: PropTypes.any,
+  textContent: PropTypes.object,
   zoomLevel: PropTypes.number,
   rotation: PropTypes.string,
-  isSearching: PropTypes.bool
+  viewport: PropTypes.object,
+  hasSearchMatch: PropTypes.bool
 };
 
 export default TextLayer;

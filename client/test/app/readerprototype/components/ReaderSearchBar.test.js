@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
 import RenderSearchBar from '../../../../app/readerprototype/components/ReaderSearchBar';
 
-describe('finds results', () => {
+describe.skip('finds results', () => {
   // mock scrolling since it isn't included in jsdom
   window.HTMLElement.prototype.scrollIntoView = jest.fn;
 

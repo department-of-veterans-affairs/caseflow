@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState, useRef } from 'react';
 import Layer from './Comments/Layer';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
@@ -9,9 +10,11 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
-import { useDispatch } from 'react-redux';
+
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
+import { getPageIndexWithMatch } from '../../reader/selectors';
 
 const PdfDocument = ({
   currentPage,
@@ -22,15 +25,16 @@ const PdfDocument = ({
   setNumPages,
   setCurrentPage,
   zoomLevel,
-  isSearching
 }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  const [textContent, setTextContent] = useState([]);
   const dispatch = useDispatch();
   const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
+  const pageIndexWithMatch = useSelector(getPageIndexWithMatch);
 
   const containerStyle = {
     width: '100%',
@@ -106,6 +110,7 @@ const PdfDocument = ({
       pdfMetrics.current.renderedTimeTotal = 0;
       setPdfDoc(null);
       setPdfPages([]);
+      setTextContent([]);
       setAllPagesRendered(false);
       setMetricsLogged(false);
       const requestOptions = {
@@ -124,6 +129,7 @@ const PdfDocument = ({
       const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
 
       if (docProxy) {
+        dispatch(getDocumentText(docProxy, doc.filename));
         setPdfDoc(docProxy);
         setNumPages(docProxy.numPages);
       }
@@ -137,6 +143,7 @@ const PdfDocument = ({
 
   useEffect(() => {
     const pageArray = [];
+    let textContentContainer = [];
 
     if (!pdfDoc) {
       return;
@@ -146,8 +153,10 @@ const PdfDocument = ({
         const page = await pdfDoc.getPage(i);
 
         pageArray.push(page);
+        textContentContainer.push(await page.getTextContent());
       }
       setPdfPages(pageArray);
+      setTextContent(textContentContainer);
     };
 
     getPdfData();
@@ -166,7 +175,6 @@ const PdfDocument = ({
   useEffect(() => {
     return () => {
       if (!metricsLoggedRef.current) {
-
         logMetrics();
       }
     };
@@ -179,22 +187,30 @@ const PdfDocument = ({
   return (
     <div id="pdfContainer" style={containerStyle}>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
-      {pdfPages.map((page, index) => (
-        <Page
-          setCurrentPage={setCurrentPage}
-          scale={zoomLevel}
-          page={page}
-          rotation={rotateDeg}
-          key={`doc-${doc.id}-page-${index}`}
-          renderItem={(childProps) => (
-            <Layer isCurrentPage={currentPage === page.pageNumber}
-              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} isSearching={isSearching} />
-            </Layer>
-          )}
-          setRenderingMetrics={handleRenderingMetrics}
-        />
-      ))}
+      {
+        pdfPages.map((page, index) => (
+          <Page
+            setCurrentPage={setCurrentPage}
+            scale={zoomLevel}
+            page={page}
+            rotation={rotateDeg}
+            key={`doc-${doc.id}-page-${index + 1}`}
+            renderItem={(childProps) => (
+              <Layer isCurrentPage={currentPage === page.pageNumber}
+                documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+                <TextLayer
+                  textContent={textContent[index]}
+                  zoomLevel={zoomLevel}
+                  rotation={rotateDeg}
+                  viewport={page.getViewport({ scale: 1 })}
+                  hasSearchMatch={pageIndexWithMatch === index + 1}
+                />
+              </Layer>
+            )}
+            setRenderingMetrics={handleRenderingMetrics}
+          />
+        ))
+      }
     </div>
   );
 };
