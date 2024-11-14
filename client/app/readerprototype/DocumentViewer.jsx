@@ -15,7 +15,6 @@ import { getRotationDeg } from './util/documentUtil';
 import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 import { showSideBarSelector } from './selectors';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
-import { getFilteredDocuments } from '../reader/selectors';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);

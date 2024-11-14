@@ -54,9 +54,7 @@ const ReaderFooter = ({
   const filteredDocIds = useSelector(getFilteredDocIds);
   const currentDocIndex = filteredDocIds.indexOf(docId);
   const getPrevDocId = () => filteredDocIds?.[currentDocIndex - 1];
-  const getNextDocId = () => {
-    return filteredDocIds?.[currentDocIndex + 1];
-  };
+  const getNextDocId = () => filteredDocIds?.[currentDocIndex + 1];
 
   useEffect(() => {
     const keyHandler = (event) => {
