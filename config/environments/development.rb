@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-require_relative "../../lib/deprecation_warnings"
+require_relative "../../config/initializers/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -14,8 +14,8 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  # Do not eager load code on boot.
-  config.eager_load = false
+  # Eager load code on boot.
+  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true

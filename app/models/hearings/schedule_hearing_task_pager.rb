@@ -3,7 +3,7 @@
 ##
 # Basically the TaskPager, but has a required filter by regional key.
 
-class ScheduleHearingTaskPager < TaskPager
+class Hearings::ScheduleHearingTaskPager < TaskPager
   attr_accessor :regional_office_key
 
   def initialize(args)

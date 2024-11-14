@@ -3,6 +3,8 @@
 # FACOLS (Fake VACOLS) seeds.
 # Called by rake task and as prereq for other Caseflow seeds.
 
+require_relative "../../lib/helpers/vacols_csv_reader"
+
 module Seeds
   class Facols < Base
     def seed!

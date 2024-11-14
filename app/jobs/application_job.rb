@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../exceptions/standard_error"
+
 class ApplicationJob < ActiveJob::Base
   class InvalidJobPriority < StandardError; end
 

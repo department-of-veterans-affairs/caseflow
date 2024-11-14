@@ -145,7 +145,7 @@ describe NightlySyncsJob, :all_dbs do
       end
     end
 
-    # our BGSService fake returns five records in the poas_list, this creates one of the records
+    # our BgsService fake returns five records in the poas_list, this creates one of the records
     # before the job and verifies that the job creates the remaining four records
     context "with BGS attorneys" do
       before { create(:bgs_attorney, participant_id: "12345678") }

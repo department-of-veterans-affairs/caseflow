@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::Folder
+class Generators::Vacols::Folder
   class << self
     # rubocop:disable Metrics/MethodLength
     def folder_attrs

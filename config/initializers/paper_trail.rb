@@ -1,11 +1,7 @@
-Rails.application.config.to_prepare do
-  require "paper_trail"
-
-  module PaperTrail
-    class Version < ActiveRecord::Base
-      def user
-        User.find(whodunnit.to_i)
-      end
+module PaperTrail
+  class Version < ActiveRecord::Base
+    def user
+      User.find(whodunnit.to_i)
     end
   end
 end

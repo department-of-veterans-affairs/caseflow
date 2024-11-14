@@ -48,3 +48,12 @@ class HearingAdminActionTask < Task
     (HearingsManagement.singleton.user_has_access?(user) || HearingAdmin.singleton.user_has_access?(user)) && super
   end
 end
+
+require_dependency "hearing_admin_action_contested_claimant_task"
+require_dependency "hearing_admin_action_foia_privacy_request_task"
+require_dependency "hearing_admin_action_foreign_veteran_case_task"
+require_dependency "hearing_admin_action_incarcerated_veteran_task"
+require_dependency "hearing_admin_action_missing_forms_task"
+require_dependency "hearing_admin_action_other_task"
+require_dependency "hearing_admin_action_verify_address_task"
+require_dependency "hearing_admin_action_verify_poa_task"

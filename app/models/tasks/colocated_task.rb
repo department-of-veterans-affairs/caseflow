@@ -220,3 +220,22 @@ class ColocatedTask < Task
     end
   end
 end
+
+require_dependency "poa_clarification_colocated_task"
+require_dependency "ihp_colocated_task"
+require_dependency "hearing_clarification_colocated_task"
+require_dependency "aoj_colocated_task"
+require_dependency "extension_colocated_task"
+require_dependency "missing_hearing_transcripts_colocated_task"
+require_dependency "unaccredited_rep_colocated_task"
+require_dependency "foia_colocated_task"
+require_dependency "retired_vlj_colocated_task"
+require_dependency "arneson_colocated_task"
+require_dependency "new_rep_arguments_colocated_task"
+require_dependency "pending_scanning_vbms_colocated_task"
+require_dependency "address_verification_colocated_task"
+require_dependency "schedule_hearing_colocated_task"
+require_dependency "stayed_appeal_colocated_task"
+require_dependency "missing_records_colocated_task"
+require_dependency "translation_colocated_task"
+require_dependency "other_colocated_task"
