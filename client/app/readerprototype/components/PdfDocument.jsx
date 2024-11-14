@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Layer from './Comments/Layer';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
