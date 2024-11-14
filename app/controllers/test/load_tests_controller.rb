@@ -86,6 +86,9 @@ class Test::LoadTestsController < ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
@@ -118,6 +121,10 @@ class Test::LoadTestsController < ApplicationController
                        target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
                      elsif target_data_type.to_s == "SupplementalClaim"
                        target_id.presence ? SupplementalClaim.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "Appeal"
+                       target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "HearingDay"
+                       target_id.presence ? HearingDay.find_by_uuid(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else

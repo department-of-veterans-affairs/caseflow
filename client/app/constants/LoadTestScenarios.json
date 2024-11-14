@@ -175,5 +175,61 @@
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "hearingDetails",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "findHearingLocations",
+    "targetType": [{
+      "value": "",
+      "label": ""
+    }],
+    "targetId": ""
+  },
+  {
+    "scenario": "hearingScheduleAssign",
+    "targetType": [],
+    "targetId": ""
+  },
+  {
+    "scenario": "hearingScheduleAssignHearingDaysJSON",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "hearingWorksheet",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingWorksheetPrint",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingView",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingScheduleDocket",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day id"
   }
 ]
