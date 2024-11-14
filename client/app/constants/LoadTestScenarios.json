@@ -231,5 +231,13 @@
       "label": "Hearing Day"
     }],
     "targetId": "Hearing Day id"
+  },
+  {
+    "scenario": "scheduleHearingTasksColumnsJSON",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day regional_office"
   }
 ]
