@@ -1,4 +1,4 @@
-class AddPriorCorrespondenceReferenceToCorrespondences < Caseflow::Migration
+class AddPriorCorrespondenceReferenceToCorrespondences < Caseflow::Migrations::AddIndexConcurrently
   disable_ddl_transaction!
 
   def change
