@@ -459,6 +459,7 @@ Rails.application.routes.draw do
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :load_tests, only: [:index]
+    get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
     post "/load_tests/run_load_tests", to: "load_tests#run_load_tests", as: "run_load_tests"
 
     post "/load_test_api/user", to: "load_test_api#user", as: "user"

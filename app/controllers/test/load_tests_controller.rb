@@ -3,8 +3,15 @@
 class Test::LoadTestsController < ApplicationController
   include ProdtestOnlyConcern
 
+  LOAD_TESTING_USER = "LOAD_TESTER"
+
   def index
     render template: "test/index"
+  end
+
+  def build_cookie
+    save_session(load_test_user)
+    render json: { message: "logged in" }
   end
 
   # Desciption: Method to generate request to Jenkins to run the load tests
@@ -46,6 +53,18 @@ class Test::LoadTestsController < ApplicationController
   end
 
   private
+
+  def load_test_user
+    User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
+  end
+
+  # Private: Method to save the current_user's session cookie
+  # Params: user
+  # Response: None
+  def save_session(user)
+    session[:user] = user.to_session_hash
+    session[:regional_office] = user.selected_regional_office
+  end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
   def generate_request_headers(crumb_response)
