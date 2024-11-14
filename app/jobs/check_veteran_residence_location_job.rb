@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class CheckVeteranResidenceLocationJob < CaseflowJob
-  RESIDENCE_LOCATION_PROCESS_LIMIT = ENV["RESIDENCE_LOCATION_BATCH_SIZE"].to_i || 5000
-  VET_UPDATE_BATCH_PROCESS_LIMIT = ENV["VET_UPDATE_BATCH_SIZE"].to_i || 100
+  RESIDENCE_LOCATION_PROCESS_LIMIT = if ENV["RESIDENCE_LOCATION_BATCH_SIZE"].nil?
+                                       2500
+                                     else
+                                       ENV["RESIDENCE_LOCATION_BATCH_SIZE"].to_i
+    end
+  VET_UPDATE_BATCH_PROCESS_LIMIT = ENV["VET_UPDATE_BATCH_SIZE"].nil? ? 100 : ENV["VET_UPDATE_BATCH_SIZE"].to_i
   USER = User.system_user
 
   def perform
@@ -20,7 +24,7 @@ class CheckVeteranResidenceLocationJob < CaseflowJob
         end
       end
 
-      batch_update_veterans(vet_updates)
+      batch_update_veterans(vet_updates.compact) unless vet_updates.compact.empty?
     end
   end
 
@@ -37,6 +41,7 @@ class CheckVeteranResidenceLocationJob < CaseflowJob
       check_veteran_residence
     rescue StandardError => error
       log_error(error)
+      raise error
     end
   end
 
@@ -49,6 +54,7 @@ class CheckVeteranResidenceLocationJob < CaseflowJob
       end
     rescue StandardError => error
       log_error(error)
+      raise error
     end
   end
 end
