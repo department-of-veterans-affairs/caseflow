@@ -116,6 +116,7 @@ class Test::LoadTestsController < ApplicationController
   # Private: If no target_id is provided, use the target_id of sample data instead
   # Returns the target_data_id of each target_data_type
   # For Metric returns the entire target_data object
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def get_target_data_id(target_id, target_data_type, target_data_column)
     target_data_id = if target_data_type.to_s == "Metric"
                        target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
