@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-class InvalidEventType < StandardError
-  def initialize(event_type)
-    super("Invalid event type: #{event_type}")
-  end
-end
-
 # :reek:TooManyInstanceVariables
 # :reek:TooManyConstants
 # rubocop:disable Metrics/ClassLength
 class ClaimHistoryEvent
+  class InvalidEventType < StandardError
+    def initialize(event_type)
+      super("Invalid event type: #{event_type}")
+    end
+  end
+
   attr_reader :task_id, :event_type, :event_date, :assigned_at, :days_waiting,
               :veteran_file_number, :claim_type, :claimant_name, :user_facility,
               :benefit_type, :issue_type, :issue_description, :decision_date,

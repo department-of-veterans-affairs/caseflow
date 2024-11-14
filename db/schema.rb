@@ -1763,12 +1763,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
