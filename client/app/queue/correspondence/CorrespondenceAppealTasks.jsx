@@ -7,20 +7,20 @@ import { useSelector, useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
 import Alert from '../../components/Alert';
+import Button from '../../components/Button';
 import {
   setWaiveEvidenceAlertBanner,
   setTaskRelatedToAppealBanner,
   updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
-import Button from '../../components/Button';
 import AddRelatedTaskModalCorrespondenceDetails from
   './intake/components/TasksAppeals/AddRelatedTaskModalCorrespondenceDetails';
 
 const CorrespondenceAppealTasks = (props) => {
   const {
     waiveEvidenceAlertBanner,
-    expandedLinkedAppeals,
-    taskRelatedToAppealBanner
+    taskRelatedToAppealBanner,
+    expandedLinkedAppeals
   } = { ...props };
 
   const dispatch = useDispatch();
@@ -53,7 +53,10 @@ const CorrespondenceAppealTasks = (props) => {
   }, [waiveEvidenceAlertBanner, appeal]);
 
   useEffect(() => {
-    if (taskRelatedToAppealBanner?.message) {
+    if (
+      taskRelatedToAppealBanner?.message &&
+      taskRelatedToAppealBanner?.appealId?.toString() === appeal?.id?.toString()
+    ) {
 
       dispatch(updateExpandedLinkedAppeals(expandedLinkedAppeals, appealId));
 
@@ -214,8 +217,10 @@ const CorrespondenceAppealTasks = (props) => {
             <div className="task-banner-alert">
               {appeal &&
                 taskRelatedToAppealBanner &&
-                taskRelatedToAppealBanner.message &&
-                appeal?.id && (
+                taskRelatedToAppealBanner?.message &&
+                taskRelatedToAppealBanner?.appealId &&
+                appeal?.id &&
+                taskRelatedToAppealBanner?.appealId.toString() === appeal?.id.toString() && (
                 <Alert
                   type={taskRelatedToAppealBanner.type}
                   message={taskRelatedToAppealBanner.message}

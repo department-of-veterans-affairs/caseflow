@@ -115,7 +115,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
     setIsLoading(true);
 
     try {
-      dispatch(createCorrespondenceAppealTask(newTask, correspondence));
+      dispatch(createCorrespondenceAppealTask(newTask, correspondence, appeal.id));
 
       // Resets fields and state after submission
       setTaskContent('');

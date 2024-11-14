@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
@@ -48,7 +49,7 @@ export const setTaskRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
 export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
     then((response) => {
-      JSON.stringify(`response ${response, 1, 1}`)
+      JSON.stringify(`response ${response, 1, 1}`);
       const responseTasks = JSON.parse(response.text).tasks.data;
 
       // overwrite all correspondence_appeal_tasks in the store with values from response
@@ -424,7 +425,7 @@ export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch
     });
 };
 
-export const createCorrespondenceAppealTask = (data, correspondence) => async (dispatch) => {
+export const createCorrespondenceAppealTask = (data, correspondence, appealId) => async (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/create_correspondence_appeal_task`,
     { data }).
@@ -443,6 +444,7 @@ export const createCorrespondenceAppealTask = (data, correspondence) => async (d
         type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
         payload: {
           taskRelatedToAppealBanner: {
+            appealId,
             title: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.message, data.label),
             type: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.type
@@ -461,6 +463,7 @@ export const createCorrespondenceAppealTask = (data, correspondence) => async (d
         type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
         payload: {
           taskRelatedToAppealBanner: {
+            appealId,
             title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message, errorMessage),
             type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
