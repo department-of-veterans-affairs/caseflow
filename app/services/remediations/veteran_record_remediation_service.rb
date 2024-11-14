@@ -16,7 +16,10 @@ class Remediations::VeteranRecordRemediationService
 
     if @dups.any?
       # If there are duplicates, run dup_fix on @after_fn
-      dup_fix(@after_fn)
+      if dup_fix(@after_fn)
+        @dups.each(&:destroy!)
+      end
+
     else
       # Otherwise, fix veteran records normally
       fix_vet_records
@@ -26,12 +29,16 @@ class Remediations::VeteranRecordRemediationService
   private
 
   def dup_fix(file_number)
-    # should we run the base transaction nested like this or is that bad practice?
-    ActiveRecord::Base.transaction do
+    begin
+      # should we run the base transaction nested like this or is that bad practice?
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      @dups.each(&:destroy!)
+      true
+    rescue StandardError => error
+      Rails.logger.error "an error occured #{error}"
+      false
       # may need to fix intakes with veteran id
+      # sentry log / metabase dashboard
     end
   end
 
