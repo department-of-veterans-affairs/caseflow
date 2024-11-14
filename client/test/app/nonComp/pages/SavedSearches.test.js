@@ -50,7 +50,7 @@ describe('SavedSearches', () => {
 
   describe('renders correctly', () => {
     it('passes a11y testing', async () => {
-      const { container } = setup();
+      const { container } = setup({ nonComp: { businessLineUrl: 'vha' } });
 
       const results = await axe(container);
 
@@ -58,19 +58,19 @@ describe('SavedSearches', () => {
     });
 
     it('renders correctly', () => {
-      const { container } = setup();
+      const { container } = setup({ nonComp: { businessLineUrl: 'vha' } });
 
       expect(container).toMatchSnapshot();
     });
 
     it('renders Search page description', () => {
-      setup();
+      setup({ nonComp: { businessLineUrl: 'vha' } });
       expect(screen.getAllByText(SearchPageDescription)).
         toBeTruthy();
     });
 
     it('renders a tab titled "My saved searches"', () => {
-      setup();
+      setup({ nonComp: { businessLineUrl: 'vha' } });
       expect(screen.getAllByText('My saved searches')).toBeTruthy();
 
       checkTableHeaders();
@@ -78,11 +78,31 @@ describe('SavedSearches', () => {
     });
 
     it('renders a tab titled "All saved searches"', () => {
-      setup();
+      setup({ nonComp: { businessLineUrl: 'vha' } });
       expect(screen.getAllByText('All saved searches')).toBeTruthy();
 
       checkTableHeaders();
       checkSortableHeaders();
+    });
+  });
+
+  describe('Alert message', () => {
+    it('should display a successful Alert banner', async() => {
+      setup(
+        {
+          nonComp: { businessLineUrl: 'vha' },
+          savedSearch: {
+            message: 'You have successfully deleted First Search',
+            status: 'succeeded',
+            fetchedSearches: {
+              userSearches: {},
+              allSearches: {}
+
+            }
+          }
+        });
+
+      expect(screen.getByText('You have successfully deleted First Search')).toBeTruthy();
     });
   });
 });

@@ -9,7 +9,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
       class="saved-search-back-link"
     >
       <a
-        href="/undefined/report"
+        href="/vha/report"
       >
         <div
           class="saved-search-link-text"
@@ -388,6 +388,30 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
           </div>
         </div>
       </section>
+    </div>
+    <div
+      style="float: right; margin-top: 20px; display: flex; justify-content: space-between; gap: 2em;"
+    >
+      <span>
+        <button
+          class="cf-submit usa-button-disabled usa-button"
+          disabled=""
+          id="button-delete"
+          type="button"
+        >
+          Delete
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-submit usa-button-disabled usa-button"
+          disabled=""
+          id="button-apply"
+          type="button"
+        >
+          Apply
+        </button>
+      </span>
     </div>
   </div>
 </div>

@@ -1520,5 +1520,6 @@
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
   "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
+  "DELETE_SEARCH_TITLE": "Delete Search",
   "DELETE_SEARCH_DESCRIPTION": "Deleting this search will remove it from Saved Searches. Are you sure you want to continue?"
 }
