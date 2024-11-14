@@ -1,55 +1,88 @@
 import debounce from 'lodash/debounce';
 import Mark from 'mark.js';
-import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../components/Button';
 import SearchBar from '../../components/SearchBar';
 import { LeftChevronIcon } from '../../components/icons/LeftChevronIcon';
 import { RightChevronIcon } from '../../components/icons/RightChevronIcon';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import {
+  searchText,
+  setSearchIndex,
+  updateSearchIndexPage,
+  updateSearchRelativeIndex
+} from '../../reader/PdfSearch/PdfSearchActions';
+import { getCurrentMatchIndex, getMatchesPerPageInFile, getTotalMatchesInFile } from '../../reader/selectors';
 
-const ReaderSearchBar = () => {
-  const [foundCount, setFoundCount] = useState(0);
-  const [foundIndex, setFoundIndex] = useState(0);
+const currentPageIndexofMatch = (matchIndex, matchesPerPage) => {
+  // get page, relative index of match at absolute index
+  let cumulativeMatches = 0;
+
+  if (Number.isNaN(matchIndex)) {
+    return -1;
+  }
+
+  for (let matchesPerPageIndex = 0; matchesPerPageIndex < matchesPerPage.length; matchesPerPageIndex++) {
+    if (matchIndex < cumulativeMatches + matchesPerPage[matchesPerPageIndex].matches) {
+      const pageNumber = matchesPerPage[matchesPerPageIndex].pageIndex + 1;
+
+      return { pageNumber, relativeIndex: matchIndex - cumulativeMatches };
+    }
+
+    cumulativeMatches += matchesPerPage[matchesPerPageIndex].matches;
+  }
+
+  return -1;
+};
+const scrollToPageIndexofMatch = (matchIndex, matchesPerPage, dispatch) => {
+  const { pageNumber, relativeIndex } = currentPageIndexofMatch(matchIndex, matchesPerPage);
+
+  if (pageNumber < 0 || typeof pageNumber === 'undefined') {
+    return;
+  }
+
+  dispatch(updateSearchIndexPage(pageNumber));
+  dispatch(updateSearchRelativeIndex(relativeIndex));
+  const pageElement = document.getElementById(`canvasWrapper-${pageNumber}`);
+
+  pageElement.scrollIntoView();
+};
+
+const ReaderSearchBar = ({ file }) => {
   const searchBarRef = useRef(null);
-
+  const dispatch = useDispatch();
+  const totalMatches = useSelector((state) => getTotalMatchesInFile(state, { file }));
+  const matchesPerPage = useSelector((state) => getMatchesPerPageInFile(state, { file }));
+  const foundIndex = useSelector((state) => getCurrentMatchIndex(state, { file }));
   const pdfContainer = document.getElementById('pdfContainer');
-  const markInstance = new Mark(pdfContainer);
 
+  window.markInstance = new Mark(pdfContainer);
   if (pdfContainer) {
     pdfContainer.className = 'prototype-mark';
   }
 
-  const highlightMarkAtIndex = (selectedIndex = 0) => {
-    const marks = pdfContainer.getElementsByTagName('mark');
-
-    marks.forEach((mark, index) => {
-      mark.classList.remove('highlighted');
-      if (index === selectedIndex) {
-        mark.classList.add('highlighted');
-        mark.scrollIntoView({
-          block: 'center',
-        });
-      }
-    });
-  };
-
   const next = () => {
-    const newIndex = (foundIndex + 1) % foundCount;
+    const newIndex = (foundIndex + 1) % totalMatches;
 
-    highlightMarkAtIndex(newIndex);
-    setFoundIndex(newIndex);
+    dispatch(setSearchIndex(newIndex));
+    // highlightMarkAtIndex(newIndex);
   };
 
   const previous = () => {
     let newIndex = foundIndex - 1;
 
     if (newIndex < 0) {
-      newIndex = foundCount - 1;
+      newIndex = totalMatches - 1;
     }
-
-    highlightMarkAtIndex(newIndex);
-    setFoundIndex(newIndex);
+    dispatch(setSearchIndex(newIndex));
+    // highlightMarkAtIndex(newIndex);
   };
+
+  useEffect(() => {
+    scrollToPageIndexofMatch(foundIndex, matchesPerPage, dispatch);
+  }, [foundIndex]);
 
   // set focus upon mount
   useEffect(() => {
@@ -79,42 +112,32 @@ const ReaderSearchBar = () => {
 
     // clean up event listener on unmount
     return () => window.removeEventListener('keydown', keyHandler);
-  }, [foundCount, foundIndex]);
+  }, [totalMatches, foundIndex]);
 
   // clean up on unmount
   useEffect(
     () => () => {
-      markInstance.unmark({
-        done: () => setFoundCount(0),
-      });
+      dispatch(searchText(null));
+      dispatch(setSearchIndex(0));
+
+      window.markInstance.unmark();
     },
     []
   );
 
   const onChange = debounce((value) => {
-    setFoundIndex(0);
+    window.markInstance.unmark();
+    dispatch(setSearchIndex(0));
 
     if (value === '') {
-      markInstance.unmark({
-        done: () => setFoundCount(0),
-      });
+      dispatch(searchText(null));
     } else {
-      markInstance.unmark({
-        done: () => {
-          markInstance.mark(value, {
-            separateWordSearch: false,
-            done: (count) => {
-              setFoundCount(count);
-              highlightMarkAtIndex(0);
-            },
-          });
-        },
-      });
+      dispatch(searchText(value));
     }
   }, 500);
 
-  const index = foundCount === 0 ? 0 : foundIndex + 1;
-  const internalText = `${index} of ${foundCount > 9999 ? 'many' : foundCount}`;
+  const index = totalMatches === 0 ? 0 : foundIndex + 1;
+  const internalText = `${index} of ${totalMatches > 9999 ? 'many' : totalMatches}`;
 
   return (
     <div className="cf-search-bar" style={{ hidden: false }}>
@@ -143,6 +166,10 @@ const ReaderSearchBar = () => {
       </Button>
     </div>
   );
+};
+
+ReaderSearchBar.propTypes = {
+  file: PropTypes.string
 };
 
 export default ReaderSearchBar;
