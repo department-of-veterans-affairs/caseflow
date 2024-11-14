@@ -97,6 +97,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
+      readerPreferences={this.props.readerPreferences}
       featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
@@ -149,6 +150,7 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/${vacolsId}/documents`}
         zoomLevel={this.state.zoomLevel}
         onZoomChange={this.updateZoomLevel}
+        readerPreferences={this.props.readerPreferences}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -204,6 +206,7 @@ DecisionReviewer.propTypes = {
   buildDate: PropTypes.any,
   dropdownUrls: PropTypes.array,
   featureToggles: PropTypes.any,
+  readerPreferences: PropTypes.any,
   feedbackUrl: PropTypes.any,
   efolderExpressUrl: PropTypes.any,
   userHasEfolderRole: PropTypes.bool,
