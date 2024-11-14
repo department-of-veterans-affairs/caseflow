@@ -12,7 +12,6 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
-import _ from 'lodash';
 import ReaderFooter from './ReaderFooter';
 
 const PdfDocument = ({
@@ -151,10 +150,11 @@ const PdfDocument = ({
   };
 
   const getPages = (pdfDocument) => {
-    const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+    let promises = [];
 
-      return pdfDocument.getPage(index + 1);
-    });
+    for (let i = 0; i < pdfDocument?.numPages; i++) {
+      promises.push(pdfDocument.getPage(i + 1));
+    }
 
     Promise.all(promises).
       then((values) => {
