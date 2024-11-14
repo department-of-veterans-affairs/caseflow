@@ -73,9 +73,6 @@ class CorrespondenceIntakeProcessor
 
   def verify_correspondence(correspondence)
     return fail "Correspondence not found" if correspondence.blank?
-    # if correspondence.blank?
-    #   return fail "Correspondence not found"
-    # end
   end
 
   def create_correspondence_relations(intake_params, correspondence_id)
