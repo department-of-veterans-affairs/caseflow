@@ -10,24 +10,18 @@ describe "gather_bfcorkeys_of_hearing_schedulable_legacy_cases" do
   context "with legacy cases meeting the criteria" do
     include_context "Legacy appeals that may or may not appear in the NHQ"
 
-    let!(:desired_bfcorkeys) do
-      cases = legacy_appeals_with_active_sched_task + [legacy_appeal_with_two_active_sched_tasks]
-      bfcorkeys = cases.pluck(:bfcorkey)
+    let(:desired_bfcorkeys) do
+      legacy_appeals = legacy_appeals_with_active_sched_task + [legacy_appeal_with_two_active_sched_tasks]
 
-      bfcorkeys.map do |bfcorkey|
-        byebug
-        VACOLS::Correspondent.create!(stafkey: bfcorkey)
-      end
-
-      bfcorkeys
+      legacy_appeals.map(&:case_record).pluck(:bfcorkey)
     end
 
     after { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events]) }
 
-    it "test" do
-      byebug
+    it "only the desired appeals' IDs are returned and are formatted properly", bypass_cleaner: true do
+      expect(subject.scan(/'\d*'/).size).to eq desired_bfcorkeys.size
 
-      expect(true).to eq true
+      expect(subject.delete("'").split(",")).to match_array(desired_bfcorkeys)
     end
   end
 

@@ -7,7 +7,7 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
       create(:legacy_appeal,
              :with_schedule_hearing_tasks,
              :with_veteran,
-             vacols_case: create(:case, bfcorkey: generate(:vacols_correspondent_key))
+             vacols_case: create(:case)
             )
     end
   end
@@ -20,7 +20,7 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
       :legacy_appeal,
       :with_schedule_hearing_tasks,
       :with_veteran,
-      vacols_case: create(:case, bfcorkey: generate(:vacols_correspondent_key))
+      vacols_case: create(:case)
     ).tap do |appeal|
       second_hearing_task = HearingTask.create(appeal: appeal, parent: appeal.root_task)
       ScheduleHearingTask.create(appeal: appeal, parent: second_hearing_task)
@@ -32,7 +32,7 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
       :legacy_appeal,
       :with_schedule_hearing_tasks,
       :with_veteran,
-      vacols_case: create(:case, bfcorkey: generate(:vacols_correspondent_key))
+      vacols_case: create(:case)
     ).tap do |appeal|
       ScheduleHearingTask.find_by(appeal: appeal).completed!
     end
@@ -42,7 +42,7 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
     create(
       :legacy_appeal,
       :with_veteran,
-      vacols_case: create(:case, bfcorkey: generate(:vacols_correspondent_key))
+      vacols_case: create(:case)
     )
   end
 
