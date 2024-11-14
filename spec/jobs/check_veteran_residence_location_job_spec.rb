@@ -3,33 +3,42 @@
 describe CheckVeteranResidenceLocationJob, :all_dbs do
   include ActiveJob::TestHelper
 
+  let!(:fl_vet_attrs) { { file_number: "1238", ssn: "1111111111", state: "FL", country: "US" } }
+  let!(:fl_vet_outdated_attrs) { { file_number: "1239", ssn: "1111111112", state: "FL", country: "US" } }
+  let!(:az_vet_attrs) { { file_number: "1236", ssn: "1111111114", state: "AZ", country: "US" } }
+  let!(:az_vet_recently_processed_attrs) { { file_number: "1237", ssn: "1111111115", state: "AZ", country: "US" } }
+  let!(:ca_vet_outdated_attrs) { { file_number: "1235", ssn: "1111111113", state: "CA", country: "US" } }
+  let!(:international_vet_attrs) { { file_number: "1240", ssn: "1111111116", state: nil, country: "PI" } }
+
+  before do
+    Generators::Veteran.build(fl_vet_attrs).save!
+    Generators::Veteran.build(az_vet_attrs).save!
+    Generators::Veteran.build(az_vet_recently_processed_attrs).save!
+    Generators::Veteran.build(ca_vet_outdated_attrs).save!
+    Generators::Veteran.build(fl_vet_outdated_attrs).save!
+    Generators::Veteran.build(international_vet_attrs).save!
+  end
+
   describe "#perform" do
-    let!(:vet) { create(:veteran, file_number: "1238", ssn: "1111111113") }
-
-    before do
-      vet_attrs = { file_number: vet.file_number, ssn: vet.ssn, state: "FL", country: "US" }
-
-      Generators::Veteran.build(vet_attrs)
-    end
-
     it "updates the veteran residence location", bypass_cleaner: true do
       vet_before_job_run = Veteran.find_by_file_number_or_ssn("1238")
-      expect(vet_before_job_run).to_not be_nil
+      expect(vet_before_job_run.address.state).to eq("FL")
 
-      perform_enqueued_jobs { CheckVeteranResidenceLocationJob.perform_later }
+      CheckVeteranResidenceLocationJob.perform_now
 
       vet_after_job_run = Veteran.find_by_file_number_or_ssn("1238")
+      vet2_after_job_run = Veteran.find_by_file_number("1239")
 
-      expect(vet_before_job_run.state_of_residence).not_to eq vet_after_job_run.state_of_residence
-      expect(vet_before_job_run.country_of_residence).not_to eq vet_after_job_run.country_of_residence
       expect(vet_after_job_run.state_of_residence).to eq "FL"
       expect(vet_after_job_run.country_of_residence).to eq "US"
+      expect(vet_after_job_run.residence_location_last_checked_at).to be_within(5.minutes).of(Time.zone.now)
+      expect(vet2_after_job_run.residence_location_last_checked_at).to be_within(5.minutes).of(Time.zone.now)
     end
 
     it "catches standard errors within the parallel threads", bypass_cleaner: true do
       allow_any_instance_of(Veteran).to receive(:address).and_raise(BGS::ShareError, "Error")
 
-      expect_any_instance_of(CheckVeteranResidenceLocationJob).to receive(:log_error).once
+      expect_any_instance_of(CheckVeteranResidenceLocationJob).to receive(:log_error).at_least(6).times
 
       perform_enqueued_jobs { CheckVeteranResidenceLocationJob.perform_later }
     end
@@ -43,39 +52,16 @@ describe CheckVeteranResidenceLocationJob, :all_dbs do
   end
 
   describe "#retrieve_veterans" do
-    let!(:veteran1) do
-      create(:veteran, file_number: "1234", ssn: "1111111111", state_of_residence: "FL",
-                       country_of_residence: "US", residence_location_last_checked_at: Time.zone.now)
-    end
-    let!(:veteran2) do
-      create(:veteran, file_number: "1235", ssn: "1111111112", state_of_residence: "CA",
-                       country_of_residence: "US", residence_location_last_checked_at: 2.weeks.ago)
-    end
-    let!(:veteran3) { create(:veteran, file_number: "1236", ssn: "1111111113") }
-    let!(:veteran4) { create(:veteran, file_number: "1237", ssn: "1111111114") }
-
-    before do
-      vet1_attrs = { file_number: veteran1.file_number, ssn: veteran1.ssn, state: "FL", country: "US" }
-      vet2_attrs = { file_number: veteran2.file_number, ssn: veteran2.ssn, state: "CA", country: "US" }
-      vet3_attrs = { file_number: veteran3.file_number, ssn: veteran3.ssn, state: "FL", country: "US" }
-      vet4_attrs = { file_number: veteran4.file_number, ssn: veteran4.ssn, state: "TX", country: "US" }
-
-      Generators::Veteran.build(vet1_attrs)
-      Generators::Veteran.build(vet2_attrs)
-      Generators::Veteran.build(vet3_attrs)
-      Generators::Veteran.build(vet4_attrs)
-    end
-
     it "retrieves all veterans matching the criteria" do
       res = CheckVeteranResidenceLocationJob.new
 
-      expect(res.send(:retrieve_veterans).length).to be(3)
+      expect(res.send(:retrieve_veterans).length).to be(5)
     end
 
     it "raises errors for connection issues" do
       allow(Veteran).to receive(:where).and_raise(StandardError, "Connection Error")
 
-      expect_any_instance_of(CheckVeteranResidenceLocationJob).to receive(:log_error).once
+      expect_any_instance_of(CheckVeteranResidenceLocationJob).to receive(:log_error)
 
       res = CheckVeteranResidenceLocationJob.new
       res.send(:retrieve_veterans)
@@ -83,14 +69,6 @@ describe CheckVeteranResidenceLocationJob, :all_dbs do
   end
 
   describe "#batch_update_veterans" do
-    let!(:veteran3) { create(:veteran, file_number: "1236", ssn: "1111111113") }
-
-    before do
-      vet3_attrs = { file_number: veteran3.file_number, ssn: veteran3.ssn, state: "FL", country: "US" }
-
-      Generators::Veteran.build(vet3_attrs)
-    end
-
     it "retrieves all veterans matching the criteria" do
       res = CheckVeteranResidenceLocationJob.new
 
@@ -104,11 +82,10 @@ describe CheckVeteranResidenceLocationJob, :all_dbs do
 
       expect(vet_after_update.state_of_residence).to eq "AZ"
       expect(vet_after_update.country_of_residence).to eq "US"
+      expect(vet_after_update.residence_location_last_checked_at).to be_within(5.minutes).of(Time.zone.now)
     end
 
     it "raises errors for connection issues" do
-      # allow(Veteran).to receive(:update).and_raise(StandardError, "Connection Error")
-
       expect_any_instance_of(CheckVeteranResidenceLocationJob).to receive(:log_error)
 
       res = CheckVeteranResidenceLocationJob.new

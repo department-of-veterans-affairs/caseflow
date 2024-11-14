@@ -1,29 +1,20 @@
 # frozen_string_literal: true
 
 class CheckVeteranResidenceLocationJob < CaseflowJob
-  include Hearings::EnsureCurrentUserIsSet
-
   RESIDENCE_LOCATION_PROCESS_LIMIT = ENV["RESIDENCE_LOCATION_BATCH_SIZE"].to_i || 5000
   VET_UPDATE_BATCH_PROCESS_LIMIT = ENV["VET_UPDATE_BATCH_SIZE"].to_i || 100
+  USER = User.system_user
 
   def perform
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
-      vets_semaphore = Mutex.new
-      vet_updates = []
-
       # Setting up parallel threads to retrieve and process all the veteran residence details
-      Parallel.each(retrieve_veterans, in_threads: 4) do |veteran|
+      vet_updates = Parallel.map(retrieve_veterans, in_threads: 4) do |veteran|
         begin
-          ensure_current_user_is_set
-
-          residence_updates = { id: veteran.id, state_of_residence: veteran.address.state,
-                                country_of_residence: veteran.address.country,
-                                residence_location_last_checked_at: Time.zone.now }
-
-          # Adding all the veteran updates to a common object between all the threads
-          vets_semaphore.synchronize do
-            vet_updates << residence_updates
-          end
+          # Make sure the current user is set
+          RequestStore[:current_user] = USER
+          { id: veteran.id, state_of_residence: veteran.address.state,
+            country_of_residence: veteran.address.country,
+            residence_location_last_checked_at: Time.zone.now }
         rescue StandardError => error
           log_error(error)
         end
