@@ -15,26 +15,29 @@ class Remediations::DuplicatePersonRemediationService
   end
 
   def remediate!
-    find_and_update_records
+    if find_and_update_records
+      @dup_persons.each(&:destroy!)
+    end
   end
 
   private
 
   def find_and_update_records
-    ActiveRecord::Base.transaction do
-      dup_persons = Person.where(id: @duplicate_person_ids)
+    begin
+      @dup_persons = Person.where(id: @duplicate_person_ids)
       og_person = Person.find_by(id: @updated_person_id)
 
-      ASSOCIATIONS.each do |klass|
-        update_found_records(klass, dup_persons, og_person)
+      ActiveRecord::Base.transaction do
+        ASSOCIATIONS.each do |klass|
+          column = klass.column_names.find { |name| name.end_with?("participant_id") }
+          records = klass.where("#{column}": @dup_persons.map(&:participant_id))
+          records.update_all("#{column}": og_person.participant_id)
+        end
       end
-      # destroy dup_person
+      true
+    rescue StandardError => error
+      Rails.logger.error "an error occured #{error}"
+      false
     end
-  end
-
-  def update_found_records(klass, dup_persons, og_person)
-    column = klass.column_names.find { |name| name.end_with?("participant_id") }
-    records = klass.where("#{column}": dup_persons.pluck(:participant_id))
-    records.update_all("#{column}": og_person.participant_id)
   end
 end
