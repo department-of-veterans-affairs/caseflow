@@ -148,6 +148,10 @@ class Document < CaseflowRecord
     vbms_document_id.to_s
   end
 
+  def file_size
+    rand(10 * 1024..100 * 1024 * 1024)
+  end
+
   def default_path
     File.join(Rails.root, "tmp", "pdfs", file_name)
   end
