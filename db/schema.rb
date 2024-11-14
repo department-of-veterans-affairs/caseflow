@@ -2465,6 +2465,44 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+          declare
+            string_claim_id varchar(25);
+            epe_id integer;
+          begin
+            if (NEW."EP_CODE" LIKE '04%'
+                OR NEW."EP_CODE" LIKE '03%'
+                OR NEW."EP_CODE" LIKE '93%'
+                OR NEW."EP_CODE" LIKE '68%')
+                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
+
+              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
+
+              select id into epe_id
+              from end_product_establishments
+              where (reference_id = string_claim_id
+              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
+
+              if epe_id > 0
+              then
+                if not exists (
+                  select 1
+                  from priority_end_product_sync_queue
+                  where end_product_establishment_id = epe_id
+                ) then
+                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
+                  values (now(), epe_id, now());
+                end if;
+              end if;
+            end if;
+            return null;
+          end;
+        $function$
+  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2486,8 +2524,6 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
       END
       $function$
   SQL
-
-
   create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
       CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
   SQL
