@@ -44,26 +44,29 @@ module Seeds
       2.times do
         # HearBlock One
         create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
-          :case,
+          :case_with_form_9,
           :aod,
           :type_original,
+          :status_active,
           bfcorlid: "#{hearblock_one.file_number}S",
           case_issues: create_list(:case_issue, 1, :compensation)
           ))
 
         # HearBlock Two
         create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
-          :case,
+          :case_with_form_9,
           :type_original,
+          :status_active,
           bfcorlid: "#{hearblock_two.file_number}S",
           case_issues: create_list(:case_issue, 2, :compensation)
           ))
 
         # HearBlock Three
         create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
-          :case,
+          :case_with_form_9,
           :aod,
           :type_original,
+          :status_active,
           bfcorlid: "#{hearblock_three.file_number}S",
           case_issues: create_list(:case_issue, 2, :compensation)
         ))
@@ -71,33 +74,37 @@ module Seeds
 
       # HearBlock CAVC
       create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
+        :status_active,
         bfcorlid: "#{hearblock_cavc.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
       # HearBlock Four
       create(:legacy_appeal, :with_schedule_hearing_tasks, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_original,
+        :status_active,
         bfcorlid: "#{hearblock_four.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
       # HearNon Block
       create(:legacy_appeal, :with_active_ihp_colocated_task, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :aod,
         :type_original,
+        :status_active,
         bfcorlid: "#{hearnon_block.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
       # DoesNot Qualify
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_original,
+        :status_active,
         bfcurloc: "83",
         bfcorlid: "#{doesnot_qualify.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
