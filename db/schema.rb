@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_14_165717) do
+ActiveRecord::Schema.define(version: 2024_11_14_170652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2535,10 +2535,10 @@ ActiveRecord::Schema.define(version: 2024_11_14_165717) do
               CASE
                   WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
                   ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
+              END IS TRUE) OR (appeals.receipt_date <= COALESCE(schedulable_cutoff_dates.cutoff_date, '2019-12-31'::date))) THEN true
               ELSE false
           END AS schedulable
-     FROM (((((appeals
+     FROM ((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
        JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
@@ -2547,6 +2547,7 @@ ActiveRecord::Schema.define(version: 2024_11_14_165717) do
              FROM (claimants
                JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
             WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
+       LEFT JOIN schedulable_cutoff_dates ON ((schedulable_cutoff_dates.created_by_id = tasks.assigned_to_id)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
