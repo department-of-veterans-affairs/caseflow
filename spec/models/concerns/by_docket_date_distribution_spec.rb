@@ -95,26 +95,26 @@ describe ByDocketDateDistribution, :all_dbs do
       @new_acd.send :priority_push_distribution, 12
     end
 
-    it "calls distribute_appeals method for all the dockets and returns the array of objects received from each method" do
+    it "calls distribute_appeals for all the dockets and returns the array of objects received from each method" do
       # distribute all priority appeals from all dockets
       expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: 'not_genpop')
+        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: "not_genpop")
         .and_return(add_object_to_return_array(priority_count_hash[:legacy]))
 
       expect_any_instance_of(DirectReviewDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: 'not_genpop')
+        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: "not_genpop")
         .and_return(add_object_to_return_array(priority_count_hash[:direct_review]))
 
       expect_any_instance_of(EvidenceSubmissionDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: 'not_genpop')
+        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: "not_genpop")
         .and_return(add_object_to_return_array(priority_count_hash[:evidence_submission]))
 
       expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: 'not_genpop')
+        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: "not_genpop")
         .and_return(add_object_to_return_array(priority_count_hash[:hearing]))
 
       expect_any_instance_of(AojLegacyDocket).to receive(:distribute_appeals)
-        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: 'not_genpop')
+        .with(@new_acd, priority: true, style: "push", limit: nil, genpop: "not_genpop")
         .and_return(add_object_to_return_array(3))
 
       @new_acd.send :priority_push_distribution, nil
