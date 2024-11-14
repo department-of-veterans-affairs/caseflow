@@ -53,7 +53,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     end
 
     context "when there are duplicate veterans" do
-      it "runs dup_fix and updates the file_number for duplicates" do
+      it "runs dup_fix and updates the file_number for duplicates and destroys the duplicates" do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
 
@@ -64,7 +64,6 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
           end
         end
 
-        # talk to raymond about this
         expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
         vet_record_service.remediate!
@@ -105,22 +104,3 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     end
   end
 end
-
-# -------------------------
-
-# describe Remediations::VeteranRecordRemediationService do
-#   let(:before_fn) { "12345" }  # Replace with appropriate test value
-#   let(:after_fn) { "54321" }   # Replace with appropriate test value
-#   let(:vet_record_service) { described_class.new(before_fn, after_fn) }
-
-#   let(:vet_appeal_record) {
-#     instance_double("Appeal", id: 1, veteran_file_number: 12345)
-#   }
-
-#   describe "#remediate!" do
-#     it "calls fix_vet_records and performs remediation" do
-#       expect(vet_record_service).to receive(:fix_vet_records).and_call_original
-#       vet_record_service.remediate!
-#     end
-#   end
-# end
