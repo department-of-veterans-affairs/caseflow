@@ -43,10 +43,11 @@ module Seeds
 
       # Scenario 1: Draft One (Primary, age-based, CAVC, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
         :aod,
         :assigned,
+        :status_active,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVACOTBJUDGE"),
         as_judge_assign_task: true,
@@ -82,10 +83,11 @@ module Seeds
 
       # Scenario 4: Draft Four (Priority, manually added, CAVC, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
         :aod,
         :assigned,
+        :status_active,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAGSPORER"),
         as_judge_assign_task: true,
