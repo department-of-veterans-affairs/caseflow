@@ -16,7 +16,6 @@ import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from
 import { showSideBarSelector } from './selectors';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 import { getFilteredDocuments } from '../reader/selectors';
-import _ from 'lodash';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,11 +36,9 @@ const DocumentViewer = (props) => {
   const currentDocIndex = docList.indexOf(doc);
   const prevDoc = docList?.[currentDocIndex - 1];
   const nextDoc = docList?.[currentDocIndex + 1];
-  // note - remove the redundant logic (above) from ReaderFooter and pass as props to ReaderFooter
-  // and refactor getPrefetchFiles() without using lodash
-  const getPrefetchFiles = () => _.compact(_.map([prevDoc, nextDoc], 'content_url'));
 
-  const files = [...getPrefetchFiles(), doc.content_url];
+  const prefetchFiles = [prevDoc, nextDoc].map((file) => file.content_url);
+  const files = [...prefetchFiles, doc.content_url];
 
   useEffect(() => {
     setShowSearchBar(false);
