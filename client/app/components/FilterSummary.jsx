@@ -27,7 +27,7 @@ const FilterSummary = ({ filteredByList, clearFilteredByList, vhaCompletedTab })
   const clearAllFiltersLink = <button
     onClick={() => {
       if (vhaCompletedTab) {
-        clearFilteredByList({ clear: true });
+        clearFilteredByList({ closedAt: ['all,,'] });
       } else {
         clearFilteredByList({});
       }
