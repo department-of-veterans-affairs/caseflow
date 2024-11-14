@@ -34,7 +34,8 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       records_double = double("ActiveRecord::Relation")
 
       # Use symbol keys instead of string keys in where
-      allow(klass).to receive(:where).with(column_name => ["duplicate_participant_id_1", "duplicate_participant_id_2"]).and_return(records_double)
+      allow(klass).to receive(:where).with(column_name => %w[duplicate_participant_id_1 duplicate_participant_id_2])
+        .and_return(records_double)
       allow(records_double).to receive(:update_all).with(column_name => updated_person.participant_id)
     end
 
@@ -49,8 +50,10 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         expect(service.remediate!).to be_truthy
 
         column_mapping.each do |klass, column_name|
-          expect(klass).to have_received(:where).with(column_name => ["duplicate_participant_id_1", "duplicate_participant_id_2"])
-          expect(klass.where(column_name => ["duplicate_participant_id_1", "duplicate_participant_id_2"])).to have_received(:update_all).with(column_name => updated_person.participant_id)
+          expect(klass).to have_received(:where)
+            .with(column_name => %w[duplicate_participant_id_1 duplicate_participant_id_2])
+          expect(klass.where(column_name => %w[duplicate_participant_id_1 duplicate_participant_id_2]))
+            .to have_received(:update_all).with(column_name => updated_person.participant_id)
         end
       end
 
