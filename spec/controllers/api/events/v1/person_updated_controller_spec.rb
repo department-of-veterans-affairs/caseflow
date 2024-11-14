@@ -14,7 +14,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
   describe "before_action :check_api_disabled" do
     context "when API is disabled" do
       before do
-        allow(FeatureToggle).to receive(:enabled?).with(:disable_ama_eventing).and_return(true)
+        allow(FeatureToggle).to receive(:enabled?).with(:disable_person_updated_eventing).and_return(true)
       end
 
       it "returns a 501 status and error message" do
@@ -34,7 +34,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
     context "when API is enabled" do
       before do
-        allow(FeatureToggle).to receive(:enabled?).with(:disable_ama_eventing).and_return(false)
+        allow(FeatureToggle).to receive(:enabled?).with(:disable_person_updated_eventing).and_return(false)
       end
 
       it "allows the action to proceed" do
@@ -88,7 +88,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
         post :person_updated, params: payload
 
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:ok)
         expect(response.body).to eq(JSON.dump({ "message": "PersonUpdated successfully processed" }))
       end
     end
@@ -135,7 +135,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
     context "when service error handling is successful" do
       it "returns a 201 status and success message" do
-        expect(person_error).to receive(:call)
+        expect(person_error).to receive(:call).and_return(:created)
 
         post :person_updated_error, params: params
 
@@ -143,6 +143,14 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
         expect(JSON.parse(response.body)).to eq(
           { "message" => "Person Updated Error Saved in Caseflow" }
         )
+      end
+
+      it "returns a 200 status and success message when event exists" do
+        expect(person_error).to receive(:call).and_return(:updated)
+
+        post :person_updated_error, params: params
+
+        expect(response).to have_http_status(:ok)
       end
     end
 

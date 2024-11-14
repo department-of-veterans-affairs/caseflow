@@ -14,13 +14,17 @@ class Events::PersonUpdatedError
       fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:#{redis_key} is already in the Redis Cache"
     end
 
+    exists = false
+
     RedisMutex.with_lock(redis_key, block: 60, expire: 100) do
       ActiveRecord::Base.transaction do
-        event.update!(
-          error: error_message, info: { "errored_claim_id" => participant_id }
-        )
+        exists = event_exists?
+
+        update_event
       end
     end
+
+    exists ? :updated : :created
   rescue RedisMutex::LockError => error
     Rails.logger.error("LockError occurred: #{error.message}")
     raise Caseflow::Error::RedisLockFailed
@@ -34,6 +38,14 @@ class Events::PersonUpdatedError
 
   attr_reader :event_id, :participant_id, :error_message
 
+  def update_event
+    event.update!(
+      error: error_message,
+      info: { "errored_claim_id" => participant_id },
+      errored_claim_id: participant_id
+    )
+  end
+
   def redis_key
     "PersonUpdatedError:#{event_id}"
   end
@@ -42,7 +54,12 @@ class Events::PersonUpdatedError
     Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 
+  def event_exists?
+    @event ||= Events::PersonUpdatedErrorEvent.where(reference_id: event_id).first
+    @event.present?
+  end
+
   def event
-    @event ||= Events::PersonUpdatedEvent.find_or_create_by(reference_id: event_id)
+    @event ||= Events::PersonUpdatedErrorEvent.find_or_create_by(reference_id: event_id)
   end
 end

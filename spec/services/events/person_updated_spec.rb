@@ -21,12 +21,17 @@ describe Events::PersonUpdated do
   let(:is_veteran) { true }
   let(:person) { FactoryBot.create(:person, participant_id: participant_id) }
   let(:veteran) { FactoryBot.create(:veteran, participant_id: participant_id) }
-  let(:event_id) { SecureRandom.uuid }
+  let(:consumer_event_id) { SecureRandom.uuid }
 
   let(:redis) { Redis.new(url: Rails.application.secrets.redis_url_cache) }
-  let(:lock_key) { "RedisMutex:PersonUpdated:#{event_id}" }
+  let(:lock_key) { "RedisMutex:PersonUpdated:#{consumer_event_id}" }
 
-  subject { described_class.new(event_id, participant_id, is_veteran, attributes) }
+  subject { described_class.new(consumer_event_id, participant_id, is_veteran, attributes) }
+
+  before do
+    person.save
+    veteran.save
+  end
 
   it "throws a Redis lock error when lock fails" do
     redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
@@ -38,33 +43,105 @@ describe Events::PersonUpdated do
     redis.del(lock_key)
   end
 
+  let!(:event_person_info) do
+    {
+      "before_data": {
+        "id": person.id,
+        "participant_id": participant_id,
+        "date_of_birth": person.date_of_birth.to_s,
+        "created_at": kind_of(DateTime),
+        "updated_at": kind_of(DateTime),
+        "first_name": person.first_name,
+        "last_name": person.last_name,
+        "middle_name": person.middle_name,
+        "name_suffix": person.name_suffix,
+        "email_address": nil,
+        "ssn": person.ssn
+      },
+      "record_data": {
+        "id": person.id,
+        "participant_id": participant_id,
+        "date_of_birth": attributes.date_of_birth.to_s,
+        "created_at": kind_of(DateTime),
+        "updated_at": kind_of(DateTime),
+        "first_name": attributes.first_name,
+        "last_name": attributes.last_name,
+        "middle_name": attributes.middle_name,
+        "name_suffix": attributes.name_suffix,
+        "email_address": nil,
+        "ssn": attributes.ssn,
+        "update_type": "U"
+      }
+    }
+  end
+
+  let!(:event_veteran_info) do
+    {
+      "before_data": {
+        "id": veteran.id,
+        "participant_id": participant_id,
+        "date_of_birth": veteran.date_of_birth.to_s,
+        "created_at": kind_of(DateTime),
+        "updated_at": kind_of(DateTime),
+        "first_name": veteran.first_name,
+        "last_name": veteran.last_name,
+        "middle_name": veteran.middle_name,
+        "name_suffix": veteran.name_suffix,
+        "email_address": veteran.email_address,
+        "ssn": veteran.ssn
+      },
+      "record_data": {
+        "id": veteran.id,
+        "participant_id": participant_id,
+        "date_of_birth": attributes.date_of_birth.to_s,
+        "created_at": kind_of(DateTime),
+        "updated_at": kind_of(DateTime),
+        "first_name": attributes.first_name,
+        "last_name": attributes.last_name,
+        "middle_name": attributes.middle_name,
+        "name_suffix": attributes.name_suffix,
+        "email_address": attributes.email_address,
+        "ssn": attributes.ssn,
+        "update_type": "U"
+      }
+    }
+  end
+
   it "updates matching veteran and person records" do
-    expect { subject.call }.to(
-      change do
-        [
-          [person.reload.first_name, veteran.reload.first_name],
-          [person.reload.last_name, veteran.reload.last_name],
-          [person.reload.middle_name, veteran.reload.middle_name],
-          [person.reload.name_suffix, veteran.reload.name_suffix],
-          [person.reload.ssn, veteran.reload.ssn],
-          [person.reload.date_of_birth, nil],
-          [person.reload.email_address, nil],
-          [nil, veteran.reload.date_of_death],
-          [nil, veteran.reload.file_number]
-        ]
-      end.to(
-        [
-          [attributes.first_name] * 2,
-          [attributes.last_name] * 2,
-          [attributes.middle_name] * 2,
-          [attributes.name_suffix] * 2,
-          [attributes.ssn] * 2,
-          [attributes.date_of_birth, nil],
-          [attributes.email_address, nil],
-          [nil, attributes.date_of_death],
-          [nil, attributes.file_number]
-        ]
-      )
-    )
+    # rubocop:disable Style/BlockDelimiters
+    # rubocop:disable Layout/MultilineMethodCallIndentation
+    expect {
+      subject.call
+    }.to change { person.reload.first_name }.to(attributes.first_name)
+    .and change { veteran.reload.first_name }.to(attributes.first_name)
+    .and change { person.reload.last_name }.to(attributes.last_name)
+    .and change { veteran.reload.last_name }.to(attributes.last_name)
+    .and change { person.reload.middle_name }.to(attributes.middle_name)
+    .and change { veteran.reload.middle_name }.to(attributes.middle_name)
+    .and change { person.reload.name_suffix }.to(attributes.name_suffix)
+    .and change { veteran.reload.name_suffix }.to(attributes.name_suffix)
+    .and change { person.reload.ssn }.to(attributes.ssn)
+    .and change { veteran.reload.ssn }.to(attributes.ssn)
+    .and change { person.reload.date_of_birth }.to(attributes.date_of_birth)
+    .and change { person.reload.email_address }.to(attributes.email_address)
+    .and change { veteran.reload.date_of_death }.to(attributes.date_of_death)
+    .and change { veteran.reload.file_number }.to(attributes.file_number)
+    # rubocop:enable Style/BlockDelimiters
+    # rubocop:enable Layout/MultilineMethodCallIndentation
+
+    event = Event.find_by(reference_id: consumer_event_id)
+    expect(event).to be_kind_of(Events::PersonUpdatedEvent)
+
+    person_event, veteran_event = event.event_records
+
+    expect(person_event.event_id).to eq(event.id)
+    expect(person_event.evented_record_type).to eq("Person")
+    expect(person_event.evented_record_id).to eq(person.id)
+    expect(person_event.info).to match(event_person_info)
+
+    expect(veteran_event.event_id).to eq(event.id)
+    expect(person_event.evented_record_type).to eq("Veteran")
+    expect(person_event.evented_record_id).to eq(veteran.id)
+    expect(veteran_event.info).to match(event_veteran_info)
   end
 end

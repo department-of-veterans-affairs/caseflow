@@ -3,7 +3,7 @@
 class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   # Checks if API is disabled
   before_action do
-    if FeatureToggle.enabled?(:disable_ama_eventing)
+    if FeatureToggle.enabled?(:disable_person_updated_eventing)
       render json: {
         errors: [
           {
@@ -36,7 +36,7 @@ class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
       )
     ).call
 
-    render json: { message: "PersonUpdated successfully processed" }, status: :created
+    render json: { message: "PersonUpdated successfully processed" }, status: :ok
   rescue Caseflow::Error::RedisLockFailed
     render json: { message: "Lock failed" }, status: :conflict
   rescue StandardError
@@ -44,13 +44,20 @@ class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   end
 
   def person_updated_error
-    Events::PersonUpdatedError.new(
+    result = Events::PersonUpdatedError.new(
       params["event_id"],
       params["errored_participant_id"].to_i,
       params["error"]
     ).call
 
-    render json: { "message": "Person Updated Error Saved in Caseflow" }, status: :created
+    response_code =
+      if result == :created
+        :created
+      else
+        :ok
+      end
+
+    render json: { "message": "Person Updated Error Saved in Caseflow" }, status: response_code
   rescue Caseflow::Error::RedisLockFailed
     render json: { message: "Lock failed" }, status: :conflict
   rescue StandardError
