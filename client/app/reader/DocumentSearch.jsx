@@ -216,14 +216,14 @@ DocumentSearch.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
-  searchIsLoading: state.searchActionReducer.searchIsLoading,
-  pdfDocument: state.pdf.pdfDocuments[props.file],
+  searchIsLoading: state.searchActionReducer?.searchIsLoading,
+  pdfDocument: state.pdf?.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
-  matchIndexToHighlight: state.searchActionReducer.indexToHighlight,
-  hidden: state.pdfViewer.hideSearchBar,
-  textExtracted: !_.isEmpty(state.searchActionReducer.extractedText),
+  matchIndexToHighlight: state.searchActionReducer?.indexToHighlight,
+  hidden: state.pdfViewer?.hideSearchBar,
+  textExtracted: !_.isEmpty(state.searchActionReducer?.extractedText),
   featureToggles: props.featureToggles,
 });
 

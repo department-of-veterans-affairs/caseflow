@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "9bd3635fbd8094d25160669f38d8699e2f1d7a98"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "dbd86859856d161d84b0bba4d67a8b62e4684996"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -74,6 +74,7 @@ gem "rack", "~> 2.2.6.2"
 gem "rails", "6.1.7.7"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rcredstash", "~> 1.1.0"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
@@ -83,6 +84,7 @@ gem "request_store"
 gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
+gem "rtf"
 gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
@@ -99,6 +101,7 @@ gem "tzinfo", "~> 2.0"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
