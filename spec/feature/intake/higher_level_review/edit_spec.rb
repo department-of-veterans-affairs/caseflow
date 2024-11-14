@@ -454,16 +454,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
       )
       # select_intake_no_match
       # add_untimely_exemption_response("No")
-      expect(page).to have_text('Service connection, rheumatoid arthritis')
+      expect(page).to have_text("Service connection, rheumatoid arthritis")
 
       # Then find and click the label
-      find('label', text: 'Service connection, rheumatoid arthritis').click
+      find("label", text: "Service connection, rheumatoid arthritis").click
       safe_click ".add-issue"
 
       safe_click("#button-submit-update")
       safe_click ".confirm"
+      expect(page).to have_no_content("Something went wrong")
       visit "higher_level_reviews/#{ep_claim_id}/edit"
-      expect(page).not_to have_content("Something went wrong")
+      expect(page).to have_no_content("Something went wrong")
     end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do

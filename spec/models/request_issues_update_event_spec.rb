@@ -25,7 +25,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
       allow(parser).to receive(:end_product_establishment_last_synced_at).and_return(last_synced_at)
       allow(parser).to receive(:end_product_establishment_code).and_return("some_end_product_code")
-      allow(parser).to receive(:end_product_establishment_reference_id).and_return(EndProductEstablishment.last.reference_id)
+      allow(parser).to receive(:end_product_establishment_reference_id)
+        .and_return(EndProductEstablishment.last.reference_id)
       allow(parser).to receive(:veteran_participant_id).and_return("some_participant_id")
     end
   end
