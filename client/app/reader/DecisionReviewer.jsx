@@ -34,11 +34,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.state = {
       isCommentLabelSelected: false,
-      zoomLevel: 100,
-      progressBarOptions: {
-        delayBeforeProgressBar: null,
-        showProgressBarThreshold: null
-      }
+      zoomLevel: 100
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
@@ -92,15 +88,6 @@ export class DecisionReviewer extends React.PureComponent {
     this.setState({ zoomLevel: newZoomLevel });
   };
 
-  updateProgressBarOptions = ({ delayBeforeProgressBar, showProgressBarThreshold }) => {
-    this.setState({
-      progressBarOptions: {
-        delayBeforeProgressBar,
-        showProgressBarThreshold
-      }
-    });
-  };
-
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -110,7 +97,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      progressBarOptions={this.updateProgressBarOptions}
+      readerPreferences={this.props.readerPreferences}
       featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
@@ -156,7 +143,6 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      progressBarOptions={this.updateProgressBarOptions}
       featureToggles={this.props.featureToggles}>
       <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}
@@ -165,7 +151,7 @@ export class DecisionReviewer extends React.PureComponent {
         zoomLevel={this.state.zoomLevel}
         featureToggles={this.props.featureToggles}
         onZoomChange={this.updateZoomLevel}
-        progressBarOptions={this.state.progressBarOptions}
+        readerPreferences={this.props.readerPreferences}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -221,6 +207,7 @@ DecisionReviewer.propTypes = {
   buildDate: PropTypes.any,
   dropdownUrls: PropTypes.array,
   featureToggles: PropTypes.any,
+  readerPreferences: PropTypes.any,
   feedbackUrl: PropTypes.any,
   efolderExpressUrl: PropTypes.any,
   userHasEfolderRole: PropTypes.bool,

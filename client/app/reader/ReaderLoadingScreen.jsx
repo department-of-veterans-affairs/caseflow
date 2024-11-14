@@ -25,11 +25,7 @@ export class ReaderLoadingScreen extends React.Component {
       then((response) => {
         const returnedObject = response.body;
         const documents = returnedObject.appealDocuments;
-        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt, progressBarOptions } = returnedObject;
-
-        if (this.props.featureToggles.readerProgressBar) {
-          this.props.progressBarOptions(progressBarOptions);
-        }
+        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);

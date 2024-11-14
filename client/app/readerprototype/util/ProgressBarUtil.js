@@ -19,10 +19,9 @@ const calculateProgress = ({ loaded, fileSize }) => {
 // Function to check if the progress bar should be shown
 // Returns a boolean based on params passed in and the 2 variables passed in as progressBarOptions
 // top of this util file has default values for if not present (delayBeforeProgressBar, showProgressBarThreshold)
-const shouldShowProgressBar = ({ enlapsedTime, downloadSpeed, percentage, loaded, fileSize, progressBarOptions }) => {
-
-  const delayBeforeProgressBar = progressBarOptions.delayBeforeProgressBar || delayBeforeProgressBarDefaultValue;
-  const showProgressBarThreshold = progressBarOptions.showProgressBarThreshold || showProgressBarThresholdDefaultValue;
+const shouldShowProgressBar = ({ enlapsedTime, downloadSpeed, percentage, loaded, fileSize, readerPreferences }) => {
+  const delayBeforeProgressBar = readerPreferences.delayBeforeProgressBar || delayBeforeProgressBarDefaultValue;
+  const showProgressBarThreshold = readerPreferences.showProgressBarThreshold || showProgressBarThresholdDefaultValue;
 
   if (percentage < 100 && enlapsedTime > delayBeforeProgressBar) {
     const projectedEndTime = (fileSize - loaded) / downloadSpeed;
