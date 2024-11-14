@@ -35,9 +35,9 @@ describe Events::DecisionReviewCompleted do
       .with(event: event, parser: parser).and_return(nil)
     allow(Events::DecisionReviewCompleted::CompleteEndProductEstablishment).to receive(:process!)
       .with(event: event, parser: parser).and_return(nil)
-    allow(RequestIssuesCompleteEvent).to receive(:new)
+    allow(DecisionIssuesCompleteEvent).to receive(:new)
       .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
-      .and_return(double("RequestIssuesCompleteEvent", perform!: nil))
+      .and_return(double("DecisionIssuesCompleteEvent", perform!: nil))
   end
 
   describe ".Complete!" do
@@ -73,9 +73,9 @@ describe Events::DecisionReviewCompleted do
     end
 
     it "completes request issues" do
-      expect(RequestIssuesCompleteEvent).to receive(:new)
+      expect(DecisionIssuesCompleteEvent).to receive(:new)
         .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
-        .and_return(double("RequestIssuesCompleteEvent", perform!: nil))
+        .and_return(double("DecisionIssuesCompleteEvent", perform!: nil))
       subject
     end
   end

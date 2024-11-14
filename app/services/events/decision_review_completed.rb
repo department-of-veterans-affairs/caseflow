@@ -40,7 +40,7 @@ class Events::DecisionReviewCompleted
           Events::DecisionReviewCompleted::CompleteInformalConference.process!(event: event, parser: parser)
           Events::DecisionReviewCompleted::CompleteClaimReview.process!(event: event, parser: parser)
           Events::DecisionReviewCompleted::CompleteEndProductEstablishment.process!(event: event, parser: parser)
-          RequestIssuesCompleteEvent.new(user: user, review: review, parser: parser, event: event, epe: epe).perform!
+          DecisionIssuesCompleteEvent.new(user: user, review: review, parser: parser, event: event, epe: epe).perform!
           # Update the Event after all operations have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
         end

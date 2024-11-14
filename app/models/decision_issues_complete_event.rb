@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RequestIssuesCompleteEvent
+class DecisionIssuesCompleteEvent
   def initialize(review:, user:, parser:, event:, epe:)
     @event = event
     @parser = parser
