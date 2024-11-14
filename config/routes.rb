@@ -505,6 +505,13 @@ Rails.application.routes.draw do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
+    resources :load_tests, only: [:index]
+    get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
+    post "/load_tests/run_load_tests", to: "load_tests#run_load_tests", as: "run_load_tests"
+
+    post "/load_test_api/user", to: "load_test_api#user", as: "user"
+    get "/load_test_api/target", to: "load_test_api#target", as: "target"
+
     resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
