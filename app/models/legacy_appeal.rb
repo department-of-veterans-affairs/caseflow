@@ -10,7 +10,7 @@
 class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
-  include BGSServiceConcern
+  include BgsService
   include CachedAttributes
   include AddressMapper
   include Taskable

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-Rails.application.config.to_prepare do
-  # Custom column types, particularly for VACOLS
+# Custom column types, particularly for VACOLS
 
-  class AsciiString < ActiveRecord::Type::Text
-    private
+require "helpers/ascii_converter"
 
-    def cast_value(value)
-      ascii_value = AsciiConverter.new(string: value.to_s).convert
-      limit ? ascii_value[0, limit] : ascii_value
-    end
+class AsciiString < ActiveRecord::Type::Text
+  private
+
+  def cast_value(value)
+    ascii_value = AsciiConverter.new(string: value.to_s).convert
+    limit ? ascii_value[0, limit] : ascii_value
   end
-
-  ActiveRecord::Type.register(:ascii_string, AsciiString)
 end
+
+ActiveRecord::Type.register(:ascii_string, AsciiString)

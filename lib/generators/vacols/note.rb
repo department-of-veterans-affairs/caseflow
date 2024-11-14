@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::Note
+class Generators::Vacols::Note
   class << self
     # rubocop:disable Metrics/MethodLength
     def note_attrs

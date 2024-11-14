@@ -9,7 +9,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
   before_action :verify_edit_hearing_schedule_access
 
   def index
-    task_pager = ScheduleHearingTaskPager.new(
+    task_pager = Hearings::ScheduleHearingTaskPager.new(
       assignee: HearingsManagement.singleton,
       tab_name: allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM],
       page: allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM].to_i,

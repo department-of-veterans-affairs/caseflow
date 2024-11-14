@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "#{Rails.root}/app/helpers/sync_decided_appeals_helper.rb"
+
 namespace :appeal_state_synchronizer do
   desc "Used to synchronize appeal_states table using data from other sources."
   task sync_appeal_states: :environment do

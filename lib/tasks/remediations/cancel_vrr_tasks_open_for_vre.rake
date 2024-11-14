@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../../../lib/helpers/cancel_tasks_and_descendants"
+
 namespace :remediations do
   desc "Cancel VeteranRecordRequest tasks that are both open and assigned to " \
        "the 'Veterans Readiness and Employment' business line"

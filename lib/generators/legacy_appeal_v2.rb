@@ -76,7 +76,7 @@ class Generators::LegacyAppealV2
     end
 
     def setup_vacols_data(attrs)
-      Generators::VACOLS::Case.create(
+      Generators::Vacols::Case.create(
         attrs.merge(
           case_attrs: {
             bfkey: attrs[:vacols_id], bfcorlid: attrs[:vbms_id]

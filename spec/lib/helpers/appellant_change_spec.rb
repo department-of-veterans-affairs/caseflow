@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "helpers/appellant_change"
+
 describe AppellantChange do
   describe ".run_appellant_change" do
     subject(:run_appellant_change) { described_class.run_appellant_change(arguments) }

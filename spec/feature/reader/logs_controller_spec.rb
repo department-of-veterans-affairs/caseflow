@@ -6,7 +6,7 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
-    Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+    Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
 
     User.authenticate!(roles: ["Reader"])
   end

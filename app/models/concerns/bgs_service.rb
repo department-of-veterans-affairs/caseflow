@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BGSServiceConcern
+module BgsService
   extend ActiveSupport::Concern
 
   private

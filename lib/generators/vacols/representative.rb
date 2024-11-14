@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::Representative
+class Generators::Vacols::Representative
   class << self
     # rubocop:disable Metrics/MethodLength
     def representative_attrs

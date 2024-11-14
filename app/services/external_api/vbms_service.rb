@@ -1,5 +1,26 @@
 # frozen_string_literal: true
 
+# :nocov:
+class VBMSCaseflowLogger
+  def log(event, data)
+    case event
+    when :request
+      status = data[:response_code]
+
+      if status != 200
+        Rails.logger.error(
+          "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
+        )
+      else
+        Rails.logger.info(
+          "VBMS HTTP Success #{status} (#{data.pretty_inspect})"
+        )
+      end
+    end
+  end
+end
+# :nocov:
+
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections

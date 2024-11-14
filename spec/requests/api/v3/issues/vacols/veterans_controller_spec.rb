@@ -3,7 +3,7 @@
 require "test_prof/recipes/rspec/let_it_be"
 
 # rubocop:disable Layout/LineLength
-describe Api::V3::Issues::VACOLS::VeteransController, :postgres, type: :request do
+describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request do
   let_it_be(:api_key) do
     ApiKey.create!(consumer_name: "ApiV3 Test VBMS Consumer").key_string
   end
@@ -81,8 +81,8 @@ describe Api::V3::Issues::VACOLS::VeteransController, :postgres, type: :request 
         end
 
         context "when a veteran is found - but an unexpected error has happened." do
-          before { Api::V3::Issues::VACOLS::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = "breaking_the_api" }
-          after { Api::V3::Issues::VACOLS::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = 50 }
+          before { Api::V3::Issues::Vacols::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = "breaking_the_api" }
+          after { Api::V3::Issues::Vacols::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = 50 }
           let(:vet) { create(:veteran) }
           it "should return 500 error" do
             headers = { "Authorization": authorization_token, "X-VA-File-Number": vet.file_number }

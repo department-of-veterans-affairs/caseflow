@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+
 describe ClaimHistoryEvent do
   let(:change_data) do
     {
@@ -275,7 +277,7 @@ describe ClaimHistoryEvent do
       context "when the event type is invalid" do
         let(:event_type) { :invalid_event }
         it "should raise InvalidEventType error" do
-          expect { subject }.to raise_error(described_class::InvalidEventType)
+          expect { subject }.to raise_error(InvalidEventType)
         end
       end
 
@@ -1070,7 +1072,7 @@ describe ClaimHistoryEvent do
         context "when the event type is invalid" do
           let(:event_type) { :invalid_event }
           it "should raise InvalidEventType error" do
-            expect { subject }.to raise_error(described_class::InvalidEventType)
+            expect { subject }.to raise_error(InvalidEventType)
           end
         end
 

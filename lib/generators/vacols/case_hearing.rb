@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::CaseHearing
+class Generators::Vacols::CaseHearing
   class << self
     # rubocop:disable Metrics/MethodLength
     def case_hearing_attrs
