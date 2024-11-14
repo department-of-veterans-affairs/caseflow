@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import COPY from '../../COPY';
-import moment from 'moment';
 
 const ALTERNATE_COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',
@@ -28,7 +27,6 @@ const FilterSummary = ({ filteredByList, clearFilteredByList, vhaCompletedTab })
   const clearAllFiltersLink = <button
     onClick={() => {
       if (vhaCompletedTab) {
-        // clearFilteredByList({ closedAt: [`all,${moment().subtract(300, 'years')}`] });
         clearFilteredByList({ clear: true });
       } else {
         clearFilteredByList({});
