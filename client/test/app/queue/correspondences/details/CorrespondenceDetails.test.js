@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+// import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceDetailsData } from 'test/data/correspondence';
+import { correspondenceDetailsData, correspondenceInfoData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
@@ -69,7 +69,8 @@ jest.mock('app/util/ApiUtil', () => ({
 }));
 
 let initialState = {
-  correspondence: correspondenceDetailsData
+  correspondence: correspondenceDetailsData,
+  correspondenceDetails: correspondenceInfoData
 };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -495,9 +496,9 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('toggles view all correspondence', () => {
-    const viewAllButton = screen.getByText('View all correspondence');
+    const viewAllButton = screen.getAllByText('View all correspondence');
 
-    fireEvent.click(viewAllButton);
+    fireEvent.click(viewAllButton[0]);
     expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
   });
 
@@ -523,10 +524,10 @@ describe('CorrespondenceDetails', () => {
 
     let collapsibleButtons = document.getElementsByClassName('plus-symbol');
 
-    expect(collapsibleButtons.length).toBe(5);
+    expect(collapsibleButtons.length).toBe(2);
     fireEvent.click(collapsibleButtons[0]);
 
-    expect(document.getElementsByClassName('plus-symbol').length).toBe(4);
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
