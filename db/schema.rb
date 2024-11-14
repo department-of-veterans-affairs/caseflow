@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_12_172400) do
+ActiveRecord::Schema.define(version: 2024_11_14_165717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1775,7 +1775,7 @@ ActiveRecord::Schema.define(version: 2024_11_12_172400) do
   create_table "schedulable_cutoff_dates", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.bigint "created_by_id", null: false
-    t.date "cutoff_date"
+    t.date "cutoff_date", null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
@@ -2465,7 +2465,6 @@ ActiveRecord::Schema.define(version: 2024_11_12_172400) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
-
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2486,6 +2485,26 @@ ActiveRecord::Schema.define(version: 2024_11_12_172400) do
       	RETURN legacy_case_ids;
       END
       $function$
+  SQL
+
+
+  create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
+  SQL
+  create_trigger :priority_end_product_sync_queue_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER priority_end_product_sync_queue_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.priority_end_product_sync_queue FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_priority_end_product_sync_queue_audit()
+  SQL
+  create_trigger :vbms_communication_packages_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_communication_packages_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_communication_packages FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_communication_packages_audit()
+  SQL
+  create_trigger :vbms_distribution_destinations_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distribution_destinations_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distribution_destinations FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distribution_destinations_audit()
+  SQL
+  create_trigger :vbms_distributions_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distributions_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distributions FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distributions_audit()
+  SQL
+  create_trigger :vbms_uploaded_documents_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_uploaded_documents_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_uploaded_documents FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_uploaded_documents_audit()
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
