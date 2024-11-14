@@ -26,18 +26,17 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  const docList = useSelector(getFilteredDocuments);
-  const doc = docList.find((x) => x.id === currentDocumentId);
+  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
   if (!doc) {
     return;
   }
 
-  const currentDocIndex = docList.indexOf(doc);
-  const prevDoc = docList?.[currentDocIndex - 1];
-  const nextDoc = docList?.[currentDocIndex + 1];
+  const currentDocIndex = props.allDocuments.indexOf(doc);
+  const prevDoc = props.allDocuments?.[currentDocIndex - 1];
+  const nextDoc = props.allDocuments?.[currentDocIndex + 1];
 
-  const prefetchFiles = [prevDoc, nextDoc].map((file) => file.content_url);
+  const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
   const files = [...prefetchFiles, doc.content_url];
 
   useEffect(() => {
