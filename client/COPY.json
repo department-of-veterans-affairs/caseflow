@@ -1623,5 +1623,4 @@
   "UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE": "Errors found: Upload to VBMS",
   "UPLOAD_TRANSCRIPTION_VBMS_CANCEL_ACTION_TYPE": "Cancel task",
   "REVIEW_TRANSCRIPTION_VBMS_MESSAGE": "You have successfully uploaded %s's final transcript to VBMS"
-
 }
