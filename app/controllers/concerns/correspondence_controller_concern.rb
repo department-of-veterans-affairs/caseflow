@@ -167,12 +167,12 @@ module CorrespondenceControllerConcern
     vet = veteran_by_correspondence
     if action_type == "cancel_intake"
       @response_header = "You have successfully cancelled the intake form"
-      @response_message = "#{vet.name}'s correspondence (ID: #{correspondence.id}) "\
+      @response_message = "#{vet.name}'s correspondence "\
        "has been returned to the supervisor's queue for assignment."
     else
       @response_header = "You have successfully saved the intake form"
       @response_message = "You can continue from step three of the intake form for #{vet.name}'s "\
-      "correspondence (ID: #{correspondence.id}) at a later date."
+      "correspondence at a later date."
     end
     @response_type = "success"
   end
