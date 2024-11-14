@@ -30,35 +30,18 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       begin
         transcription_package = find_transcription_package(hearing)
         unless transcription_package
-          error_details = {
-            error: {
-              type: "transcription_package",
-              message: "Transcription package not found for hearing ID: #{hearing[:hearing_id]}"
-            },
-            provider: "Box"
-          }
-          send_transcription_issues_email(error_details) unless email_sent?(:transcription_package)
-          mark_email_sent(:transcription_package)
+          handle_transcription_package_not_found(hearing)
           next
         end
-        s3_file_path = transcription_package.aws_link_zip
-        contractor_name = file_info[:contractor_name]
-        child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor_name)
+
+        child_folder_id = box_service.get_child_folder_id(box_folder_id, file_info[:contractor_name])
         unless child_folder_id
-          error_details = {
-            error: {
-              type: "child_folder_id",
-              message: "Child folder ID not found for contractor name: #{contractor_name}"
-            },
-            provider: "Box"
-          }
-          send_transcription_issues_email(error_details) unless email_sent?(:child_folder_id)
-          mark_email_sent(:child_folder_id)
+          handle_invalid_child_folder_id(file_info[:contractor_name])
           break
         end
 
         # Download file from S3
-        local_file_path = download_file_from_s3(s3_file_path)
+        local_file_path = download_file_from_s3(transcription_package.aws_link_zip)
 
         if index == 0
           upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
@@ -68,7 +51,10 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
         # Update transcription files after successful upload
         update_transcription_files(hearing, file_info, transcription_package)
+
+        update_vacols(hearing) if legacy_hearing?(hearing)
       rescue StandardError => error
+        binding.pry
         log_error(error, extra: { transcription_package_id: transcription_package&.id })
         error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
         send_transcription_issues_email(error_details) unless email_sent?(:upload)
@@ -175,5 +161,37 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   def mark_email_sent(type)
     @email_sent_flags[type] = true
+  end
+
+  def handle_transcription_package_not_found(hearing)
+    error_details = {
+            error: {
+              type: "transcription_package",
+              message: "Transcription package not found for hearing ID: #{hearing[:hearing_id]}"
+            },
+            provider: "Box"
+          }
+    send_transcription_issues_email(error_details) unless email_sent?(:transcription_package)
+    mark_email_sent(:transcription_package)
+  end
+
+  def handle_invalid_child_folder_id(contractor_name)
+    error_details = {
+            error: {
+              type: "child_folder_id",
+              message: "Child folder ID not found for contractor name: #{contractor_name}"
+            },
+            provider: "Box"
+          }
+    send_transcription_issues_email(error_details) unless email_sent?(:child_folder_id)
+    mark_email_sent(:child_folder_id)
+  end
+
+  def legacy_hearing?(hearing)
+    hearing[:hearing_type] == "LegacyHearing"
+  end
+
+  def update_vacols(hearing)
+    binding.pry
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe Hearings::VaBoxUploadJob, type: :job do
   let(:box_service) { instance_double(ExternalApi::VaBoxService) }
   let(:file_info) do
     {
-      work_order_name: "#ewrwer34r2rfegvdsrfg",
+      work_order_name: "BVA-2039-01",
       return_date: "12/12/2024",
       contractor_name: "Jamison Pickup",
       hearings: [
