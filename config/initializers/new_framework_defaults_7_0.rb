@@ -9,11 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Change the digest class for ActiveSupport::Digest.
-# Changing this default means that for example Etags change and
-# various cache keys leading to cache invalidation.
-# Rails.application.config.active_support.hash_digest_class = OpenSSL::Digest::SHA256
-
 # Don't override ActiveSupport::TimeWithZone.name and use the default Ruby
 # implementation.
 # Rails.application.config.active_support.remove_deprecated_time_with_zone_name = true

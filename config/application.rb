@@ -142,6 +142,14 @@ module CaseflowCertification
     # Default as of 7.0: OpenSSL::Digest::SHA256
     config.active_support.key_generator_hash_digest_class = OpenSSL::Digest::SHA1
 
+    # Change the digest class for ActiveSupport::Digest.
+    # Changing this default means that for example Etags change and
+    # various cache keys leading to cache invalidation.
+    #
+    # Default as of 5.2: OpenSSL::Digest::SHA1
+    # Default as of 7.0: OpenSSL::Digest::SHA256
+    config.active_support.hash_digest_class = OpenSSL::Digest::SHA1
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
