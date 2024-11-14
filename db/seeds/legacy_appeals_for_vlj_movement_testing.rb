@@ -43,8 +43,9 @@ module Seeds
 
       # Scenario 1: Draft One (Primary, age-based, CAVC, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
@@ -56,7 +57,9 @@ module Seeds
 
       # Scenario 2: Draft Two (Non-priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVACOTBJUDGE"),
@@ -67,7 +70,9 @@ module Seeds
 
       # Scenario 3: Draft Three (Non-priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVACOTBJUDGE"),
@@ -78,8 +83,9 @@ module Seeds
 
       # Scenario 4: Draft Four (Priority, manually added, CAVC, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
@@ -91,7 +97,9 @@ module Seeds
 
       # Scenario 5: Draft Five (Priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
@@ -103,7 +111,9 @@ module Seeds
 
       # Scenario 6: Draft Six (Non-priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAGSPORER"),
@@ -114,7 +124,9 @@ module Seeds
 
       # Scenario 7: Not Draftable (Non-priority, 1 issue, not distributed yet)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :ready_for_distribution,
         bfcorlid: "#{not_draftable.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
