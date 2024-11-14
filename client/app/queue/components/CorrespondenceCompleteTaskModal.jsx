@@ -77,7 +77,7 @@ const CorrespondenceCompleteTaskModal = (props) => {
         </React.Fragment>
       }
       <TextareaField
-        name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL}
+        name={taskData?.instructions_label ?? COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
         id="taskInstructions"
         optional
         onChange={setInstructions}
