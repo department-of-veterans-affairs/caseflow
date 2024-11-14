@@ -9,10 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Don't override ActiveSupport::TimeWithZone.name and use the default Ruby
-# implementation.
-# Rails.application.config.active_support.remove_deprecated_time_with_zone_name = true
-
 # Calls `Rails.application.executor.wrap` around test cases.
 # This makes test cases behave closer to an actual request or job.
 # Several features that are normally disabled in test, such as Active Record query cache

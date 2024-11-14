@@ -150,6 +150,11 @@ module CaseflowCertification
     # Default as of 7.0: OpenSSL::Digest::SHA256
     config.active_support.hash_digest_class = OpenSSL::Digest::SHA1
 
+    # Don't override ActiveSupport::TimeWithZone.name and use the default Ruby
+    # implementation.
+    # Default as of 7.0: true
+    config.active_support.remove_deprecated_time_with_zone_name = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
