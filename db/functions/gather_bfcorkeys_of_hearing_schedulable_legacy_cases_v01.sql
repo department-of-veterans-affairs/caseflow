@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION gather_bfcorkeys_of_hearing_schedulable_legacy_cases(
   LANGUAGE plpgsql AS
 $func$
 DECLARE
-	bfcorkey_ids text;
+	bfcorkey_ids TEXT;
 BEGIN
 	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
 	INTO bfcorkey_ids
