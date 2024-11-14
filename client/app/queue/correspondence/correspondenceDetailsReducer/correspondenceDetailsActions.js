@@ -32,6 +32,19 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
   });
 };
 
+export const setTaskRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
+    payload: {
+      taskRelatedToAppealBanner: {
+        taskId: bannerDetails.taskId,
+        message: bannerDetails.message,
+        type: bannerDetails.type
+      }
+    }
+  });
+};
+
 export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
     then((response) => {
@@ -380,9 +393,9 @@ export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
           bannerAlert: {
-            title: CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.title,
-            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.message, taskData.label),
-            type: CORRESPONDENCE_DETAILS_BANNERS.completeTaskNotRelatedBanner.type
+            title: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.message, taskData.label),
+            type: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.type
           }
         }
       });
@@ -407,6 +420,54 @@ export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch
       });
 
       // Reject the promise to handle the error in the component
+      return Promise.reject(error);
+    });
+};
+
+export const createCorrespondenceAppealTask = (data, correspondence) => async (dispatch) => {
+
+  return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/create_correspondence_appeal_task`,
+    { data }).
+    then((response) => {
+
+      // Dispatch action to update tasks
+      const responseTasks = JSON.parse(response.text).tasks.data;
+
+      const preparedTasks = prepareTasksForStore(responseTasks);
+
+      dispatch(onReceiveTasks({
+        amaTasks: preparedTasks
+      }));
+
+      dispatch({
+        type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          taskRelatedToAppealBanner: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.message, data.label),
+            type: CORRESPONDENCE_DETAILS_BANNERS.completeTaskCreationBanner.type
+          }
+        }
+      });
+
+      return response;
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      dispatch({
+        type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          taskRelatedToAppealBanner: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message, errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
+          }
+        }
+      });
+
       return Promise.reject(error);
     });
 };

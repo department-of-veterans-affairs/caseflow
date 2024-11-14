@@ -6,71 +6,15 @@ import TextareaField from '../../../../../components/TextareaField';
 // import Checkbox from '../../../../../components/Checkbox';
 import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
-import { useDispatch, useSelector } from 'react-redux';
-import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { useDispatch } from 'react-redux';
+import { createCorrespondenceAppealTask } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 import { maxWidthFormInput } from '../../../../../hearings/components/details/style';
 // import { maxWidthFormInput, ninetySixWidthFormInput } from '../../../../../hearings/components/details/style';
-
-const customSelectStyless = {
-  dropdownIndicator: () => ({
-    width: '80%'
-  }),
-
-  control: (styles) => {
-    return {
-      ...styles,
-      alignContent: 'center',
-      borderRadius: 0,
-      border: '1px solid black'
-    };
-  },
-
-  menu: () => ({
-    boxShadow: '0 0 0 1px hsla(0,0%,0%,0.1), 0 4px 11px hsla(0,0%,0%,0.1)',
-    marginTop: '8px'
-  }),
-
-  valueContainer: (styles) => ({
-
-    ...styles,
-    lineHeight: 'normal',
-    // this is a hack to fix a problem with changing the height of the dropdown component.
-    // Changing the height causes problems with text shifting.
-    marginTop: '-10%',
-    marginBottom: '-10%',
-    paddingTop: '-10%',
-    minHeight: '140px',
-    borderRadius: 50
-
-  }),
-  singleValue: (styles) => {
-    return {
-      ...styles,
-      alignContent: 'center',
-    };
-  },
-
-  placeholder: (styles) => ({
-    ...styles,
-    color: 'black',
-  }),
-
-  option: (styles, { isFocused }) => ({
-    color: 'black',
-    fontSize: '17px',
-    padding: '8px 12px',
-    backgroundColor: isFocused ? 'white' : 'null',
-    ':hover': {
-      ...styles[':hover'],
-      backgroundColor: '#5b616b',
-      color: 'white',
-    }
-  })
-};
 
 const AddRelatedTaskModalCorrespondenceDetails = ({
   isOpen,
   handleClose,
+  correspondence,
   appeal,
   tasks
   // autoTexts
@@ -117,6 +61,8 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   // or task content and additional are not filled out
   // const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
 
+  const isSubmitDisabled = !(taskContent) || !selectedTaskType || isLoading;
+
   // Handle task type selection, stores the selected task type
   const updateTaskType = (newType) => setSelectedTaskType(newType.value);
 
@@ -154,20 +100,22 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
     // const combinedContent = taskContent ? `${taskContent}\n${additionalContent}` : additionalContent;
 
     const newTask = {
+      appeal_id: appeal.id,
       klass: selectedTaskType.klass,
       assigned_to: selectedTaskType.assigned_to,
       // content: combinedContent,
-      content: taskContent,
+      content: [taskContent],
       label: taskTypeOptions.find((option) => option.value === selectedTaskType)?.label,
       assignedOn: new Date().toISOString(),
       // instructions: [combinedContent],
       instructions: [taskContent],
+      correspondence_uuid: correspondence.correspondence_uuid
     };
 
     setIsLoading(true);
 
     try {
-      await dispatch(addTaskNotRelatedToAppeal(correspondence, newTask));
+      dispatch(createCorrespondenceAppealTask(newTask, correspondence));
 
       // Resets fields and state after submission
       setTaskContent('');
@@ -206,7 +154,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
           // onClick={isSecondPage ? handleSubmit : handleNext}
           // disabled={isSecondPage ? isSubmitDisabled : false}
           onClick={handleSubmit}
-          disabled={false}
+          disabled={isSubmitDisabled ? isSubmitDisabled : false}
         >
           {isLoading ? 'Loading...' : 'Submit'}
         </Button>
@@ -265,8 +213,8 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
                 classNamePrefix="react-select"
                 className="add-task-dropdown-style"
                 onChange={updateTaskType}
-                styles={customSelectStyless}
                 value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
+                isSearchable={false}
               />
             </div>
             <TextareaField
@@ -288,9 +236,10 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
 AddRelatedTaskModalCorrespondenceDetails.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  correspondence: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  tasks: PropTypes.object,
-  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  tasks: PropTypes.array,
+  // autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default AddRelatedTaskModalCorrespondenceDetails;

@@ -42,6 +42,28 @@ class CorrespondenceIntakeProcessor
     create_response_letter(params, correspondence.id)
   end
 
+  def create_appeal_related_tasks(data, current_user, correspondence_id)
+    appeal = Appeal.find(data[:appeal_id])
+    # find the CorrespondenceAppeal created in link_appeals_to_correspondence
+    cor_appeal = CorrespondenceAppeal.find_by(
+      correspondence_id: correspondence_id,
+      appeal_id: appeal.id
+    )
+    task = task_class_for_task_related(data).create_from_params(
+      {
+        appeal: appeal,
+        parent_id: appeal.root_task&.id,
+        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+        instructions: data[:content]
+      }, current_user
+    )
+    # create join table to CorrespondenceAppealTask for tracking
+    CorrespondencesAppealsTask.find_or_create_by(
+      correspondence_appeal: cor_appeal,
+      task: task
+    )
+  end
+
   private
 
   def find_correspondence(uuid)
@@ -138,28 +160,6 @@ class CorrespondenceIntakeProcessor
     intake_params[:related_appeal_ids]&.map do |appeal_id|
       CorrespondenceAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
     end
-  end
-
-  def create_appeal_related_tasks(data, current_user, correspondence_id)
-    appeal = Appeal.find(data[:appeal_id])
-    # find the CorrespondenceAppeal created in link_appeals_to_correspondence
-    cor_appeal = CorrespondenceAppeal.find_by(
-      correspondence_id: correspondence_id,
-      appeal_id: appeal.id
-    )
-    task = task_class_for_task_related(data).create_from_params(
-      {
-        appeal: appeal,
-        parent_id: appeal.root_task&.id,
-        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-        instructions: data[:content]
-      }, current_user
-    )
-    # create join table to CorrespondenceAppealTask for tracking
-    CorrespondencesAppealsTask.find_or_create_by(
-      correspondence_appeal: cor_appeal,
-      task: task
-    )
   end
 
   def add_tasks_to_related_appeals(intake_params, current_user, correspondence_id)
