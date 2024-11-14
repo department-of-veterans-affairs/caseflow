@@ -1,27 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
+import Tooltip from '../Tooltip';
 
 const WARNING_TOOLTIP_TEXT = "This document may be slow to load.";
 
 export const SizeWarningIcon = (props) => {
   const { size, className } = props;
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  // Hover event handlers
-  const handleMouseEnter = () => setShowTooltip(true);
-  const handleMouseLeave = () => setShowTooltip(false);
 
   return (
-    <div className="warning-icon-container"
-         onMouseEnter={handleMouseEnter}
-         onMouseLeave={handleMouseLeave}>
+    <Tooltip text={WARNING_TOOLTIP_TEXT} position="top">
       <svg
-         title="Large File Warning"
-         xmlns="https://www.w3.org/2000/svg"
-         height={size}
-         viewBox="0 0 512 512"
-         className={className}
+        title="Large File Warning"
+        xmlns="https://www.w3.org/2000/svg"
+        height={size}
+        viewBox="0 0 512 512"
+        className={className}
       >
         <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216
          368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40
@@ -30,26 +24,11 @@ export const SizeWarningIcon = (props) => {
          112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32
          224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z" />
       </svg>
-      {showTooltip && (
-        <div className="toolTip">
-          {WARNING_TOOLTIP_TEXT}
-        </div>
-      )}
-    </div>
+    </Tooltip>
   );
 };
-
 SizeWarningIcon.propTypes = {
-
-  /**
-  Sets height of the component, width is set automatically by the svg viewbox property.
-  Default height is 'ICON_SIZES.MEDIUM'.
-  */
   size: PropTypes.number,
-
-  /**
-  Adds class to the component. Default value is ''.
-  */
   className: PropTypes.string
 };
 
