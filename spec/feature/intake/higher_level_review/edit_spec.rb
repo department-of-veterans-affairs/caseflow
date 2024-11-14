@@ -432,14 +432,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
-      # Step 2: Visit the higher-level review edit page
       visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-      # Step 3: Verify that the correct number of issues (8) are listed on the page
       number_of_issues = 8
       expect(page).to have_content("#{number_of_issues} issues")
 
-      # Step 4: Click the "add issue" button to trigger the action of adding an issue
       ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
         ri_legacy_issue_not_withdrawn.contention_text
       )
@@ -452,11 +449,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         date: "06/20/2021",
         legacy_issues: true
       )
-      # select_intake_no_match
-      # add_untimely_exemption_response("No")
+
       expect(page).to have_text("Service connection, rheumatoid arthritis")
 
-      # Then find and click the label
       find("label", text: "Service connection, rheumatoid arthritis").click
       safe_click ".add-issue"
 
