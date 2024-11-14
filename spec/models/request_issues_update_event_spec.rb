@@ -475,7 +475,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
         expect(request_issue.edited_description).to eq(valid_parser_issue.ri_edited_description.to_s)
         expect(request_issue.ramp_claim_id).to eq(valid_parser_issue.ri_ramp_claim_id)
         expect(request_issue.vacols_id).to eq(valid_parser_issue.ri_vacols_id)
-        expect(request_issue.decision_date.strftime('%Y-%m-%d')).to eq(valid_parser_issue.ri_decision_date.to_s)
+        expect(request_issue.decision_date.strftime("%Y-%m-%d")).to eq(valid_parser_issue.ri_decision_date.to_s)
         expect(request_issue.is_unidentified).to eq(valid_parser_issue.ri_is_unidentified)
         expect(request_issue.untimely_exemption).to eq(valid_parser_issue.ri_untimely_exemption)
         expect(request_issue.untimely_exemption_notes).to eq(valid_parser_issue.ri_untimely_exemption_notes.to_s)
