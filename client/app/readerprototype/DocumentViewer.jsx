@@ -35,6 +35,7 @@ const DocumentViewer = (props) => {
   const prevDoc = props.allDocuments?.[currentDocIndex - 1];
   const nextDoc = props.allDocuments?.[currentDocIndex + 1];
 
+  /* eslint-disable camelcase */
   const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
   const files = [...prefetchFiles, doc.content_url];
 
