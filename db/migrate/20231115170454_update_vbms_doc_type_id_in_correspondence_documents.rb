@@ -1,4 +1,4 @@
-class UpdateVbmsDocTypeIdInCorrespondenceDocuments < Caseflow::Migration
+class UpdateVbmsDocTypeIdInCorrespondenceDocuments < ActiveRecord::Migration[6.1]
   def up
     safety_assured do
       add_column :correspondence_documents, :vbms_document_type_id, :bigint, comment: "From CMP documents table"
