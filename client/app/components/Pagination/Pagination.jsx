@@ -59,6 +59,7 @@ class Pagination extends React.PureComponent {
     } else if (totalCases === 0) {
       beginningCaseNumber = 0;
     } else {
+      // eslint-disable-next-line no-mixed-operators
       beginningCaseNumber = currentPage * pageSize - pageSize + 1;
     }
     // If there are no pages, there is no data, so the range should be 0-0.
