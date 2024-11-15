@@ -1,69 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NodDateUpdateTimeline renders correctly 1`] = `
-<Fragment>
-  <tr>
-    <td
-      className="taskContainerStyling taskTimeTimelineContainerStyling"
+<DocumentFragment>
+  <div>
+    01/25/2021
+  </div>
+  <div
+    data-css-1e14v4t=""
+  >
+    15:10:29 EST
+  </div>
+  <svg
+    aria-labelledby="green-checkmark-title"
+    class="green-checkmark"
+    height="40"
+    role="img"
+    version="1.1"
+    viewBox="0 0 40 40"
+  >
+    <title
+      id="green-checkmark-title"
     >
-      <div>
-        01/25/2021
-      </div>
-      <div
-        data-css-1e14v4t=""
+      Green check: Completed
+    </title>
+    <g
+      fill="none"
+      fill-rule="evenodd"
+      stroke="none"
+      stroke-width="1"
+    >
+      <g
+        id="750-copy-12"
+        transform="translate(-120.000000, -725.000000)"
       >
-        15:10:29
-         EST
-      </div>
-    </td>
-    <td
-      className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
-    >
-      <GreenCheckmarkIcon
-        className="green-checkmark"
-        color="#2e8540"
-        size={40}
-        strokeColor="#fff"
-      />
-      <div
-        data-css-78t0uq=""
-      />
-    </td>
-    <td
-      className="taskContainerStyling taskInformationTimelineContainerStyling"
-    >
-      Notice of disagreement edited
-      <div
-        data-css-qgrw5t=""
-      >
-        <div>
-          <span>
-            Edited:
-          </span>
-          J
-          . 
-          Doe
-        </div>
-        <div>
-          <span>
-            Old Nod:
-          </span>
-          01/05/2021
-        </div>
-        <div>
-          <span>
-            New Nod:
-          </span>
-          01/12/2021
-        </div>
-        <div>
-          <span>
-            Reason:
-          </span>
-          Data Entry Error
-        </div>
-      </div>
-    </td>
-  </tr>
-</Fragment>
+        <g
+          id="Group-11"
+          transform="translate(124.000000, 729.000000)"
+        >
+          <rect
+            fill="#2e8540"
+            height="36"
+            id="Background"
+            rx="20"
+            stroke="#fff"
+            stroke-width="4"
+            width="36"
+            x="-2"
+            y="-2"
+          />
+          <path
+            d="M25,11.7340067 C25,11.4393939 24.883871,11.1447811 24.6748387,10.9326599 L23.0954839,9.32996633 C22.8864516,9.11784512 22.596129,9 22.3058065,9 C22.0154839,9 21.7251613,9.11784512 21.516129,9.32996633 L13.8980645,17.0723906 L10.483871,13.5959596 C10.2748387,13.3838384 9.98451613,13.2659933 9.69419355,13.2659933 C9.40387097,13.2659933 9.11354839,13.3838384 8.90451613,13.5959596 L7.32516129,15.1986532 C7.11612903,15.4107744 7,15.7053872 7,16 C7,16.2946128 7.11612903,16.5892256 7.32516129,16.8013468 L13.1083871,22.6700337 C13.3174194,22.8821549 13.6077419,23 13.8980645,23 C14.1883871,23 14.4787097,22.8821549 14.6877419,22.6700337 L24.6748387,12.5353535 C24.883871,12.3232323 25,12.0286195 25,11.7340067 Z"
+            fill="#fff"
+            fill-opacity="0.91"
+            id="Check"
+          />
+        </g>
+      </g>
+    </g>
+  </svg>
+  <div
+    data-css-78t0uq=""
+  />
+  Notice of disagreement edited
+  <div
+    data-css-qgrw5t=""
+  >
+    <div>
+      <span>
+        Edited:
+      </span>
+      J. Doe
+    </div>
+    <div>
+      <span>
+        Old Nod:
+      </span>
+      01/05/2021
+    </div>
+    <div>
+      <span>
+        New Nod:
+      </span>
+      01/12/2021
+    </div>
+    <div>
+      <span>
+        Reason:
+      </span>
+      Data Entry Error
+    </div>
+  </div>
+</DocumentFragment>
 `;
