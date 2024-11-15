@@ -45,9 +45,6 @@ const scrollToPageIndexofMatch = (matchIndex, matchesPerPage, dispatch) => {
 
   dispatch(updateSearchIndexPage(pageNumber));
   dispatch(updateSearchRelativeIndex(relativeIndex));
-  const pageElement = document.getElementById(`canvasWrapper-${pageNumber}`);
-
-  // pageElement.scrollIntoView();
 };
 
 const ReaderSearchBar = ({ file }) => {
@@ -67,7 +64,6 @@ const ReaderSearchBar = ({ file }) => {
     const newIndex = (foundIndex + 1) % totalMatches;
 
     dispatch(setSearchIndex(newIndex));
-    // highlightMarkAtIndex(newIndex);
   };
 
   const previous = () => {
@@ -77,7 +73,6 @@ const ReaderSearchBar = ({ file }) => {
       newIndex = totalMatches - 1;
     }
     dispatch(setSearchIndex(newIndex));
-    // highlightMarkAtIndex(newIndex);
   };
 
   useEffect(() => {
