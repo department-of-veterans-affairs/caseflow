@@ -126,7 +126,6 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
   end
 
   subject { described_class.new(headers, payload) }
-
   describe "attributes" do
     it "returns the correct event_id" do
       expect(subject.event_id).to eq(214_706)
