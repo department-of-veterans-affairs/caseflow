@@ -37,7 +37,6 @@ class Remediations::VeteranRecordRemediationService
     rescue StandardError => error
       Rails.logger.error "an error occured #{error}"
       false
-      # may need to fix intakes with veteran id
       # sentry log / metabase dashboard
     end
   end
