@@ -181,13 +181,17 @@ module Seeds
     def create_previous_distribtions
       statistics = { batch_size: 10, info: "See related row in distribution_stats for additional stats" }
       4.times do |n|
-        create(:distribution, :completed, :priority,
-               judge: judge_many_previous_distributions, completed_at: n.weeks.ago, statistics: statistics)
+        d = create(:distribution, :completed, :priority,
+                   judge: judge_many_previous_distributions, completed_at: n.weeks.ago)
+
+        d.update!(statistics: statistics)
       end
 
       statistics = { batch_size: 100, info: "See related row in distribution_stats for additional stats" }
-      create(:distribution, :completed, :priority, :this_month,
-             judge: judge_one_large_previous_distribution, statistics: statistics)
+      d = create(:distribution, :completed, :priority, :this_month,
+                 judge: judge_one_large_previous_distribution, statistics: statistics)
+
+      d.update!(statistics: statistics)
     end
 
     def create_direct_review_priority_not_genpop_cases
