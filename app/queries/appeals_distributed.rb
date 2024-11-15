@@ -3,6 +3,7 @@
 class AppealsDistributed
   # define CSV headers and use this to pull fields to maintain order
   HEADERS = {
+    case_id: "Case ID",
     docket_number: "Docket Number",
     docket: "Docket",
     aod: "AOD",
@@ -10,11 +11,16 @@ class AppealsDistributed
     receipt_date: "Receipt Date",
     ready_for_distribution_at: "Ready for Distribution at",
     distributed_at: "Distributed At",
+    distributed_to: "Distributed To",
+    genpop_query: "Genpop Query Value",
     original_judge: "Original Judge",
+    prior_decision_date: "Prior Decision Date",
     hearing_judge: "Hearing Judge",
+    hearing_date: "Hearing Date",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
-    affinity_start_date: "Affinity Start Date"
+    affinity_start_date: "Affinity Start Date",
+    affinity_status: "Affinity Status"
   }.freeze
 
   def self.generate_rows(record)
@@ -68,6 +74,7 @@ class AppealsDistributed
       .first&.judge&.full_name
 
     {
+      case_id: "Not yet implemented",
       docket_number: appeal.docket_number,
       docket: distributed_case.docket,
       aod: appeal.aod,
@@ -75,11 +82,16 @@ class AppealsDistributed
       receipt_date: appeal.receipt_date,
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
+      distributed_to: "Not yet implemented",
+      genpop_query: "Not yet implemented",
       original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
+      prior_decision_date: "Not yet implemented",
       hearing_judge: hearing_judge,
+      hearing_date: "Not yet implemented",
       veteran_file_number: appeal.veteran_file_number,
       veteran_name: appeal.veteran&.name.to_s,
-      affinity_start_date: appeal.appeal_affinity&.affinity_start_date
+      affinity_start_date: appeal.appeal_affinity&.affinity_start_date,
+      affinity_status: "Not yet implemented"
     }
   end
 
@@ -110,6 +122,7 @@ class AppealsDistributed
     appeal_affinity = case_record.appeal_affinity
 
     {
+      case_id: "Not yet implemented",
       docket_number: folder_record.tinum,
       docket: distributed_case.docket,
       aod: aod,
@@ -117,11 +130,16 @@ class AppealsDistributed
       receipt_date: normalize_vacols_date(case_record.bfd19),
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
+      distributed_to: "Not yet implemented",
+      genpop_query: "Not yet implemented",
       original_judge: original_judge&.sdomainid,
+      prior_decision_date: "Not yet implemented",
       hearing_judge: case_record.case_hearings.first&.staff&.sdomainid,
+      hearing_date: "Not yet implemented",
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
       veteran_name: veteran_name,
-      affinity_start_date: appeal_affinity&.affinity_start_date
+      affinity_start_date: appeal_affinity&.affinity_start_date,
+      affinity_status: "Not yet implemented"
     }
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
