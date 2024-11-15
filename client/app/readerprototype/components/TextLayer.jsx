@@ -8,9 +8,11 @@ import usePageVisibility from '../hooks/usePageVisibility';
 
 const isMarkOnScreen = (mark) => {
   const { top: markTop, bottom: markBottom } = mark.getBoundingClientRect();
-  const { top: containerTop, bottom: containerBottom } = document.getElementById('pdfContainer').getBoundingClientRect();
+  const {
+    top: containerTop,
+    bottom: containerBottom
+  } = document.getElementById('pdfContainer').getBoundingClientRect();
 
-  console.log(markTop, markBottom, containerTop, containerBottom);
   if ((markTop - 100) > containerTop && (markBottom + 200) < containerBottom) {
     return true;
   }
@@ -21,7 +23,7 @@ const isMarkOnScreen = (mark) => {
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
 const TextLayer = memo((props) => {
-  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch, pnum } = props;
+  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch } = props;
   const relativeIndex = useSelector(getRelativeIndex);
   const textLayerRef = useRef(null);
   const isVisible = usePageVisibility(textLayerRef);

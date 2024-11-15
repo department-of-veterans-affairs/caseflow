@@ -183,7 +183,6 @@ const PdfDocument = ({
   useEffect(() => {
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
-  console.log(`piwm: ${pageIndexWithMatch}`);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
@@ -205,7 +204,6 @@ const PdfDocument = ({
                   rotation={rotateDeg}
                   viewport={page.getViewport({ scale: 1 })}
                   hasSearchMatch={pageIndexWithMatch === index + 1}
-                  pnum={page.pageNumber}
                 />
               </Layer>
             )}
