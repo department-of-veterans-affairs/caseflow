@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
-import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
@@ -19,10 +18,8 @@ import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerCon
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [numPages, setNumPages] = useState(null);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const showSideBar = useSelector(showSideBarSelector);
   const dispatch = useDispatch();
 
@@ -150,7 +147,6 @@ const DocumentViewer = (props) => {
                   isFileVisible={doc.content_url === file}
                   rotateDeg={rotateDeg}
                   setCurrentPage={setCurrentPage}
-                  setNumPages={setNumPages}
                   showPdf={props.showPdf}
                   zoomLevel={props.zoomLevel}
                 />

@@ -1,20 +1,19 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Layer from './Comments/Layer';
-import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
 import ApiUtil from '../../util/ApiUtil';
+import DocumentLoadError from './DocumentLoadError';
 import Page from './Page';
 import TextLayer from './TextLayer';
-import DocumentLoadError from './DocumentLoadError';
 
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
-import { storeMetrics } from '../../util/Metrics';
-import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
+import { storeMetrics } from '../../util/Metrics';
 import ReaderFooter from './ReaderFooter';
 
 const PdfDocument = ({
@@ -23,7 +22,6 @@ const PdfDocument = ({
   isFileVisible,
   rotateDeg,
   setCurrentPage,
-  setNumPages,
   showPdf,
   zoomLevel,
 }) => {
@@ -42,7 +40,6 @@ const PdfDocument = ({
     alignContent: 'start',
     justifyContent: 'center',
     gap: '8rem',
-    // visibility: `${isFileVisible}`
   };
 
   const dispatch = useDispatch();
@@ -51,6 +48,7 @@ const PdfDocument = ({
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
   const [textContent, setTextContent] = useState([]);
+  const [numPages, setNumPages] = useState(null);
 
   const metricsLoggedRef = useRef(metricsLogged);
   const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
@@ -147,7 +145,7 @@ const PdfDocument = ({
           return setIsDocumentLoadError(true);
         }
         pdfjsDocumentRef.current = pdfDocument;
-        setNumPages(pdfjsDocumentRef.current.numPages);
+        setNumPages(pdfjsDocumentRef.current?.numPages);
       }).
       catch((err) => {
         console.error(`ERROR with pdfjs: ${err}`);
