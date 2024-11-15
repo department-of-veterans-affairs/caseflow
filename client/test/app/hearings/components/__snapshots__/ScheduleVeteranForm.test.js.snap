@@ -4534,7 +4534,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4608,7 +4608,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -4711,7 +4711,6 @@ SAN FRANCISCO, CA 94103
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="hearing-type-label"
                           aria-owns="hearing-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -4826,7 +4825,7 @@ SAN FRANCISCO, CA 94103
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="regional-office-label"
+                            aria-label="null"
                             aria-owns="regional-office-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -4888,7 +4887,7 @@ SAN FRANCISCO, CA 94103
         class="usa-width-one-whole"
       >
         <h2>
-          Email Notifications
+          Email Notifications 
         </h2>
         <p>
           When you schedule the hearing, the undefined, POA, and Judge will receive an email with connection information for the virtual hearing.
@@ -4897,7 +4896,7 @@ SAN FRANCISCO, CA 94103
           data-css-1jfbwxw=""
         />
         <strong>
-
+           
         </strong>
         <div
           class="usa-grid css-1jfbwxw"
@@ -4956,7 +4955,7 @@ SAN FRANCISCO, CA 94103
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="appellant-tz-label"
+                              aria-label="Pacific Time (US & Canada)"
                               aria-owns="appellant-tz-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -5130,7 +5129,7 @@ SAN FRANCISCO, CA 94103
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="representative-tz-label"
+                              aria-label="Pacific Time (US & Canada)"
                               aria-owns="representative-tz-listbox"
                               autocapitalize="none"
                               autocomplete="off"
