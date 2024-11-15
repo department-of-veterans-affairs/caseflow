@@ -2198,6 +2198,7 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
   create_table "veterans", force: :cascade do |t|
     t.datetime "bgs_last_synced_at", comment: "The last time cached BGS attributes were synced"
     t.string "closest_regional_office"
+    t.text "country_of_residence", comment: "The most recently known country of residence of the veteran"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
     t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
@@ -2207,7 +2208,9 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
     t.string "middle_name", comment: "PII. Veteran's middle name"
     t.string "name_suffix"
     t.string "participant_id"
+    t.datetime "residence_location_last_checked_at", comment: "The most recent time the veteran residence location was checked"
     t.string "ssn", comment: "PII. The cached Social Security Number"
+    t.text "state_of_residence", comment: "The most recently known state of residence of the veteran"
     t.datetime "updated_at"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
