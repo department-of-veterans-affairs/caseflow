@@ -2,11 +2,14 @@ import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter as Router } from 'react-router-dom';
 
 import SavedSearches from 'app/nonComp/pages/SavedSearches';
 import createNonCompStore from 'test/app/nonComp/nonCompStoreCreator';
+import savedSearchesData from '../../../data/nonComp/savedSearchesData';
+import COPY from 'app/../COPY';
 
 describe('SavedSearches', () => {
 
@@ -83,6 +86,36 @@ describe('SavedSearches', () => {
 
       checkTableHeaders();
       checkSortableHeaders();
+    });
+
+    it('renders a delete button', async () => {
+      setup({ nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches });
+      const deleteBtn = screen.getByText('Delete');
+
+      expect(deleteBtn).toBeDisabled();
+
+      const radioButtons = screen.getAllByRole('radio');
+
+      userEvent.click(radioButtons[0]);
+
+      expect(radioButtons[0]).toBeChecked();
+      expect(deleteBtn).not.toBeDisabled();
+    });
+
+    it('should open Delete modal', async () => {
+      setup({ nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches });
+
+      const deleteBtn = screen.getByText('Delete');
+      const radioButtons = screen.getAllByRole('radio');
+
+      userEvent.click(radioButtons[0]);
+
+      await fireEvent.click(deleteBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText(COPY.DELETE_SEARCH_TITLE)).toBeTruthy();
+        expect(screen.getByText(COPY.DELETE_SEARCH_DESCRIPTION)).toBeTruthy();
+      });
     });
   });
 
