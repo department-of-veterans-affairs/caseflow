@@ -3,16 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { rootReducer } from 'app/reader/reducers';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import ApiUtil from 'app/util/ApiUtil';
+import { storeMetrics } from 'app/util/Metrics';
 import { def, get } from 'bdd-lazy-var/getter';
-import fs from 'fs';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { documentFactory } from './factories';
-import { storeMetrics } from 'app/util/Metrics';
 import { stopPlacingAnnotation } from '../../../app/reader/AnnotationLayer/AnnotationActions';
+import { documentFactory } from './factories';
 
 jest.mock('../../../app/reader/AnnotationLayer/AnnotationActions', () => ({
   stopPlacingAnnotation: jest.fn(),
