@@ -1532,6 +1532,17 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # appeals where prev deciding judge ineligible and hearing before decision (genpop)
       let!(:aoj_aod_inel_5) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney) }
       let!(:aoj_cavc_inel_5) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, cavc: true) }
+      # appeals where the hearing and deciding judge are different, and the deciding judge is ineligible
+      let!(:aoj_aod_inel_10) do
+        c = create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney)
+        VACOLS::CaseHearing.find_by(folder_nr: c.bfkey.to_i + 1).update!(board_member: other_judge.sattyid)
+        c
+      end
+      let!(:aoj_cavc_inel_10) do
+        c = create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, cavc: true)
+        VACOLS::CaseHearing.find_by(folder_nr: c.bfkey.to_i + 1).update!(board_member: other_judge.sattyid)
+        c
+      end
       # appeals where prev deciding judge excluded and is not the hearing vlj and hearing before decision (genpop)
       let!(:aoj_aod_excl_6) do
         c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney)

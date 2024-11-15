@@ -925,7 +925,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       genpop == "not_genpop" || reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], lever_value)
     elsif lever_value == Constants.ACD_LEVERS.infinite
-      return if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
+      return if
+        (deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?) &&
+        genpop != "not_genpop"
 
       appeal["prev_deciding_judge"] != judge_sattyid
     elsif lever_value == Constants.ACD_LEVERS.omit
