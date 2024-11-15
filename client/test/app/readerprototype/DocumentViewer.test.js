@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { rootReducer } from 'app/reader/reducers';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import ApiUtil from 'app/util/ApiUtil';
+import { storeMetrics } from 'app/util/Metrics';
 import { def, get } from 'bdd-lazy-var/getter';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
