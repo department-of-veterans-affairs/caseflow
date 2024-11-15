@@ -5,25 +5,42 @@ describe CheckVeteranResidenceLocationJob, :all_dbs do
 
   let!(:fl_vet_attrs) { { file_number: "1238", ssn: "1111111111", state: "FL", country: "US" } }
   let!(:fl_vet_outdated_attrs) do
-    { file_number: "1239", ssn: "1111111112", state: "FL", country: "US",
-      residence_location_last_checked_at: 2.weeks.ago }
+    { file_number: "1239", ssn: "1111111112", state: "FL", country: "US" }
   end
   let!(:az_vet_recently_processed_attrs) do
-    { file_number: "1237", ssn: "1111111115", state: "AZ", country: "US",
-      state_of_residence: "AZ", country_of_residence: "US", residence_location_last_checked_at: 1.day.ago }
+    { file_number: "1237", ssn: "1111111115", state: "AZ", country: "US" }
   end
   let!(:ca_vet_outdated_attrs) do
-    { file_number: "1235", ssn: "1111111113", state: "CA", country: "US",
-      residence_location_last_checked_at: 2.weeks.ago }
+    { file_number: "1235", ssn: "1111111113", state: "CA", country: "US" }
   end
   let!(:international_vet_attrs) { { file_number: "1240", ssn: "1111111116", state: nil, country: "PI" } }
 
   before do
-    Generators::Veteran.build(fl_vet_attrs).save!
-    Generators::Veteran.build(az_vet_recently_processed_attrs).save!
-    Generators::Veteran.build(ca_vet_outdated_attrs).save!
-    Generators::Veteran.build(fl_vet_outdated_attrs).save!
-    Generators::Veteran.build(international_vet_attrs).save!
+    Generators::Veteran.build(fl_vet_attrs).update!(
+      state_of_residence: nil,
+      country_of_residence: nil,
+      residence_location_last_checked_at: nil
+    )
+    Generators::Veteran.build(az_vet_recently_processed_attrs).update!(
+      state_of_residence: "AZ",
+      country_of_residence: "USA",
+      residence_location_last_checked_at: 1.day.ago
+    )
+    Generators::Veteran.build(ca_vet_outdated_attrs).update!(
+      state_of_residence: nil,
+      country_of_residence: nil,
+      residence_location_last_checked_at: 2.weeks.ago
+    )
+    Generators::Veteran.build(fl_vet_outdated_attrs).update!(
+      state_of_residence: "FL",
+      country_of_residence: "USA",
+      residence_location_last_checked_at: 2.weeks.ago
+    )
+    Generators::Veteran.build(international_vet_attrs).update!(
+      state_of_residence: nil,
+      country_of_residence: nil,
+      residence_location_last_checked_at: nil
+    )
   end
 
   describe "#perform" do

@@ -89,10 +89,7 @@ class Generators::Veteran
                     entered_on_duty_date: "07022006",
                     released_active_duty_date: "06282008",
                     char_of_svc_code: "UHC",
-                    pay_grade: "E5" }],
-        state_of_residence: nil,
-        country_of_residence: nil,
-        residence_location_last_checked_at: nil
+                    pay_grade: "E5" }]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -109,10 +106,7 @@ class Generators::Veteran
                   middle_name: attrs[:middle_name],
                   date_of_death: attrs[:date_of_death],
                   name_suffix: attrs[:suffix_name],
-                  participant_id: attrs[:participant_id],
-                  state_of_residence: attrs[:state_of_residence],
-                  country_of_residence: attrs[:country_of_residence],
-                  residence_location_last_checked_at: attrs[:residence_location_last_checked_at])
+                  participant_id: attrs[:participant_id])
     end
   end
 end

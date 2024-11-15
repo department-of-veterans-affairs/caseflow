@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
 class CheckVeteranResidenceLocationJob < CaseflowJob
-  RESIDENCE_LOCATION_PROCESS_LIMIT = if ENV["RESIDENCE_LOCATION_BATCH_SIZE"].nil?
-                                       2500
-                                     else
-                                       ENV["RESIDENCE_LOCATION_BATCH_SIZE"].to_i
-    end
-  VET_UPDATE_BATCH_PROCESS_LIMIT = ENV["VET_UPDATE_BATCH_SIZE"].nil? ? 100 : ENV["VET_UPDATE_BATCH_SIZE"].to_i
-  USER = User.system_user
+  RESIDENCE_LOCATION_PROCESS_LIMIT = ENV.fetch("RESIDENCE_LOCATION_BATCH_SIZE", 2500).to_i
+  VET_UPDATE_BATCH_PROCESS_LIMIT = ENV.fetch("VET_UPDATE_BATCH_SIZE", 100).to_i
 
   def perform
+    user = User.system_user
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
       # Setting up parallel threads to retrieve and process all the veteran residence details
       vet_updates = Parallel.map(retrieve_veterans, in_threads: 4) do |veteran|
         begin
           # Make sure the current user is set
-          RequestStore[:current_user] = USER
+          RequestStore[:current_user] = user
           { id: veteran.id, state_of_residence: veteran.address.state,
             country_of_residence: veteran.address.country,
             residence_location_last_checked_at: Time.zone.now }
@@ -24,7 +20,7 @@ class CheckVeteranResidenceLocationJob < CaseflowJob
         end
       end
 
-      batch_update_veterans(vet_updates.compact) unless vet_updates.compact.empty?
+      batch_update_veterans(vet_updates.filter { !!_1 }) unless vet_updates.filter { !!_1 }.empty?
     end
   end
 
