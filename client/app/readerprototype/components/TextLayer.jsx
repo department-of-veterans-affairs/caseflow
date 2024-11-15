@@ -6,11 +6,22 @@ import { useSelector } from 'react-redux';
 import { getRelativeIndex, getSearchTerm } from '../../reader/selectors';
 import usePageVisibility from '../hooks/usePageVisibility';
 
+const isMarkOnScreen = (mark) => {
+  const { top: markTop, bottom: markBottom } = mark.getBoundingClientRect();
+  const { top: containerTop, bottom: containerBottom } = document.getElementById('pdfContainer').getBoundingClientRect();
+
+  console.log(markTop, markBottom, containerTop, containerBottom);
+  if ((markTop - 100) > containerTop && (markBottom + 200) < containerBottom) {
+    return true;
+  }
+
+  return false;
+};
 // Similar to the behavior in Page.jsx, we need to manipulate height and width
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
 const TextLayer = memo((props) => {
-  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch } = props;
+  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch, pnum } = props;
   const relativeIndex = useSelector(getRelativeIndex);
   const textLayerRef = useRef(null);
   const isVisible = usePageVisibility(textLayerRef);
@@ -49,7 +60,8 @@ const TextLayer = memo((props) => {
 
   useEffect(() => {
     const renderText = async () => {
-      if (textLayerRef.current && textContent && !hasRenderedText && isVisible) {
+      // render the text into the page if that page is either visible or if it has search results on it.
+      if (textLayerRef.current && textContent && !hasRenderedText && (isVisible || hasSearchMatch)) {
         await PDFJS.renderTextLayer({
           textContent,
           container: textLayerRef.current,
@@ -62,7 +74,7 @@ const TextLayer = memo((props) => {
     };
 
     renderText();
-  }, [textLayerRef.current, textContent, hasRenderedText, isVisible]);
+  }, [textLayerRef.current, textContent, hasRenderedText, isVisible, hasSearchMatch]);
 
   useEffect(() => {
     if (hasRenderedText && searchTerm) {
@@ -79,9 +91,12 @@ const TextLayer = memo((props) => {
 
           marks.forEach((mark, index) => {
             mark.classList.remove('highlighted');
+
             if (index === relativeIndex && hasSearchMatch) {
               mark.classList.add('highlighted');
-              // mark.scrollIntoView({ block: 'center' });
+              if (!isMarkOnScreen(mark)) {
+                mark.scrollIntoView({ block: 'center' });
+              }
             }
           });
         }

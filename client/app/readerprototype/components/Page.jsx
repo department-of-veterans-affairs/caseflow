@@ -80,7 +80,7 @@ const Page = memo(({
     position: 'relative',
     top,
     // removes offscreen canvas from rendering calculations to improve performance
-    contentVisibility: 'auto',
+    // contentVisibility: 'auto',
   };
 
   const render = async () => {

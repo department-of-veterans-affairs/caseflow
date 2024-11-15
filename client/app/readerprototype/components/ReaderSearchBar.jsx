@@ -47,7 +47,7 @@ const scrollToPageIndexofMatch = (matchIndex, matchesPerPage, dispatch) => {
   dispatch(updateSearchRelativeIndex(relativeIndex));
   const pageElement = document.getElementById(`canvasWrapper-${pageNumber}`);
 
-  pageElement.scrollIntoView();
+  // pageElement.scrollIntoView();
 };
 
 const ReaderSearchBar = ({ file }) => {
