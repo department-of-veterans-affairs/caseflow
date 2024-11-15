@@ -41,8 +41,6 @@ class Events::PersonUpdated
 
   def update_person
     before_attributes = person.attributes
-    #before_attributes["email_address"] = person.email_address
-
     person.assign_attributes(
       person_attributes.as_json.without("date_of_death", "file_number")
     )

@@ -19,9 +19,9 @@ describe Events::PersonUpdated do
 
   let(:participant_id) { 54_321 }
   let(:is_veteran) { true }
-  let(:person) do 
-    person = FactoryBot.create(
-      :person, 
+  let(:person) do
+    FactoryBot.create(
+      :person,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name,
       middle_name: Faker::Name.first_name,
