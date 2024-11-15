@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::Correspondent
+class Generators::Vacols::Correspondent
   class << self
     def generate_pkseq
       SecureRandom.random_number(99_999_999)

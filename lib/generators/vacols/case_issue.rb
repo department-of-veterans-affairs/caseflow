@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::VACOLS::CaseIssue
+class Generators::Vacols::CaseIssue
   class << self
     def case_issue_attrs
       {

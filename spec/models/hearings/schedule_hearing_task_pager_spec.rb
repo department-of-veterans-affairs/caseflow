@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe ScheduleHearingTaskPager, :all_dbs do
+describe Hearings::ScheduleHearingTaskPager, :all_dbs do
   let(:assignee) { HearingsManagement.singleton }
   let(:regional_office_key) { "RO18" }
-  let(:legacy_task_pager) { ScheduleHearingTaskPager.new(legacy_arguments) }
-  let(:ama_task_pager) { ScheduleHearingTaskPager.new(ama_arguments) }
+  let(:legacy_task_pager) { Hearings::ScheduleHearingTaskPager.new(legacy_arguments) }
+  let(:ama_task_pager) { Hearings::ScheduleHearingTaskPager.new(ama_arguments) }
   let(:default_cases_per_page) { TaskPager::TASKS_PER_PAGE }
   let(:page_no) { 1 }
   let(:legacy_arguments) do

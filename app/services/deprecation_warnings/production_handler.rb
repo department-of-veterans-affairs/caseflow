@@ -1,23 +1,7 @@
 # frozen_string_literal: true
 
+# @note For use with `ActiveSupport::Deprecation.behavior=` or `Rails.application.config.active_support.deprecation=`
 module DeprecationWarnings
-  # Regular expressions for custom deprecation warnings that we have addressed in the codebase
-  CUSTOM_DEPRECATION_WARNING_REGEXES = [
-    /Caseflow::Migration is deprecated/
-  ].freeze
-
-  # Regular expressions for Rails 7.0 deprecation warnings that we have addressed in the codebase
-  RAILS_7_0_FIXED_DEPRECATION_WARNING_REGEXES = [
-    /Initialization autoloaded the constant/
-  ].freeze
-
-  # Regular expressions for deprecation warnings that should raise an exception on detection
-  DISALLOWED_DEPRECATION_WARNING_REGEXES = [
-    *CUSTOM_DEPRECATION_WARNING_REGEXES,
-    *RAILS_7_0_FIXED_DEPRECATION_WARNING_REGEXES
-  ].freeze
-
-  # @note For use with `ActiveSupport::Deprecation.behavior=` or `Rails.application.config.active_support.deprecation=`
   class ProductionHandler
     APP_NAME = "caseflow"
     SLACK_ALERT_TITLE = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"

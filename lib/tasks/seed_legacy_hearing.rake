@@ -32,8 +32,8 @@ namespace :db do
 
       return vacols_veteran_record if vacols_veteran_record
 
-      Generators::VACOLS::Correspondent.create(
-        Generators::VACOLS::Correspondent.correspondent_attrs.merge(
+      Generators::Vacols::Correspondent.create(
+        Generators::Vacols::Correspondent.correspondent_attrs.merge(
           ssalut: veteran.name_suffix,
           snamef: veteran.first_name,
           snamemi: veteran.middle_name,
@@ -115,12 +115,12 @@ namespace :db do
 
       cases = Array.new(num_appeals_to_create).each_with_index.map do |_element|
         key = VACOLS::Case.pluck(:bfkey).map(&:to_i).max + 1
-        Generators::VACOLS::Case.create(
+        Generators::Vacols::Case.create(
           corres_exists: true,
-          folder_attrs: Generators::VACOLS::Folder.folder_attrs.merge(
+          folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
             custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
           ),
-          case_hearing_attrs: [Generators::VACOLS::CaseHearing.case_hearing_attrs.merge(
+          case_hearing_attrs: [Generators::Vacols::CaseHearing.case_hearing_attrs.merge(
             custom_hearing_attributes(type)
           )],
           case_attrs: other_params(vacols_veteran_record, key, type, regional_office)

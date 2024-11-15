@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::V3::Issues::VACOLS::VacolsIssueSerializer, :postgres do
+describe Api::V3::Issues::Vacols::VacolsIssueSerializer, :postgres do
   context "VACOLS issue object" do
     let(:vacols_id) { "12345678" }
     let(:disposition) { nil }
@@ -21,7 +21,7 @@ describe Api::V3::Issues::VACOLS::VacolsIssueSerializer, :postgres do
     let(:issue) { Issue.load_from_vacols(vacols_case_issue.attributes) }
 
     it "should show all the fields" do
-      serialized_vacols_issue = Api::V3::Issues::VACOLS::VacolsIssueSerializer.new(issue)
+      serialized_vacols_issue = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(issue)
         .serializable_hash[:data][:attributes][:vacols_issue]
 
       expect(serialized_vacols_issue).not_to eq nil

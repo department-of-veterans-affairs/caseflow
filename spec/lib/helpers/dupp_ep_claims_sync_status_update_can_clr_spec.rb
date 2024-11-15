@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "helpers/dupp_ep_claims_sync_status_update_can_clr"
+
 describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
   let(:script) { WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new }
   # create a test ep

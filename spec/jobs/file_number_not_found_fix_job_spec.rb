@@ -226,7 +226,7 @@ describe FileNumberNotFoundFixJob, :postgres do
       allow(bgs_service).to receive(:fetch_file_number_by_ssn)
         .and_return(bgs_file_number)
 
-      allow(described_class::FixfileNumberCollections)
+      allow(FixfileNumberCollections)
         .to receive(:get_collections)
         .with(veteran_2)
         .and_return([FixFileNumberWizard::Collection.new(Form8, veteran_2.ssn)])
