@@ -219,7 +219,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
             </div>
             <TextareaField
               name="content"
-              label="Provide context and instructions on this task"
+              label="Please provide context and instructions for this action"
               value={taskContent}
               onChange={updateTaskContent}
               classNames={['task-selection-dropdown-box']}

@@ -168,6 +168,7 @@ module Seeds
             appeal = create(:appeal, veteran: veteran)
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           end
+        end
 
         # Creating inactive appeals for each veteran
         create_inactive_appeals(veteran)
