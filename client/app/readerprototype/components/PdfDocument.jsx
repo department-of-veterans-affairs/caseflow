@@ -281,6 +281,7 @@ const PdfDocument = memo(({
   useEffect(() => {
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
+  console.log(`piwm: ${pageIndexWithMatch}`);
 
   const renderPages = () => {
     // eslint-disable-next-line no-underscore-dangle

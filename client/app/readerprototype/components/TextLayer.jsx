@@ -23,7 +23,7 @@ const isMarkOnScreen = (mark) => {
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
 const TextLayer = memo((props) => {
-  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch } = props;
+  const { viewport, textContent, zoomLevel, rotation, hasSearchMatch, pnum } = props;
   const relativeIndex = useSelector(getRelativeIndex);
   const textLayerRef = useRef(null);
   const isVisible = usePageVisibility(textLayerRef);
