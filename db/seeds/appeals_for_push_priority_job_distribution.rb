@@ -136,6 +136,9 @@ module Seeds
       judge_one_large_previous_distribution
       excluded_judge
       ineligible_judge
+
+      # This user is not a judge in VACOLS in the seed data, so don't allow them to get cases in the PPJ
+      JudgeTeam.find_by(name: "BVAAWAKEFIELD")&.update!(accepts_priority_pushed_cases: false)
     end
 
     def tied_or_affinity_judges
