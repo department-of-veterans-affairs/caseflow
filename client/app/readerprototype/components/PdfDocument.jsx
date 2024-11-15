@@ -24,6 +24,7 @@ const PdfDocument = ({
   setNumPages,
   onrequestCancel,
   zoomLevel,
+  featureToggles,
   readerPreferences }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -234,7 +235,7 @@ const PdfDocument = ({
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      {showProgressBarRef.current && (
+      {showProgressBarRef.current && featureToggles.readerProgressBar && (
         <ProgressBar
           progressPercentage={Number(progressData.progressPercentage)}
           loadedBytes={progressData.loadedBytes}
@@ -278,6 +279,7 @@ PdfDocument.propTypes = {
   zoomLevel: PropTypes.number,
   onrequestCancel: PropTypes.func,
   readerPreferences: PropTypes.object,
+  featureToggles: PropTypes.object,
 };
 
 export default PdfDocument;
