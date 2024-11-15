@@ -85,6 +85,7 @@ module Seeds
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
+        :aod,
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVAGBOTSFORD"),
@@ -97,7 +98,7 @@ module Seeds
       # Scenario 6: Draft Six (Non-priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
-        :type_original,
+        :type_post_remand,
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVAJWEHNER1"),
@@ -110,7 +111,7 @@ module Seeds
       # Scenario 7: Not Swappable (Non-priority, 1 issue, not distributed yet)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
-        :type_post_remand,
+        :type_original
         :status_active,
         :ready_for_distribution,
         bfcorlid: "#{not_swappable.file_number}S",
