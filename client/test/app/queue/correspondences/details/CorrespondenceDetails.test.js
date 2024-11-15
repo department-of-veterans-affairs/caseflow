@@ -597,6 +597,8 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('validates the options of the actions dropdown based on the task type', () => {
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    fireEvent.click(collapsibleButtons[collapsibleButtons.length - 1]);
     const table = document.querySelector('#case-timeline-table');
 
     expect(table).toBeInTheDocument();
