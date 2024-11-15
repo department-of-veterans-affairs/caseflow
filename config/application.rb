@@ -155,6 +155,13 @@ module CaseflowCertification
     # Default as of 7.0: true
     config.active_support.remove_deprecated_time_with_zone_name = false
 
+    # Calls `Rails.application.executor.wrap` around test cases.
+    # This makes test cases behave closer to an actual request or job.
+    # Several features that are normally disabled in test, such as Active Record query cache
+    # and asynchronous queries will then be enabled.
+    # Default as of 7.0: true
+    config.active_support.executor_around_test_case = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
