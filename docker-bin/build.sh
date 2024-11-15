@@ -15,9 +15,9 @@ echo -e "\tChecking if Oracle Instant client files exist"
 if [ ! -f instantclient-basic-linux.x64-12.2.0.1.0.zip ]; then
 
   echo -e "\t\tDownloading Oracle Instant Client and SQLPlus"
-  aws s3 cp --region us-gov-west-1  s3://shared-s3/dsva-appeals/instantclient-basic-linux.x64-12.2.0.1.0.zip instantclient-basic-linux.x64-12.2.0.1.0.zip
-  aws s3 cp --region us-gov-west-1 s3://shared-s3/dsva-appeals/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
-  aws s3 cp --region us-gov-west-1 s3://shared-s3/dsva-appeals/instantclient-sdk-linux.x64-12.2.0.1.0.zip instantclient-sdk-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-basic-linux.x64-12.2.0.1.0.zip instantclient-basic-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-sdk-linux.x64-12.2.0.1.0.zip instantclient-sdk-linux.x64-12.2.0.1.0.zip
 
 fi
 
@@ -41,8 +41,6 @@ fi
 cd ../../
 printf "commit: `git rev-parse HEAD`\ndate: `git log -1 --format=%cd`" > config/build_version.yml
 
-credstash -t appeals-credstash get datadog.api.key > config/datadog.key
-
 cp /etc/ssl/certs/ca-certificates.crt docker-bin/ca-certs/cacert.pem
 
 # Build Docker
@@ -50,7 +48,6 @@ echo -e "\tCreating Caseflow App Docker Image"
 docker build -t caseflow .
 result=$?
 echo -e "\tCleaning Up..."
-rm -rf config/datadog.key
 rm -rf docker-bin/oracle_libs
 if [ $result == 0 ]; then
   echo -e "\tBuilding Caseflow Docker App: Completed"

@@ -4,14 +4,6 @@
 
 module Seeds
   class VeteransHealthAdministration < Base
-    PROGRAM_OFFICES = [
-      "Community Care - Payment Operations Management",
-      "Community Care - Veteran and Family Members Program",
-      "Member Services - Health Eligibility Center",
-      "Member Services - Beneficiary Travel",
-      "Prosthetics"
-    ].freeze
-
     CLAIMANT_TYPES = [
       :veteran_claimant,
       :dependent_claimant,
@@ -24,11 +16,6 @@ module Seeds
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze
 
     def seed!
-      setup_camo_org
-      setup_caregiver_org
-      setup_program_offices!
-      setup_specialty_case_team!
-      create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
       create_vha_program_office
@@ -40,53 +27,6 @@ module Seeds
     end
 
     private
-
-    def setup_camo_org
-      regular_user = create(:user, full_name: "Greg CAMOUser Camo", css_id: "CAMOUSER")
-      admin_user = create(:user, full_name: "Alex CAMOAdmin Camo", css_id: "CAMOADMIN")
-      camo = VhaCamo.singleton
-      camo.add_user(regular_user)
-      OrganizationsUser.make_user_admin(admin_user, camo)
-    end
-
-    def setup_caregiver_org
-      regular_user = create(:user, full_name: "Edward CSPUser Caregiver", css_id: "CAREGIVERUSER")
-      admin_user = create(:user, full_name: "Alvin CSPAdmin Caregiver", css_id: "CAREGIVERADMIN")
-      vha_csp = VhaCaregiverSupport.singleton
-      vha_csp.add_user(regular_user)
-      OrganizationsUser.make_user_admin(admin_user, vha_csp)
-    end
-
-    def setup_program_offices!
-      PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
-
-      regular_user = create(:user, full_name: "Stevie VhaProgramOffice Amana", css_id: "VHAPOUSER")
-      admin_user = create(:user, full_name: "Channing VhaProgramOfficeAdmin Katz", css_id: "VHAPOADMIN")
-
-      VhaProgramOffice.all.each do |org|
-        org.add_user(regular_user)
-        OrganizationsUser.make_user_admin(admin_user, org)
-      end
-    end
-
-    def setup_specialty_case_team!
-      regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
-      admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
-      sct = SpecialtyCaseTeam.singleton
-      sct.add_user(regular_user)
-      OrganizationsUser.make_user_admin(admin_user, sct)
-    end
-
-    def create_visn_org_teams!
-      regular_user = create(:user, full_name: "Stacy VISNUser Smith", css_id: "VISNUSER")
-      admin_user = create(:user, full_name: "Betty VISNAdmin Rose", css_id: "VISNADMIN")
-
-      Constants.VISN_ORG_NAMES.visn_orgs.name.each do |name|
-        visn = VhaRegionalOffice.create!(name: name, url: name)
-        visn.add_user(regular_user)
-        OrganizationsUser.make_user_admin(admin_user, visn)
-      end
-    end
 
     def create_vha_camo
       create_vha_camo_queue_assigned
@@ -114,6 +54,7 @@ module Seeds
         3.times do
           CLAIMANT_TYPES.each do |claimant_type|
             create_sc_with_claimant(benefit_type, claimant_type)
+            create_sc_remand(benefit_type, claimant_type)
           end
         end
       end
@@ -122,6 +63,7 @@ module Seeds
     def create_hlr_with_claimant(benefit_type, claimant_type)
       hlr = create(
         :higher_level_review,
+        :with_intake,
         :with_request_issue,
         :processed,
         benefit_type: benefit_type,
@@ -134,8 +76,19 @@ module Seeds
     def create_sc_with_claimant(benefit_type, claimant_type)
       sc = create(
         :supplemental_claim,
+        :with_intake,
         :with_request_issue,
         :processed,
+        benefit_type: benefit_type,
+        claimant_type: claimant_type,
+        number_of_claimants: 1
+      )
+      sc.create_business_line_tasks!
+    end
+
+    def create_sc_remand(benefit_type, claimant_type)
+      sc = create(
+        :remand,
         benefit_type: benefit_type,
         claimant_type: claimant_type,
         number_of_claimants: 1
@@ -243,11 +196,9 @@ module Seeds
         INNER JOIN Organizations o on o.id = ou.organization_id")
         .where("o.type like ?", "Vha%")
         .distinct
-      # organization = BusinessLine.where(name:)
-      # organization = Organization.find_by_name_or_url("Veterans Health Administration")
-      organization = VhaBusinessLine.singleton
+
       user_list.each do |user|
-        organization.add_user(user)
+        VhaBusinessLine.singleton.add_user(user)
       end
     end
   end

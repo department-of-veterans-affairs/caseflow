@@ -5,7 +5,6 @@
 module Seeds
   class Intake < Base
     def seed!
-      create_intake_users
       create_higher_level_review_tasks
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
@@ -17,40 +16,24 @@ module Seeds
 
     private
 
-    def create_intake_users
-      ["Mail Intake", "Admin Intake"].each do |role|
-        # do not try to recreate when running seed file after inital seed
-        next if User.find_by_css_id("#{role.tr(' ', '')}_LOCAL".upcase)
-
-        create(:user,
-               css_id: "#{role.tr(' ', '')}_LOCAL",
-               roles: [role],
-               station_id: "101",
-               full_name: "Jame Local #{role} Smith")
-      end
-    end
-
     def create_deceased_veteran
       params = { first_name: "Ed", last_name: "Deceased", date_of_death: Time.zone.yesterday }
       params[:file_number] = 45_454_545 unless Veteran.find_by(file_number: 45_454_545)
-      create(:veteran,
-             params)
+      create(:veteran, params)
     end
 
     def create_veteran_with_no_dependents
       params = { first_name: "Robert", last_name: "Lonely" }
       params[:file_number] = 44_444_444 unless Veteran.find_by(file_number: 44_444_444)
       params[:participant_id] = 44_444_444 unless Veteran.find_by(file_number: 44_444_444)
-      create(:veteran,
-             params)
+      create(:veteran, params)
     end
 
     def create_deceased_veteran_with_no_dependents
       params = { first_name: "Karen", last_name: "Lonely", date_of_death: Time.zone.yesterday }
       params[:file_number] = 55_555_555 unless Veteran.find_by(file_number: 55_555_555)
       params[:participant_id] = 55_555_555 unless Veteran.find_by(file_number: 55_555_555)
-      create(:veteran,
-             params)
+      create(:veteran, params)
     end
 
     def create_higher_level_review_tasks
@@ -70,9 +53,7 @@ module Seeds
                  decision_review: higher_level_review)
         end
         nca = BusinessLine.find_or_create_by(name: "National Cemetery Administration", url: "nca")
-        create(:higher_level_review_task,
-               assigned_to: nca,
-               appeal: higher_level_review)
+        create(:higher_level_review_task, assigned_to: nca, appeal: higher_level_review)
       end
     end
 
@@ -183,10 +164,7 @@ module Seeds
                benefit_type: "compensation",
                ineligible_reason: :untimely)
 
-      higher_level_review.create_issues!([
-                                           eligible_request_issue,
-                                           untimely_request_issue
-                                         ])
+      higher_level_review.create_issues!([eligible_request_issue, untimely_request_issue])
       higher_level_review.establish!
 
       create(:supplemental_claim,
@@ -229,7 +207,8 @@ module Seeds
     # rubocop:enable Metrics/MethodLength
 
     def create_bgs_attorneys
-      5000.times { create(:bgs_attorney) } if BgsAttorney.count < 5000
+      attorneys_to_create = 1000 - BgsAttorney.count
+      attorneys_to_create.times { create(:bgs_attorney) } if attorneys_to_create > 0
     end
   end
 end

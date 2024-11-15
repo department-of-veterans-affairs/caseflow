@@ -7,8 +7,8 @@ module Seeds
     include PowerOfAttorneyMapper
 
     # Create the available hearing times and issue counts to pull from
-    AMA_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze # times in UTC
-    LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze # times in EST
+    AMA_SCHEDULE_TIMES = ["8:30 AM", "10:00 AM", "11:30 AM", "1:00 PM", "1:15 PM"].freeze # times in EST/EDT
+    LEGACY_SCHEDULE_TIMES = ["8:15 AM", "9:30 AM", "10:15 AM", "11:00 AM", "11:45 AM"].freeze # times in EST/EDT
     ISSUE_COUNTS = %w[1 2 3 4 12].freeze
 
     # Define how many hearings per day and how many hearing days to create
@@ -52,11 +52,12 @@ module Seeds
       count.times do
         # Pick a random time from the list
         scheduled_time = AMA_SCHEDULE_TIMES[rand(0...AMA_SCHEDULE_TIMES.size)]
+        formatted_scheduled_time = "#{scheduled_time} America/New_York"
 
         # Pick a random issue count from the list
         issue_count = ISSUE_COUNTS[rand(0...ISSUE_COUNTS.size)]
 
-        create_ama_hearing(day: day, scheduled_time_string_utc: scheduled_time, issue_count: issue_count.to_i)
+        create_ama_hearing(day: day, scheduled_time_string_eastern: formatted_scheduled_time, issue_count: issue_count.to_i)
       end
     end
 
@@ -64,8 +65,9 @@ module Seeds
       count.times do
         # Pick a random time from the list
         scheduled_time = LEGACY_SCHEDULE_TIMES[rand(0...LEGACY_SCHEDULE_TIMES.size)]
+        formatted_scheduled_time = "#{scheduled_time} America/New_York"
 
-        create_legacy_hearing(day: day, scheduled_time_string_est: scheduled_time)
+        create_legacy_hearing(day: day, scheduled_time_string_eastern: formatted_scheduled_time)
       end
     end
 
@@ -175,14 +177,22 @@ module Seeds
       )
     end
 
-    def create_ama_hearing(day:, scheduled_time_string_utc:, issue_count: 1)
+    def create_ama_hearing(day:, scheduled_time_string_eastern:, issue_count: 1)
       appeal = create_ama_appeal(issue_count: issue_count)
+
       hearing = create(
         :hearing,
         hearing_day: day,
         appeal: appeal,
         bva_poc: created_by_user.full_name,
-        scheduled_time: scheduled_time_string_utc
+        scheduled_in_timezone: "America/New_York"
+      )
+
+      hearing.update!(
+        scheduled_datetime: HearingDatetimeService.prepare_datetime_for_storage(
+          date: day.scheduled_for,
+          time_string: scheduled_time_string_eastern
+        )
       )
 
       maybe_create_virtual_hearing(hearing)
@@ -238,24 +248,32 @@ module Seeds
       )
     end
 
-    def create_legacy_hearing(day:, scheduled_time_string_est:)
+    def create_legacy_hearing(day:, scheduled_time_string_eastern:)
       appeal = create_legacy_appeal(day)
-
-      scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-        scheduled_for: day.scheduled_for.in_time_zone,
-        scheduled_time_string: scheduled_time_string_est
-      )
 
       case_hearing = create(
         :case_hearing,
         hearing_type: day.request_type,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
         folder_nr: appeal.vacols_id,
         vdkey: day.id,
         board_member: day.judge.vacols_attorney_id.to_i
       )
 
-      hearing = create(:legacy_hearing, case_hearing: case_hearing, hearing_day: day, appeal: appeal)
+      hearing = create(
+        :legacy_hearing,
+        case_hearing: case_hearing,
+        hearing_day: day,
+        appeal: appeal,
+        scheduled_in_timezone: "America/New_York"
+      )
+
+      case_hearing.update!(
+        hearing_date: HearingDatetimeService.prepare_datetime_for_storage(
+          date: day.scheduled_for,
+          time_string: scheduled_time_string_eastern
+        )
+      )
+
       maybe_create_virtual_hearing(hearing)
       create_hearing_subtree(appeal, hearing)
     end
@@ -267,14 +285,12 @@ module Seeds
     # rubocop:disable Metrics/MethodLength
     def create_hearing_subtree(appeal, hearing)
       root_task = create(:root_task, appeal: appeal)
-      distribution_task = create(
-        :distribution_task,
-        appeal: appeal,
-        parent: root_task
-      )
+
+      distribution_task = create(:distribution_task, appeal: appeal, parent: root_task) if appeal.is_a?(Appeal)
+
       parent_hearing_task = create(
         :hearing_task,
-        parent: distribution_task,
+        parent: appeal.is_a?(Appeal) ? distribution_task : root_task,
         appeal: appeal
       )
 

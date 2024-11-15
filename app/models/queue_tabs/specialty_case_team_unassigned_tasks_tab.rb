@@ -21,13 +21,31 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
     assigned_tasks
   end
 
+  # Override task_includes to optimize the queue a bit
+  def task_includes
+    [
+      { appeal: [
+        :request_issues,
+        :available_hearing_locations,
+        :claimants,
+        :work_mode,
+        :latest_informal_hearing_presentation_task
+      ] },
+      :assigned_by,
+      :assigned_to,
+      :children,
+      :parent,
+      :attorney_case_reviews
+    ]
+  end
+
   def column_names
     SpecialtyCaseTeam::COLUMN_NAMES
   end
 
   # This only affects bulk assign on the standard queue tab view
   def allow_bulk_assign?
-    true
+    false
   end
 
   def hide_from_queue_table_view
@@ -35,6 +53,6 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   end
 
   def no_task_limit
-    true
+    false
   end
 end

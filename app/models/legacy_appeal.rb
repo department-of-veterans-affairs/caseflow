@@ -10,7 +10,7 @@
 class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
-  include BgsService
+  include BGSServiceConcern
   include CachedAttributes
   include AddressMapper
   include Taskable
@@ -42,6 +42,7 @@ class LegacyAppeal < CaseflowRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
   has_one :appeal_state, as: :appeal
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :notifications, as: :notifiable
 
   class UnknownLocationError < StandardError; end
 
@@ -347,6 +348,10 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def appeal_affinity
+    VACOLS::Case.find_by(bfkey: vacols_id).appeal_affinity
+  end
+
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
@@ -636,10 +641,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
                         FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
-    issues.any?(&:mst_status) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
+    issues.any?(&:mst_status) || special_issue_list&.military_sexual_trauma
   end
 
   def pact?
@@ -961,6 +963,10 @@ class LegacyAppeal < CaseflowRecord
   end
   # rubocop:enable Naming/PredicateName
 
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -1111,6 +1117,10 @@ class LegacyAppeal < CaseflowRecord
 
     def repository
       AppealRepository
+    end
+
+    def aoj_appeal_repository
+      AojAppealRepository
     end
 
     # Wraps the closure of appeals in a transaction

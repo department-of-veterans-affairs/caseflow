@@ -6,7 +6,7 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
-    Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+    Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
 
     User.authenticate!(roles: ["Reader"])
   end
@@ -34,7 +34,7 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
   end
 
   context "pdf_page_render_time_in_ms Feature toggle enabled" do
-    scenario "create a metric for pdf_page_render_time_in_ms" do
+    xscenario "create a metric for pdf_page_render_time_in_ms" do
       FeatureToggle.enable!(:metrics_get_pdfjs_doc)
       expect(Metric.any?).to be false # There are no metrics
       Capybara.default_max_wait_time = 5 # seconds

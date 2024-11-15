@@ -20,14 +20,14 @@ namespace :db do
 
           cases = Array.new(num_appeals_to_create).each_with_index.map do |_element, idx|
             key = VACOLS::Folder.maximum(:ticknum).next
-            Generators::Vacols::Case.create(
+            Generators::VACOLS::Case.create(
               corres_exists: true,
               case_issue_attrs: [
-                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
-                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
-                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {})
+                Generators::VACOLS::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
+                Generators::VACOLS::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
+                Generators::VACOLS::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {})
               ],
-              folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
+              folder_attrs: Generators::VACOLS::Folder.folder_attrs.merge(
                 custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
               ),
               case_attrs: {
@@ -62,7 +62,7 @@ namespace :db do
           }
         end
 
-        # Generators::Vacols::Case will create new correspondents, and I think it'll just be easier to
+        # Generators::VACOLS::Case will create new correspondents, and I think it'll just be easier to
         # update the cases created rather than mess with the generator's internals.
         def find_or_create_vacols_veteran(veteran)
           # Being naughty and calling a private method (it'd be cool to have this be public...)
@@ -70,8 +70,8 @@ namespace :db do
 
           return vacols_veteran_record if vacols_veteran_record
 
-          Generators::Vacols::Correspondent.create(
-            Generators::Vacols::Correspondent.correspondent_attrs.merge(
+          Generators::VACOLS::Correspondent.create(
+            Generators::VACOLS::Correspondent.correspondent_attrs.merge(
               ssalut: veteran.name_suffix,
               snamef: veteran.first_name,
               snamemi: veteran.middle_name,
@@ -124,8 +124,6 @@ namespace :db do
 
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
-
-        # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
       # request CSS ID for task assignment if not given
@@ -147,9 +145,6 @@ namespace :db do
         docket_number += 1
         LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
       end
-      # veterans_with_250_appeals.each do |file_number|
-      #   LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user)
-      # end
     end
   end
 end

@@ -21,13 +21,16 @@ import DateSelector from '../../../components/DateSelector';
 import ErrorAlert from '../../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../../constants';
 import EP_CLAIM_TYPES from '../../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues,
+import {
+  formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues } from '../../util/issues';
+  formatLegacyAddedIssues
+} from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
+import { IssueModificationRow as issueModificationRow } from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -35,6 +38,7 @@ import {
   toggleAddIssuesModal,
   toggleUntimelyExemptionModal,
   toggleNonratingRequestIssueModal,
+  addIssue,
   removeIssue,
   withdrawIssue,
   setIssueWithdrawalDate,
@@ -47,11 +51,33 @@ import {
   toggleCorrectionTypeModal,
   toggleEditIntakeIssueModal
 } from '../../actions/addIssues';
+import {
+  toggleRequestIssueModificationModal,
+  toggleRequestIssueRemovalModal,
+  toggleRequestIssueWithdrawalModal,
+  toggleRequestIssueAdditionModal,
+  toggleCancelPendingRequestIssueModal,
+  toggleConfirmPendingRequestIssueModal,
+  moveToPendingReviewSection,
+  addToPendingReviewSection,
+  updatePendingReview,
+  cancelOrRemovePendingReview,
+  setAllApprovedIssueModificationsWithdrawalDates
+} from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeIssueModal';
+import { RequestIssueModificationModal } from 'app/intakeEdit/components/RequestIssueModificationModal';
+import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssueRemovalModal';
+import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
+import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
+import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
+import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
+import { getOpenPendingIssueModificationRequests } from '../../selectors';
+import Alert from '../../../components/Alert';
+import { css } from 'glamor';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -69,12 +95,60 @@ class AddIssuesPage extends React.Component {
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
-      loading: false
+      loading: false,
+      pendingIssueModification: {}
     };
   }
 
   onClickAddIssue = () => {
     this.setState({ addingIssue: true });
+  };
+
+  onClickRequestAdditionalIssue = () => {
+    this.setState({
+      pendingIssueModification: {}
+    });
+    this.props.toggleRequestIssueAdditionModal();
+  }
+
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
+    const identifier = issueModificationRequest.identifier;
+
+    switch (requestType) {
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueModificationModal(identifier);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueAdditionModal(identifier);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueWithdrawalModal(identifier);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
+      this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    case 'cancelReviewIssueRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
+      this.props.toggleCancelPendingRequestIssueModal();
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
+    }
   };
 
   onClickIssueAction = (index, option = 'remove') => {
@@ -109,17 +183,39 @@ class AddIssuesPage extends React.Component {
       });
       this.props.toggleEditIntakeIssueModal({ index });
       break;
+    case 'requestModification':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'requestRemoval':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'requestWithdrawal':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
     default:
       this.props.undoCorrection(index);
     }
   };
 
-  onClickSplitAppeal =() => {
+  onClickSplitAppeal = () => {
     return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
+    this.props.setAllApprovedIssueModificationsWithdrawalDates(value);
   };
 
   editingClaimReview() {
@@ -145,7 +241,7 @@ class AddIssuesPage extends React.Component {
 
     return (
       !formType || (this.editingClaimReview() && !processedAt) ||
-       intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
+      intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -176,7 +272,7 @@ class AddIssuesPage extends React.Component {
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
       Established {this.establishmentCreditsTimestamp()}
-      { this.props.intakeUser &&
+      {this.props.intakeUser &&
         <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
       }
     </div>;
@@ -231,12 +327,18 @@ class AddIssuesPage extends React.Component {
       addingIssue,
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
+      userIsVhaAdmin,
       userCanSplitAppeal,
-      isLegacy
+      userCanRequestIssueUpdates,
+      isRemand,
+      isLegacy,
+      pendingIssueModificationRequests,
+      intakeFromVbms
     } = this.props;
+
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
+    const { useAmaActivationDate, hlrScUnrecognizedClaimants, disableAmaEventing } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -261,12 +363,21 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    // eslint-disable-next-line max-len
-    const issues = intakeData.docketType === 'Legacy' ? formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
+    const issues = intakeData.docketType === 'Legacy' ?
+      formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
+    // Filter the issues to remove those that have a pending modification request
+    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+      issues : issues.filter((issue) => {
+        return !pendingIssueModificationRequests.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id;
+        });
+      });
+
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const issuesBySection = formatIssuesBySection(issues);
+
+    const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -290,6 +401,13 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const areAllIssuesReadyToBeEstablished = () => {
+      const withdrawnIssue = (issue) => (issue.withdrawalDate || issue.withdrawalPending);
+      const establishedIssue = (issue) => (withdrawnIssue(issue) || issue.decisionDate);
+
+      return _.every(intakeData.addedIssues, establishedIssue);
+    };
+
     const issuesChanged = !_.isEqual(
       intakeData.addedIssues, intakeData.originalIssues
     );
@@ -302,7 +420,37 @@ class AddIssuesPage extends React.Component {
 
     };
 
+    const originalIssuesHaveNoDecisionDate = () => {
+      return intakeData.originalIssues.some((issue) => issue.decisionDate === null);
+    };
+
+    const showRequestIssueUpdateOptions = editPage &&
+      userCanRequestIssueUpdates &&
+      !originalIssuesHaveNoDecisionDate() &&
+      !isRemand &&
+      intakeData.benefitType === 'vha';
+
+    const disableIssueActions = editPage &&
+      intakeData.userIsVhaAdmin &&
+      !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+
     const renderButtons = () => {
+      if (showRequestIssueUpdateOptions) {
+        return (
+          <div className="cf-actions">
+            <Button
+              name="request-additional-issue"
+              label="request-additional-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickRequestAdditionalIssue()}
+            >
+              + Request additional issue
+            </Button>
+          </div>
+        );
+      }
+
       return (
         <div className="cf-actions">
           {splitButtonVisible() ? (
@@ -312,8 +460,9 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickAddIssue()}
+              disabled={this.props.disableEditingForCompAndPen}
             >
-            + Add issue
+              + Add issue
             </Button>,
             (' '),
             <Link to="/create_split" disabled={issuesChanged}>
@@ -324,17 +473,18 @@ class AddIssuesPage extends React.Component {
                 classNames={['usa-button-secondary']}
                 disabled={issuesChanged}
               >
-              Split appeal
+                Split appeal
               </Button>
             </Link>]
           ) : (
             <Button
               name="add-issue"
               legacyStyling={false}
-              classNames={['usa-button-secondary']}
+              dangerStyling
               onClick={() => this.onClickAddIssue()}
+              disabled={disableIssueActions || this.props.disableEditingForCompAndPen}
             >
-            + Add issue
+              + Add issue
             </Button>)}
         </div>
       );
@@ -360,7 +510,20 @@ class AddIssuesPage extends React.Component {
       }
     };
 
-    const columns = [{ valueName: 'field' }, { valueName: 'content' }];
+    // Factory function for generating cell span functions based on an array of possible field values
+    const createTableCellSpanFunc = (fieldValues, matchSpan, noMatchSpan) => {
+      return (rowObj) => fieldValues.includes(rowObj.field) ? matchSpan : noMatchSpan;
+    };
+
+    // Add keys to this field to make the content span an entire row
+    const fieldKeysThatSpanTheRow = ['undecided pending addition requests'];
+
+    // Create two spaning functions to pass to the Table component. If it matches the field key,
+    // then the content should span the full row.
+    const hideFieldColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 0, 1);
+    const growContentColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 2, 1);
+
+    const columns = [{ valueName: 'field', span: hideFieldColumn }, { valueName: 'content', span: growContentColumn }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
@@ -404,11 +567,11 @@ class AddIssuesPage extends React.Component {
 
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
-      const isAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
-        issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-      );
+      const isEstablishedAndVha = intakeData.benefitType === 'vha' &&
+        areAllIssuesReadyToBeEstablished() &&
+        _.isEmpty(pendingIssueModificationRequests);
 
-      const establishText = intakeData.benefitType === 'vha' && isAllIssuesReadyToBeEstablished ? 'Establish' : 'Save';
+      const establishText = isEstablishedAndVha ? 'Establish' : 'Save';
       const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;
 
       fieldsForFormType = fieldsForFormType.concat({
@@ -418,21 +581,51 @@ class AddIssuesPage extends React.Component {
       additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
+    if (editPage) {
+      // This checks for open addition requests to prevent claim deletion while they still exist
+      const hasPendingAdditionRequests = pendingIssueModificationRequests.some((issueModificationRequest) => {
+        return issueModificationRequest.requestType === 'addition';
+      }) && (_.isEmpty(intakeData.addedIssues) || _.every(
+        intakeData.addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+      ));
+
+      if (hasPendingAdditionRequests) {
+        // If there are remaining addition issue modification requests, and all the other request issues
+        // have been removed or withdrawn, then show a banner that tells the user that they can't save the
+        // claim until those pending issue modification requests have been decided to prevent premature claim deletion
+        const messageStyling = css({
+          fontSize: '17px !important',
+          fontWeight: 'normal'
+        });
+
+        const deletionBanner = <Alert
+          type="warning"
+          message="All pending issue addition requests must be reviewed before the claim can be saved."
+          messageStyling={messageStyling} />;
+
+        fieldsForFormType = fieldsForFormType.concat({
+          field: 'undecided pending addition requests',
+          content: deletionBanner
+        });
+      }
+
+    }
+
     const endProductLabelRow = (endProductCode, editDisabled) => {
       return {
         field: 'EP Claim Label',
         content: (
           <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
             <div className="claim-label">
-              <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
+              <strong>{EP_CLAIM_TYPES[endProductCode].official_label}</strong>
             </div>
             <div className="edit-claim-label">
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
-                disabled={editDisabled}
+                disabled={editDisabled || this.props.disableEditingForCompAndPen}
               >
-              Edit claim label
+                Edit claim label
               </Button>
             </div>
           </div>
@@ -440,7 +633,18 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const intakeSystemLabelRow = () => {
+      return {
+        field: 'Intake System',
+        content: intakeFromVbms ? 'VBMS' : 'Caseflow'
+      };
+    };
+
     let rowObjects = fieldsForFormType;
+
+    if (!disableAmaEventing) {
+      rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    }
 
     Object.keys(issuesBySection).sort().
       map((key) => {
@@ -455,7 +659,10 @@ class AddIssuesPage extends React.Component {
           sectionIssues,
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
+          userIsVhaAdmin,
+          userCanRequestIssueUpdates,
           withdrawReview,
+          showRequestIssueUpdateOptions
         };
 
         if (key === 'requestedIssues') {
@@ -463,6 +670,8 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Requested issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen,
+              disableIssueActions
             }),
           );
         } else if (key === 'withdrawnIssues') {
@@ -470,6 +679,7 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Withdrawn issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         } else {
@@ -478,12 +688,22 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: ' ',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         }
 
         return rowObjects;
       });
+
+    // Pending modifications table section
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
+      rowObjects = rowObjects.concat(issueModificationRow({
+        issueModificationRequests: pendingIssueModificationRequests,
+        fieldTitle: 'Pending admin review',
+        onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
+      }));
+    }
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
@@ -504,6 +724,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
             featureToggles={featureToggles}
             editPage={editPage}
             onComplete={() => {
@@ -524,6 +745,8 @@ class AddIssuesPage extends React.Component {
             removeIndex={this.state.issueRemoveIndex}
             intakeData={intakeData}
             closeHandler={this.props.toggleIssueRemoveModal}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
           />
         )}
         {intakeData.correctIssueModalVisible && (
@@ -563,7 +786,7 @@ class AddIssuesPage extends React.Component {
         {intakeData.editIntakeIssueModalVisible && (
           <EditIntakeIssueModal
             issueIndex={this.state.issueIndex}
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             legacyIssues={issues}
             appealIsLegacy={isLegacy}
             mstIdentification={this.props.featureToggles.mstIdentification}
@@ -580,6 +803,65 @@ class AddIssuesPage extends React.Component {
             }}
           />
         )}
+
+        {intakeData.requestIssueModificationModalVisible && (
+          <RequestIssueModificationModal
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueModificationModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            toggleConfirmPendingRequestIssueModal={this.props.toggleConfirmPendingRequestIssueModal}
+            updatePendingReview={this.props.updatePendingReview}
+          />
+        )}
+
+        {intakeData.requestIssueRemovalModalVisible && (
+          <RequestIssueRemovalModal
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueRemovalModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
+          />
+        )}
+
+        {intakeData.requestIssueWithdrawalModalVisible && (
+          <RequestIssueWithdrawalModal
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
+          />
+        )}
+
+        {intakeData.requestIssueAdditionModalVisible && (
+          <RequestIssueAdditionModal
+            onCancel={() => this.props.toggleRequestIssueAdditionModal()}
+            addToPendingReviewSection={this.props.addToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
+          />
+        )}
+
+        {intakeData.cancelPendingRequestIssueModalVisible && (
+          <CancelPendingRequestIssueModal
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
+            removeFromPendingReviewSection={this.props.cancelOrRemovePendingReview}
+            toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
+          />
+        )}
+
+        {intakeData.confirmPendingRequestIssueModalVisible && (
+          <ConfirmPendingRequestIssueModal
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
+        )}
+
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -591,6 +873,8 @@ class AddIssuesPage extends React.Component {
         )}
 
         {editPage && this.establishmentCredits()}
+
+        {editPage && isRemand ? <Alert type="info" message={COPY.REMANDS_NOT_EDITABLE} /> : null}
 
         <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
 
@@ -640,7 +924,8 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -688,11 +973,16 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
+    pendingIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
+    userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
-    isLegacy: state.isLegacy
+    userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
+    isRemand: state.isRemand,
+    isLegacy: state.isLegacy,
+    intakeFromVbms: state.intakeFromVbms
   }),
   (dispatch) =>
     bindActionCreators(
@@ -702,14 +992,26 @@ export const EditAddIssuesPage = connect(
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
         toggleEditIntakeIssueModal,
+        toggleRequestIssueModificationModal,
+        toggleRequestIssueRemovalModal,
+        toggleRequestIssueWithdrawalModal,
+        toggleRequestIssueAdditionModal,
+        toggleCancelPendingRequestIssueModal,
+        toggleConfirmPendingRequestIssueModal,
         removeIssue,
         withdrawIssue,
+        moveToPendingReviewSection,
+        addToPendingReviewSection,
+        cancelOrRemovePendingReview,
+        updatePendingReview,
+        setAllApprovedIssueModificationsWithdrawalDates,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,
         undoCorrection,
         toggleUnidentifiedIssuesModal,
         editEpClaimLabel,
+        addIssue
       },
       dispatch
     )

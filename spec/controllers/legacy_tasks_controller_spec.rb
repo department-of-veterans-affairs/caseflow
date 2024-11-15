@@ -36,7 +36,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "user is a dispatch user" do
       let(:role) { :dispatch_role }
 
-      it "should not process the request succesfully" do
+      it "should not process the request succesfully, and redirect" do
         get :index, params: { user_id: user.id }
         expect(response.status).to eq 400
       end
@@ -46,7 +46,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { nil }
       let(:caseflow_only_user) { create(:user) }
 
-      it "should return an invalid role error" do
+      it "should return if an invalid role error" do
         get :index, params: { user_id: caseflow_only_user.id }
         expect(response.status).to eq(400)
       end
@@ -72,6 +72,19 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
       end
     end
+
+    context "when rendering json format" do
+      it "records metric with MetricsService" do
+        allow(LegacyWorkQueue).to receive(:tasks_for_user).and_return([])
+        expect(MetricsService).to receive(:record).with(
+          "VACOLS: Get all tasks with appeals for #{user.css_id}",
+          name: "LegacyTasksController.index"
+        ).and_call_original
+        get :index, format: :json, params: { user_id: user.css_id, rest: "/assign" }
+        expect(response.status).to eq 200
+      end
+    end
+
     context "CSS_ID in URL is invalid" do
       it "returns 404" do
         [-1, "BAD_CSS_ID", ""].each do |user_id_path|

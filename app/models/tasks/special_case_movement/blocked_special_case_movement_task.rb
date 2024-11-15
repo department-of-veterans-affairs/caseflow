@@ -20,6 +20,8 @@ class BlockedSpecialCaseMovementTask < SpecialCaseMovementTask
 
   def verify_appeal_distributable
     if DistributionTask.open.where(appeal: appeal).empty?
+      return true if appeal.appeal_split_process == true
+
       fail(Caseflow::Error::IneligibleForBlockedSpecialCaseMovement, appeal_id: appeal.id)
     end
   end

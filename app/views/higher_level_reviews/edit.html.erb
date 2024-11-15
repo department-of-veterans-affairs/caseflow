@@ -1,18 +1,25 @@
 <% content_for :full_page_content do %>
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
+    userCssId: current_user.css_id,
+    userFullName: current_user.full_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
     userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
+    userCanRequestIssueUpdates: current_user.can_request_for_issue_updates?,
+    userIsVhaAdmin: current_user.vha_business_line_admin_user?,
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: higher_level_review.ui_hash,
     claimId: url_claim_id,
+    intakeFromVbms: higher_level_review.from_decision_review_created_event?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
-      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
+      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+      removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user),
+      disableAmaEventing: FeatureToggle.enabled?(:disable_ama_eventing, user: current_user)
     }
   }) %>
 <% end %>

@@ -44,8 +44,16 @@ class MailTask < Task
       true
     end
 
+    # SCT - Distributed
+    # F - F -> DistributionTask
+    # F - T -> RootTask
+    # T - F -> RootTask
+    # T - T -> RootTask
     def parent_if_blocking_task(parent_task)
-      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+      return parent_task unless blocking?
+      return parent_task if parent_task.appeal.specialty_case_team_assign_task?
+
+      if !parent_task.appeal.distributed_to_a_judge?
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
 
@@ -127,25 +135,3 @@ class MailTask < Task
     )
   end
 end
-
-require_dependency "address_change_mail_task"
-require_dependency "aod_motion_mail_task"
-require_dependency "appeal_withdrawal_mail_task"
-require_dependency "cavc_correspondence_mail_task"
-require_dependency "clear_and_unmistakeable_error_mail_task"
-require_dependency "congressional_interest_mail_task"
-require_dependency "controlled_correspondence_mail_task"
-require_dependency "death_certificate_mail_task"
-require_dependency "docket_switch_mail_task"
-require_dependency "evidence_or_argument_mail_task"
-require_dependency "extension_request_mail_task"
-require_dependency "foia_request_mail_task"
-require_dependency "hearing_related_mail_task"
-require_dependency "other_motion_mail_task"
-require_dependency "power_of_attorney_related_mail_task"
-require_dependency "privacy_act_request_mail_task"
-require_dependency "privacy_complaint_mail_task"
-require_dependency "reconsideration_motion_mail_task"
-require_dependency "returned_undeliverable_correspondence_mail_task"
-require_dependency "status_inquiry_mail_task"
-require_dependency "vacate_motion_mail_task"

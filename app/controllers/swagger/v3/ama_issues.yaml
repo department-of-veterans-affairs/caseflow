@@ -1,0 +1,596 @@
+openapi: 3.0.3
+info:
+  title: AMA Request Issues
+  description: >+
+    The AMA Request Issues API allows you to interact with a veteran’s AMA Request Issues. This API provides all AMA related Request Issues and related Decision Issues per Veteran particpant ID.
+
+
+    For more information on the AMA Request Issue process, including the different types of AMA Request Issues, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
+
+
+    The AMA Request Issues API supports the Appeals Modernization Act (AMA) process only.
+
+    ## Technical Summary
+
+    The AMA Request Issues API interacts with VA's internal system, called Caseflow, that manages all benefit appeals.
+
+    * The AMA Request Issues API accepts the veteran participant identification is supplied in the URL.
+
+    * The AMA Request Issue request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+
+    * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the AMA Request Issue request.
+
+    * The Request Issues are paginated in the response. The page paramenter must be a integer greater than or equal to 1. 0 and negative numbers are defaulted to page 1.
+
+    ## Authorization
+
+    API requests are authorized through a token, provided in an HTTP header.
+    Example _curl_ (assuming you're running Caseflow locally, and the `api_v3` feature toggle has been enabled):
+
+    ```
+     curl -v -H 'Authorization: Token {{YourApiKeyHere}}'\
+    'http://localhost:3000/api/v3/issues/ama/find_by_veteran/{{VeteranParticipantId}}?page=2'
+
+    ```
+
+  version: 3.0.0
+security:
+  - bearerAuth: []
+servers:
+- url: /api/v3/issues/ama/
+paths:
+  /find_by_veteran/{veteran_participant_id}:
+    get:
+      tags:
+        - Request Issues
+      parameters:
+        - name: veteran_participant_id
+          in: path
+          required: true
+          description: Veteran Participant ID
+          example: 123456789
+          schema:
+            $ref: "#/components/schemas/VeteranParticipantId"
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page of request issues for the supplied veteran. Positive greater than 0. 0 or negative numbers are defaulted to 1.
+      summary: Retrieve all AMA request issues and associated decision issues from Veteran.
+      description: >+
+        Will return a paginated response of request issues and associated decision issue for the Veteran.
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/vnd.api+json:
+              examples:
+                veteran_returned_1_page:
+                  value:
+                    page: 1
+                    total_number_of_pages: 1
+                    total_request_issues_for_vet: 2
+                    max_request_issues_per_page: 2
+                    veteran_participant_id: "123456789"
+                    legacy_appeals_present: true
+                    request_issues:
+                      - id: 1
+                        benefit_type: compensation
+                        closed_at: nil
+                        closed_status: nil
+                        contention_reference_id: 1
+                        contested_decision_issue_id: 453
+                        contested_issue_description: "I am rating decision issue 0"
+                        contested_rating_decision_reference_id: nil
+                        contested_rating_issue_diagnostic_code: "9999"
+                        contested_rating_issue_profile_date: nil
+                        contested_rating_issue_reference_id: nil
+                        corrected_by_request_issue_id: 1
+                        correction_type: nil
+                        created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        decision_date: Thu, 21 Sep 2023
+                        decision_review_id: 2237
+                        decision_review_type: "Appeal"
+                        edited_description: nil
+                        end_product_establishment_id: 1
+                        ineligible_due_to_id: 1
+                        ineligible_reason: nil
+                        is_unidentified: false
+                        nonrating_issue_bgs_id: nil
+                        nonrating_issue_category: nil
+                        nonrating_issue_description: nil
+                        notes: nil
+                        ramp_claim_id: nil
+                        split_issue_status: nil
+                        unidentified_issue_text: nil
+                        untimely_exemption: false
+                        untimely_exemption_notes: nil
+                        updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        vacols_id: nil
+                        vacols_sequence_id: 1234
+                        verified_unidentified_issue: false
+                        veteran_participant_id: "574727684"
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
+                        caseflow_considers_title_of_active_review: "some title"
+                        caseflow_considers_eligible: true
+                        claimant_participant_id: "123456789"
+                        decision_issues:
+                          - id: 457
+                            caseflow_decision_date: Tue, 26 Sep 2023
+                            created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                            decision_text: nil
+                            deleted_at: nil
+                            description: "The decision: I am rating decision issue 0 has been vacated."
+                            diagnostic_code: nil
+                            disposition: "vacated"
+                            end_product_last_action_date: nil
+                            percent_number: nil
+                            rating_issue_reference_id: nil
+                            rating_profile_date: nil
+                            rating_promulgation_date: nil
+                            subject_text: nil
+                            updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                      - id: 2
+                        benefit_type: compensation
+                        closed_at: nil
+                        closed_status: nil
+                        contention_reference_id: 1
+                        contested_decision_issue_id: 453
+                        contested_issue_description: "I am rating decision issue 0"
+                        contested_rating_decision_reference_id: nil
+                        contested_rating_issue_diagnostic_code: "9999"
+                        contested_rating_issue_profile_date: nil
+                        contested_rating_issue_reference_id: nil
+                        corrected_by_request_issue_id: 1
+                        correction_type: nil
+                        created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        decision_date: Thu, 21 Sep 2023
+                        decision_review_id: 2237
+                        decision_review_type: "Appeal"
+                        edited_description: nil
+                        end_product_establishment_id: 1
+                        ineligible_due_to_id: 1
+                        ineligible_reason: nil
+                        is_unidentified: false
+                        nonrating_issue_bgs_id: nil
+                        nonrating_issue_category: nil
+                        nonrating_issue_description: nil
+                        notes: nil
+                        ramp_claim_id: nil
+                        split_issue_status: nil
+                        unidentified_issue_text: nil
+                        untimely_exemption: false
+                        untimely_exemption_notes: nil
+                        updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        vacols_id: nil
+                        vacols_sequence_id: 1234
+                        verified_unidentified_issue: false
+                        veteran_participant_id: "574727684"
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
+                        caseflow_considers_title_of_active_review: "some title"
+                        caseflow_considers_eligible: true
+                        claimant_participant_id: "123456789"
+                        decision_issues:
+                          -
+                veteran_returned_2_pages:
+                  value:
+                    page: 2
+                    total_number_of_pages: 2
+                    total_request_issues_for_vet: 3
+                    max_request_issues_per_page: 2
+                    veteran_participant_id: "123456789"
+                    legacy_appeals_present: true,
+                    request_issues:
+                      - id: 1
+                        benefit_type: compensation
+                        closed_at: nil
+                        closed_status: nil
+                        contention_reference_id: 1
+                        contested_decision_issue_id: 453
+                        contested_issue_description: "I am rating decision issue 0"
+                        contested_rating_decision_reference_id: nil
+                        contested_rating_issue_diagnostic_code: "9999"
+                        contested_rating_issue_profile_date: nil
+                        contested_rating_issue_reference_id: nil
+                        corrected_by_request_issue_id: 1
+                        correction_type: nil
+                        created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        decision_date: Thu, 21 Sep 2023
+                        decision_review_id: 2237
+                        decision_review_type: "Appeal"
+                        edited_description: nil
+                        end_product_establishment_id: 1
+                        ineligible_due_to_id: 1
+                        ineligible_reason: nil
+                        is_unidentified: false
+                        nonrating_issue_bgs_id: nil
+                        nonrating_issue_category: nil
+                        nonrating_issue_description: nil
+                        notes: nil
+                        ramp_claim_id: nil
+                        split_issue_status: nil
+                        unidentified_issue_text: nil
+                        untimely_exemption: false
+                        untimely_exemption_notes: nil
+                        updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                        vacols_id: nil
+                        vacols_sequence_id: 1234
+                        verified_unidentified_issue: false
+                        veteran_participant_id: "574727684"
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
+                        caseflow_considers_title_of_active_review: "some title"
+                        caseflow_considers_eligible: true
+                        claimant_participant_id: "111111"
+                        decision_issues:
+                          - id: 457
+                            caseflow_decision_date: Tue, 26 Sep 2023
+                            created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                            decision_text: nil
+                            deleted_at: nil
+                            description: "The decision: I am rating decision issue 0 has been vacated."
+                            diagnostic_code: nil
+                            disposition: "vacated"
+                            end_product_last_action_date: nil
+                            percent_number: nil
+                            rating_issue_reference_id: nil
+                            rating_profile_date: nil
+                            rating_promulgation_date: nil
+                            subject_text: nil
+                            updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                veteran_returned_no_legacy:
+                  value:
+                    data:
+                      page: 1
+                      total_number_of_pages: 2
+                      total_request_issues_for_vet: 3
+                      max_request_issues_per_page: 2
+                      veteran_participant_id: 123456789
+                      legacy_appeals_present: false,
+                      request_issues:
+                        - id: 1
+                          benefit_type: compensation
+                          closed_at: nil
+                          closed_status: nil
+                          contention_reference_id: 1
+                          contested_decision_issue_id: 453
+                          contested_issue_description: "I am rating decision issue 0"
+                          contested_rating_decision_reference_id: nil
+                          contested_rating_issue_diagnostic_code: "9999"
+                          contested_rating_issue_profile_date: nil
+                          contested_rating_issue_reference_id: nil
+                          corrected_by_request_issue_id: 1
+                          correction_type: nil
+                          created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                          decision_date: Thu, 21 Sep 2023
+                          decision_review_id: 2237
+                          decision_review_type: "Appeal"
+                          edited_description: nil
+                          end_product_establishment_id: 1
+                          ineligible_due_to_id: 1
+                          ineligible_reason: nil
+                          is_unidentified: false
+                          nonrating_issue_bgs_id: nil
+                          nonrating_issue_category: nil
+                          nonrating_issue_description: nil
+                          notes: nil
+                          ramp_claim_id: nil
+                          split_issue_status: nil
+                          unidentified_issue_text: nil
+                          untimely_exemption: false
+                          untimely_exemption_notes: nil
+                          updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                          vacols_id: nil
+                          vacols_sequence_id: 1234
+                          verified_unidentified_issue: false
+                          veteran_participant_id: "574727684"
+                          caseflow_considers_status_active: true
+                          caseflow_considers_issue_active: true
+                          caseflow_considers_title_of_active_review: "some title"
+                          caseflow_considers_eligible: true
+                          claimant_participant_id: "111111"
+                          decision_issues:
+                          -
+                          development_item_reference_id: "111"
+                          same_office: nil
+                          legacy_opt_in_approved: false
+                          added_by_station_id: "101"
+                          added_by_css_id: "BVADWISE101"
+                          corrected_by_station_id: nil
+                          corrected_by_css_id: nil
+                          edited_by_station_id: nil
+                          edited_by_css_id: nil
+                          removed_by_css_id: "BVADWISE101"
+                          removed_by_station_id: "101"
+                          withdrawn_by_css_id: nil
+                          withdrawn_by_station_id: nil
+        '401':
+          description: 401 Unauthorized
+          content:
+            application/vnd.api+json:
+              examples:
+                invalid_api_key:
+                  value:
+                    status: unauthorized
+                missing_api_key:
+                  value:
+                    status: unauthorized
+        '404':
+          description: 404 Veteran not found
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    errors:
+                    - status: 404
+                      code: "veteran_not_found"
+                      detail: "No Veteran found for the given identifier."
+        '500':
+          description: 500 Unexpected Error
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    errors:
+                    - status: 500
+                      code: "Unknown error occured"
+                      detail: "Message: There was a server error. Use the error uuid to submit a support ticket: {id}"
+        '501':
+          description: 501 Not Implemented
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    -
+                      status: 501
+                      title: "Not Implemented"
+                      detail: "This endpoint is not yet supported."
+components:
+  schemas:
+    VeteranParticipantId:
+      type: string
+    Errors:
+      type: array
+      items:
+        type: object
+        properties:
+          status:
+            type: string
+          code:
+            type: string
+          title:
+            type: string
+    RequestIssue:
+      description: An AMA request issue linked with a veteran.
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: "The unique identifier for a request issue"
+            added_by_css_id:
+              type: string
+              description: "It comes from the user record tied to the RequestIssuesUpdate.  If there is no RequestIssuesUpdate for the issue being added, then it comes from the user record linked to intake."
+            added_by_station_id:
+                type: string
+                description: "It comes from the user record tied to the RequestIssuesUpdate.  If there is no RequestIssuesUpdate for the issue being added, then it comes from the user record linked to intake."
+            benefit_type:
+              type: string
+              description: "The Line of Business the issue is connected with."
+            closed_at:
+              type: string
+              description: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
+            closed_status:
+              type: string
+              description: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
+            contention_reference_id:
+              type: integer
+              description: "The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS."
+            contested_decision_issue_id:
+              type: integer
+              description: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue."
+            contested_issue_description:
+              type: string
+              description: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
+            contested_rating_decision_reference_id:
+              type: string
+              description: "The BGS id for contested rating decisions. These may not have corresponding contested_rating_issue_reference_id values."
+            contested_rating_issue_diagnostic_code:
+              type: string
+              description: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
+            contested_rating_issue_profile_date:
+              type: string
+              description: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
+            contested_rating_issue_reference_id:
+              type: string
+              description: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
+            corrected_by_request_issue_id:
+              type: integer
+              description: "If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
+            correction_type:
+              type: string
+              description: "EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
+            created_at:
+              type: string
+              description: "The date and time the record was created"
+            corrected_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being corrected. Indicates css_id of that user."
+            corrected_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being corrected. Indicates station_id of that user."
+            decision_date:
+              type: string
+              description: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)."
+            decision_review_id:
+              type: integer
+              description: "ID of the decision review that this request issue belongs to"
+            decision_review_type:
+              type: string
+              description: "Class name of the decision review that this request issue belongs to."
+            development_item_reference_id:
+              type: string
+              description: "When a Veteran requests an informal conference with their higher level review, a tracked item is created. This stores the ID of the of the tracked item, it is also used to indicate the success of creating the tracked item."
+            edited_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being edited."
+            edited_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being edited."
+            edited_description:
+              type: string
+              description: "The edited description for the contested issue, optionally entered by the user."
+            end_product_establishment_id:
+              type: integer
+              description: "Associated appeal EP claim_id (if C&P => higher level review or supp claim)"
+            ineligible_due_to_id:
+              type: integer
+              description: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
+            ineligible_reason:
+              type: string
+              description: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+            is_unidentified:
+              type: boolean
+              description: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
+            legacy_opt_in_approved:
+              type: boolean
+              description: "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
+            nonrating_issue_bgs_id:
+              type: string
+              description: "The ID of the nonrating request issue in BGS/CorpDB"
+            nonrating_issue_bgs_source:
+              type: string
+              description: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
+            nonrating_issue_category:
+              type: string
+              description: "The category selected for nonrating request issues. These vary by business line."
+            nonrating_issue_description:
+              type: string
+              description: "The user entered description if the issue is a nonrating issue."
+            notes:
+              type: string
+              description: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
+            ramp_claim_id:
+              type: string
+              description: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
+            removed_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a removed Request Issue."
+            removed_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a removed Request Issue. Indicates station_id of user who updated closed_stauts to 'removed'."
+            same_office:
+              type: boolean
+              description: "comes from Higher Level Review. Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
+            split_issue_status:
+              type: string
+              description: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals."
+            unidentified_issue_text:
+              type: string
+              description: "User entered description if the request issue is neither a rating or a nonrating issue."
+            untimely_exemption:
+              type: boolean
+              description: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
+            untimely_exemption_notes:
+              type: string
+              description: "Notes related to the untimeliness exemption requested."
+            updated_at:
+              type: string
+              description: "The date and time the record was updated"
+            vacols_id:
+              type: string
+              description: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
+            vacols_sequence_id:
+              type: integer
+              description: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
+            verified_unidentified_issue:
+              type: boolean
+              description: "A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
+            veteran_participant_id:
+              type: string
+              description: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
+            withdrawn_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a Withdrawn Request Issue."
+            withdrawn_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a withdrawn Request Issue."
+            caseflow_considers_decision_review_active:
+              type: boolean
+              description: "This value is populated by a method call in the request_issue model. Returns true if the Request Issue's decision_review is an Appeal that has open tasks OR if the End Product Establishment's synced_status is nil or anything other than CAN or CLR."
+            caseflow_considers_issue_active:
+              type: boolean
+              description: "This value is populated by a method call in the request_issue model. Is true when the issue is eligible, not closed, no split issue status or the split issue status is in_progress."
+            caseflow_considers_title_of_active_review:
+              type: string
+              description: "This value is populated by a method call in the request_issue model. If the Request Issue is a duplicate of a request issue already being reviewed, the decision_review type will be listed here"
+            caseflow_considers_eligible:
+              type: boolean
+              description: "This value is populated by a method call in the request_issue model. If the Request Issue has a value for ineligible_reason, this value will be false"
+            claimant_participant_id:
+              type: string
+              description: "Participant ID of claimant."
+    DecisionIssue:
+      description: An AMA decision issue linked to a AMA request issue.
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: "The ID of the record"
+            caseflow_decision_date:
+              type: string
+              description: "This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
+            created_at:
+              type: string
+              description: "The date and time the record was created"
+            decision_text:
+              type: string
+              description: "If decision resulted in a change to a rating, the rating issue's decision text."
+            deleted_at:
+              type: string
+              description: "Time/date a soft delete occurred on the decision issue."
+            description:
+              type: string
+              description: "Optional description that the user can input for decisions made in Caseflow."
+            diagnostic_code:
+              type: string
+              description: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
+            disposition:
+              type: string
+              description: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
+            end_product_last_action_date:
+              type: string
+              description: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
+            percent_number:
+              type: string
+              description: "percent_number from RatingIssue (prcntNo from Rating Profile)."
+            rating_issue_reference_id:
+              type: string
+              description: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
+            rating_profile_date:
+              type: string
+              description: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
+            rating_promulgation_date:
+              type: string
+              description: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
+            subject_text:
+              type: string
+              description: "subject_text from RatingIssue (subjctTxt from Rating Profile)."
+            updated_at:
+              type: string
+              description: "The date and time the record was updated"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

@@ -43,9 +43,13 @@ class ScheduleHearingTask < Task
   end
 
   def create_parent_hearing_task
+    return true unless parent
+
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
+
+    true
   end
 
   def verify_vso_can_change_hearing_to_virtual!(params)
@@ -198,6 +202,7 @@ class ScheduleHearingTask < Task
       # Create and assign the hearing now that it has been scheduled
       created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
 
+      hearing.maybe_create_non_virtual_conference
     # The only other option is to cancel the schedule hearing task
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       # If we are cancelling the schedule hearing task, we need to withdraw the request

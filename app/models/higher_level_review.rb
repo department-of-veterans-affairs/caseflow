@@ -10,6 +10,7 @@ class HigherLevelReview < ClaimReview
   end
 
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
+  has_many :event_records, as: :evented_record
 
   attr_accessor :appeal_split_process
 

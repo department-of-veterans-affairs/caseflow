@@ -57,7 +57,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
       it "only OPEN Legacy Appeal records will be added to the Appeal States table" do
         subject.perform
-        expect(AppealState.all.map(&:appeal_id)).to eq(open_ama_appeals.map(&:id))
+        expect(AppealState.all.map(&:appeal_id)).to match_array(open_ama_appeals.map(&:id))
         expect(AppealState.all.count).to eq(5)
       end
     end

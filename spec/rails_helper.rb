@@ -79,7 +79,6 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
-    Seeds::CaseDistributionLevers.new.seed!
   end
 
   config.after(:each) do
@@ -103,7 +102,7 @@ RSpec.configure do |config|
 end
 
 # Wrap this around your test to run it many times and ensure that it passes consistently.
-# Note: do not merge to master like this, or the tests will be slow! Ha.
+# Note: do not merge to main like this, or the tests will be slow! Ha.
 def ensure_stable
   repeat_count = ENV.fetch("ENSURE_STABLE", "10").to_i
   repeat_count.times do

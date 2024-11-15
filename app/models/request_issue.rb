@@ -34,6 +34,8 @@ class RequestIssue < CaseflowRecord
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   has_many :legacy_issues
+  has_many :issue_modification_requests, dependent: :destroy
+  has_many :event_records, as: :evented_record
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -50,7 +52,8 @@ class RequestIssue < CaseflowRecord
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
-    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible",
+    contested: "contested"
   }
 
   enum closed_status: {
@@ -115,6 +118,7 @@ class RequestIssue < CaseflowRecord
 
   class << self
     # the umbrella term "rating" here is generalized to the type of EP it refers to.
+
     def rating
       rating_issue.or(rating_decision).or(unidentified)
     end
@@ -190,7 +194,6 @@ class RequestIssue < CaseflowRecord
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
       attrs = attrs.merge(decision_review: decision_review) if decision_review
-
       new(attrs).tap(&:validate_eligibility!)
     end
 
@@ -200,7 +203,6 @@ class RequestIssue < CaseflowRecord
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
       issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
-
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
@@ -231,7 +233,8 @@ class RequestIssue < CaseflowRecord
         mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
         pact_status: data[:pact_status],
         vbms_pact_status: data[:vbms_pact_status],
-        pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
+        pact_status_update_reason_notes: data[:pact_status_update_reason_notes],
+        reference_id: data[:reference_id]
       }
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -252,7 +255,6 @@ class RequestIssue < CaseflowRecord
 
     epe = decision_review.end_product_establishment_for_issue(self, request_issues_update)
     update!(end_product_establishment: epe) if epe
-
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
     handle_legacy_issues!
   end
@@ -416,6 +418,87 @@ class RequestIssue < CaseflowRecord
     closed_at if withdrawn?
   end
 
+  def removed?
+    closed_status == "removed"
+  end
+
+  # check if this RequestIssue was edited
+  def edited?
+    edited_description&.present?
+  end
+
+  # check for any RequestIssuesUpdates on the associated DecisionReview
+  def any_updates?
+    decision_review.request_issues_updates.any?
+  end
+
+  # Retrieve all Updates tied to the DecisionReview (Appeal, HLR/SC)
+  def fetch_request_issues_updates
+    decision_review.request_issues_updates if any_updates?
+  end
+
+  def fetch_removed_by_user
+    if removed?
+      relevant_update = request_issues_updates&.find do |update|
+        update.removed_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_withdrawn_by_user
+    if withdrawn?
+      relevant_update = request_issues_updates.find do |update|
+        update.withdrawn_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_edited_by_user
+    if edited? && any_updates?
+      # Find the most recent update where the current issue ID is in the edited_issues list
+      relevant_update = request_issues_updates
+        .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
+        .max_by(&:updated_at)
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
+  def fetch_added_by_user_from_update
+    if any_updates?
+      relevant_update = request_issues_updates.find do |update|
+        update.added_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def request_issues_updates
+    @request_issues_updates ||= fetch_request_issues_updates
+  end
+
+  def removed_by_user
+    @removed_by_user ||= fetch_removed_by_user
+  end
+
+  def withdrawn_by_user
+    @withdrawn_by_user ||= fetch_withdrawn_by_user
+  end
+
+  def edited_by_user
+    @edited_by_user ||= fetch_edited_by_user
+  end
+
+  def added_by_user
+    @added_by_user ||= fetch_added_by_user_from_update || decision_review&.intake&.user
+  end
+
   def serialize
     Intake::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
@@ -540,6 +623,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
+    return if reference_id.present?
+
     close!(status: :ineligible) if ineligible_reason?
   end
 
@@ -737,7 +822,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+    duplicate_of_issue_in_active_review? ? ineligible_due_to&.review_title : nil
   end
 
   def handle_legacy_issues!
@@ -751,6 +836,11 @@ class RequestIssue < CaseflowRecord
     return true if untimely_exemption
 
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    decision_review&.from_decision_review_created_event?
   end
 
   private

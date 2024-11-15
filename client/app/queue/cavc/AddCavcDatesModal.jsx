@@ -130,7 +130,7 @@ const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   // eslint-disable-next-line camelcase
-  decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
+  decisionType: state.queue.appealDetails[ownProps.appealId]?.cavcRemand?.cavc_decision_type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -265,6 +265,12 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       vha_org.add_user(user)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
+
+      OrganizationsUser.make_user_admin(admin_user, VhaBusinessLine.singleton)
+    end
+
+    let!(:admin_user) do
+      create(:user, roles: ["Mail Intake"])
     end
 
     after do
@@ -273,7 +279,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     let!(:vha_org) { VhaBusinessLine.singleton }
-    let(:user) { create(:default_user) }
+    let(:user) { create(:default_user, roles: ["Mail Intake"]) }
     let(:veteran) { create(:veteran) }
     let(:decision_date) { Time.zone.now + 10.days }
 
@@ -281,7 +287,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       create(:higher_level_review,
              :with_vha_issue,
              :with_end_product_establishment,
-             :create_business_line,
+             :processed,
+             :update_assigned_at,
              benefit_type: "vha",
              veteran: veteran,
              claimant_type: :veteran_claimant)
@@ -393,16 +400,41 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
-    context "with a VHA Admin" do
+    scenario "VHA non-admins should see request issue modification" do
+      visit dispositions_url
+
+      expect(page).to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
+      expect(page).to have_button("Edit Issues", disabled: true)
+      expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+    end
+
+    context "claims with pending issue modifications should not be able to be dispositioned" do
       before do
-        OrganizationsUser.make_user_admin(user, vha_org)
+        create(:issue_modification_request, decision_review: in_progress_task)
+        visit dispositions_url
       end
 
-      it "should display a view history link" do
-        visit dispositions_url
-        expect(page).to have_link("View History")
+      scenario "The banner should display and the save button should be disabled" do
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+        expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN)
+        expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+        expect(page).to have_selector("textarea#description-issue-0[disabled]")
+        expect(page).to have_selector("input#decision-date[readonly]")
+        expect(page).to have_button("Complete", disabled: true)
+
+        step "As an admin user" do
+          User.authenticate!(user: admin_user)
+          visit dispositions_url
+          expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN)
+          expect(page).not_to have_text(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
+          expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+          expect(page).to have_selector("textarea#description-issue-0[disabled]")
+          expect(page).to have_selector("input#decision-date[readonly]")
+          expect(page).to have_button("Complete", disabled: true)
+        end
       end
     end
+
     context "with no POA" do
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
@@ -468,6 +500,28 @@ feature "NonComp Dispositions Task Page", :postgres do
           expect(page).to have_content("Veterans Health Administration")
           expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
         end
+      end
+    end
+
+    context "viewing a remand" do
+      let(:in_progress_remand_task) do
+        create(:remand_vha_task, assigned_at: 1.minute.ago)
+      end
+
+      let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_remand_task.id}" }
+
+      it "should disable the request issue modification button" do
+        visit dispositions_url
+
+        expect(page).to have_css(".usa-button-disabled", text: "Request issue modification")
+        expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
+      end
+
+      it "should disable the edit issues button" do
+        User.authenticate!(user: admin_user)
+        visit dispositions_url
+
+        expect(page).to have_css(".usa-button-disabled", text: "Edit Issues")
       end
     end
   end

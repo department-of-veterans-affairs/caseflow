@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
@@ -7,7 +7,7 @@ import '@testing-library/jest-dom';
 import { vhaTaskFilterDetails, genericTaskFilterDetails } from '../../data/taskFilterDetails';
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 import ApiUtil from '../../../app/util/ApiUtil';
-import { VHA_INCOMPLETE_TAB_DESCRIPTION } from '../../../COPY';
+import { VHA_INCOMPLETE_TAB_DESCRIPTION, VHA_PENDING_REQUESTS_TAB_DESCRIPTION } from '../../../COPY';
 
 const basicVhaProps = {
   businessLine: 'Veterans Health Administration',
@@ -20,7 +20,7 @@ const basicVhaProps = {
     decisionReviewQueueSsnColumn: true
   },
   businessLineConfig: {
-    tabs: ['incomplete', 'in_progress', 'completed']
+    tabs: ['incomplete', 'pending', 'in_progress', 'completed']
   },
 };
 
@@ -104,8 +104,8 @@ describe('NonCompTabsVha', () => {
     renderNonCompTabs(basicVhaProps);
   });
 
-  it('renders a tab titled "In progress tasks"', () => {
-    expect(screen.getAllByText('In progress tasks')).toBeTruthy();
+  it('renders a tab titled "In Progress Tasks"', () => {
+    expect(screen.getAllByText('In Progress Tasks (410)')).toBeTruthy();
 
     // Check for the correct in progress tasks header values
     const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
@@ -118,18 +118,46 @@ describe('NonCompTabsVha', () => {
 
   });
 
-  it('renders a tab titled "Incomplete tasks"', async () => {
-    expect(screen.getAllByText('Incomplete tasks')).toBeTruthy();
+  it('renders a tab titled "Pending tasks"', async () => {
+    expect(screen.getAllByText('Pending Tasks (0)')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[0].click();
+    fireEvent.click(tabs[1]);
+
+    await waitFor(() => {
+      expect(screen.getByText(VHA_PENDING_REQUESTS_TAB_DESCRIPTION)).toBeInTheDocument();
+    });
+
+    // Check for the correct pending tasks header values
+    const expectedHeaders = ['Claimant',
+      'Veteran SSN',
+      'Issues',
+      'Issue Type',
+      'Pending Requests',
+      'Days Waiting',
+      'Type'];
+    const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
+    const filterableHeaders = ['type', 'issue type'];
+
+    checkTableHeaders(expectedHeaders);
+    checkSortableHeaders(sortableHeaders);
+    checkFilterableHeaders(filterableHeaders);
+
+  });
+
+  it('renders a tab titled "Incomplete tasks"', async () => {
+    expect(screen.getAllByText('Incomplete Tasks (0)')).toBeTruthy();
+
+    const tabs = screen.getAllByRole('tab');
+
+    fireEvent.click(tabs[0]);
 
     await waitFor(() => {
       expect(screen.getByText(VHA_INCOMPLETE_TAB_DESCRIPTION)).toBeInTheDocument();
     });
 
-    // Check for the correct completed tasks header values
+    // Check for the correct incomplete tasks header values
     const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
     const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
     const filterableHeaders = ['type', 'issue type'];
@@ -142,11 +170,11 @@ describe('NonCompTabsVha', () => {
 
   it('renders a tab titled "Completed tasks"', async () => {
 
-    expect(screen.getAllByText('Completed tasks')).toBeTruthy();
+    expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[2].click();
+    fireEvent.click(tabs[3]);
 
     await waitFor(() => {
       expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
@@ -170,12 +198,12 @@ describe('NonCompTabsGeneric', () => {
   });
 
   it('renders a tab titled "In progress tasks"', async () => {
-    expect(screen.getAllByText('In progress tasks')).toBeTruthy();
+    expect(screen.getAllByText('In Progress Tasks (0)')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
     // The async from the first describe block is interferring with this test so wait for the tab to reload apparently.
-    await tabs[0].click();
+    fireEvent.click(tabs[0]);
     await waitFor(() => {
       expect(screen.getByText('Days Waiting')).toBeInTheDocument();
     });
@@ -192,16 +220,21 @@ describe('NonCompTabsGeneric', () => {
   });
 
   it('does not render a tab titled "Incomplete tasks"', () => {
-    expect(screen.queryByText('Incomplete tasks')).toBeNull();
+    expect(screen.queryByText('Incomplete Tasks (0)')).toBeNull();
+  });
+
+  it('does not render a tab titled "Pending tasks"', () => {
+    expect(screen.queryByText('Pending Tasks (0)')).toBeNull();
   });
 
   it('renders a tab titled "Completed tasks"', async () => {
 
-    expect(screen.getAllByText('Completed tasks')).toBeTruthy();
+    expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
+    console.log('tabs', tabs)
 
-    await tabs[1].click();
+    fireEvent.click(tabs[1]);
 
     await waitFor(() => {
       expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();

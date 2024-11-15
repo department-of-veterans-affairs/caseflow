@@ -4,31 +4,52 @@ on:
   # Every 6 hours, the password validity is 12 hours
   schedule:
     - cron:  '0 */6 * * *'
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   login:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        id: acquire-credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-gov-west-1
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          output-credentials: true
+
       - name: retrieve ecr password and store as secret
+        if: steps.acquire-credentials.outcome == 'success'
         run: |
-          pip3 install -r .github/workflows/requirements.txt
-          python3 .github/workflows/ecr_password_updater.py
+          sudo apt install python3-venv
+          python3 -m venv .venv
+          source .venv/bin/activate
+
+          pip install -r .github/workflows/requirements.txt
+
+          python .github/workflows/ecr_password_updater.py
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ steps.acquire-credentials.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.acquire-credentials.outputs.aws-secret-access-key }}
           AWS_DEFAULT_REGION: us-gov-west-1
           GH_API_ACCESS_TOKEN: ${{ secrets.GH_API_ACCESS_TOKEN }}
-  # This 'test' job is usefull for fast debugging
+
+  # This 'test' job is useful for fast debugging
   test:
     needs: login
     runs-on: ubuntu-latest
     timeout-minutes: 1
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
         # Here is the password retrieved as a secret that is set by the `login` job
-        password: ${{ secrets.ECR_PASSWORD }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
     steps:
       - run: echo "Inside a container pulled from ECR!!"

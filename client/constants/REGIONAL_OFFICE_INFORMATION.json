@@ -184,7 +184,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_320",
-    "alternate_locations": ["vc_0720V", "vc_0719V", "vha_626GF"]
+    "alternate_locations": ["vc_0719V"]
   },
   "RO21": {
     "label": "New Orleans regional office",
@@ -477,6 +477,7 @@
     "alternate_locations": [
       "vha_653",
       "vha_653BY",
+      "vha_653QA",
       "vba_347",
       "vha_653GB",
       "vha_648GA",
@@ -484,7 +485,8 @@
       "vha_687GC",
       "vha_653GA",
       "vba_346",
-      "vha_692"
+      "vha_692",
+      "vha_692GB"
     ]
   },
   "RO49": {
@@ -530,7 +532,7 @@
     "timezone": "America/Los_Angeles",
     "hold_hearings": true,
     "facility_locator_id": "vba_354",
-    "alternate_locations": ["vha_593", "vc_0505V"]
+    "alternate_locations": ["vha_593"]
   },
   "RO55": {
     "label": "San Juan regional office",
@@ -598,7 +600,7 @@
     "label": "Anchorage regional office",
     "city": "Anchorage",
     "state": "AK",
-    "timezone": "America/Anchorage",
+    "timezone": "America/Juneau",
     "hold_hearings": true,
     "facility_locator_id": "vba_463",
     "alternate_locations": null

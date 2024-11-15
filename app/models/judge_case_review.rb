@@ -30,7 +30,7 @@ class JudgeCaseReview < CaseflowRecord
   # As of Dec 2019, we want AMA and Legacy to use the same cap. The percentages may differ. The
   # goal is to get to the cap as steadily across the month as possible
   MONTHLY_LIMIT_OF_QUALITY_REVIEWS = 137
-  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
+  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.100
 
   def update_in_vacols!
     MetricsService.record("VACOLS: judge_case_review #{task_id}",

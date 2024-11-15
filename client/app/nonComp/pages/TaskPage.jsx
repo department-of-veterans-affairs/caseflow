@@ -39,7 +39,9 @@ class TaskPageUnconnected extends React.PureComponent {
     let errorAlert = null;
 
     if (decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.FAIL) {
-      errorAlert = <ErrorAlert errorCode="decisionIssueUpdateFailed" />;
+      const errorCode = decisionIssuesStatus.errorCode || 'decisionIssueUpdateFailed';
+
+      errorAlert = <ErrorAlert errorCode={errorCode} />;
     }
 
     let detailedTaskView = null;

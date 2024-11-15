@@ -21,6 +21,9 @@ FactoryBot.define do
 
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+
+      # There is a callback to create an AppealState record for appeal_docketed that will raise an error without this
+      RequestStore[:current_user] ||= User.system_user unless RequestStore[:current_user]
     end
 
     # Appeal's after_save interferes with explicit updated_at values
@@ -369,12 +372,18 @@ FactoryBot.define do
       end
     end
 
+    trait :with_distribution_task_and_schedule_hearing_child_task do
+      after(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distribution_task)
+      end
+    end
+
     trait :with_evidence_submission_window_task do
       after(:create) do |appeal, _evaluator|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        parent = root_task
+        parent = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         parent = appeal.tasks.open.find_by(type: "HearingTask") if appeal.docket_type == Constants.AMA_DOCKETS.hearing
-
         EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent)
       end
     end
@@ -443,10 +452,35 @@ FactoryBot.define do
     trait :ready_for_distribution do
       with_post_intake_tasks
       completed_distribution_task
+
+      after(:create) do |appeal, _evaluator|
+        appeal.reload
+      end
+    end
+
+    trait :ready_for_distribution_with_appeal_affinity do
+      ready_for_distribution
+      with_appeal_affinity
     end
 
     trait :cavc_ready_for_distribution do
       completed_distribution_task
+    end
+
+    trait :with_appeal_affinity do
+      transient do
+        affinity_start_date { Time.zone.now }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
+      end
+    end
+
+    trait :with_appeal_affinity_no_start_date do
+      after(:create) do |appeal, _evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: nil)
+      end
     end
 
     trait :completed_distribution_task do
@@ -473,6 +507,23 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
         timed_hold_task.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    # The appeal would be distributed already but have a hearing related mail task
+    trait :distributed_hearing_related_mail_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = DistributionTask.create!(appeal: appeal, parent: root_task)
+        sct_task = SpecialtyCaseTeamAssignTask.create!(appeal: appeal,
+                                                       parent: root_task,
+                                                       assigned_to: SpecialtyCaseTeam.singleton)
+        HearingRelatedMailTask.create!(appeal: appeal,
+                                       parent: root_task,
+                                       assigned_to: Bva.singleton)
+        distribution_task.update(status: "completed")
+        sct_task.update(status: "completed")
       end
     end
 
@@ -635,7 +686,7 @@ FactoryBot.define do
         create(:request_issue,
                benefit_type: "vha",
                nonrating_issue_category: "Caregiver | Other",
-               nonrating_issue_description: "VHA - Caregiver ",
+               nonrating_issue_description: "VHA - Caregiver",
                decision_review: appeal,
                decision_date: 1.month.ago)
         appeal.reload

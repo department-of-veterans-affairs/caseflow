@@ -66,7 +66,7 @@ RSpec.feature "User organization", :postgres do
     end
 
     context "when there are many users in the organization" do
-      let(:other_org_user) { create(:user) }
+      let(:other_org_user) { create(:user, full_name: "Inego Montoya") }
       before do
         organization.add_user(other_org_user)
       end
@@ -86,6 +86,27 @@ RSpec.feature "User organization", :postgres do
         click_on("Remove-admin-rights-#{other_org_user.id}")
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
         expect(organization.user_is_admin?(other_org_user)).to eq(false)
+      end
+
+      it "allows the admin to search for users in the organization by their names" do
+        visit(organization.user_admin_path)
+        fill_in("searchBar", with: other_org_user.full_name)
+        expect(page).to have_content(other_org_user.full_name)
+        expect(page).to_not have_content(user_with_role.full_name)
+      end
+
+      it "allows the admin to search for users in the organization by their css id" do
+        visit(organization.user_admin_path)
+        fill_in("searchBar", with: other_org_user.css_id)
+        expect(page).to have_content(other_org_user.css_id)
+        expect(page).to_not have_content(user_with_role.css_id)
+      end
+
+      it "displays a message if no users are found" do
+        visit(organization.user_admin_path)
+        fill_in("searchBar", with: "you killed my father, prepare to die")
+        expect(page).to have_content("No results found")
+        expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
       end
     end
 

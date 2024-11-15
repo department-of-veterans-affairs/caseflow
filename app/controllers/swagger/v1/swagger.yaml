@@ -1,0 +1,16 @@
+---
+openapi: 3.0.2
+info:
+  title: API V1
+  version: v1
+security:
+  bearerAuth: []
+servers:
+- url: "/api/v1"
+paths: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

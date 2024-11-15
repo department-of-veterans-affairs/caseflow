@@ -4,6 +4,10 @@
 
 module Seeds
   class MTV < Base
+    MOTION_DISPOSITIONS = %w[denied dismissed granted].freeze
+    NOT_GRANTED_MOTION_DISPOSITIONS = %w[denied dismissed].freeze
+    VACATE_TYPES = %w[straight_vacate vacate_and_de_novo vacate_and_readjudication].freeze
+
     def initialize
       file_number_initial_value
     end
@@ -117,71 +121,39 @@ module Seeds
     end
 
     def original_at_judge_to_address_motion(mtv_judge, drafting_attorney, lit_support_user)
-      # These are ready to be addressed by the Judge
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
-      end
-
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
-      end
-
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+      MOTION_DISPOSITIONS.each do |disposition|
+        # These are ready to be addressed by the Judge
+        3.times do
+          original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
+          mtv_task = create_motion_to_vacate_mail_task(original_stream)
+          mtv_task.update!(status: "on_hold")
+          send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, disposition)
+        end
       end
     end
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def vacate_at_attorney_review(mtv_judge, drafting_attorney, lit_support_user)
-      # These are ready to be reviewed by the decision drafting attorney on the vacate stream
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
-        judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
+      NOT_GRANTED_MOTION_DISPOSITIONS.each do |disposition|
+        # These are ready to be reviewed by the decision drafting attorney on the vacate stream
+        3.times do
+          original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
+          mtv_task = create_motion_to_vacate_mail_task(original_stream)
+          mtv_task.update!(status: "on_hold")
+          jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, disposition)
+          judge_addresses_mtv(jam_task, disposition, nil, lit_support_user)
+        end
       end
 
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
-        judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
-      end
-
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
-        judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
-      end
-
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
-        judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudication", drafting_attorney)
-      end
-
-      3.times do
-        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
-        mtv_task = create_motion_to_vacate_mail_task(original_stream)
-        mtv_task.update!(status: "on_hold")
-        jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
-        judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+      VACATE_TYPES.each do |vacate_type|
+        3.times do
+          original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
+          mtv_task = create_motion_to_vacate_mail_task(original_stream)
+          mtv_task.update!(status: "on_hold")
+          jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+          judge_addresses_mtv(jam_task, "granted", vacate_type, drafting_attorney)
+        end
       end
     end
     # rubocop:enable Metrics/MethodLength

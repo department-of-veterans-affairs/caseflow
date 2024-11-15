@@ -1,84 +1,120 @@
 import React from 'react';
+import { logRoles, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
-import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { mount } from 'enzyme';
-import moment from 'moment-timezone/moment-timezone';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import TIMEZONES from 'constants/TIMEZONES';
-import { shortZoneName } from 'app/hearings/utils';
 
 const [timezoneLabel] = Object.keys(TIMEZONES).filter((zone) => TIMEZONES[zone] === COMMON_TIMEZONES[3]);
+
+const hearingDayDate = '2025-01-01';
 
 describe('HearingTime', () => {
   // Ignore warnings about SearchableDropdown
   jest.spyOn(console, 'error').mockReturnValue();
 
   test('Matches snapshot with default props when passed in', () => {
-    const form = mount(<HearingTime />);
+    const {asFragment} = render(<HearingTime />);
 
-    expect(form).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
 
-    const checkedRadio = form.find('input').find({ checked: true });
+    const checkedRadio = screen.getByRole('radio', { name: 'Other'})
 
     // A single input is checked by default, and it's the "Other" radio
-    expect(checkedRadio.exists()).toBe(true);
-    expect(checkedRadio.exists({ value: 'other' })).toBe(true);
+    expect(checkedRadio).toBeInTheDocument();
+    expect(checkedRadio.value).toBe('Other');
+    expect(checkedRadio).toBeChecked();
 
-    const dropdown = form.find('Select');
+    const dropdown = screen.getByRole('combobox');
 
     // The select field is not disabled by default (meaning the "Other")
     // radio is checked
-    expect(dropdown.exists()).toBe(true);
-    expect(dropdown.exists({ disabled: false })).toBe(true);
+    expect(dropdown).toBeInTheDocument();
+    expect(dropdown).not.toBeDisabled();
 
     // Expect the naming of forms to match expected
-    expect(form.exists({ name: 'hearingTime0' })).toBe(true);
-    expect(form.exists({ name: 'optionalHearingTime0' })).toBe(true);
+    const radios = screen.getAllByRole('radio');
+    expect(radios).toHaveLength(3);
   });
 
-  test('Matches snapshot when enableZone is true', () => {
+  test('Matches snapshot when enableZone is true', async () => {
     // Run the test
-    const hearingTime = mount(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
+    const {asFragment} = render(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
 
     // Assertions
-    expect(hearingTime).toMatchSnapshot();
-    expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);
+    expect(asFragment()).toMatchSnapshot();
+
+    const textToMatch = timezoneLabel;
+    const regexPattern = textToMatch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(regexPattern, 'i');
+
+    await waitFor(() => {
+      const elements = screen.getAllByText(regex);
+      expect(elements.length).toBeGreaterThan(0); // Ensure we have found at least one element
+    });
+
+    const founcElements = screen.getAllByText(regex);
+    founcElements.forEach(element => {
+      expect(element).toBeInTheDocument();
+    });
   });
 
   test('Matches snapshot when other time is not selected', () => {
-    const form = mount(<HearingTime value="12:30" />);
+    const {asFragment} = render(
+    <HearingTime
+      enableZone
+      value="12:30 PM Eastern Time (US & Canada)"
+      hearingDayDate={hearingDayDate}
+    />);
 
-    expect(form).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
 
-    expect(form.exists('SearchableDropdown')).toBe(false);
-    expect(form.find('input').exists({ checked: true, value: '12:30' })).toBe(
-      true
-    );
+    const radios = screen.getAllByRole('radio');
+    const radioValues = radios.map(radio => radio.value);
+    expect(radios).toHaveLength(3);
+    expect(radioValues).toContain('12:30 PM Eastern Time (US & Canada)');
+    expect(radioValues).toContain('8:30 AM Eastern Time (US & Canada)');
+    expect(radioValues).toContain('Other');
+
+    const checkedRadio = screen.getByRole('radio', { name: '12:30 PM Eastern Time (US & Canada)'});
+    expect(checkedRadio).toBeChecked();
+
   });
 
-  test('Matches snapshot when other time is selected', () => {
-    const selectedTime = '13:45';
+  test('Matches snapshot when other time is selected', async () => {
+    const selectedTime = '1:45 PM Eastern Time (US & Canada)';
     const option = HEARING_TIME_OPTIONS.find(({ value }) => value === selectedTime);
 
-    const form = mount(<HearingTime value={selectedTime} />);
+    const {asFragment} = render(<HearingTime value={selectedTime} />);
 
-    expect(form).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
 
     // Expect "Other" radio to be checked
-    expect(form.find('input').exists({ checked: true, value: 'other' })).toBe(true);
+    const checkedRadio = screen.getByRole('radio', { name: 'Other'});
+    expect(checkedRadio).toBeChecked();
 
     // Expect dropdown to be populated with correct time
-    expect(form.exists('SearchableDropdown')).toBe(true);
-    expect(form.find('Select').exists({ value: option })).toBe(true);
+    const dropdown = screen.getByRole('combobox');
+    expect(dropdown).toBeInTheDocument();
+
+    userEvent.type(dropdown, ' ');
+
+    // Wait for the options to appear and get them
+    const listbox = await screen.findByRole('listbox');
+    const options = within(listbox).getAllByRole('option');
+    const isPresent = options.some(opt => opt.textContent === option.label);
+    expect(isPresent).toBe(true);
   });
 
   test('Matches snapshot when readonly prop is set', () => {
-    const form = mount(<HearingTime />);
+    const {asFragment} = render(<HearingTime readOnly={true}/>);
 
-    expect(form).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
 
-    expect(form.find('select').every({ disabled: true })).toBe(true);
+    // Check if all select elements are disabled
+    const select = screen.queryByRole('combobox');
+    expect(select).toBeNull();
   });
 });

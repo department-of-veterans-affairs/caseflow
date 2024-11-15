@@ -2,7 +2,7 @@
 
 class BgsPowerOfAttorney < CaseflowRecord
   include AssociatedBgsRecord
-  include BgsService
+  include BGSServiceConcern
 
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
   has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id
@@ -49,7 +49,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
-      poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
+      poa = default_scoped.find_or_create_by!(claimant_participant_id: claimant_participant_id)
       if FeatureToggle.enabled?(:poa_auto_refresh, user: RequestStore.store[:current_user])
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
@@ -156,7 +156,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def update_ihp_task
     related_appeals.each do |appeal|
-      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active?
+      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active? && !appeal.predocketed?
     end
   end
 

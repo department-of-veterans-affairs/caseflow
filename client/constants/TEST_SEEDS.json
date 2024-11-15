@@ -1,0 +1,10 @@
+{
+  "aod-seeds": "db:seed:demo_aod_hearing_case_lever_test_data",
+  "non-aod-hearing-seeds":"db:seed:demo_non_aod_hearing_case_lever_test_data",
+  "ama-aod-hearing-seeds": "db:seed:demo_ama_aod_hearing_data",
+  "ama-non-aod-hearing-seeds": "db:seed:demo_ama_non_aod_hearing_data",
+  "legacy-case-seeds": "db:seed:demo_legacy_cases_data",
+  "ama-direct-review-seeds": "db:seed:demo_direct_reviews_data",
+  "scenario-1-seeds": "db:seed:demo_aod_hearing_case_lever_test_data",
+  "scenario-2-seeds": "db:seed:demo_non_aod_hearing_case_lever_test_data"
+}

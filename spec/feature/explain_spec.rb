@@ -203,4 +203,49 @@ RSpec.feature "Explain JSON" do
       end
     end
   end
+
+  context "for appeals with affinity dates" do
+    let!(:legacy_appeal_with_affinity) do
+      vacols_case = create(:case_with_form_9, :with_appeal_affinity, :ready_for_distribution)
+      create(:legacy_appeal, vacols_case: vacols_case)
+      vacols_case
+    end
+    let!(:legacy_appeal_without_affinity) do
+      vacols_case = create(:case_with_form_9, :ready_for_distribution)
+      create(:legacy_appeal, vacols_case: vacols_case)
+      vacols_case
+    end
+    let!(:ama_appeal_with_affinity) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
+             tied_judge: create(:user, :judge, :with_vacols_judge_record))
+    end
+    let!(:ama_appeal_without_affinity) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+             tied_judge: create(:user, :judge, :with_vacols_judge_record))
+    end
+
+    it "legacy appeals show the date if one exists" do
+      visit "explain/appeals/#{legacy_appeal_with_affinity.bfkey}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .to have_text "Affinity Start Date: #{legacy_appeal_with_affinity.appeal_affinity.affinity_start_date}"
+
+      visit "explain/appeals/#{legacy_appeal_without_affinity.bfkey}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .not_to have_text "Affinity Start Date:"
+    end
+
+    it "AMA appeals show the date if one exists" do
+      visit "explain/appeals/#{ama_appeal_with_affinity.uuid}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.reload.appeal_affinity.affinity_start_date}"
+
+      visit "explain/appeals/#{ama_appeal_without_affinity.uuid}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .not_to have_text "Affinity Start Date:"
+    end
+  end
 end

@@ -12,8 +12,10 @@ module Seeds
 
     def seed!
       create_cda_admin_user
-      create_cavc_affinity_cases
-      create_hearing_affinity_cases
+      create_priority_affinity_cases
+      create_nonpriority_affinity_cases
+      create_set_of_affinity_cases
+      create_hearing_docket_cavc_cases
     end
 
     private
@@ -41,7 +43,8 @@ module Seeds
 
     def find_or_create_active_cda_admin_judge(css_id, full_name)
       User.find_by_css_id(css_id) ||
-        create(:user, :judge, :admin_intake_role, :cda_control_admin, :bva_intake_admin, :team_admin, css_id: css_id, full_name: full_name)
+        create(:user, :judge, :admin_intake_role, :cda_control_admin, :bva_intake_admin, :team_admin,
+               :with_vacols_judge_record, css_id: css_id, full_name: full_name)
     end
 
     def create_cda_admin_user
@@ -51,30 +54,73 @@ module Seeds
       judge_team.add_user(user)
     end
 
-    def create_cavc_affinity_cases
+    def create_priority_affinity_cases
       judges_with_attorneys.each do |judge|
-        3.times do
+        2.times do
           create_case_ready_for_less_than_cavc_affinty_days(judge)
+          create_case_ready_for_less_than_aod_hearing_affinity_days(judge)
           create_case_ready_for_more_than_cavc_affinty_days(judge)
+          create_case_ready_for_more_than_aod_hearing_affinity_days(judge)
         end
       end
     end
 
-    def create_hearing_affinity_cases
+    def create_nonpriority_affinity_cases
       judges_with_attorneys.each do |judge|
-        3.times do
+        2.times do
           create_case_ready_for_less_than_hearing_affinity_days(judge)
           create_case_ready_for_more_than_hearing_affinity_days(judge)
         end
       end
     end
 
+    def create_set_of_affinity_cases
+      judges_with_attorneys.each do |judge|
+        create_ama_affinity_cases_set(judge, (4.years + 1.week))
+        create_ama_affinity_cases_set(judge, 3.years)
+      end
+      2.times do
+        create_ama_affinity_cases_set(User.find_by_css_id("BVABDANIEL"), 1.year)
+      end
+    end
+
+    def create_hearing_docket_cavc_cases
+      judges_with_attorneys.each do |judge|
+        # Case in affinity window for both levers where new hearing and previous deciding judge are the same
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
+                                                     days_ago:CaseDistributionLever.cavc_affinity_days - 7)
+        # Case with affinity between the two levers where new hearing and previous deciding judge are the same
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
+                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days - 7)
+        # Case outside of affinity window for both levers where new hearing and previous deciding judge are the same
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
+                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days + 7)
+
+        # Case in affinity window for both levers where new hearing and previous deciding judge are different
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
+                                                     days_ago:CaseDistributionLever.cavc_affinity_days - 7)
+        # Case with affinity between the two levers where new hearing and previous deciding judge are different
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
+                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days - 7)
+        # Case outside of affinity window for both levers where new hearing and previous deciding judge are different\
+        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
+                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days + 7)
+      end
+    end
+
     def judges_with_attorneys
       # use judges with attorneys to minimize how many cases are distributed when testing because the
       # alternative_batch_size is higher than the batch_size for most judge teams
-      @judges_with_attorneys ||= JudgeTeam.all.reject { |jt| jt.attorneys.empty? }.map(&:judge).compact
+      @judges_with_attorneys ||=
+        JudgeTeam.all.reject { |jt| jt.attorneys.empty? }.map(&:judge).compact.filter(&:vacols_attorney_id)
     end
 
+    def hearing_judge
+      @hearing_judge ||= User.find_by_css_id("HRNG_JUDGE") ||
+        create(:user, :judge, :with_vacols_judge_record, css_id: "HRNG_JUDGE", full_name: "Judge HeldHearing")
+    end
+
+    # rubocop:disable Metrics/AbcSize
     def create_case_ready_for_less_than_cavc_affinty_days(judge)
       attorney = JudgeTeam.for_judge(judge).attorneys&.filter(&:attorney_in_vacols?)&.first ||
                  create(:user, :with_vacols_attorney_record)
@@ -106,6 +152,7 @@ module Seeds
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      create(:appeal_affinity, appeal: remand.remand_appeal)
 
       Timecop.return
     end
@@ -140,6 +187,7 @@ module Seeds
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      create(:appeal_affinity, appeal: remand.remand_appeal)
 
       Timecop.return
     end
@@ -163,6 +211,37 @@ module Seeds
       # set the distribution task to assigned, if it was not already
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
+    end
+
+    def create_case_ready_for_less_than_aod_hearing_affinity_days(judge)
+      # set system time and create the appeal
+      Timecop.travel(4.years.ago)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+
+      # travel to when the hearing was held, then create the held hearing and post-hearing tasks:
+      # add 91 days for the amount of time the post-hearing tasks are open and remove 7 to make the case ready
+      # for less than the hearing affinity days value
+      Timecop.return
+      Timecop.travel((91 + CaseDistributionLever.ama_hearing_case_aod_affinity_days - 7).days.ago)
+      create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
+
+      # travel to when the tasks will auto-complete and complete them
+      Timecop.travel(91.days.from_now)
+      appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+
+      # created granted AOD motion to make this priority
+      create(:advance_on_docket_motion, appeal: appeal, granted: true, person_id: appeal.claimant.person.id,
+                                        reason: Constants.AOD_REASONS.financial_distress, user: User.system_user)
+
+      # set the distribution task to assigned, if it was not already
+      dist_task = appeal.tasks.where(type: DistributionTask.name).first
+      dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
     end
 
     def create_case_ready_for_more_than_hearing_affinity_days(judge)
@@ -184,6 +263,154 @@ module Seeds
       # set the distribution task to assigned, if it was not already
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
     end
+
+    def create_case_ready_for_more_than_aod_hearing_affinity_days(judge)
+      # set system time and create the appeal
+      Timecop.travel(4.years.ago)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+
+      # travel to when the hearing was held, then create the held hearing and post-hearing tasks:
+      # add 91 days for the amount of time the post-hearing tasks are open and add 7 more to make the case ready
+      # for more than the hearing affinity days value
+      Timecop.return
+      Timecop.travel((91 + CaseDistributionLever.ama_hearing_case_aod_affinity_days + 7).days.ago)
+      create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
+
+      # travel to when the tasks will auto-complete and complete them
+      Timecop.travel(91.days.from_now)
+      appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+
+      # created granted AOD motion to make this priority
+      create(:advance_on_docket_motion, appeal: appeal, granted: true, person_id: appeal.claimant.person.id,
+                                        reason: Constants.AOD_REASONS.financial_distress, user: User.system_user)
+
+      # set the distribution task to assigned, if it was not already
+      dist_task = appeal.tasks.where(type: DistributionTask.name).first
+      dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
+    end
+
+    def create_ama_affinity_cases_set(judge, years_old)
+      attorney = JudgeTeam.for_judge(judge).attorneys&.filter(&:attorney_in_vacols?)&.first ||
+                 create(:user, :with_vacols_attorney_record)
+
+      Timecop.travel(years_old.ago)
+
+      direct_review_appeal = create(:appeal, :direct_review_docket, :ready_for_distribution, associated_judge: judge, veteran: create_veteran)
+      evidence_submission_appeal = create(:appeal, :evidence_submission_docket, :ready_for_distribution, associated_judge: judge, veteran: create_veteran)
+      hearing_appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+      hearing_aod_appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+
+      # travel to when the hearing was held, then create the held hearing and post-hearing tasks:
+      # add 91 days for the amount of time the post-hearing tasks are open and add 7 more to make the case ready
+      # for more than the hearing affinity days value
+      Timecop.return
+      Timecop.travel(92.days.ago)
+      create(:hearing, :held, appeal: hearing_appeal, judge: judge, adding_user: User.system_user)
+      create(:hearing, :held, appeal: hearing_aod_appeal, judge: judge, adding_user: User.system_user)
+
+      Timecop.travel(91.days.from_now)
+      hearing_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+      hearing_aod_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+
+      # created granted AOD motion to make this priority
+      create(:advance_on_docket_motion, appeal: hearing_aod_appeal, granted: true, person_id: hearing_aod_appeal.claimant.person.id,
+                                        reason: Constants.AOD_REASONS.financial_distress, user: User.system_user)
+
+      # set the distribution task to assigned, if it was not already
+      dist_task1 = hearing_appeal.tasks.where(type: DistributionTask.name).first
+      dist_task2 = hearing_aod_appeal.tasks.where(type: DistributionTask.name).first
+      dist_task1.assigned! unless dist_task1.assigned?
+      dist_task2.assigned! unless dist_task2.assigned?
+
+      Timecop.return
+      Timecop.travel(years_old.ago)
+
+      direct_review_cavc_appeal = create(
+        :appeal,
+        :dispatched,
+        :direct_review_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+      evidence_submission_cavc_appeal = create(
+        :appeal,
+        :dispatched,
+        :evidence_submission_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+
+      hearing_cavc_appeal = create(
+        :appeal,
+        :dispatched,
+        :hearing_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+
+      Timecop.travel(1.year.from_now)
+
+      # remand_appeal will have no tasks completed on it
+      direct_review_cavc_remand = create(:cavc_remand, source_appeal: direct_review_cavc_appeal)
+      evidence_submission_cavc_remand = create(:cavc_remand, source_appeal: evidence_submission_cavc_appeal)
+      hearing_cavc_remand = create(:cavc_remand, source_appeal: hearing_cavc_appeal)
+
+      # return system time back to now, then go to desired date where appeal will be ready for distribution
+      Timecop.return
+
+      # complete the CAVC task and make the appeal ready to distribute
+      direct_review_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      evidence_submission_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      hearing_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+    end
+
+    def create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge:, hearing_judge:, days_ago:)
+      # Go back to when we want the original appeal to have been decided
+      Timecop.travel(4.years.ago)
+
+      # Create a decided appeal. all tasks are marked complete at the same time which won't affect distribution
+      source = create(:appeal, :dispatched, :hearing_docket, associated_judge: affinity_judge)
+
+      Timecop.travel(1.year.from_now)
+      remand = create(:cavc_remand, source_appeal: source).remand_appeal
+      Timecop.return
+
+      # Travel to 9 mo. ago and then in smaller increments for a more "realistic" looking task tree
+      Timecop.travel(9.months.ago)
+      remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).map(&:completed!)
+      create(:appeal_affinity, appeal: remand)
+
+      Timecop.travel(1.month.from_now)
+      # Call the creator class which will handle the task manipulation normally done by a distribution
+      jat = JudgeAssignTaskCreator.new(appeal: remand, judge: affinity_judge, assigned_by_id: affinity_judge.id).call
+      # Create and complete a ScheduleHearingColocatedTask, which will create a new DistributionTask and
+      # HearingTask subtree to mimic how this would happen in a higher environment
+      create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: affinity_judge).completed!
+
+      Timecop.travel(1.month.from_now)
+      create(:hearing, :held, appeal: remand, judge: hearing_judge, adding_user: User.system_user)
+
+      Timecop.travel(3.months.from_now)
+      # Completes the remaining open HearingTask descendant tasks to make appeal ready to distribute
+      remand.tasks.where(type: AssignHearingDispositionTask.name).flat_map(&:children).map(&:completed!)
+      Timecop.return
+
+      # When a DistributionTask goes to assigned it clears the affinity start date, so restore that at the right date
+      Timecop.travel(days_ago.days.ago) { remand.appeal_affinity.update!(affinity_start_date: Time.zone.now) }
+
+      # Return the remand appeal to let us track which appeals were created when run from a rails console
+      remand
+    end
+    # rubocop:enable Metrics/AbcSize
   end
 end

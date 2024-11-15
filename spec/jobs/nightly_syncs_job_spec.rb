@@ -145,7 +145,7 @@ describe NightlySyncsJob, :all_dbs do
       end
     end
 
-    # our BgsService fake returns five records in the poas_list, this creates one of the records
+    # our BGSService fake returns five records in the poas_list, this creates one of the records
     # before the job and verifies that the job creates the remaining four records
     context "with BGS attorneys" do
       before { create(:bgs_attorney, participant_id: "12345678") }
@@ -155,6 +155,138 @@ describe NightlySyncsJob, :all_dbs do
 
         expect(BgsAttorney.count).to eq 5
       end
+    end
+
+    context "#sync_hearing_states" do
+      let(:pending_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing(nil)
+      end
+
+      let(:postponed_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("P")
+      end
+
+      let(:withdrawn_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("C")
+      end
+
+      let(:scheduled_in_error_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("E")
+      end
+
+      let(:held_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("H")
+      end
+
+      it "Job synchronizes hearing statuses" do
+        expect([pending_hearing_appeal_state,
+                postponed_hearing_appeal_state,
+                withdrawn_hearing_appeal_state,
+                scheduled_in_error_hearing_appeal_state,
+                held_hearing_appeal_state].all?(&:hearing_scheduled)).to eq true
+
+        subject
+
+        expect(pending_hearing_appeal_state.hearing_scheduled).to eq true
+
+        expect(postponed_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(postponed_hearing_appeal_state.hearing_postponed).to eq true
+
+        expect(withdrawn_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(withdrawn_hearing_appeal_state.hearing_withdrawn).to eq true
+
+        expect(scheduled_in_error_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(scheduled_in_error_hearing_appeal_state.scheduled_in_error).to eq true
+
+        expect(held_hearing_appeal_state.reload.hearing_scheduled).to eq false
+      end
+
+      it "catches standard errors" do
+        expect([pending_hearing_appeal_state,
+                postponed_hearing_appeal_state,
+                withdrawn_hearing_appeal_state,
+                scheduled_in_error_hearing_appeal_state,
+                held_hearing_appeal_state].all?(&:hearing_scheduled)).to eq true
+
+        allow(AppealState).to receive(:where).and_raise(StandardError)
+        slack_msg = ""
+        slack_msg_error_text = "Fatal error in sync_hearing_states"
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+        subject
+
+        expect(slack_msg.include?(slack_msg_error_text)).to be true
+      end
+
+      # Hearing scheduled will be set to true to simulate Caseflow missing a
+      # disposition update.
+      def create_appeal_state_with_case_record_and_hearing(desired_disposition)
+        case_hearing = create(:case_hearing, hearing_disp: desired_disposition)
+        vacols_case = create(:case, case_hearings: [case_hearing])
+        appeal = create(:legacy_appeal, vacols_case: vacols_case)
+
+        appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) }
+      end
+    end
+  end
+
+  context "#sync_decided_appeals" do
+    let(:decided_appeal_state) do
+      create_decided_appeal_state_with_case_record_and_hearing(true, true)
+    end
+
+    let(:undecided_appeal_state) do
+      create_decided_appeal_state_with_case_record_and_hearing(false, true)
+    end
+
+    let(:missing_vacols_case_appeal_state) do
+      create_decided_appeal_state_with_case_record_and_hearing(true, false)
+    end
+
+    it "Job syncs decided appeals decision_mailed status", bypass_cleaner: true do
+      expect([decided_appeal_state,
+              undecided_appeal_state,
+              missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
+
+      subject
+
+      expect(decided_appeal_state.reload.decision_mailed).to eq true
+      expect(undecided_appeal_state.reload.decision_mailed).to eq false
+      expect(missing_vacols_case_appeal_state.reload.decision_mailed).to eq false
+    end
+
+    it "catches standard errors", bypass_cleaner: true do
+      expect([decided_appeal_state,
+              undecided_appeal_state,
+              missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
+
+      allow(AppealState).to receive(:legacy).and_raise(StandardError)
+      slack_msg = ""
+      slack_msg_error_text = "Fatal error in sync_decided_appeals"
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      subject
+
+      expect(slack_msg.include?(slack_msg_error_text)).to be true
+    end
+
+    # Clean up parallel threads
+    after(:each) { clean_up_after_threads }
+
+    # VACOLS record's decision date will be set to simulate a decided appeal
+    # decision_mailed will be set to false for the AppealState to verify the method
+    # functionality
+    def create_decided_appeal_state_with_case_record_and_hearing(decided_appeal, create_case)
+      case_hearing = create(:case_hearing)
+      decision_date = decided_appeal ? Time.current : nil
+      vacols_case = create_case ? create(:case, case_hearings: [case_hearing], bfddec: decision_date) : nil
+      appeal = create(:legacy_appeal, vacols_case: vacols_case)
+
+      appeal.appeal_state.tap { _1.update!(decision_mailed: false) }
+    end
+
+    def clean_up_after_threads
+      DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events])
     end
   end
 

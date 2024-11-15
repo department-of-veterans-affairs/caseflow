@@ -1,0 +1,133 @@
+$seed-table-border-color: #d6d7d9;
+$seed-button-background-color: #0071bc;
+$seed-button-font-color: #fff;
+$seed-table-preview-bg-color: #f1f1f1;
+$case-movement-button-bg-color: #07648d;
+
+.test-seeds-num-field {
+  // width: auto;
+
+  .cf-form-int-input {
+    width: auto;
+    display: inline-block;
+    position: relative;
+
+    .input-container {
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    label {
+      position: absolute;
+      bottom: 6px;
+      left: 90px;
+    }
+  }
+}
+
+.test-seed-button-style {
+  width: auto;
+
+  button {
+    padding-top: 14px;
+    padding-bottom: 20px;
+    height: 45px;
+  }
+}
+
+.seed-col {
+  width: 15%;
+}
+
+.seed-table-style tr th {
+  background: transparent;
+}
+
+.seed-table-style tr td {
+  border: 0;
+  padding: 1rem 3rem;
+}
+
+.test-seeds-cssid-field {
+  input {
+    width: 110px;
+  }
+}
+
+.custom-seeds-preview {
+  border-bottom: 1px solid $seed-table-border-color;
+  width: 100%;
+  overflow: auto;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.preview-table-scroll {
+  max-height: 400px;
+  overflow: auto;
+  position: relative;
+  // min-width: 2000px; additional s
+}
+
+.preview-table {
+  margin: 0;
+
+  tr th {
+    background-color: $seed-table-preview-bg-color;
+    position: sticky;
+    top: 0;
+    z-index: 9;
+  }
+}
+
+.preview-table tr th,
+.preview-table tr td {
+  border: 1px solid $seed-table-border-color;
+  border-bottom: 0;
+  border-right: 0;
+  padding: 10px;
+}
+
+.preview-table tr th:last-child,
+.preview-table tr td:last-child {
+  border-right: 1px solid $seed-table-border-color;
+  text-align: center;
+}
+
+.preview-table tr:last-child th,
+.preview-table tr:last-child td {
+  border-bottom: 1px solid $seed-table-border-color;
+}
+
+.cf-section-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.upload-seed-csv-button {
+  margin-top: 18px;
+  margin-right: 10px;
+
+  a {
+    background: $seed-button-background-color;
+    padding: 12px;
+    color: $seed-button-font-color;
+    border-radius: 5px;
+  }
+}
+
+.custom-seed-button-section {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+
+.usa-button-case-movement {
+  background: $case-movement-button-bg-color;
+}
+
+.usa-button-case-movement:hover {
+  background: $case-movement-button-bg-color;
+}

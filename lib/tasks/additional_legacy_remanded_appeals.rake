@@ -34,16 +34,16 @@ namespace :additional_legacy_remand_reasons do
             end
 
             staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
-            Generators::Vacols::Case.create(
+            Generators::VACOLS::Case.create(
               decass_creation: decass_creation,
               corres_exists: true,
-              folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
+              folder_attrs: Generators::VACOLS::Folder.folder_attrs.merge(
                 custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
               ),
               case_issue_attrs: [
-                Generators::Vacols::CaseIssue.case_issue_attrs,
-                Generators::Vacols::CaseIssue.case_issue_attrs,
-                Generators::Vacols::CaseIssue.case_issue_attrs
+                Generators::VACOLS::CaseIssue.case_issue_attrs,
+                Generators::VACOLS::CaseIssue.case_issue_attrs,
+                Generators::VACOLS::CaseIssue.case_issue_attrs
               ],
               case_attrs: {
                 bfcorkey: vacols_veteran_record.stafkey,
@@ -149,7 +149,7 @@ namespace :additional_legacy_remand_reasons do
           end
         end
 
-        # Generators::Vacols::Case will create new correspondents, and I think it'll just be easier to
+        # Generators::VACOLS::Case will create new correspondents, and I think it'll just be easier to
         # update the cases created rather than mess with the generator's internals.
         def find_or_create_vacols_veteran(veteran)
           # Being naughty and calling a private method (it'd be cool to have this be public...)
@@ -157,8 +157,8 @@ namespace :additional_legacy_remand_reasons do
 
           return vacols_veteran_record if vacols_veteran_record
 
-          Generators::Vacols::Correspondent.create(
-            Generators::Vacols::Correspondent.correspondent_attrs.merge(
+          Generators::VACOLS::Correspondent.create(
+            Generators::VACOLS::Correspondent.correspondent_attrs.merge(
               ssalut: veteran.name_suffix,
               snamef: veteran.first_name,
               snamemi: veteran.middle_name,
@@ -228,7 +228,6 @@ namespace :additional_legacy_remand_reasons do
 
       else
         veterans_with_like_45_appeals = %w[011899917 011899918] # UAT option for veterans
-
       end
 
       # set task to ATTORNEYTASK

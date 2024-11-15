@@ -3,6 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import { formatIssues } from '../../intake/util/issues';
 import COPY from '../../../COPY';
 import { PAGE_PATHS } from '../../intake/constants';
+import { formatIssueModificationRequestSubmissionData } from '../../intake/util/issueModificationRequests';
 const analytics = true;
 
 const pathMap = {
@@ -17,7 +18,11 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
     meta: { analytics }
   });
 
-  const data = formatIssues(state);
+  const issueData = formatIssues(state);
+
+  const issueModificationData = { issue_modification_requests: formatIssueModificationRequestSubmissionData(state) };
+
+  const data = { ...issueData, ...issueModificationData };
 
   return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).
     then(
@@ -77,19 +82,20 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
         sessionStorage.setItem('veteranSearchPageAlert', JSON.stringify(alert));
         window.location.replace(`${PAGE_PATHS.SEARCH}?veteran_ids=${veteranId}`);
       }
-    }, 
+    },
     (error) => {
       const responseObject = error.response.body || {};
       const responseErrorCode = responseObject.error_code;
-      
-        dispatch({
-          type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
-          payload: {
-           errorCode: responseErrorCode
-          },
-          meta: { analytics }
-        });
-      }
 
-    ).catch((error) => error);
+      dispatch({
+        type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
+        payload: {
+          errorCode: responseErrorCode
+        },
+        meta: { analytics }
+      });
+    }
+
+  ).
+    catch((error) => error);
 };

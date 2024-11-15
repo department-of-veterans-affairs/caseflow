@@ -30,33 +30,55 @@ export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
  */
 export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
+  y: (y - pageBoundingBox.top) / scale,
+});
+
+export const pageCoordsOfRootCoordsPrototype = ({ x, y }, pageBoundingBox, scale) => ({
+  x: (x - pageBoundingBox.left) * scale,
+  y: (y - pageBoundingBox.top) * scale,
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
-  if (rotation === 0) {
-    return { x, y };
-  } else if (rotation === 90) {
-    return { x: y, y: container.width - x };
-  } else if (rotation === 180) {
-    return { x: container.width - x, y: container.height - y };
-  } else if (rotation === 270) {
-    return { x: container.height - y, y: x };
+  let rotatedCoords = null;
+
+  switch (rotation) {
+  case 90:
+    rotatedCoords = { x: y, y: container.width - x };
+    break;
+  case 180:
+    rotatedCoords = { x: container.width - x, y: container.height - y };
+    break;
+  case 270:
+    rotatedCoords = { x: container.height - y, y: x };
+    break;
+  default:
+    rotatedCoords = { x, y };
+    break;
   }
 
-  return {
-    x,
-    y
-  };
+  return rotatedCoords;
 };
 
 export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {
   const constrainedRootCoords = {
     x: clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
-    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
+    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH),
   };
 
   return rotateCoordinates(pageCoordsOfRootCoords(constrainedRootCoords, container, scale), container, rotation);
+};
+
+export const getPageCoordinatesOfMouseEventPrototype = (event, container, scale, rotation) => {
+  const constrainedRootCoords = {
+    x: clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
+    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH),
+  };
+
+  return rotateCoordinates(
+    pageCoordsOfRootCoordsPrototype(constrainedRootCoords, container, scale),
+    container,
+    rotation
+  );
 };
 
 /**
@@ -100,7 +122,7 @@ const immutabilityHelperSpecOfPath = (objPath, spec, specVal) => {
 export const moveModel = (state, srcPath, destPath, id) =>
   update(state, {
     ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),
-    ...immutabilityHelperSpecOfPath([...destPath, id], '$set', get(state, [...srcPath, id]))
+    ...immutabilityHelperSpecOfPath([...destPath, id], '$set', get(state, [...srcPath, id])),
   });
 
 export const isValidWholeNumber = (number) => {

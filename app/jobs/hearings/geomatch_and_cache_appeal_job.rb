@@ -5,7 +5,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
   application_attr :hearing_schedule
 
   # :nocov:
-  retry_on(StandardError, wait: 10.seconds, attempts: 10) do |job, exception|
+  retry_on(StandardError, wait: 10.seconds, attempts: 5) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     if job.executions == 10

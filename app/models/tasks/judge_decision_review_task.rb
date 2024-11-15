@@ -35,9 +35,9 @@ class JudgeDecisionReviewTask < JudgeTask
   private
 
   def ama_judge_actions
-    # bypass special issues page if mst/pact enabled
+    # bypass special issues page if mst issue tracking is enabled
     return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h if
-      FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
+      FeatureToggle.enabled?(:mst_identification)
 
     Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SPECIAL_ISSUES.to_h
   end

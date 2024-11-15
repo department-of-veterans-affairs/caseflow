@@ -4,10 +4,16 @@ FactoryBot.define do
   factory :hearing do
     transient do
       regional_office { nil }
-      adding_user { create(:user) }
+      adding_user do
+        User.find_by(css_id: "HR_FCT_USER") ||
+          create(:user, css_id: "HR_FCT_USER", full_name: "Hearing Factory AddingUser")
+      end
     end
     appeal { association(:appeal, :hearing_docket) }
-    judge { create(:user, roles: ["Hearing Prep"]) }
+    judge do
+      User.find_by(css_id: "HR_FCT_JUDGE") ||
+        create(:user, css_id: "HR_FCT_JUDGE", full_name: "Hearing Factory JudgeUser", roles: ["Hearing Prep"])
+    end
     uuid { SecureRandom.uuid }
     hearing_day do
       association(
@@ -30,6 +36,8 @@ FactoryBot.define do
     updated_by { adding_user }
     virtual_hearing { nil }
 
+    scheduled_in_timezone { nil }
+
     # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
     # be ready for distribution then the referring class must mark the transcription/evidence
     # tasks complete and set the distribution task to assigned
@@ -46,13 +54,14 @@ FactoryBot.define do
         appeal.tasks.each { |task| task.update!(created_at: appeal.created_at, assigned_at: appeal.created_at) }
         create(:hearing_task_association,
                hearing: hearing,
-               hearing_task: hearing_task)
-        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
+               hearing_task: hearing_task,
+               hearing_task_id: hearing_task.id)
+
         assign_hearing_disposition_task = create(:assign_hearing_disposition_task,
-                                                 :completed,
                                                  parent: hearing_task,
                                                  appeal: appeal)
-        appeal.tasks.find_by(type: :DistributionTask).update!(status: :on_hold)
+        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
+        appeal.tasks.open.where(type: :DistributionTask).last.update!(status: :on_hold)
         assign_hearing_disposition_task.hold!
       end
     end
@@ -119,6 +128,33 @@ FactoryBot.define do
                :completed,
                parent: hearing.hearing_task_association.hearing_task,
                appeal: hearing.appeal)
+      end
+    end
+
+    trait :with_transcription_files do
+      after(:create) do |hearing, _evaluator|
+        hearing.meeting_type.update(service_name: "webex")
+
+        2.times do |count|
+          %w[mp4 mp3 vtt rtf].each do |file_type|
+            TranscriptionFile.create!(
+              hearing_id: hearing.id,
+              hearing_type: "Hearing",
+              file_name: "#{hearing.docket_number}_#{hearing.id}_Hearing#{count == 1 ? '-2' : ''}.#{file_type}",
+              file_type: file_type,
+              docket_number: hearing.docket_number,
+              file_status: "Successful upload (AWS)",
+              date_upload_aws: Time.zone.today,
+              aws_link: "www.test.com"
+            )
+          end
+        end
+      end
+    end
+
+    trait :with_webex_non_virtual_conference_link do
+      after(:create) do |hearing, _evaluator|
+        create(:webex_conference_link, hearing_id: hearing.id, hearing_type: "Hearing")
       end
     end
   end

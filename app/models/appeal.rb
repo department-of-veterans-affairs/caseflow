@@ -10,7 +10,7 @@ require "securerandom"
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include BeaamAppealConcern
-  include BgsService
+  include BGSServiceConcern
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
@@ -26,6 +26,7 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :notifications, as: :notifiable
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -33,6 +34,8 @@ class Appeal < DecisionReview
   has_many :nod_date_updates
   has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
+
+  has_one :appeal_affinity, as: :case, primary_key: "uuid"
 
   # Each appeal has one appeal_state that is used for tracking quarterly notifications
   has_one :appeal_state, as: :appeal
@@ -248,11 +251,15 @@ class Appeal < DecisionReview
 
     category_substrings = %w[Contested Apportionment]
 
-    request_issues.active.any? do |request_issue|
-      category_substrings.any? do |substring|
-        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+    request_issues.each do |request_issue|
+      category_substrings.each do |substring|
+        if request_issue.active? && request_issue.nonrating_issue_category&.include?(substring)
+          return true
+        end
       end
     end
+
+    false
   end
 
   # :reek:RepeatedConditionals
@@ -263,9 +270,7 @@ class Appeal < DecisionReview
     return decision_issues.any?(&:mst_status) unless decision_issues.empty?
 
     request_issues.active.any?(&:mst_status) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
+      special_issue_list&.military_sexual_trauma
   end
 
   # :reek:RepeatedConditionals
@@ -508,7 +513,6 @@ class Appeal < DecisionReview
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
     # define hash to store parent/child relationship values
     task_parent_to_child_hash = {}
-
     while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
       # cycle each task in the parent
       parent_ordered_tasks.each do |task|
@@ -522,14 +526,12 @@ class Appeal < DecisionReview
 
           # otherwise reassign old parent task to new from hash
           cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
-
         else
           # else create the task that doesn't have a parent
           cloned_task_id = clone_task(task, user_css_id)
         end
         # add the parent/clone id to the hash set
         task_parent_to_child_hash[task.id] = cloned_task_id
-
         # break if the tree count is the same
         break if parent_appeal.tasks.count == tasks.count
       end
@@ -700,6 +702,10 @@ class Appeal < DecisionReview
   # matches Legacy behavior
   def cavc
     court_remand?
+  end
+
+  def predocketed?
+    tasks.select { |task| task.class.name == "PreDocketTask" && task.open? }
   end
 
   def vha_predocket_needed?
@@ -907,6 +913,10 @@ class Appeal < DecisionReview
     end
   end
 
+  def task_in_progress?
+    nil
+  end
+
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
@@ -955,6 +965,10 @@ class Appeal < DecisionReview
 
   def is_legacy?
     false
+  end
+
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
   end
 
   private

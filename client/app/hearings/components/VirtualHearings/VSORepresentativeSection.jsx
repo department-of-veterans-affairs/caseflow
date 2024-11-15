@@ -20,7 +20,8 @@ export const VSORepresentativeSection = ({
   formFieldsOnly,
   readOnly,
   update,
-  actionType
+  actionType,
+  hearingDayDate
 }) => {
   return (
     <VirtualHearingSection
@@ -87,6 +88,7 @@ export const VSORepresentativeSection = ({
             roTimezone={hearing.regionalOfficeTimezone}
             label="POA/Representative Timezone"
             name="representativeTz"
+            hearingDayDate={hearingDayDate}
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
@@ -115,5 +117,6 @@ VSORepresentativeSection.propTypes = {
   representativeTimezone: PropTypes.string,
   currentUserTimezone: PropTypes.string,
   update: PropTypes.func,
-  actionType: PropTypes.string
+  actionType: PropTypes.string,
+  hearingDayDate: PropTypes.string
 };

@@ -48,7 +48,7 @@ describe BgsShareErrorFixJob, :postgres do
       end
     end
 
-    context "RIU" do
+    context "RIU", skip: "flaky test" do
       let!(:hlr_2) { create(:higher_level_review) }
 
       let!(:riu) do

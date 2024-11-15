@@ -1,0 +1,1232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render Case Distribution Application matches snapshot 1`] = `
+<div>
+  <div>
+    <div>
+      <div>
+        <h1>
+          Administration
+        </h1>
+        <div>
+           
+          <h2>
+            Case Distribution Algorithm Values
+          </h2>
+          <p
+            class="cf-lead-paragraph"
+          >
+            The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is "Docket Date."
+          </p>
+          <div
+            class="active-data-content"
+            id="active-data-elements"
+          >
+              
+            <h2
+              data-css-3rhuy2=""
+            >
+              <span
+                data-css-5cst2t=""
+                id="our-elemnt"
+              >
+                Active Data Elements
+              </span>
+            </h2>
+            <div
+              data-css-4wtju6=""
+            >
+              <p
+                class="cf-lead-paragraph"
+              >
+                You may make changes to the Case Distribution algorithm values based on the data elements below.  Changes will be applied to the next case distribution event unless subsequent confirmed changes are made to the same variable.
+              </p>
+              <div
+                class="cf-help-divider"
+              />
+              <h2>
+                Excluding Appeals by Docket Type and Priority from Automatic Case Distribution
+              </h2>
+              <p
+                class="cf-lead-paragraph"
+              >
+                For both Non-priority and Priority cases, you may use the sliders to turn on or off all options for each row.  When you turn off a slider, all items in that row will be automatically deselected and visa versa. ​Additionally, If you wish to select only some options in a row or column, the slider will automatically turn off.  You can make individual selections for that row or column at any point.
+              </p>
+              <p
+                class="cf-lead-paragraph"
+              >
+                Selected docket type/priority combination options will be excluded from automatic case distribution beginning with the next distribution.
+              </p>
+              <div>
+                <div
+                  class="exclusion-table-container-styling"
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <div
+                          aria-hidden="true"
+                          class="table-header-styling"
+                          scope="column"
+                        />
+                        <th
+                          class="table-header-styling"
+                          scope="column"
+                        >
+                          Legacy Appeals
+                        </th>
+                        <th
+                          class="table-header-styling"
+                          scope="column"
+                        >
+                          AMA Hearings Appeals
+                        </th>
+                        <th
+                          class="table-header-styling"
+                          scope="column"
+                        >
+                          AMA Direct Review Appeals
+                        </th>
+                        <th
+                          class="table-header-styling"
+                          scope="column"
+                        >
+                          AMA Evidence Submission Appeals
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td
+                          aria-label="All Non-priority"
+                          class="exclusion-table-styling lever-disabled exclusion-first-col-styling"
+                        >
+                          <span>
+                            <h4
+                              class="exclusion-table-header-styling"
+                            >
+                              All Non-priority
+                            </h4>
+                            <button
+                              class="toggleButton"
+                              id="All Non-priority"
+                            >
+                              <span
+                                class="toggleButtonSpace"
+                              />
+                              <h5
+                                class="toggleButtonText switchOn"
+                              >
+                                On
+                              </h5>
+                            </button>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          aria-label="All Priority"
+                          class="exclusion-table-styling lever-disabled exclusion-first-col-styling"
+                        >
+                          <span>
+                            <h4
+                              class="exclusion-table-header-styling"
+                            >
+                              All Priority
+                            </h4>
+                            <button
+                              class="toggleButton"
+                              id="All Priority"
+                            >
+                              <span
+                                class="toggleButtonSpace"
+                              />
+                              <h5
+                                class="toggleButtonText switchOn"
+                              >
+                                On
+                              </h5>
+                            </button>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div
+                  class="lever-content"
+                >
+                  <div
+                    class="lever-head"
+                  >
+                    <h2>
+                      Batch Size
+                    </h2>
+                    <div
+                      class="lever-left"
+                    >
+                      <strong>
+                        Data Elements
+                      </strong>
+                    </div>
+                    <div
+                      class="lever-right"
+                    >
+                      <strong>
+                        Value
+                      </strong>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever"
+                  >
+                    <div
+                      class="lever-left"
+                    >
+                      <strong
+                        class="lever-active"
+                      >
+                        Test Title Lever*
+                        *
+                      </strong>
+                      <p
+                        class="lever-active"
+                      >
+                        Test Description for Lever data outOfBoundsBatchLever.
+                      </p>
+                    </div>
+                    <div
+                      aria-label="Test Title Lever* Test Description for Lever data outOfBoundsBatchLever."
+                      class="lever-right batch-lever-num-sec"
+                      id="test-lever"
+                    >
+                      <div
+                        class="cf-form-int-input"
+                      >
+                        <div
+                          class="cf-form-textinput   "
+                        >
+                          <label
+                            for="test-lever-field"
+                          >
+                            <span>
+                              cases
+                            </span>
+                          </label>
+                          <div
+                            class="input-container"
+                          >
+                            <input
+                              aria-label="Test Title Lever*"
+                              aria-readonly="false"
+                              class="cf-form-textinput"
+                              id="test-lever-field"
+                              name="test-lever-field"
+                              type="text"
+                              value="5"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever"
+                  >
+                    <div
+                      class="lever-left"
+                    >
+                      <strong
+                        class="lever-disabled"
+                      >
+                        Test Title Lever2*
+                        *
+                      </strong>
+                      <p
+                        class="lever-disabled"
+                      >
+                        Test Description for Lever data disabled-in-ui.
+                      </p>
+                    </div>
+                    <div
+                      aria-label="Test Title Lever2* Test Description for Lever data disabled-in-ui."
+                      class="lever-right batch-lever-num-sec"
+                      id="test-lever-disabled"
+                    >
+                      <div
+                        class="cf-form-int-input"
+                      >
+                        <div
+                          class="cf-form-textinput   "
+                        >
+                          <label
+                            for="test-lever-disabled-field"
+                          >
+                            <span>
+                              cases
+                            </span>
+                          </label>
+                          <div
+                            class="input-container"
+                          >
+                            <input
+                              aria-readonly="true"
+                              class="cf-form-textinput"
+                              disabled=""
+                              id="test-lever-disabled-field"
+                              name="test-lever-disabled-field"
+                              readonly=""
+                              type="text"
+                              value="5"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever"
+                  >
+                    <div
+                      class="lever-left"
+                    >
+                      <strong
+                        class="lever-disabled"
+                      >
+                        Test Text Title Lever3
+                        *
+                      </strong>
+                      <p
+                        class="lever-disabled"
+                      >
+                        Test Description for Lever data type text
+                      </p>
+                    </div>
+                    <div
+                      aria-label="Test Text Title Lever3 Test Description for Lever data type text"
+                      class="lever-right batch-lever-num-sec"
+                      id="test-lever-text-type"
+                    >
+                      <div
+                        class="cf-form-int-input"
+                      >
+                        <div
+                          class="cf-form-textinput   "
+                        >
+                          <label
+                            for="test-lever-text-type-field"
+                          >
+                            <span>
+                              cases
+                            </span>
+                          </label>
+                          <div
+                            class="input-container"
+                          >
+                            <input
+                              aria-readonly="true"
+                              class="cf-form-textinput"
+                              disabled=""
+                              id="test-lever-text-type-field"
+                              name="test-lever-text-type-field"
+                              readonly=""
+                              type="text"
+                              value="10"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4
+                    class="footer-styling"
+                  >
+                    * Denotes a variable that is also relevant to the currently inactive distribution algorithm
+                  </h4>
+                  <div
+                    class="cf-help-divider"
+                  />
+                </div>
+                <div
+                  class="lever-content"
+                >
+                  <div
+                    class="lever-head"
+                  >
+                    <h2>
+                      Affinity Days
+                    </h2>
+                    <div
+                      class="lever-left"
+                    >
+                      <strong>
+                        Data Elements
+                      </strong>
+                    </div>
+                    <div
+                      class="lever-right"
+                    >
+                      <strong>
+                        Value
+                      </strong>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever lever-disabled"
+                    id="lever-wrapper-ama_hearing_case_affinity_days"
+                  >
+                    <div
+                      class="lever-left"
+                    >
+                      <strong>
+                        AMA Hearing Case Affinity Days
+                      </strong>
+                      <p
+                        class="affinity-lever-text"
+                      >
+                        For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.
+                      </p>
+                    </div>
+                    <div
+                      class="lever-right affinity-lever-num-sec"
+                      id="ama_hearing_case_affinity_days"
+                    >
+                      <div>
+                        <div>
+                          <input
+                            checked=""
+                            disabled=""
+                            id="ama_hearing_case_affinity_days-value"
+                            name="ama_hearing_case_affinity_days"
+                            type="radio"
+                            value="value"
+                          />
+                          <label
+                            for="ama_hearing_case_affinity_days-value"
+                          >
+                            Attempt distribution to current judge for max of:
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            aria-label="days"
+                            class="combined-radio-input"
+                          >
+                            <div
+                              class="cf-form-int-input"
+                            >
+                              <div
+                                class="cf-form-textinput   "
+                              >
+                                <label
+                                  for="value"
+                                >
+                                  <span>
+                                    days
+                                  </span>
+                                </label>
+                                <div
+                                  class="input-container"
+                                >
+                                  <input
+                                    aria-readonly="true"
+                                    class="cf-form-textinput"
+                                    disabled=""
+                                    id="ama_hearing_case_affinity_days-0-input"
+                                    name="value"
+                                    readonly=""
+                                    title="Attempt distribution to current judge for max of:"
+                                    type="text"
+                                    value="0"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <input
+                            disabled=""
+                            id="ama_hearing_case_affinity_days-infinite"
+                            name="ama_hearing_case_affinity_days"
+                            type="radio"
+                            value="infinite"
+                          />
+                          <label
+                            for="ama_hearing_case_affinity_days-infinite"
+                          >
+                            Always distribute to current judge
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            class="combined-radio-input outline-radio-input"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <input
+                            disabled=""
+                            id="ama_hearing_case_affinity_days-omit"
+                            name="ama_hearing_case_affinity_days"
+                            type="radio"
+                            value="omit"
+                          />
+                          <label
+                            for="ama_hearing_case_affinity_days-omit"
+                          >
+                            Omit variable from distribution rules
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            class="combined-radio-input outline-radio-input"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever lever-disabled"
+                    id="lever-wrapper-ama_hearing_case_aod_affinity_days"
+                  >
+                    <div
+                      class="lever-left"
+                    >
+                      <strong>
+                        AMA Hearing Case AOD Affinity Days
+                      </strong>
+                      <p
+                        class="affinity-lever-text"
+                      >
+                        Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.
+                      </p>
+                    </div>
+                    <div
+                      class="lever-right affinity-lever-num-sec"
+                      id="ama_hearing_case_aod_affinity_days"
+                    >
+                      <div>
+                        <div>
+                          <input
+                            disabled=""
+                            id="ama_hearing_case_aod_affinity_days-value"
+                            name="ama_hearing_case_aod_affinity_days"
+                            type="radio"
+                            value="value"
+                          />
+                          <label
+                            for="ama_hearing_case_aod_affinity_days-value"
+                          >
+                            Attempt distribution to current judge for max of:
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            aria-label="days"
+                            class="combined-radio-input outline-radio-input"
+                          >
+                            <div
+                              class="cf-form-textinput   "
+                            >
+                              <div
+                                class="input-container"
+                              >
+                                <input
+                                  aria-readonly="true"
+                                  class="cf-form-textinput"
+                                  disabled=""
+                                  id="ama_hearing_case_aod_affinity_days-test-input"
+                                  name="value"
+                                  readonly=""
+                                  title="Attempt distribution to current judge for max of:"
+                                  type="text"
+                                  value="test"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <input
+                            checked=""
+                            disabled=""
+                            id="ama_hearing_case_aod_affinity_days-infinite"
+                            name="ama_hearing_case_aod_affinity_days"
+                            type="radio"
+                            value="infinite"
+                          />
+                          <label
+                            for="ama_hearing_case_aod_affinity_days-infinite"
+                          >
+                            Always distribute to current judge
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            aria-label=""
+                            class="combined-radio-input"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <input
+                            disabled=""
+                            id="ama_hearing_case_aod_affinity_days-omit"
+                            name="ama_hearing_case_aod_affinity_days"
+                            type="radio"
+                            value="omit"
+                          />
+                          <label
+                            for="ama_hearing_case_aod_affinity_days-omit"
+                          >
+                            Omit variable from distribution rules
+                          </label>
+                        </div>
+                        <div>
+                          <div
+                            aria-label=""
+                            class="combined-radio-input outline-radio-input"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4
+                    class="footer-styling"
+                  >
+                    * Denotes a variable that is also relevant to the currently inactive distribution algorithm
+                  </h4>
+                  <div
+                    class="cf-help-divider"
+                  />
+                </div>
+                <div
+                  class="lever-content"
+                >
+                  <div
+                    class="lever-head"
+                  >
+                    <h2>
+                      AMA Non-priority Distribution Goals by Docket
+                    </h2>
+                    <p
+                      class="cf-lead-paragraph"
+                    >
+                      <strong
+                        class="cf-lead-paragraph"
+                      >
+                        Docket Time Goal
+                      </strong>
+                       set the completion target for AMA non-priority appeals by docket type. It represents the number of calendar days that are added to the receipt date of the appeal to establish the decision target date.
+                    </p>
+                    <p
+                      class="cf-lead-paragraph"
+                    >
+                      <strong
+                        class="cf-lead-paragraph"
+                      >
+                        Start Distribution Prior to Docket Time Goal
+                      </strong>
+                       days sets the number of calendar days prior to the Docket Time Goal for that docket type when appeals become eligible for distribution.
+                    </p>
+                    <p
+                      class="cf-lead-paragraph"
+                    >
+                      Please note, if turned on, non-priority appeals of that docket type will not be distributed until eligible, which may disrupt strict docket-date-order distribution across dockets.
+                    </p>
+                    <div
+                      class="docker-lever-table"
+                    >
+                      <div
+                        class="lever-left docket-lever-left"
+                      >
+                        <strong />
+                      </div>
+                      <div
+                        class="lever-middle"
+                      >
+                        <strong>
+                          Docket Time Goal
+                        </strong>
+                      </div>
+                      <div
+                        class="lever-right"
+                      >
+                        <strong>
+                          Start Distribution Prior to Docket Time Goal
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever"
+                    id="ama_hearing_docket_time_goals-lever"
+                  >
+                    <div
+                      class="lever-left docket-lever-left"
+                    >
+                      <strong
+                        class="lever-disabled"
+                      >
+                        AMA Hearings
+                      </strong>
+                    </div>
+                    <div
+                      class="lever-middle docket-time-lever-num-sec
+            lever-disabled}"
+                    >
+                      <div
+                        class="cf-form-int-input"
+                      >
+                        <div
+                          class="cf-form-textinput   "
+                        >
+                          <label
+                            for="ama_hearing_docket_time_goals"
+                          >
+                            <span>
+                              days
+                            </span>
+                          </label>
+                          <div
+                            class="input-container"
+                          >
+                            <input
+                              aria-readonly="true"
+                              class="cf-form-textinput"
+                              disabled=""
+                              id="ama_hearing_docket_time_goals"
+                              name="ama_hearing_docket_time_goals"
+                              readonly=""
+                              type="text"
+                              value="365"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="AMA Hearings Docket Time Goals"
+                      class="lever-right docket-lever-right docket-time-lever-num-sec"
+                      id="ama_hearing_docket_time_goals-lever-middle"
+                    >
+                      <button
+                        class="toggleButton toggleSwitchDisabled"
+                        disabled=""
+                        id="toggle-switch-ama_hearing_start_distribution_prior_to_goals"
+                      >
+                        <span
+                          class="toggleButtonSpace"
+                        />
+                        <h5
+                          class="toggleButtonText switchDisabled switchOff"
+                        >
+                          Off
+                        </h5>
+                      </button>
+                      <div
+                        class="toggle-input-hide"
+                      >
+                        <div
+                          class="cf-form-int-input"
+                        >
+                          <div
+                            class="cf-form-textinput   "
+                          >
+                            <label
+                              for="toggle-ama_hearing_start_distribution_prior_to_goals"
+                            >
+                              <span>
+                                days
+                              </span>
+                            </label>
+                            <div
+                              class="input-container"
+                            >
+                              <input
+                                aria-readonly="true"
+                                class="cf-form-textinput"
+                                disabled=""
+                                id="toggle-ama_hearing_start_distribution_prior_to_goals"
+                                name="toggle-ama_hearing_start_distribution_prior_to_goals"
+                                readonly=""
+                                type="text"
+                                value="40"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="active-lever"
+                    id="ama_direct_review_docket_time_goals-lever"
+                  >
+                    <div
+                      class="lever-left docket-lever-left"
+                    >
+                      <strong
+                        class="lever-disabled"
+                      >
+                        AMA Direct Review
+                      </strong>
+                    </div>
+                    <div
+                      class="lever-middle docket-time-lever-num-sec
+            lever-disabled}"
+                    >
+                      <div
+                        class="cf-form-int-input"
+                      >
+                        <div
+                          class="cf-form-textinput   "
+                        >
+                          <label
+                            for="ama_direct_review_docket_time_goals"
+                          >
+                            <span>
+                              days
+                            </span>
+                          </label>
+                          <div
+                            class="input-container"
+                          >
+                            <input
+                              aria-readonly="true"
+                              class="cf-form-textinput"
+                              disabled=""
+                              id="ama_direct_review_docket_time_goals"
+                              name="ama_direct_review_docket_time_goals"
+                              readonly=""
+                              type="text"
+                              value="365"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="AMA Direct Review Docket Time Goals"
+                      class="lever-right docket-lever-right docket-time-lever-num-sec"
+                      id="ama_direct_review_docket_time_goals-lever-middle"
+                    >
+                      <button
+                        class="toggleButton toggleSwitchDisabled"
+                        disabled=""
+                        id="toggle-switch-ama_direct_review_start_distribution_prior_to_goals"
+                      >
+                        <span
+                          class="toggleButtonSpace"
+                        />
+                        <h5
+                          class="toggleButtonText switchDisabled switchOff"
+                        >
+                          Off
+                        </h5>
+                      </button>
+                      <div
+                        class="toggle-input-hide"
+                      >
+                        <div
+                          class="cf-form-int-input"
+                        >
+                          <div
+                            class="cf-form-textinput   "
+                          >
+                            <label
+                              for="toggle-ama_direct_review_start_distribution_prior_to_goals"
+                            >
+                              <span>
+                                days
+                              </span>
+                            </label>
+                            <div
+                              class="input-container"
+                            >
+                              <input
+                                aria-readonly="true"
+                                class="cf-form-textinput"
+                                disabled=""
+                                id="toggle-ama_direct_review_start_distribution_prior_to_goals"
+                                name="toggle-ama_direct_review_start_distribution_prior_to_goals"
+                                readonly=""
+                                type="text"
+                                value="770"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="button-wrapper-styling"
+                >
+                  <div
+                    class="cancel-button-styling"
+                  >
+                    <span>
+                      <button
+                        class="cf-btn-link usa-button"
+                        id="CancelLeversButton"
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </span>
+                  </div>
+                  <div
+                    class="save-button-styling"
+                  >
+                    <span>
+                      <button
+                        class="cf-submit usa-button"
+                        id="LeversSaveButton"
+                        type="button"
+                      >
+                        Save
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="inactive-data-content"
+            id="inactive-data-elements"
+          >
+              
+            <h2
+              data-css-3rhuy2=""
+            >
+              <span
+                data-css-5cst2t=""
+                id="our-elemnt"
+              >
+                Inactive Data Elements
+              </span>
+            </h2>
+            <div
+              data-css-4wtju6=""
+            >
+              <p
+                class="cf-lead-paragraph"
+              >
+                The below values do not effect the current active Case Distribution algorithm.
+              </p>
+              <table
+                class="table-styling"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="table-header-styling-left"
+                    >
+                      Data Elements
+                    </th>
+                    <th
+                      class="table-header-styling-right"
+                    >
+                      Values
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="title-styling"
+                    >
+                      Maximum Direct Review Proportion
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="cf-lead-paragraph description-styling"
+                      id="maximum_direct_review_proportion-description"
+                    >
+                      Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.
+                    </td>
+                    <td
+                      class="cf-lead-paragraph value-styling"
+                      id="maximum_direct_review_proportion-product"
+                    >
+                      <span
+                        class="value-right-styling"
+                        id="maximum_direct_review_proportion-value"
+                      >
+                        80
+                        <span
+                          id="maximum_direct_review_proportion-unit"
+                        >
+                          %
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td
+                      class="title-styling"
+                    >
+                      Minimum Legacy Proportion
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="cf-lead-paragraph description-styling"
+                      id="minimum_legacy_proportion-description"
+                    >
+                      Sets the minimum proportion of legacy appeals that will be distributed.
+                    </td>
+                    <td
+                      class="cf-lead-paragraph value-styling"
+                      id="minimum_legacy_proportion-product"
+                    >
+                      <span
+                        class="value-right-styling"
+                        id="minimum_legacy_proportion-value"
+                      >
+                        20
+                        <span
+                          id="minimum_legacy_proportion-unit"
+                        >
+                          %
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td
+                      class="title-styling"
+                    >
+                      NOD Adjustment
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="cf-lead-paragraph description-styling"
+                      id="nod_adjustment-description"
+                    >
+                      Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.
+                    </td>
+                    <td
+                      class="cf-lead-paragraph value-styling"
+                      id="nod_adjustment-product"
+                    >
+                      <span
+                        class="value-right-styling"
+                        id="nod_adjustment-value"
+                      >
+                        90
+                        <span
+                          id="nod_adjustment-unit"
+                        >
+                          %
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td
+                      class="title-styling"
+                    >
+                      Priority Bust Backlog
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="cf-lead-paragraph description-styling"
+                      id="bust_backlog-description"
+                    >
+                      Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.
+                    </td>
+                    <td
+                      class="cf-lead-paragraph value-styling"
+                      id="bust_backlog-product"
+                    >
+                      <span
+                        class="value-right-styling"
+                        id="bust_backlog-value"
+                      >
+                        True
+                        <span
+                          class="unit-with-separator"
+                          id="bust_backlog-unit"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div
+            class="case-distribution-history-content"
+            id="case-distribution-history"
+          >
+            <h2
+              data-css-3rhuy2=""
+            >
+              <span
+                data-css-5cst2t=""
+                id="our-elemnt"
+              >
+                Case Distribution Algorithm Change History
+              </span>
+            </h2>
+            <div
+              data-css-4wtju6=""
+            >
+              <p
+                class="cf-lead-paragraph"
+              >
+                Change history for Case Distribution Admin shows changes made in the last 365 days.
+              </p>
+              <div
+                class="lever-history-styling"
+              >
+                <table
+                  id="lever-history-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th
+                        class="lever-history-table-header-styling"
+                        scope="column"
+                      >
+                        Date of Last Change
+                      </th>
+                      <th
+                        class="lever-history-table-header-styling"
+                        scope="column"
+                      >
+                        User ID
+                      </th>
+                      <th
+                        class="lever-history-table-header-styling"
+                        scope="column"
+                      >
+                        Data Element Changed
+                      </th>
+                      <th
+                        class="lever-history-table-header-styling"
+                        scope="column"
+                      >
+                        Previous Value
+                      </th>
+                      <th
+                        class="lever-history-table-header-styling"
+                        scope="column"
+                      >
+                        Updated Value
+                      </th>
+                    </tr>
+                  </tbody>
+                  <tbody>
+                    <tr
+                      id="lever-history-table-row-0"
+                    >
+                      <td
+                        class="history-table-styling entry-created-at"
+                      >
+                        Sat, Jul 1, 2023 12:10:01
+                      </td>
+                      <td
+                        class="history-table-styling entry-user-id"
+                      />
+                      <td
+                        class="history-table-styling entry-titles"
+                      >
+                        <ol>
+                          <li />
+                        </ol>
+                      </td>
+                      <td
+                        class="history-table-styling entry-previous-values"
+                      >
+                        <ol>
+                          <li>
+                            undefined 
+                          </li>
+                        </ol>
+                      </td>
+                      <td
+                        class="history-table-styling entry-updated-values"
+                      >
+                        <ol>
+                          <li>
+                            undefined 
+                          </li>
+                        </ol>
+                      </td>
+                    </tr>
+                    <tr
+                      id="lever-history-table-row-1"
+                    >
+                      <td
+                        class="history-table-styling entry-created-at"
+                      >
+                        Sat, Jul 1, 2023 10:10:01
+                      </td>
+                      <td
+                        class="history-table-styling entry-user-id"
+                      />
+                      <td
+                        class="history-table-styling entry-titles"
+                      >
+                        <ol>
+                          <li />
+                          <li />
+                        </ol>
+                      </td>
+                      <td
+                        class="history-table-styling entry-previous-values"
+                      >
+                        <ol>
+                          <li>
+                            undefined 
+                          </li>
+                          <li>
+                            undefined 
+                          </li>
+                        </ol>
+                      </td>
+                      <td
+                        class="history-table-styling entry-updated-values"
+                      >
+                        <ol>
+                          <li>
+                            undefined 
+                          </li>
+                          <li>
+                            undefined 
+                          </li>
+                        </ol>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

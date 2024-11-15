@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
-import { issueCountSelector } from '../../intake/selectors';
+import { getOpenPendingIssueModificationRequests, issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
@@ -161,7 +161,11 @@ class SaveButtonUnconnected extends React.Component {
       processedInCaseflow,
       withdrawalDate,
       receiptDate,
-      benefitType
+      benefitType,
+      pendingIssueModificationRequests,
+      originalPendingIssueModificationRequests,
+      isRemand,
+      openIssueModificationRequests
     } = this.props;
 
     const invalidVeteran = !veteranValid && (_.some(
@@ -176,20 +180,25 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => !issue.withdrawalPending
     ) || validateWithdrawDateError;
 
-    const saveDisabled = _.isEqual(
-      addedIssues, originalIssues
-    ) || invalidVeteran || !withdrawDateValid;
-
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
+
+    const hasPendingAdditionRequests = openIssueModificationRequests.some((issueModificationRequest) => {
+      return issueModificationRequest.requestType === 'addition';
+    }) && (_.isEmpty(addedIssues) || withdrawReview);
+
+    const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
+       _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
+      invalidVeteran ||
+      !withdrawDateValid || hasPendingAdditionRequests || isRemand;
 
     let saveButtonText;
 
     if (benefitType === 'vha' && _.every(addedIssues, (issue) => (
       issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-    )) {
-      saveButtonText = COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
+    ) && _.isEmpty(openIssueModificationRequests)) {
+      saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
     } else {
       saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
     }
@@ -200,7 +209,6 @@ class SaveButtonUnconnected extends React.Component {
     const removeReviewBody = processedInCaseflow ?
       <React.Fragment>
         <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT}</p>
-        <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM}</p>
       </React.Fragment> :
       <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>;
 
@@ -247,8 +255,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_SCT_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToSctModal')}
-        onConfirm={() => this.confirmModal('moveToSctModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToSctModal')} >
         <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
@@ -256,8 +263,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_DISTRIBUTION_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToDistributionModal')}
-        onConfirm={() => this.confirmModal('moveToDistributionModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToDistributionModal')} >
         <p>{COPY.MOVE_TO_DISTRIBUTION_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
@@ -294,6 +300,10 @@ SaveButtonUnconnected.propTypes = {
   hasDistributionTask: PropTypes.bool,
   hasSpecialtyCaseTeamAssignTask: PropTypes.bool,
   specialtyCaseTeamDistribution: PropTypes.bool,
+  pendingIssueModificationRequests: PropTypes.array,
+  originalPendingIssueModificationRequests: PropTypes.array,
+  isRemand: PropTypes.bool,
+  openIssueModificationRequests: PropTypes.array,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -315,6 +325,10 @@ const SaveButton = connect(
     hasDistributionTask: state.hasDistributionTask,
     hasSpecialtyCaseTeamAssignTask: state.hasSpecialtyCaseTeamAssignTask,
     specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
+    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    openIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
+    isRemand: state.isRemand,
+    originalPendingIssueModificationRequests: state.originalPendingIssueModificationRequests,
     state
   }),
   (dispatch) => bindActionCreators({
