@@ -56,13 +56,6 @@ module Seeds
         @file_number += 100
         @participant_id += 100
       end
-
-      @year = Time.zone.now.strftime("%y")
-      @cavc_docket_number_last_four ||= 1000
-
-      while CavcRemand.find_by(cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four))
-        @cavc_docket_number_last_four += 100
-      end
     end
 
     def create_correspondence_types
@@ -134,41 +127,13 @@ module Seeds
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
-        (0..35).each do |i|
-          if i%5 == 1
-            appeal = create(:appeal, :with_decision_issue, :type_cavc_remand, veteran: veteran)
-            creation_params = {
-              source_appeal_id: appeal.id,
-              cavc_decision_type: "remand",
-              cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
-              cavc_judge_full_name: "Clerk",
-              created_by_id: i,
-              decision_date: 1.week.ago,
-              decision_issue_ids: appeal.decision_issue_ids,
-              instructions: "Seed remand for testing",
-              represented_by_attorney: true,
-              updated_by_id: i,
-              remand_subtype: "jmr",
-              judgement_date: 1.week.ago,
-              mandate_date: 1.week.ago
-            }
-            CavcRemand.create!(creation_params)
-            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          elsif i%5 == 2
-            appeal = create(:appeal, :advanced_on_docket_due_to_age, veteran: veteran)
 
-            AdvanceOnDocketMotion.create!(
-              user_id: i,
-              person_id: veteran.person.id,
-              granted: true,
-              reason: Constants.AOD_REASONS.age,
-              appeal: appeal
-              )
-            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          else
-            appeal = create(:appeal, veteran: veteran)
-            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          end
+        # Creating inactive appeals for each veteran
+        create_inactive_appeals(veteran)
+
+        35.times do
+          appeal = create(:appeal, veteran: veteran)
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         end
         veterans << veteran
       end
@@ -178,6 +143,9 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
+        # Creating inactive appeals that have a RootTask with the status of canceled
+        create_inactive_appeals_for_user(user, veteran)
+
         # Correspondences with unassigned ReviewPackageTask
         create_correspondence_with_unassigned_review_package_task(user, veteran)
 
@@ -314,6 +282,37 @@ module Seeds
     def create_correspondence_with_canceled_root_task(user, veteran = {})
       corres = create_correspondence(user, veteran)
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+    end
+
+    def create_inactive_appeals(veteran)
+      # creating three appeals with cancelled root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+
+      # creating three appeals with completed root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    def create_inactive_appeals_for_user(_user, veteran = {})
+      # creating two appeals with cancelled root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+      # creating two appeals with completed root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
     end
 
     def create_cavc_mailtask(user, veteran = {})
