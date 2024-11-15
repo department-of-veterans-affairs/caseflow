@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "helpers/cancel_tasks_and_descendants"
 require "securerandom"
 
 describe CancelTasksAndDescendants do
