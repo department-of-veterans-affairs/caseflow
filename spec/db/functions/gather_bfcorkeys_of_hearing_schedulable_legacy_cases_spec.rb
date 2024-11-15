@@ -16,7 +16,7 @@ describe "gather_bfcorkeys_of_hearing_schedulable_legacy_cases" do
       legacy_appeals.map(&:case_record).pluck(:bfcorkey)
     end
 
-    after { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events]) }
+    after(:each) { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events]) }
 
     it "only the desired appeals' IDs are returned and are formatted properly", bypass_cleaner: true do
       expect(subject.scan(/'\d*'/).size).to eq desired_bfcorkeys.size
