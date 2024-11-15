@@ -176,6 +176,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_content issue_description
       expect(abandoned.count).to eq 3
       expect(affirmed.count).to eq 1
+
     end
 
     it "user can set decision reasons for Vacated and Remanded or Reversed decision types and save" do
