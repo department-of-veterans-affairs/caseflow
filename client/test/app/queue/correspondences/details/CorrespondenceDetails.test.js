@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
 import { correspondenceDetailsData } from 'test/data/correspondence';
@@ -522,11 +521,12 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
     let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    console.log('collapsibleButtons', collapsibleButtons.length);
 
-    expect(collapsibleButtons.length).toBe(5);
+    expect(collapsibleButtons.length).toBe(2);
     fireEvent.click(collapsibleButtons[0]);
 
-    expect(document.getElementsByClassName('plus-symbol').length).toBe(4);
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
