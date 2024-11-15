@@ -1,39 +1,36 @@
 /* eslint-disable max-lines, max-len */
 
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../../components/Checkbox';
 
-const RoleConfiguration = ({ role, currentState, updateState }) => {
-  const handleRoleSelect = (selectedRole, value) => {
-    const currentRoles = currentState.user.user.roles;
-    let roleObjCopy = {};
+const RoleConfiguration = (props) => {
+  const [checked, setChecked] = useState(false);
 
-    if (value) {
-      const updatedRoles = {
-        ...currentRoles,
-        [selectedRole]: value
-      };
+  const role = props.role;
+  const currentState = props.currentState;
+  const updateState = props.updateState;
 
-      roleObjCopy = updatedRoles;
+  const handleRoleSelect = (selectedRole) => {
+    const currentRoles = currentState.user.roles;
+
+    if (currentRoles.find((selection) => selection === selectedRole)) {
+      currentRoles.splice(currentRoles.indexOf(selectedRole), 1);
+      setChecked(false);
     } else {
-      // eslint-disable-next-line no-unused-vars
-      const { [selectedRole]: removedValue, ...updatedRoles } = currentRoles;
-
-      roleObjCopy = updatedRoles;
+      currentRoles.push(selectedRole);
+      setChecked(true);
     }
 
     updateState({
       ...currentState,
       user: {
         ...currentState.user,
-        user: {
-          ...currentState.user.user,
-          roles: roleObjCopy
-        }
+        roles: currentRoles
       }
-    });
+    }
+    );
   };
 
   return (
@@ -44,7 +41,7 @@ const RoleConfiguration = ({ role, currentState, updateState }) => {
         onChange={(value) => {
           handleRoleSelect(role, value);
         }}
-        isChecked={Boolean(currentState.user.user.feature_toggles[role] ?? false)}
+        isChecked={checked}
       />
     </div>
   );

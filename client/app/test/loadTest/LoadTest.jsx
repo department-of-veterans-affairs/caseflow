@@ -8,14 +8,12 @@ export default function LoadTest(props) {
     {
       scenarios: [],
       user: {
-        user: {
-          station_id: '',
-          regional_office: '',
-          roles: [],
-          functions: {},
-          organizations: [],
-          feature_toggles: {}
-        }
+        station_id: '',
+        regional_office: '',
+        roles: [],
+        functions: {},
+        organizations: [],
+        feature_toggles: {}
       }
     }
   );

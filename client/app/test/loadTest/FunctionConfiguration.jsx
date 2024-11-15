@@ -33,10 +33,7 @@ export default function FunctionConfiguration(props) {
           ...currentState,
           user: {
             ...currentState.user,
-            user: {
-              ...currentState.user.user,
-              functions: updatedSelections
-            }
+            functions: updatedSelections
           }
         }
       );

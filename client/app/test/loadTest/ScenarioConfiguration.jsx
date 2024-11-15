@@ -7,11 +7,13 @@ import TextField from '../../components/TextField';
 import PropTypes from 'prop-types';
 export default function ScenarioConfiguration(props) {
   const [checked, setChecked] = useState(false);
+  const [targetId, setTargetId] = useState('');
 
   const scenario = props.scenario;
   const targetType = props.targetType;
   const currentState = props.currentState;
   const updateState = props.updateState;
+  const currentScenarios = currentState.scenarios;
   const scenariosArray = currentState.scenarios.map((selection) =>
     Object.keys(selection)[0]
   );
@@ -24,32 +26,41 @@ export default function ScenarioConfiguration(props) {
   };
 
   const handleScenarioSelect = (chosenScenario) => {
-    const currentSelections = currentState.scenarios;
-
     if (scenariosArray.find((selection) => selection === chosenScenario)) {
-      currentSelections.splice(scenariosArray.indexOf(chosenScenario), 1);
+      currentScenarios.splice(scenariosArray.indexOf(chosenScenario), 1);
       setChecked(false);
     } else {
-      currentSelections.push({ [chosenScenario]: {} });
+      currentScenarios.push({ [chosenScenario]: {} });
       setChecked(true);
     }
 
     updateState(
       {
         ...currentState,
-        scenarios: currentSelections
+        scenarios: currentScenarios
       }
     );
   };
 
   const handleTargetSelect = (chosenTarget, associatedScenario) => {
-    let currentScenarios = currentState.scenarios;
-
     if (chosenTarget === null) {
       currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: {} };
     } else {
-      currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: { targetType: chosenTarget } };
+      currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: { targetType: chosenTarget, targetId: '' } };
     }
+
+    updateState(
+      {
+        ...currentState,
+        scenarios: currentScenarios
+      }
+    );
+  };
+
+  const handleTargetIdSelect = (value) => {
+    setTargetId(value);
+
+    currentScenarios[scenariosArray.indexOf(scenario)][scenario].targetId = value;
 
     updateState(
       {
@@ -80,7 +91,9 @@ export default function ScenarioConfiguration(props) {
           <TextField
             name="testTargetID"
             label="Target Type ID"
+            onChange={handleTargetIdSelect}
             optional
+            value={targetId}
           />
         </div>
         )

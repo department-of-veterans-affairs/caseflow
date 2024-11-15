@@ -7,7 +7,7 @@ import Checkbox from '../../components/Checkbox';
 
 const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }) => {
   const handleFeatureToggleSelect = (selectedFeature, value) => {
-    const currentFeatureToggles = currentState.user.user.feature_toggles;
+    const currentFeatureToggles = currentState.user.feature_toggles;
     let featureToggleObjCopy = {};
 
     if (value) {
@@ -28,12 +28,10 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
       ...currentState,
       user: {
         ...currentState.user,
-        user: {
-          ...currentState.user.user,
-          feature_toggles: featureToggleObjCopy
-        }
+        feature_toggles: featureToggleObjCopy
       }
-    });
+    }
+    );
   };
 
   return (
@@ -44,7 +42,7 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
         onChange={(value) => {
           handleFeatureToggleSelect(featureToggle, value);
         }}
-        isChecked={Boolean(currentState.user.user.feature_toggles[featureToggle] ?? false)}
+        isChecked={Boolean(currentState.user.feature_toggles[featureToggle] ?? false)}
       />
     </div>
   );
