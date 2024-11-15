@@ -156,7 +156,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
           onClick={handleSubmit}
           disabled={isSubmitDisabled ? isSubmitDisabled : false}
         >
-          {isLoading ? 'Loading...' : 'Submit'}
+          {isLoading ? 'Loading...' : 'Next'}
         </Button>
       }
       cancelButton={
