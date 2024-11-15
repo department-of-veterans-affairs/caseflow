@@ -3,6 +3,23 @@
 # bundle exec rails runner scripts/enable_features_dev.rb
 
 class AllFeatureToggles
+  class FeatureToggleSearch
+    def initialize(file:, regex:)
+      @file = file
+      @regex = regex
+    end
+
+    def call
+      File.open(file, "r").each_with_object([]) do |line, result|
+        line.match(regex) { |found| result << found[1] }
+      end
+    end
+
+    private
+
+    attr_reader :file, :regex
+  end
+
   def call
     files.each_with_object([]) do |file, result|
       result << FeatureToggleSearch.new(file: file, regex: feature_toggle_regex).call
@@ -31,23 +48,6 @@ class AllFeatureToggles
   def feature_enabled_regex
     /feature_enabled\?\(:(.+?)\)/
   end
-end
-
-class FeatureToggleSearch
-  def initialize(file:, regex:)
-    @file = file
-    @regex = regex
-  end
-
-  def call
-    File.open(file, "r").each_with_object([]) do |line, result|
-      line.match(regex) { |found| result << found[1] }
-    end
-  end
-
-  private
-
-  attr_reader :file, :regex
 end
 
 # Flags that are turned off by default because
