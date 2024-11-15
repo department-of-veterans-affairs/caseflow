@@ -34,13 +34,14 @@ class Events::PersonUpdated
   attr_reader :event, :consumer_event_id, :participant_id, :person_attributes, :is_veteran
 
   def create_event
-    @event = Events::PersonUpdatedEvent.create(
+    @event = ::PersonUpdatedEvent.create(
       reference_id: consumer_event_id
     )
   end
 
   def update_person
     before_attributes = person.attributes
+    #before_attributes["email_address"] = person.email_address
 
     person.assign_attributes(
       person_attributes.as_json.without("date_of_death", "file_number")
@@ -53,6 +54,9 @@ class Events::PersonUpdated
   def update_veteran
     if veteran.present?
       before_attributes = veteran.attributes
+      before_attributes["email_address"] = veteran.email_address
+      before_attributes["date_of_birth"] = veteran.date_of_birth
+
       veteran.assign_attributes(
         person_attributes.as_json.without("email_address")
       )
@@ -68,12 +72,10 @@ class Events::PersonUpdated
       "created_at": attributes["created_at"],
       "updated_at": attributes["updated_at"],
       "participant_id": attributes["participant_id"],
-      "date_of_birth": attributes["date_of_birth"].to_s,
       "first_name": attributes["first_name"],
       "last_name": attributes["last_name"],
       "middle_name": attributes["middle_name"],
       "name_suffix": attributes["name_suffix"],
-      "email_address": attributes["email_address"],
       "ssn": attributes["ssn"]
     }
   end
@@ -83,10 +85,15 @@ class Events::PersonUpdated
       evented_record_type: "Person",
       evented_record_id: before_attributes["id"],
       info: {
-        "before_date": {
+        "before_data": {
+          "email_address" => before_attributes["email_address"],
+          "date_of_birth" => before_attributes["date_of_birth"].to_s,
           **info_attributes(before_attributes)
         },
-        "record_date": {
+        "record_data": {
+          "update_type" => "U",
+          "email_address" => person.email_address,
+          "date_of_birth" => person.date_of_birth.to_s,
           **info_attributes(after_attributes)
         }
       }
@@ -98,10 +105,15 @@ class Events::PersonUpdated
       evented_record_type: "Veteran",
       evented_record_id: before_attributes["id"],
       info: {
-        "before_date": {
+        "before_data": {
+          "email_address" => before_attributes["email_address"],
+          "date_of_birth" => before_attributes["date_of_birth"].to_s,
           **info_attributes(before_attributes)
         },
-        "record_date": {
+        "record_data": {
+          "update_type" => "U",
+          "email_address" => before_attributes["email_address"],
+          "date_of_birth": veteran.date_of_birth.to_s,
           **info_attributes(after_attributes)
         }
       }

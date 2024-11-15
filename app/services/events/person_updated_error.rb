@@ -55,11 +55,11 @@ class Events::PersonUpdatedError
   end
 
   def event_exists?
-    @event ||= Events::PersonUpdatedErrorEvent.where(reference_id: event_id).first
+    @event ||= PersonUpdatedErrorEvent.where(reference_id: event_id).first
     @event.present?
   end
 
   def event
-    @event ||= Events::PersonUpdatedErrorEvent.find_or_create_by(reference_id: event_id)
+    @event ||= PersonUpdatedErrorEvent.find_or_create_by(reference_id: event_id)
   end
 end

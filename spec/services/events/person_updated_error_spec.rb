@@ -15,7 +15,7 @@ describe Events::PersonUpdatedError do
         new_event = Event.find_by(reference_id: consumer_event_id)
 
         expect(return_value).to eq(:created)
-        expect(new_event).to be_kind_of(Events::PersonUpdatedErrorEvent)
+        expect(new_event).to be_kind_of(PersonUpdatedErrorEvent)
         expect(new_event.reference_id).to eq(consumer_event_id)
         expect(new_event.error).to eq(error_message)
         expect(new_event.info).to eq("errored_claim_id" => "999")
@@ -25,7 +25,7 @@ describe Events::PersonUpdatedError do
 
     context "when event already exists" do
       before do
-        Events::PersonUpdatedErrorEvent.create!(reference_id: consumer_event_id)
+        PersonUpdatedErrorEvent.create!(reference_id: consumer_event_id)
       end
 
       it "should create a new event with an updated Error" do
@@ -50,7 +50,7 @@ describe Events::PersonUpdatedError do
 
     context "when standard error is raised" do
       it "logs an error and raises if an standard error occurs" do
-        allow_any_instance_of(Events::PersonUpdatedErrorEvent).to receive(:update!).and_raise(StandardError)
+        allow_any_instance_of(PersonUpdatedErrorEvent).to receive(:update!).and_raise(StandardError)
         expect { subject.call }.to raise_error(StandardError)
       end
     end

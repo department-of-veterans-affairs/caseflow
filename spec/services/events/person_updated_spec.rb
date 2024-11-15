@@ -19,7 +19,18 @@ describe Events::PersonUpdated do
 
   let(:participant_id) { 54_321 }
   let(:is_veteran) { true }
-  let(:person) { FactoryBot.create(:person, participant_id: participant_id) }
+  let(:person) do 
+    person = FactoryBot.create(
+      :person, 
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name,
+      middle_name: Faker::Name.first_name,
+      name_suffix: Faker::Name.suffix,
+      email_address: Faker::Internet.email,
+      ssn: "777889999",
+      participant_id: participant_id
+    )
+  end
   let(:veteran) { FactoryBot.create(:veteran, participant_id: participant_id) }
   let(:consumer_event_id) { SecureRandom.uuid }
 
@@ -27,11 +38,6 @@ describe Events::PersonUpdated do
   let(:lock_key) { "RedisMutex:PersonUpdated:#{consumer_event_id}" }
 
   subject { described_class.new(consumer_event_id, participant_id, is_veteran, attributes) }
-
-  before do
-    person.save
-    veteran.save
-  end
 
   it "throws a Redis lock error when lock fails" do
     redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
@@ -45,64 +51,64 @@ describe Events::PersonUpdated do
 
   let!(:event_person_info) do
     {
-      "before_data": {
-        "id": person.id,
-        "participant_id": participant_id,
-        "date_of_birth": person.date_of_birth.to_s,
-        "created_at": kind_of(DateTime),
-        "updated_at": kind_of(DateTime),
-        "first_name": person.first_name,
-        "last_name": person.last_name,
-        "middle_name": person.middle_name,
-        "name_suffix": person.name_suffix,
-        "email_address": nil,
-        "ssn": person.ssn
+      "before_data" => {
+        "id" => person.id,
+        "updated_at" => kind_of(String),
+        "created_at" => kind_of(String),
+        "participant_id" => participant_id.to_s,
+        "date_of_birth" => person.date_of_birth.to_s,
+        "first_name" => person.first_name,
+        "last_name" => person.last_name,
+        "middle_name" => person.middle_name,
+        "name_suffix" => person.name_suffix,
+        "email_address" => person.email_address,
+        "ssn" => person.ssn
       },
-      "record_data": {
-        "id": person.id,
-        "participant_id": participant_id,
-        "date_of_birth": attributes.date_of_birth.to_s,
-        "created_at": kind_of(DateTime),
-        "updated_at": kind_of(DateTime),
-        "first_name": attributes.first_name,
-        "last_name": attributes.last_name,
-        "middle_name": attributes.middle_name,
-        "name_suffix": attributes.name_suffix,
-        "email_address": nil,
-        "ssn": attributes.ssn,
-        "update_type": "U"
+      "record_data" => {
+        "id" => person.id,
+        "updated_at" => kind_of(String),
+        "created_at" => kind_of(String),
+        "participant_id" => participant_id.to_s,
+        "date_of_birth" => attributes.date_of_birth.to_s,
+        "first_name" => attributes.first_name,
+        "last_name" => attributes.last_name,
+        "middle_name" => attributes.middle_name,
+        "name_suffix" => attributes.name_suffix,
+        "email_address" => attributes.email_address,
+        "ssn" => attributes.ssn,
+        "update_type" => "U"
       }
     }
   end
 
   let!(:event_veteran_info) do
     {
-      "before_data": {
-        "id": veteran.id,
-        "participant_id": participant_id,
-        "date_of_birth": veteran.date_of_birth.to_s,
-        "created_at": kind_of(DateTime),
-        "updated_at": kind_of(DateTime),
-        "first_name": veteran.first_name,
-        "last_name": veteran.last_name,
-        "middle_name": veteran.middle_name,
-        "name_suffix": veteran.name_suffix,
-        "email_address": veteran.email_address,
-        "ssn": veteran.ssn
+      "before_data" => {
+        "id" => veteran.id,
+        "updated_at" => kind_of(String),
+        "created_at" => kind_of(String),
+        "participant_id" => participant_id.to_s,
+        "date_of_birth" => Veteran.first.date_of_birth.to_s,
+        "first_name" => veteran.first_name,
+        "last_name" => veteran.last_name,
+        "middle_name" => veteran.middle_name,
+        "name_suffix" => veteran.name_suffix,
+        "email_address" => veteran.email_address,
+        "ssn" => veteran.ssn
       },
-      "record_data": {
-        "id": veteran.id,
-        "participant_id": participant_id,
-        "date_of_birth": attributes.date_of_birth.to_s,
-        "created_at": kind_of(DateTime),
-        "updated_at": kind_of(DateTime),
-        "first_name": attributes.first_name,
-        "last_name": attributes.last_name,
-        "middle_name": attributes.middle_name,
-        "name_suffix": attributes.name_suffix,
-        "email_address": attributes.email_address,
-        "ssn": attributes.ssn,
-        "update_type": "U"
+      "record_data" => {
+        "id" => veteran.id,
+        "updated_at" => kind_of(String),
+        "created_at" => kind_of(String),
+        "participant_id" => participant_id.to_s,
+        "date_of_birth" => attributes.date_of_birth.to_s,
+        "first_name" => attributes.first_name,
+        "last_name" => attributes.last_name,
+        "middle_name" => attributes.middle_name,
+        "name_suffix" => attributes.name_suffix,
+        "email_address" => veteran.email_address,
+        "ssn" => attributes.ssn,
+        "update_type" => "U"
       }
     }
   end
@@ -130,18 +136,20 @@ describe Events::PersonUpdated do
     # rubocop:enable Layout/MultilineMethodCallIndentation
 
     event = Event.find_by(reference_id: consumer_event_id)
-    expect(event).to be_kind_of(Events::PersonUpdatedEvent)
+    expect(event).to be_kind_of(PersonUpdatedEvent)
 
     person_event, veteran_event = event.event_records
 
     expect(person_event.event_id).to eq(event.id)
     expect(person_event.evented_record_type).to eq("Person")
     expect(person_event.evented_record_id).to eq(person.id)
-    expect(person_event.info).to match(event_person_info)
+    expect(person_event.info["before_data"]).to match(event_person_info["before_data"])
+    expect(person_event.info["record_data"]).to match(event_person_info["record_data"])
 
     expect(veteran_event.event_id).to eq(event.id)
-    expect(person_event.evented_record_type).to eq("Veteran")
-    expect(person_event.evented_record_id).to eq(veteran.id)
-    expect(veteran_event.info).to match(event_veteran_info)
+    expect(veteran_event.evented_record_type).to eq("Veteran")
+    expect(veteran_event.evented_record_id).to eq(veteran.id)
+    expect(veteran_event.info["before_data"]).to match(event_veteran_info["before_data"])
+    expect(veteran_event.info["record_data"]).to match(event_veteran_info["record_data"])
   end
 end
