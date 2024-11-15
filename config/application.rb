@@ -226,6 +226,7 @@ module CaseflowCertification
       "#{root}/app/models/validators",
       "#{root}/app/models/vanotify",
       "#{root}/app/models/tasks/correspondence",
+      "#{root}/app/models/tasks/correspondence/correspondence_mail_task",
       "#{root}/app/serializers/case_distribution",
       "#{root}/app/serializers/hearings",
       "#{root}/app/services/claim_change_history",

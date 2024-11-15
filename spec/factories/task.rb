@@ -795,7 +795,7 @@ FactoryBot.define do
         appeal_type { Correspondence.name }
       end
 
-      factory :other_motion_correspondence_task, class: CorrespondenceMailTask::OtherMotionCorrespondenceTask do
+      factory :other_motion_correspondence_task, class: OtherMotionCorrespondenceTask do
         appeal { create(:correspondence) }
         appeal_type { Correspondence.name }
       end

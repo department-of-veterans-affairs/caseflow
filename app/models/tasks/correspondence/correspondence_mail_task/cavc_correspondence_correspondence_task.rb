@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CorrespondenceMailTask::CavcCorrespondenceCorrespondenceTask < CorrespondenceMailTask
+class CavcCorrespondenceCorrespondenceTask < CorrespondenceMailTask
   def label
     COPY::CAVC_CORRESPONDENCE_MAIL_TASK_LABEL
   end
