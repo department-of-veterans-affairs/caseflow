@@ -975,10 +975,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .response-letter-table-borderless-first-item {
-    display: block;
     width: 100%;
     margin-left: 5%;
     padding-bottom: 1.25rem;
+    padding-left: 2.3rem;
   }
 
   .response-letter-table-borderless {
@@ -1657,8 +1657,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .tasks-added-container {
   border: 1px solid $color-cream;
-  margin-bottom: 20px;
-  padding-top: 0;
+  padding: 20px 20px 30px 20px;
 }
 
 .task-added-header {
@@ -1681,9 +1680,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-left: 2%;
   flex-direction: row;
   display: flex;
-  width: 98%;
-  margin-left: 1%;
-  margin-top: 15px;
 }
 
 .corr-tasks-added-col {
@@ -1716,7 +1712,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .tasks-added-text-alternate {
   padding-top: 20px;
-  padding-bottom: 20px;
+  //padding-bottom: 20px;
   display: block;
   .tasks-added-button-spacing{
     margin-left: 20px;
@@ -1742,6 +1738,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding: 3px;
   background-color: $color-white;
   min-width: 166px;
+}
+
+.case-details-badge {
+  border: 1px solid $color-gray-lighter;
 }
 
 .case-details-header-badge {
@@ -1775,13 +1775,19 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .tasks-added-details {
-  margin-left: 1%;
+  .left-section {
+    tr {
+      td {
+        padding-bottom: 0;
+      }
+    }
+  }
 }
 
-.tasks-added-waive-banner-alert {
-  margin-left: 1%;
-  width: 98%;
-}
+//.tasks-added-waive-banner-alert {
+//  margin-left: 1%;
+//  width: 98%;
+//}
 
 .waive-banner-alert .usa-alert.usa-alert-slim {
   padding-top: 4px;
@@ -1988,4 +1994,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .back-button {
 margin-left: 240px;
+}
+
+th.notes-column {
+  width: 25%;
 }
