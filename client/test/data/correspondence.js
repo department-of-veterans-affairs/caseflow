@@ -156,6 +156,18 @@ export const correspondenceDetailsData = {
   ]
 };
 
+export const correspondenceInfoData = {
+  correspondenceInfo: {
+    tasksUnrelatedToAppeal : [
+      {
+          label: 'Other motion',
+          assignedOn: '11/13/2024',
+          assignedTo: 'Litigation Support',
+      }
+  ]
+  }
+}
+
 export const appeals = {
   appellantFullName: 'John Doe',
 };
