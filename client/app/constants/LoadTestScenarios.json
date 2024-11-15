@@ -178,74 +178,74 @@
   },
   {"scenario": "readerAppeal",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "idtAppeal",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "idtAppealUserId",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "idtUploadDocument",
     "targetType": [{
-      "value": "veteran",
+      "value": "Veteran",
       "label": "Veteran"
     }],
     "targetId": "veteran uuid"
   },
   {"scenario": "idtAddressValidation",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "appealTasks",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "vhaDecisionReview",
     "targetType": [{
-      "value": "appeal",
+      "value": "Appeal",
       "label": "Appeal"
     }, {
-      "value": "legacy_appeal",
+      "value": "LegacyAppeal",
       "label": "Legacy Appeal"
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {"scenario": "apiAppeal",
     "targetType": [{
-      "value": "veteran",
+      "value": "Veteran",
       "label": "Veteran"
     }],
     "targetId": "veteran uuid"
