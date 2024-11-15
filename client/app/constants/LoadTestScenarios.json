@@ -186,10 +186,14 @@
   {
     "scenario": "findHearingLocations",
     "targetType": [{
-      "value": "",
-      "label": ""
+      "value": "Appeal",
+      "label": "Appeal"
+    },
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
     }],
-    "targetId": ""
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
   {
     "scenario": "hearingScheduleAssign",
