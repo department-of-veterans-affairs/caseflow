@@ -2237,7 +2237,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-debug-ide
-  ruby-oci8 (~> 2.2.14)
+  ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)

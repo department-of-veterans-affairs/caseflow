@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable max-lines */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
