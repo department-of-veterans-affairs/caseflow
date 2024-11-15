@@ -6,7 +6,6 @@ require "securerandom"
 require "base64"
 class Test::LoadTestsController < ApplicationController
   before_action :check_environment
-  skip_before_action :verify_authenticity_token
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
