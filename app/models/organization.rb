@@ -8,7 +8,6 @@ class Organization < CaseflowRecord
   has_many :membership_requests
   has_many :organization_permissions
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
-  require_dependency "dvc_team"
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
