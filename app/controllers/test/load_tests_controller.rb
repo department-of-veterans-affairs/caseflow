@@ -5,7 +5,7 @@ require "digest"
 require "securerandom"
 require "base64"
 class Test::LoadTestsController < ApplicationController
-  before_action :check_environment
+  # before_action :check_environment
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
@@ -125,7 +125,7 @@ class Test::LoadTestsController < ApplicationController
                      elsif target_data_type.to_s == "Appeal"
                        target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
                      elsif target_data_type.to_s == "HearingDay"
-                       target_id.presence ? HearingDay.find_by_uuid(target_id) : target_data_type.all.sample
+                       target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else
