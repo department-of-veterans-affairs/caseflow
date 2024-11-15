@@ -9,9 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Automatically infer `inverse_of` for associations with a scope.
-# Rails.application.config.active_record.automatic_scope_inversing = true
-
 # Raise when running tests if fixtures contained foreign key violations
 # Rails.application.config.active_record.verify_foreign_keys_for_fixtures = true
 

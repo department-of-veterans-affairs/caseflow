@@ -166,6 +166,10 @@ module CaseflowCertification
     # Default as of 7.0: 5
     config.action_mailer.smtp_timeout = nil
 
+    # Automatically infer `inverse_of` for associations with a scope.
+    # Default as of 7.0: true
+    config.active_record.automatic_scope_inversing = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
