@@ -471,9 +471,9 @@ module Seeds
         # hearing before decision different deciding judge AOJ CAVC AOD affinity in window
         create(:legacy_aoj_appeal, :aod, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 3.days.ago, cavc: true, original_dec_judge_sattyid: judge_staff.sattyid)
 
-        # no hearings AOJ CAVC affinity in window
-        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago)
         # no hearings AOJ AOD affinity in window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago)
+        # no hearings AOJ CAVC affinity in window
         create(:legacy_aoj_appeal, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
         # no hearings AOJ CAVC AOD affinity in window
         create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
