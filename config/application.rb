@@ -162,6 +162,10 @@ module CaseflowCertification
     # Default as of 7.0: true
     config.active_support.executor_around_test_case = false
 
+    # Set both the `:open_timeout` and `:read_timeout` values for `:smtp` delivery method.
+    # Default as of 7.0: 5
+    config.action_mailer.smtp_timeout = nil
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

@@ -9,10 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-
-# Set both the `:open_timeout` and `:read_timeout` values for `:smtp` delivery method.
-# Rails.application.config.action_mailer.smtp_timeout = 5
-
 # The ActiveStorage video previewer will now use scene change detection to generate
 # better preview images (rather than the previous default of using the first frame
 # of the video).
