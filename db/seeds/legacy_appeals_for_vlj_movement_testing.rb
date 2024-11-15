@@ -111,7 +111,7 @@ module Seeds
       # Scenario 7: Not Swappable (Non-priority, 1 issue, not distributed yet)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
-        :type_original
+        :type_original,
         :status_active,
         :ready_for_distribution,
         bfcorlid: "#{not_swappable.file_number}S",
