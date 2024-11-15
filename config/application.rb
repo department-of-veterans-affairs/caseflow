@@ -174,6 +174,12 @@ module CaseflowCertification
     # Default as of 7.0: true
     config.active_record.verify_foreign_keys_for_fixtures = false
 
+    # Disable partial inserts.
+    # This default means that all columns will be referenced in INSERT queries
+    # regardless of whether they have a default or not.
+    # Default as of 7.0: false
+    config.active_record.partial_inserts = true
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

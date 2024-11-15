@@ -9,11 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Disable partial inserts.
-# This default means that all columns will be referenced in INSERT queries
-# regardless of whether they have a default or not.
-# Rails.application.config.active_record.partial_inserts = false
-
 # Protect from open redirect attacks in `redirect_back_or_to` and `redirect_to`.
 # Rails.application.config.action_controller.raise_on_open_redirects = true
 
