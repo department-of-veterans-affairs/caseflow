@@ -33,22 +33,32 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { described_class.perform_now }
 
-    it "using Automatic Case Distribution module", skip: "Automatic Case Distribution is deprecated" do
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:distribute_non_genpop_priority_appeals).and_return([])
+    context "acd_ppj_distribute_not_genpop feature toggle" do
+      context "with feature toggle disabled" do
+        it "does not distribute not_genpop appeals" do
+          expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
 
-      subject
+          subject
+        end
+      end
+
+      context "with feature toggle enabled" do
+        before { FeatureToggle.enable!(:acd_ppj_distribute_not_genpop) }
+        after { FeatureToggle.disable!(:acd_ppj_distribute_not_genpop) }
+
+        it "does distribute not_genpop appeals if the feature toggle is enabled" do
+          expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to receive(:distribute_non_genpop_priority_appeals).and_return([])
+
+          subject
+        end
+      end
     end
 
-    it "using By Docket Date Distribution module" do
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
-
-      subject
-    end
-
-    it "queues the UpdateAppealAffinityDatesJob" do
+    it "queues the UpdateAppealAffinityDatesJob and ReturnLegacyAppealsToBoardJob" do
       expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+      expect_any_instance_of(ReturnLegacyAppealsToBoardJob).to receive(:perform).with(no_args)
 
       subject
     end
@@ -355,73 +365,35 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       ready_priority_evidence_cases.each { |appeal| appeal.update(receipt_date: 1.month.ago) }
     end
 
-    context "using Automatic Case Distribution module", skip: "Automatic Case Distribution is deprecated" do
-      it "should distribute ready priority appeals to the judges" do
-        expect(subject.count).to eq judges.count
+    it "should distribute ready priority appeals to the judges" do
+      expect(subject.count).to eq judges.count
 
-        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq priority_count
-        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+      # Ensure we distributed all available ready cases from any docket that are not tied to a judge
+      distributed_cases = DistributedCase.where(distribution: subject)
+      expect(distributed_cases.count).to eq priority_count
+      expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
+      expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
+      expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+      expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4, 8]
+    end
 
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
-      end
-
-      it "distributes cases to each judge based on their priority target" do
-        judges.each_with_index do |judge, i|
-          target_distributions = priority_target - judge_distributions_this_month[i]
-          distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.statistics["batch_size"]).to eq target_distributions
-          distributed_cases = DistributedCase.where(distribution: distribution)
-          expect(distributed_cases.count).to eq target_distributions
-        end
-      end
-
-      context "where there is an ama-only judge" do
-        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-        let(:judges) { [ama_only_judge] }
-        it "only distributes ama cases to ama-only judge" do
-          distributed_cases = DistributedCase.where(distribution: subject)
-          distributed_cases.each do |distributed_case|
-            expect(distributed_case.docket).not_to eq("legacy")
-          end
-        end
+    it "distributes cases to each judge based on their priority target" do
+      judges.each_with_index do |judge, i|
+        target_distributions = priority_target - judge_distributions_this_month[i]
+        distribution = subject.detect { |dist| dist.judge_id == judge.id }
+        expect(distribution.statistics["batch_size"]).to eq target_distributions
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq target_distributions
       end
     end
 
-    context "using By Docket Date Distribution module" do
-      it "should distribute ready priority appeals to the judges" do
-        expect(subject.count).to eq judges.count
-
-        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
+    context "where there is an ama-only judge" do
+      let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
+      let(:judges) { [ama_only_judge] }
+      it "only distributes ama cases to ama-only judge" do
         distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq priority_count
-        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4, 8]
-      end
-
-      it "distributes cases to each judge based on their priority target" do
-        judges.each_with_index do |judge, i|
-          target_distributions = priority_target - judge_distributions_this_month[i]
-          distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.statistics["batch_size"]).to eq target_distributions
-          distributed_cases = DistributedCase.where(distribution: distribution)
-          expect(distributed_cases.count).to eq target_distributions
-        end
-      end
-
-      context "where there is an ama-only judge" do
-        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-        let(:judges) { [ama_only_judge] }
-        it "only distributes ama cases to ama-only judge" do
-          distributed_cases = DistributedCase.where(distribution: subject)
-          distributed_cases.each do |distributed_case|
-            expect(distributed_case.docket).not_to eq("legacy")
-          end
+        distributed_cases.each do |distributed_case|
+          expect(distributed_case.docket).not_to eq("legacy")
         end
       end
     end
