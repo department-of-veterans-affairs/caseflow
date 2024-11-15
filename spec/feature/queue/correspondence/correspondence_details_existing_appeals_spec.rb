@@ -39,9 +39,10 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       expect(page).to have_content("Confirm waive removal")
       expect(page).to have_content("Once confirmed, the waive evidence window will be removed.")
       click_button("Confirm")
+      all(".plus-symbol")[1].click
       expect(page).to have_content(
         "The waive evidence window request has been removed from the " \
-        "\"Evidence submission window\" task"
+        "\"Evidence submission window\" task", wait: 5
       )
     end
 
@@ -79,6 +80,45 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       using_wait_time(wait_time) do
         expect(page).to have_content("You have successfully saved changes to this page")
         expect(page).not_to have_content("The linked appeal must be saved before tasks can be added.")
+      end
+    end
+  end
+
+  context "user can add new tasks to linked appeal" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_super)
+      User.authenticate!(user: current_super)
+      FeatureToggle.enable!(:correspondence_queue)
+      @correspondence = create(
+        :correspondence,
+        :with_correspondence_intake_task,
+        assigned_to: MailTeam.singleton,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
+      allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
+
+      2.times do
+        appeal = create(:appeal, :evidence_submission_docket, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+    end
+
+    it "Adds a new task related to appeal on Correspondence Details page" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[1].click
+      click_on(class: "usa-button-secondary tasks-added-button-spacing usa-button", wait: 5)
+      expect(page).to have_content("Add task to appeal")
+      expect(page).to have_selector(".add-task-modal-container")
+      expect(page).to have_field("content")
+      find(".add-task-dropdown-style").click
+      find(".react-select__option", text: "Congressional Interest").click
+      fill_in "content", with: "Test"
+      click_button "Next"
+      using_wait_time(10) do
+        expect(page).to have_content("Congressional Interest")
       end
     end
   end
