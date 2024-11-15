@@ -39,7 +39,7 @@ module Seeds
       draft_four = create_scenario_5_veteran(first_name: "Draft", last_name: "Four")
       draft_five = create_scenario_5_veteran(first_name: "Draft", last_name: "Five")
       draft_six = create_scenario_5_veteran(first_name: "Draft", last_name: "Six")
-      not_draftable = create_scenario_5_veteran(first_name: "Control", last_name: "NotDraftable")
+      not_draftable = create_scenario_5_veteran(first_name: "NotDraftable", last_name: "Control")
 
       # Scenario 1: Draft One (Primary, age-based, CAVC, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
