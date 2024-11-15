@@ -1087,5 +1087,3 @@ class BusinessLine < Organization
   end
   # rubocop:enable Metrics/ClassLength
 end
-
-require_dependency "vha_business_line"
