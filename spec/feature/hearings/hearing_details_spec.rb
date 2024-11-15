@@ -77,18 +77,21 @@ RSpec.feature "Hearing Details", :all_dbs do
         "Conference Room: N/A\n" \
         "PIN: N/A"
       )
+      expect(page).to have_button("Copy VLJ Link", disabled: true)
     end
     within "#hc-hearings-link" do
       expect(page).to have_content(
         "Conference Room: N/A\n" \
         "PIN: N/A"
       )
+      expect(page).to have_button("Copy HC Link", disabled: true)
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
         "Conference Room: N/A\n" \
         "PIN: N/A"
       )
+      expect(page).to have_button("Copy Guest Link", disabled: true)
     end
   end
 
@@ -497,6 +500,9 @@ RSpec.feature "Hearing Details", :all_dbs do
             visit "hearings/" + hearing.external_id.to_s + "/details"
             link = hearing.non_virtual_conference_link
             check_webex_hearings_links(link)
+            expect(page).to have_button("Copy VLJ Link", disabled: false)
+            expect(page).to have_button("Copy HC Link", disabled: false)
+            expect(page).to have_button("Copy Guest Link", disabled: false)
           end
         end
       end
@@ -524,6 +530,9 @@ RSpec.feature "Hearing Details", :all_dbs do
           scenario "displays details when the date is before the hearing date" do
             visit "hearings/" + hearing.external_id.to_s + "/details"
             check_pexip_hearings_links(virtual_hearing, virtual_hearing.formatted_alias_or_alias_with_host)
+            expect(page).to have_button("Copy VLJ Link", disabled: false)
+            expect(page).to have_button("Copy HC Link", disabled: false)
+            expect(page).to have_button("Copy Guest Link", disabled: false)
           end
 
           scenario "displays N/A when the date is after the hearing date" do
