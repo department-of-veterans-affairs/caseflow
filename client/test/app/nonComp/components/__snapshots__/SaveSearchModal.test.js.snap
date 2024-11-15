@@ -67,55 +67,57 @@ exports[`SaveSearchModal renders correctly renders correctly 1`] = `
             </li>
           </ul>
           <div
-            class="cf-form-textinput   "
+            style="height: 125px;"
           >
-            <label
-              for="Name this search (Max 50 characters)"
-            >
-              <span>
-                Name this search (Max 50 characters)
-              </span>
-            </label>
             <div
-              class="input-container"
+              class="cf-form-textinput   "
             >
-              <input
-                class="cf-form-textinput"
-                id="Name this search (Max 50 characters)"
-                maxlength="50"
-                name="Name this search (Max 50 characters)"
-                type="text"
-                value=""
-              />
-            </div>
-            <div
-              class="cf-validation"
-            >
-              <span>
-                50 characters left
-              </span>
+              <label
+                for="Name this search (Max 50 characters)"
+              >
+                <span>
+                  Name this search (Max 50 characters)
+                </span>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="Name this search (Max 50 characters)"
+                  maxlength="50"
+                  name="Name this search (Max 50 characters)"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
-            class="cf-form-textarea"
+            style="height: 175px;"
           >
-            <label
-              class="question-label"
-              for="Description of search (Max 100 characters)"
+            <div
+              class="cf-form-textarea"
             >
-              <span>
-                Description of search (Max 100 characters)
-                <span
-                  class="cf-optional"
-                >
-                  Optional
+              <label
+                class="question-label"
+                for="Description of search (Max 100 characters)"
+              >
+                <span>
+                  Description of search (Max 100 characters)
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
                 </span>
-              </span>
-            </label>
-            <textarea
-              id="Description of search (Max 100 characters)"
-              name="Description of search (Max 100 characters)"
-            />
+              </label>
+              <textarea
+                id="Description of search (Max 100 characters)"
+                maxlength="100"
+                name="Description of search (Max 100 characters)"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -237,20 +237,26 @@ export const SaveSearchModal = ({ setShowModal }) => {
       }
     >
       {searchParameterFragment()}
-      <TextField
-        name="Name this search (Max 50 characters)"
-        maxLength={50}
-        value={name}
-        onChange={(val) => setName(val)}
-        validationError={`${50 - name.length} characters left`}
-      />
-      <TextareaField
-        name="Description of search (Max 100 characters)"
-        optional
-        maxLength={100}
-        value={description}
-        onChange={(val) => setDescription(val)}
-      />
+      <div style={{ height: '125px' }} >
+        <TextField
+          name="Name this search (Max 50 characters)"
+          maxLength={50}
+          value={name}
+          onChange={(val) => setName(val)}
+          textAreaStyling={{ rows: '1' }}
+          validationError={name ? <i style ={{ color: '#323A45' }}> {`${50 - name.length} characters left` } </i> : null}
+        />
+      </div>
+      <div style={{ height: '175px' }} >
+        <TextareaField
+          label="Description of search (Max 100 characters)"
+          name="Description of search (Max 100 characters)"
+          maxlength={100}
+          optional
+          value={description}
+          onChange={(val) => setDescription(val)}
+        />
+      </div>
     </Modal>);
 };
 
