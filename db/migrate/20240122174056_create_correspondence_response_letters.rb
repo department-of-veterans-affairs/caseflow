@@ -1,4 +1,4 @@
-class CreateCorrespondenceResponseLetters < Caseflow::Migration
+class CreateCorrespondenceResponseLetters < ActiveRecord::Migration[6.1]
   def change
     create_table :correspondence_response_letters do |t|
       t.integer :correspondence_id, comment: "Foreign key on correspondences table"

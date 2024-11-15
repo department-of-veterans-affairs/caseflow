@@ -1,4 +1,4 @@
-class CreateOrganizationUserPermissions < Caseflow::Migration
+class CreateOrganizationUserPermissions < ActiveRecord::Migration[6.1]
   def change
     create_table :organization_user_permissions do |t|
       t.references :organizations_user, foreign_key: true, null: false, index: false,

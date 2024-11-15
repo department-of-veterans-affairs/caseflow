@@ -1,4 +1,4 @@
-class CreateCorrespondenceTypesTable < Caseflow::Migration
+class CreateCorrespondenceTypesTable < ActiveRecord::Migration[6.1]
   def change
     create_table :correspondence_types do |t|
 

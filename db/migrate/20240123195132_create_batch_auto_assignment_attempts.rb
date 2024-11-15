@@ -1,4 +1,4 @@
-class CreateBatchAutoAssignmentAttempts < Caseflow::Migration
+class CreateBatchAutoAssignmentAttempts < ActiveRecord::Migration[6.1]
   def change
     create_table :batch_auto_assignment_attempts do |t|
       t.references :user, foreign_key: true, null: false, index: false,
