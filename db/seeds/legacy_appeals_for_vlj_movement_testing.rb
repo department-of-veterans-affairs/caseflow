@@ -43,8 +43,9 @@ module Seeds
 
       # Case 1: Wqjudge One (Priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
@@ -56,8 +57,9 @@ module Seeds
 
       # Case 2: Wqjudge Two (Nonpriority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
-        :type_cavc_remand,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVACOTBJUDGE"),
@@ -68,8 +70,9 @@ module Seeds
 
       # Case 3: Wqjudge Three (Nonpriority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
-        :type_cavc_remand,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id(""),
@@ -79,8 +82,9 @@ module Seeds
 
       # Case 4: Wqjudge Four (Priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
         :type_cavc_remand,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
@@ -92,8 +96,9 @@ module Seeds
 
       # Case 5: Wqjudge Five (Priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
-        :type_cavc_remand,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
@@ -105,8 +110,9 @@ module Seeds
 
       # Case 6: Wqjudge Six (Nonpriority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
-        :type_cavc_remand,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAGSPORER"),
@@ -117,7 +123,9 @@ module Seeds
 
       # Case 7: Wqjudge Control (priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
-        :case,
+        :case_with_form_9,
+        :type_original,
+        :status_active,
         :assigned,
         :aod,
         bfcorlid: "#{wqjudge_control.file_number}S",
