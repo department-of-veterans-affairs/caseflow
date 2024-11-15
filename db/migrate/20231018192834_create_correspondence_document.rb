@@ -1,4 +1,4 @@
-class CreateCorrespondenceDocument < Caseflow::Migration
+class CreateCorrespondenceDocument < ActiveRecord::Migration[6.1]
   def change
     create_table :correspondence_documents do |t|
       t.belongs_to :correspondence, index: true, foreign_key: true

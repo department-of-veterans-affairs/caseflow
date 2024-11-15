@@ -1,4 +1,4 @@
-class CreateCorrespondenceRelations < Caseflow::Migration
+class CreateCorrespondenceRelations < ActiveRecord::Migration[6.1]
   def change
     create_table :correspondence_relations do |t|
       t.references :correspondence, foreign_key: true, index: false
