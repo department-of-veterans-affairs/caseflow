@@ -101,6 +101,7 @@ class Test::LoadTestsController < ApplicationController
     when "Veteran"
       target_data_type = Veteran
       target_data_column = "uuid"
+      # uuid versus file number
     when "User"
       target_data_type = User
       target_data_column = "id"
