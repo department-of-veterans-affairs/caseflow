@@ -176,6 +176,74 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
+  {"scenario": "hearingDetails",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "findHearingLocations",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    },
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {
+    "scenario": "hearingScheduleAssign",
+    "targetType": [],
+    "targetId": ""
+  },
+  {
+    "scenario": "hearingScheduleAssignHearingDaysJSON",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "hearingWorksheet",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingWorksheetPrint",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingView",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingScheduleDocket",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day id"
+  },
+  {
+    "scenario": "scheduleHearingTasksColumnsJSON",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day regional_office"
+  },
   {"scenario": "readerAppeal",
     "targetType": [{
       "value": "Appeal",
