@@ -7,8 +7,7 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
       create(:legacy_appeal,
              :with_schedule_hearing_tasks,
              :with_veteran,
-             vacols_case: create(:case)
-            )
+             vacols_case: create(:case))
     end
   end
 
