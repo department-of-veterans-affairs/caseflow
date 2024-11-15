@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CorrespondencesAppealsTasks < Caseflow::Migration
+class CorrespondencesAppealsTasks < ActiveRecord::Migration[6.1]
   def up
     safety_assured do
       create_table :correspondences_appeals_tasks do |t|

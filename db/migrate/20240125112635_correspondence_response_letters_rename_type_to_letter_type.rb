@@ -1,4 +1,4 @@
-class CorrespondenceResponseLettersRenameTypeToLetterType < Caseflow::Migration
+class CorrespondenceResponseLettersRenameTypeToLetterType < ActiveRecord::Migration[6.1]
   def change
     safety_assured { remove_column :correspondence_response_letters, :type, :string }
 
