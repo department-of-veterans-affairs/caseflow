@@ -75,7 +75,7 @@ module Seeds
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
-        assigner: User.find_by_css_id(""),
+        assigner: User.find_by_css_id("BVALSHIELDS"),
         as_judge_assign_task: false,
         bfcorlid: "#{wqjudge_three.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)))
