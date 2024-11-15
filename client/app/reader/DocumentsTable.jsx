@@ -55,8 +55,16 @@ const receiptDateFilterStates = {
 // This needs to be called here and not from a util file. This is because the value of the
 // connection.downlink is not static and needs to be calculated at runtime.
 
-const connection = (navigator.connection || navigator.mozConnection || navigator.webkitConnection || 1);
-const mbpsToBps = megaBitsToBytes(connection.downlink);
+const connection = (navigator.connection || navigator.mozConnection || navigator.webkitConnection);
+let speed;
+
+if (typeof connection === 'object') {
+  speed = connection.downlink;
+} else {
+  speed = 1;
+}
+
+const mbpsToBps = megaBitsToBytes(speed);
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -712,7 +720,7 @@ class DocumentsTable extends React.Component {
         ),
         valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size}
           browserSpeedInBytes={mbpsToBps}
-          warningThreshold={parseInt(doc.max_wait_time, 10)} />,
+          warningThreshold={this.props.readerPreferences} />,
       },
     ];
   };
@@ -768,7 +776,8 @@ DocumentsTable.propTypes = {
   clearDocFilters: PropTypes.func,
   secretDebug: PropTypes.func,
   setClearAllFiltersCallbacks: PropTypes.func.isRequired,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  readerPreferences: PropTypes.object,
 };
 
 const mapDispatchToProps = (dispatch) =>

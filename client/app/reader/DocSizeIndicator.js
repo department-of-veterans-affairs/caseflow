@@ -7,11 +7,12 @@ import { documentDownloadTime } from './utils/network';
 
 const DocSizeIndicator = (props) => {
   const downloadTime = documentDownloadTime(props.docSize, props.browserSpeedInBytes);
+  const waitTime = parseInt(props.warningThreshold, 10) || 15;
 
   return (
-    <div data-warning-threshold={props.warningThreshold} data-bandwidth={filesize(props.browserSpeedInBytes)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div data-warning-threshold={waitTime} data-bandwidth={filesize(props.browserSpeedInBytes)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {filesize(props.docSize, { round: 1 })}&nbsp;
-      {downloadTime > props.warningThreshold ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
+      {downloadTime > waitTime ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
     </div>
   );
 };

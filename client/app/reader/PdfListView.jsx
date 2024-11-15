@@ -70,6 +70,7 @@ export class PdfListView extends React.Component {
         showPdf={this.props.showPdf}
         setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
         featureToggles={this.props.featureToggles}
+        readerPreferences={this.props.readerPreferences}
       />;
     }
 
@@ -138,7 +139,8 @@ PdfListView.propTypes = {
   documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
   queueRedirectUrl: PropTypes.string,
-  queueTaskType: PropTypes.node
+  queueTaskType: PropTypes.node,
+  readerPreferences: PropTypes.object
 };
 
 export default connect(

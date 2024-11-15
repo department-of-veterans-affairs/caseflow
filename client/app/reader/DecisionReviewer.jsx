@@ -97,7 +97,6 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      readerPreferences={this.props.readerPreferences}
       featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
@@ -109,6 +108,7 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         featureToggles={this.props.featureToggles}
+        readerPreferences={this.props.readerPreferences}
         {...props}
       />
     </ReaderLoadingScreen>;
