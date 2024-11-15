@@ -104,9 +104,6 @@ class Test::LoadTestsController < ApplicationController
     when "User"
       target_data_type = User
       target_data_column = "id"
-    when "Veteran"
-      target_data_type = Veteran
-      target_data_column = "file_number"
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
