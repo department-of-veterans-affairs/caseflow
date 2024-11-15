@@ -2198,6 +2198,7 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
   create_table "veterans", force: :cascade do |t|
     t.datetime "bgs_last_synced_at", comment: "The last time cached BGS attributes were synced"
     t.string "closest_regional_office"
+    t.text "country_of_residence", comment: "The most recently known country of residence of the veteran"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
     t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
@@ -2207,7 +2208,9 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
     t.string "middle_name", comment: "PII. Veteran's middle name"
     t.string "name_suffix"
     t.string "participant_id"
+    t.datetime "residence_location_last_checked_at", comment: "The most recent time the veteran residence location was checked"
     t.string "ssn", comment: "PII. The cached Social Security Number"
+    t.text "state_of_residence", comment: "The most recently known state of residence of the veteran"
     t.datetime "updated_at"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
@@ -2524,23 +2527,30 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
       END
       $function$
   SQL
-  create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
-  SQL
-  create_trigger :priority_end_product_sync_queue_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER priority_end_product_sync_queue_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.priority_end_product_sync_queue FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_priority_end_product_sync_queue_audit()
-  SQL
-  create_trigger :vbms_communication_packages_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_communication_packages_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_communication_packages FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_communication_packages_audit()
-  SQL
-  create_trigger :vbms_distribution_destinations_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_distribution_destinations_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distribution_destinations FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distribution_destinations_audit()
-  SQL
-  create_trigger :vbms_distributions_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_distributions_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distributions FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distributions_audit()
-  SQL
-  create_trigger :vbms_uploaded_documents_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_uploaded_documents_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_uploaded_documents FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_uploaded_documents_audit()
+  
+  create_function :brieffs_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.brieffs_awaiting_hearing_scheduling()
+       RETURNS SETOF brieff_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_brieff WHERE bfkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_brieff WHERE 1 = 0';
+      END $function$
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
