@@ -6,7 +6,7 @@ class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
-    fail "Correspondence not found" if correspondence.blank?
+    verify_correspondence(correspondence)
 
     parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id)
 
@@ -24,7 +24,7 @@ class CorrespondenceIntakeProcessor
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
     # Fail if correspondence is not found
-    fail "Correspondence not found" if correspondence.blank?
+    verify_correspondence(correspondence)
 
     ActiveRecord::Base.transaction do
       # Ensure relations removal logic is in place
@@ -43,7 +43,8 @@ class CorrespondenceIntakeProcessor
   def create_letter(params, _current_user)
     correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
 
-    fail "Correspondence not found" if correspondence.blank?
+    # Fail if correspondence is not found
+    verify_correspondence(correspondence)
 
     create_response_letter(params, correspondence.id)
   end
@@ -68,6 +69,10 @@ class CorrespondenceIntakeProcessor
     Rails.logger.error(error.full_message)
 
     false
+  end
+
+  def verify_correspondence(correspondence)
+    return fail "Correspondence not found" if correspondence.blank?
   end
 
   def create_correspondence_relations(intake_params, correspondence_id)
