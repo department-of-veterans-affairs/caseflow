@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateCorrespondenceAutoAssignmentLevers < Caseflow::Migration
+class CreateCorrespondenceAutoAssignmentLevers < ActiveRecord::Migration[6.1]
   def change
     create_table :correspondence_auto_assignment_levers do |t|
       t.string :name, null: false

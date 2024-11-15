@@ -1,4 +1,4 @@
-class CreateOrganizationPermissions < Caseflow::Migration
+class CreateOrganizationPermissions < ActiveRecord::Migration[6.1]
   def change
     create_table :organization_permissions do |t|
       t.string :permission, null: false, comment: "Developer friendly value"
