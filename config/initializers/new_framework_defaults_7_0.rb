@@ -9,9 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Raise when running tests if fixtures contained foreign key violations
-# Rails.application.config.active_record.verify_foreign_keys_for_fixtures = true
-
 # Disable partial inserts.
 # This default means that all columns will be referenced in INSERT queries
 # regardless of whether they have a default or not.
