@@ -2,8 +2,8 @@
 
 require "helpers/association_wrapper"
 
-describe "AssocationWrapper" do
-  subject { AssocationWrapper.new(target_class) }
+describe "AssociationWrapper" do
+  subject { AssociationWrapper.new(target_class) }
   describe "#fieldnames and #select_associations}" do
     context "for Task class" do
       let(:target_class) { Task }
@@ -208,7 +208,7 @@ describe "AssocationWrapper" do
       end
     end
     describe "#polymorphic" do
-      subject { AssocationWrapper.new(target_class).belongs_to.polymorphic }
+      subject { AssociationWrapper.new(target_class).belongs_to.polymorphic }
       context "for DecisionDocument class" do
         let(:target_class) { DecisionDocument }
         it "returns those with polymorphic belongs_to associations" do
@@ -235,8 +235,8 @@ describe "AssocationWrapper" do
       end
     end
   end
-  describe "AssocationWrapper#fieldnames_of_untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
+  describe "AssociationWrapper#fieldnames_of_untyped_associations_with User records" do
+    subject { AssociationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldnames associated with User records" do
