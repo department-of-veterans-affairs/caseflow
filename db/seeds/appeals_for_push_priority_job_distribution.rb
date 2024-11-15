@@ -411,7 +411,7 @@ module Seeds
 
     def create_legacy_priority_genpop_cases
       # no hearing type original AOD
-      create(:case, :type_original, :ready_for_distribution)
+      create(:case, :type_original, :aod, :ready_for_distribution)
 
       tied_or_affinity_judges.each do |judge|
         judge_staff = judge.vacols_staff
