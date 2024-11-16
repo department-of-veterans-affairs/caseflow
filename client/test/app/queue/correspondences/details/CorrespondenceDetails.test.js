@@ -522,6 +522,7 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
     let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    console.log('collapsibleButtons', collapsibleButtons.length);
 
     expect(collapsibleButtons.length).toBe(2);
     fireEvent.click(collapsibleButtons[0]);
@@ -596,6 +597,8 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('validates the options of the actions dropdown based on the task type', () => {
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    fireEvent.click(collapsibleButtons[collapsibleButtons.length - 1]);
     const table = document.querySelector('#case-timeline-table');
 
     expect(table).toBeInTheDocument();
