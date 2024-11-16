@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
