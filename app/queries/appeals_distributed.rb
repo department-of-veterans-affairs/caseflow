@@ -132,7 +132,7 @@ class AppealsDistributed
       original_judge: VACOLS::Staff.find_by(sattyid: original_case_record&.bfmemid)&.sdomainid,
       prior_decision_date: case_record.bfdpdcn,
       hearing_judge: hearing_record&.staff&.sdomainid,
-      hearing_date: LegacyAppeal.repository.normalize_vacols_date(hearing_record&.hearing_date),
+      hearing_date: LegacyAppeal.repository.normalize_vacols_date(hearing_record&.hearing_date).to_date,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
       veteran_name: FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s,
       affinity_start_date: case_record.appeal_affinity&.affinity_start_date
