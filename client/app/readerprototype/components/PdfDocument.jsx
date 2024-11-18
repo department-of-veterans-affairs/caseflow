@@ -156,14 +156,21 @@ const PdfDocument = ({
 
   const getPages = (pdfDocument) => {
     let promises = [];
+    let textContentContainer = [];
 
     for (let i = 0; i < pdfDocument?.numPages; i++) {
       promises.push(pdfDocument.getPage(i + 1));
     }
 
     Promise.all(promises).
-      then((values) => {
-        setPdfPages(values);
+      then((pages) => {
+        setPdfPages(pages);
+        for (let i = 0; i < pages.length; i++) {
+          pages[i].getTextContent().then((text) => {
+            textContentContainer.push(text);
+          });
+        }
+        setTextContent(textContentContainer);
       });
   };
 
