@@ -384,6 +384,8 @@ Rails.application.routes.draw do
     patch "/correspondence/:correspondence_uuid/edit_general_information", to: "correspondence_details#edit_general_information"
     post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
          to: "correspondence_details#save_correspondence_appeals"
+    patch "/correspondence/:correspondence_uuid/create_correspondence_appeal_task",
+         to: "correspondence_details#create_correspondence_appeal_task"
 
     resources :correspondence, param: :correspondence_uuid do
       post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"

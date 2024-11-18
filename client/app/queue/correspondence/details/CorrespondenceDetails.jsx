@@ -540,14 +540,14 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondenceInfo.correspondenceAppeals) && (
             <div>
-              {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
+              {(props.correspondenceInfo?.correspondenceAppeals?.map((appeal) =>
                 <CorrespondenceAppealTasks
-                  key={appealTaskKey + taskAdded.id}
-                  task_added={taskAdded}
+                  key={appealTaskKey + appeal.id}
+                  appeal={appeal}
                   correspondence={props.correspondence}
                   organizations={props.organizations}
                   userCssId={props.userCssId}
-                  appealUuid={taskAdded.appealUuid || taskAdded.externalId}
+                  appealUuid={appeal.appealUuid || appeal.externalId}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                 />

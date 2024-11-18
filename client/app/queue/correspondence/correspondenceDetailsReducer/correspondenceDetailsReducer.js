@@ -5,6 +5,7 @@ export const initialState = {
 
   bannerAlert: {},
   waiveEvidenceAlertBanner: {},
+  taskRelatedToAppealBanner: {},
   correspondenceInfo: {
     tasksUnrelatedToAppeal: {}
   },
@@ -19,6 +20,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       bannerAlert: {
         $set: action.payload.bannerAlert
+      }
+    });
+  case ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER:
+    return update(state, {
+      taskRelatedToAppealBanner: {
+        $set: action.payload.taskRelatedToAppealBanner
       }
     });
   case ACTIONS.CORRESPONDENCE_INFO:
