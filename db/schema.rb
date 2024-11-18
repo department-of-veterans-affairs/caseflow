@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_12_181521) do
+ActiveRecord::Schema.define(version: 2024_11_18_075353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1763,12 +1763,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -2054,6 +2054,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.string "task_number", comment: "Number associated with transcription, use as FK to transcriptions"
     t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["contractor_id"], name: "index_transcription_packages_on_contractor_id"
     t.index ["task_number"], name: "index_transcription_packages_on_task_number"
   end
 

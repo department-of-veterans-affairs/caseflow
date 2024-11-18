@@ -1,4 +1,4 @@
-class AddColumnsToTranscriptions < Caseflow::Migration
+class AddColumnsToTranscriptions < ActiveRecord::Migration[6.1]
   def change
     add_column :transcriptions, :transcription_contractor_id, :bigint
     add_column :transcriptions, :created_by_id, :bigint

@@ -1,4 +1,4 @@
-class AddTranscriptionPackagesTable < Caseflow::Migration
+class AddTranscriptionPackagesTable < ActiveRecord::Migration[6.1]
   def change
     create_table :transcription_packages do |t|
       t.string     :aws_link_zip, comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
