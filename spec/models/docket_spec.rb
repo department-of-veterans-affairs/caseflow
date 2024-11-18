@@ -339,7 +339,7 @@ describe Docket, :all_dbs do
       subject { docket.genpop_priority_count }
 
       it "counts genpop priority appeals" do
-        expect(subject).to eq(3)
+        expect(subject).to eq(2)
       end
 
       context "when acd_exclude_from_affinity flag is enabled" do

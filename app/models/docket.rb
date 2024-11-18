@@ -73,11 +73,7 @@ class Docket
   end
 
   def genpop_priority_count
-    # By default all cases are considered genpop. This can be overridden for specific dockets
-    # For evidence submission and direct review docket, all appeals are genpop;
-    # Don't need to specify anything more than "ready" and "priority".
-    # This is overridden in hearing request docket.
-    count(priority: true, ready: true)
+    appeals(priority: true, ready: true).ids.size
   end
 
   def weight
