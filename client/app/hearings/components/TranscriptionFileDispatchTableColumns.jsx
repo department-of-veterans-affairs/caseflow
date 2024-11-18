@@ -282,7 +282,7 @@ export const workOrderColumn = () => {
       </div>
     ),
     backendCanSort: true,
-    getSortValue: (row) => row.status,
+    getSortValue: (row) => row.workOrder,
   };
 };
 
