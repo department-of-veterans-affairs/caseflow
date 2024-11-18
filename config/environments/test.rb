@@ -1,6 +1,6 @@
 require "active_support/core_ext/integer/time"
 require "fileutils"
-require_relative "../../config/initializers/deprecation_warnings"
+require_relative "../../lib/deprecation_warnings"
 
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
@@ -174,6 +174,10 @@ Rails.application.configure do
 
   # Dynatrace variables
   ENV["STATSD_ENV"] = "test"
+
+  # Veteran Residence Location variables
+  ENV["RESIDENCE_LOCATION_BATCH_SIZE"] = "5"
+  ENV["VET_UPDATE_BATCH_SIZE"] = "1"
 
   config.sqs_create_queues = true
   config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'

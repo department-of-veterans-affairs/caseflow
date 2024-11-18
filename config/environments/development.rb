@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-require_relative "../../config/initializers/deprecation_warnings"
+require_relative "../../lib/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -14,8 +14,8 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  # Eager load code on boot.
-  config.eager_load = true
+  # Do not eager load code on boot.
+  config.eager_load = false
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -169,6 +169,10 @@ Rails.application.configure do
 
   # Dynatrace variables
   ENV["STATSD_ENV"] = "development"
+
+    # Veteran Residence Location variables
+    ENV["RESIDENCE_LOCATION_BATCH_SIZE"] = "5000"
+    ENV["VET_UPDATE_BATCH_SIZE"] = "100"
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
