@@ -253,9 +253,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed Tasks"
-      # expect(page).to have_content("Higher-Level Review", count: 2)
-      # Remove this once the pre filter 7 days is added back
-      expect(page).to have_content("Higher-Level Review", count: 3)
+      expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 
       decision_date = hlr_b.tasks.first.closed_at.strftime("%m/%d/%y")
@@ -432,12 +430,10 @@ feature "NonComp Reviews Queue", :postgres do
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
       # earlier_date = 3.days.ago.strftime("%m/%d/%y")
-      # Remove this one the pre filter 7 days is added
-      earlier_date = 7.days.ago.strftime("%m/%d/%y")
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc&filter%5B%5D=col%3DcompletedDateColumn%26val%3Dlast7%2C#{7.days.ago}"
       )
 
       table_rows = current_table_rows
@@ -588,7 +584,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_on "Completed Tasks"
       expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       # Turn this back on after last 7 days prefilter is added
-      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content("Cases completed (Last 7 Days)")
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Apportionment (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
@@ -999,14 +995,9 @@ feature "NonComp Reviews Queue", :postgres do
       click_on "Completed Tasks"
 
       # Swap these on once the Last 7 days pre filter is added back
-      # expect(page).to have_content("Cases completed (Last 7 Days)")
-      # expect(page).to have_content("Date Completed (1)")
-      # expect(page).to have_content("Viewing 1-2 of 2 total")
-
-      # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
-      expect(page).to_not have_content("Date Completed (1)")
-      expect(page).to have_content("Viewing 1-3 of 3 total")
+      expect(page).to have_content("Cases completed (Last 7 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
 
       find("[aria-label='Filter by completed date']").click
       expect(page).to have_content("Date filter parameters")
@@ -1051,14 +1042,9 @@ feature "NonComp Reviews Queue", :postgres do
       click_on "Clear all filters"
 
       # Swap these on once the Last 7 days pre filter is added back
-      # expect(page).to have_content("Cases completed (Last 7 Days)")
-      # expect(page).to have_content("Date Completed (1)")
-      # expect(page).to have_content("Viewing 1-2 of 2 total")
-
-      # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
-      expect(page).to_not have_content("Date Completed (1)")
-      expect(page).to have_content("Viewing 1-3 of 3 total")
+      expect(page).to have_content("Cases completed (Last 7 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
 
       find("[aria-label='Filter by completed date']").click
       expect(page).to have_content("Date filter parameters")
@@ -1104,7 +1090,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_on "Completed Tasks"
       expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       # Add this back in once the last 7 days pre filter is added again
-      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content("Cases completed (Last 7 Days)")
       click_button "Download completed tasks"
 
       # Check the csv to make sure it returns the two task rows within the last week and the header row
