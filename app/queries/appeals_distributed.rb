@@ -19,8 +19,7 @@ class AppealsDistributed
     hearing_date: "Hearing Date",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
-    affinity_start_date: "Affinity Start Date",
-    affinity_status: "Affinity Status"
+    affinity_start_date: "Affinity Start Date"
   }.freeze
 
   def self.generate_rows(record)
@@ -100,8 +99,7 @@ class AppealsDistributed
       hearing_date: hearing&.scheduled_for,
       veteran_file_number: appeal.veteran_file_number,
       veteran_name: appeal.veteran&.name.to_s,
-      affinity_start_date: appeal.appeal_affinity&.affinity_start_date,
-      affinity_status: "Not yet implemented"
+      affinity_start_date: appeal.appeal_affinity&.affinity_start_date
     }
   end
 
@@ -132,8 +130,7 @@ class AppealsDistributed
       hearing_date: hearing_record&.hearing_date,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
       veteran_name: FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s,
-      affinity_start_date: case_record.appeal_affinity&.affinity_start_date,
-      affinity_status: "Not yet implemented"
+      affinity_start_date: case_record.appeal_affinity&.affinity_start_date
     }
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
