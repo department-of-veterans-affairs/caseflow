@@ -120,7 +120,7 @@ module Seeds
 
     def ineligible_judge
       @ineligible_judge ||= User.find_by(css_id: "INEL_JUDGE") ||
-        create(:user, :judge, :with_inactive_vacols_judge_record,
+        create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
                css_id: "INEL_JUDGE", full_name: "Vacols IneligibleJudge")
     end
 
