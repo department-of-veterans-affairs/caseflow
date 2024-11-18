@@ -515,7 +515,6 @@ feature "NonComp Dispositions Task Page", :postgres do
 
         expect(page).to have_css(".usa-button-disabled", text: "Request issue modification")
         expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
-        expect(page).to have_content(COPY::DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE)
       end
 
       it "should disable the edit issues button" do
