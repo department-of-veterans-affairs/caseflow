@@ -20,7 +20,8 @@ const PdfDocument = ({
   rotateDeg,
   setIsDocumentLoadError,
   setNumPages,
-  zoomLevel }) => {
+  zoomLevel,
+   }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -28,6 +29,8 @@ const PdfDocument = ({
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
+  const requestRef = useRef(null);
+  const showProgressBarRef = useRef(false);
 
   const containerStyle = {
     width: '100%',
@@ -114,6 +117,9 @@ const PdfDocument = ({
 
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
+        requestRef.current = null;
+        showProgressBarRef.current = false;
+
         return response.body;
       });
 
@@ -170,6 +176,15 @@ const PdfDocument = ({
   }, [doc.id]);
 
   useEffect(() => {
+    return () => {
+      if (requestRef.current) {
+        requestRef.current.abort();
+        showProgressBarRef.current = false;
+      }
+    };
+  }, [doc.id]);
+
+  useEffect(() => {
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
@@ -202,12 +217,15 @@ PdfDocument.propTypes = {
     filename: PropTypes.string,
     id: PropTypes.number,
     type: PropTypes.string,
+    file_size: PropTypes.number,
   }),
   isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  onrequestCancel: PropTypes.func,
+  readerPreferences: PropTypes.object,
 };
 
 export default PdfDocument;

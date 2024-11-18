@@ -35,7 +35,9 @@ describe('DocumentsTable', () => {
           listComments: true,
           isComment: true
         },
-        { id: 20 }
+        {
+          id: 20,
+        },
       ]);
     }
   );
