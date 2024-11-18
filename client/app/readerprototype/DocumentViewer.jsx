@@ -29,6 +29,18 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
+  if (!doc) {
+    return;
+  }
+
+  const currentDocIndex = props.allDocuments.indexOf(doc);
+  const prevDoc = props.allDocuments?.[currentDocIndex - 1];
+  const nextDoc = props.allDocuments?.[currentDocIndex + 1];
+
+  /* eslint-disable camelcase */
+  const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
+  const files = [...prefetchFiles, doc.content_url];
+
   useEffect(() => {
     setShowSearchBar(false);
   }, [currentDocumentId]);
@@ -129,25 +141,21 @@ const DocumentViewer = (props) => {
           />
           {showSearchBar && <ReaderSearchBar file={doc.filename} />}
           <div className="cf-pdf-scroll-view">
-            <PdfDocument
-              currentPage={currentPage}
-              doc={doc}
-              isDocumentLoadError={isDocumentLoadError}
-              rotateDeg={rotateDeg}
-              setCurrentPage={setCurrentPageOnScroll}
-              setIsDocumentLoadError={setIsDocumentLoadError}
-              setNumPages={setNumPages}
-              zoomLevel={props.zoomLevel}
-            />
+            {files.map((file) =>
+              (
+                <PdfDocument
+                  currentPage={currentPage}
+                  doc={doc}
+                  key={file}
+                  isFileVisible={doc.content_url === file}
+                  rotateDeg={rotateDeg}
+                  setCurrentPage={setCurrentPageOnScroll}
+                  showPdf={props.showPdf}
+                  zoomLevel={props.zoomLevel}
+                />
+              )
+            )}
           </div>
-          <ReaderFooter
-            currentPage={currentPage}
-            docId={doc.id}
-            isDocumentLoadError={isDocumentLoadError}
-            numPages={numPages}
-            setCurrentPage={setCurrentPage}
-            showPdf={props.showPdf}
-          />
         </div>
         {showSideBar && (
           <ReaderSidebar
