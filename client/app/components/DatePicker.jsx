@@ -116,9 +116,8 @@ export const datePickerFilterValue = (rowValue, filterValues) => {
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last7') {
-        const startDate = moment().subtract(7, 'days').
-          valueOf();
-        const endDate = moment();
+        const startDate = '';
+        const endDate = '';
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last30') {
@@ -247,10 +246,10 @@ class DatePicker extends React.PureComponent {
 
     } else if (this.state.noFutureDates && this.isDateInFuture(this.state.startDate)) {
       disabled = true;
+    } else if (this.state.mode === 'all' || this.state.mode === 'last7' || this.state.mode === 'last30' || this.state.mode === 'last365') {
+      disabled = false;
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
-    } else if (this.state.mode === 'all') {
-      disabled = false;
     }
 
     return disabled;
@@ -288,14 +287,11 @@ class DatePicker extends React.PureComponent {
     }
 
     if (mode === 'last7') {
-      this.setState({ startDate: moment().subtract(7, 'days').
-        format(format) });
+      this.setState({ startDate: '' });
     } else if (mode === 'last30') {
-      this.setState({ startDate: moment().subtract(30, 'days').
-        format(format) });
+      this.setState({ startDate: '' });
     } else if (mode === 'last365') {
-      this.setState({ startDate: moment().subtract(365, 'days').
-        format(format) });
+      this.setState({ startDate: '' });
     }
   }
 

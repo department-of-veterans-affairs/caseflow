@@ -999,11 +999,11 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-2 of 2 total")
 
-      find("[aria-label='Filter by completed date']").click
+      find("[aria-label='Filter by completed date. Filtering by last7,,']").click
       expect(page).to have_content("Date filter parameters")
       submit_button = find("button", text: "Apply Filter")
 
-      expect(submit_button[:disabled]).to eq "true"
+      expect(submit_button[:disabled]).to eq "false"
       page.find(".cf-select__control", match: :first).click
       page.all("cf-select__option")
       # Verify that all the date picker options are available
@@ -1042,15 +1042,15 @@ feature "NonComp Reviews Queue", :postgres do
       click_on "Clear all filters"
 
       # Swap these on once the Last 7 days pre filter is added back
-      expect(page).to have_content("Cases completed (Last 7 Days)")
+      expect(page).to have_content("Cases completed")
       expect(page).to have_content("Date Completed (1)")
-      expect(page).to have_content("Viewing 1-2 of 2 total")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
 
-      find("[aria-label='Filter by completed date']").click
+      find("[aria-label='Filter by completed date. Filtering by all,,']").click
       expect(page).to have_content("Date filter parameters")
       submit_button = find("button", text: "Apply Filter")
 
-      expect(submit_button[:disabled]).to eq "true"
+      expect(submit_button[:disabled]).to eq "false"
       page.find(".cf-select__control", match: :first).click
       find("div", class: "cf-select__option", text: "Last 30 days", exact_text: true).click
       submit_button.click
