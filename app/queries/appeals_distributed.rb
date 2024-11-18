@@ -108,23 +108,28 @@ class AppealsDistributed
     distributed_case = distributed_cases.filter { |dc| dc.case_id == case_record.bfkey }.first
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
-    judge_mem_id = VACOLS::Case.includes(:folder).where(folder: { tinum: folder_record.tinum },
-                                                        bfddec: case_record.bfdpdcn).first.bfmemid
+    original_case_record = VACOLS::Case.includes(:folder).where(folder: { tinum: folder_record.tinum },
+                                                                bfddec: case_record.bfdpdcn)&.first
     prior_bfkeys = VACOLS::Folder.where(tinum: folder_record.tinum, titrnum: folder_record.titrnum).map(&:ticknum)
     hearing_record = VACOLS::CaseHearing.where(folder_nr: prior_bfkeys, hearing_disp: "H").max_by(&:hearing_date)
+    cavc = if case_record.bfac == "3"
+             original_case_record&.bfac == "7"
+           else
+             case_record.bfac == "7"
+           end
 
     {
       case_id: distributed_case.case_id,
       docket_number: folder_record.tinum,
-      docket: distributed_case.docket,
+      docket: case_record.bfac == "3" ? "aoj_legacy" : distributed_case.docket,
       aod: aod,
-      cavc: case_record.bfac == "7",
+      cavc: cavc,
       receipt_date: LegacyAppeal.repository.normalize_vacols_date(case_record.bfd19).to_date,
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
       distributed_to: distributed_case.distribution&.judge&.css_id,
       genpop_query: distributed_case.genpop_query,
-      original_judge: VACOLS::Staff.find_by(sattyid: judge_mem_id)&.sdomainid,
+      original_judge: VACOLS::Staff.find_by(sattyid: original_case_record&.bfmemid)&.sdomainid,
       prior_decision_date: case_record.bfdpdcn,
       hearing_judge: hearing_record&.staff&.sdomainid,
       hearing_date: hearing_record&.hearing_date&.to_date,
