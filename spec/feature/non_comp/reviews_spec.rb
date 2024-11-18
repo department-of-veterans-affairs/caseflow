@@ -433,7 +433,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc&filter%5B%5D=col%3DcompletedDateColumn%26val%3Dlast7%2C#{7.days.ago}"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc&filter%5B%5D=col%3DcompletedDateColumn%26val%3Dlast7%2C%2C"
       )
 
       table_rows = current_table_rows
@@ -1094,7 +1094,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_button "Download completed tasks"
 
       # Check the csv to make sure it returns the two task rows within the last week and the header row
-      completed_tasks_csv_file(4)
+      completed_tasks_csv_file(3)
 
       # Filter by Camp Lejune Family Member
       find("[aria-label='Filter by issue type']").click

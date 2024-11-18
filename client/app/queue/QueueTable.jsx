@@ -296,7 +296,7 @@ export default class QueueTable extends React.PureComponent {
     const completedTab = (new URLSearchParams(this.props?.taskPagesApiEndpoint?.split('?')[1])).has('tab', 'completed');
 
     if (this.props.isVhaOrg && completedTab && _.isEmpty(state.filteredByList)) {
-      state.filteredByList = { closedAt: [`last7,${moment().subtract(7, 'days')},`] };
+      state.filteredByList = { closedAt: ['last7,,'] };
     }
 
     return state;
@@ -382,7 +382,7 @@ export default class QueueTable extends React.PureComponent {
       _.isEmpty(previousState.filteredByList?.closedAt) &&
        !previousState.filteredByList?.clear
     ) {
-      this.updateFilteredByList({ closedAt: [`last7,${moment().subtract(7, 'days')},`] });
+      this.updateFilteredByList({ closedAt: ['last7,,'] });
     }
 
     if (this.props.useReduxCache &&
