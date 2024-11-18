@@ -587,7 +587,7 @@ class RequestIssue < CaseflowRecord
     return if processed?
 
     # exit if benefit type "compensation" or "pension"
-    return true if benefit_type_disabled?
+    return true if syncing_disabled_for_benefit_type?
 
     fail NotYetSubmitted unless submitted_and_ready?
 
