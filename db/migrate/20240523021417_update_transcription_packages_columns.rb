@@ -1,4 +1,4 @@
-class UpdateTranscriptionPackagesColumns < Caseflow::Migration
+class UpdateTranscriptionPackagesColumns < ActiveRecord::Migration[6.1]
 
   def change
     add_column :transcription_packages, :date_upload_box, :datetime, comment: "Date of successful delivery to box.com contractor endpoint"
