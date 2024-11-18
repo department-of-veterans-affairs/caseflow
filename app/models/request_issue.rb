@@ -577,12 +577,8 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
-  def disabled_benefit_types
-    Constants::DISABLED_BENEFIT_TYPES
-  end
-
   def benefit_type_disabled?
-    disabled_benefit_types.value?(benefit_type)
+    Constants::DISABLED_BENEFIT_TYPES.value?(benefit_type)
   end
 
   def sync_decision_issues!
