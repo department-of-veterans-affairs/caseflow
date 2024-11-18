@@ -38,7 +38,11 @@ RSpec.shared_context "Legacy appeals that may or may not appear in the NHQ" do
   end
 
   let!(:legacy_appeal_without_sched_task) do
-    create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+    create(
+      :legacy_appeal,
+      :with_veteran,
+      vacols_case: create(:case)
+    )
   end
 
   # Should not be included
