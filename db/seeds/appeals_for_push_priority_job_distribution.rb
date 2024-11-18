@@ -18,6 +18,8 @@ module Seeds
         create_previous_distribtions
       end
 
+      # Make this judge and their judge team inactive in Caseflow; must be done after cases are created to avoid error
+      ineligible_judge.update_status!(Constants.USER_STATUSES.inactive)
       IneligibleJudgesJob.perform_now
     end
 
@@ -120,7 +122,7 @@ module Seeds
 
     def ineligible_judge
       @ineligible_judge ||= User.find_by(css_id: "INEL_JUDGE") ||
-        create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
+        create(:user, :judge, :with_inactive_vacols_judge_record,
                css_id: "INEL_JUDGE", full_name: "Vacols IneligibleJudge")
     end
 
