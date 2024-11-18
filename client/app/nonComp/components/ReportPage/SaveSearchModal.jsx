@@ -222,6 +222,8 @@ export const SaveSearchModal = ({ setShowModal }) => {
     </>;
   };
 
+  const characterLimit = <i style ={{ color: '#323A45' }}> {`${50 - name.length} characters left` } </i>;
+
   return (
     <Modal
       title={COPY.SAVE_YOUR_SEARCH_TITLE}
@@ -244,7 +246,7 @@ export const SaveSearchModal = ({ setShowModal }) => {
           value={name}
           onChange={(val) => setName(val)}
           textAreaStyling={{ rows: '1' }}
-          validationError={name ? <i style ={{ color: '#323A45' }}> {`${50 - name.length} characters left` } </i> : null}
+          validationError={name ? characterLimit : null}
         />
       </div>
       <div style={{ height: '175px' }} >
