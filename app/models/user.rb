@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
-  include BgsService
+  include BGSServiceConcern
   include ConferenceableConcern
   include EventConcern
 
