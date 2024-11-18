@@ -43,7 +43,7 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_appeal_related_tasks(data, current_user, correspondence_id)
-    appeal = Appeal.find(data[:appeal_id])
+    appeal = Appeal.find_by_id(data[:appeal_id])
     # find the CorrespondenceAppeal created in link_appeals_to_correspondence
     cor_appeal = CorrespondenceAppeal.find_by(
       correspondence_id: correspondence_id,
