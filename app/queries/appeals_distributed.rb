@@ -12,7 +12,7 @@ class AppealsDistributed
     ready_for_distribution_at: "Ready for Distribution at",
     distributed_at: "Distributed At",
     distributed_to: "Distributed To",
-    genpop_query: "Genpop Query Value",
+    genpop_query: "Distribution Type",
     original_judge: "Original Judge",
     prior_decision_date: "Prior Decision Date",
     hearing_judge: "Hearing Judge",
@@ -69,12 +69,12 @@ class AppealsDistributed
   # For each AMA appeal get its distributed case and use ActiveRecord relationships to get fields
   def self.ama_appeal(appeal, distributed_cases)
     distributed_case = distributed_cases.filter { |dc| dc.case_id == appeal.uuid }.first
-    hearing_judge = appeal.hearings
-      .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
-      .first&.judge&.full_name
+    hearing_record =
+      appeal.hearings&.filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }&.first
+    original_task = appeal.cavc? ? ama_cavc_original_judge_task(appeal) : nil
 
     {
-      case_id: "Not yet implemented",
+      case_id: distributed_case.case_id,
       docket_number: appeal.docket_number,
       docket: distributed_case.docket,
       aod: appeal.aod,
@@ -82,12 +82,12 @@ class AppealsDistributed
       receipt_date: appeal.receipt_date,
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
-      distributed_to: "Not yet implemented",
-      genpop_query: "Not yet implemented",
-      original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
-      prior_decision_date: "Not yet implemented",
-      hearing_judge: hearing_judge,
-      hearing_date: "Not yet implemented",
+      distributed_to: distributed_case.distribution&.judge&.css_id,
+      genpop_query: distributed_case.genpop_query,
+      original_judge: original_task&.assigned_to&.css_id,
+      prior_decision_date: original_task&.closed_at,
+      hearing_judge: hearing_record&.judge&.full_name,
+      hearing_date: hearing_record&.scheduled_for,
       veteran_file_number: appeal.veteran_file_number,
       veteran_name: appeal.veteran&.name.to_s,
       affinity_start_date: appeal.appeal_affinity&.affinity_start_date,
@@ -121,8 +121,13 @@ class AppealsDistributed
     veteran_name = FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s
     appeal_affinity = case_record.appeal_affinity
 
+    relevant_bfkeys =
+      VACOLS::Folder.where(tinum: folder_record.tinum, titrnum: folder_record.titrnum).map(&:ticknum)
+    hearing_record =
+      VACOLS::CaseHearing.where(folder_nr: relevant_bfkeys, hearing_disp: "H").max_by(&:hearing_date)
+
     {
-      case_id: "Not yet implemented",
+      case_id: distributed_case.case_id,
       docket_number: folder_record.tinum,
       docket: distributed_case.docket,
       aod: aod,
@@ -130,12 +135,12 @@ class AppealsDistributed
       receipt_date: normalize_vacols_date(case_record.bfd19),
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
-      distributed_to: "Not yet implemented",
-      genpop_query: "Not yet implemented",
+      distributed_to: distributed_case.distribution&.judge&.css_id,
+      genpop_query: distributed_case.genpop_query,
       original_judge: original_judge&.sdomainid,
-      prior_decision_date: "Not yet implemented",
-      hearing_judge: case_record.case_hearings.first&.staff&.sdomainid,
-      hearing_date: "Not yet implemented",
+      prior_decision_date: case_record.bfdpdcn,
+      hearing_judge: hearing_record&.staff&.sdomainid,
+      hearing_date: hearing_record&.hearing_date,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
       veteran_name: veteran_name,
       affinity_start_date: appeal_affinity&.affinity_start_date,
@@ -144,10 +149,9 @@ class AppealsDistributed
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  def self.ama_cavc_original_deciding_judge(appeal)
+  def self.ama_cavc_original_judge_task(appeal)
     source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
 
     Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
-      &.assigned_to&.css_id
   end
 end
