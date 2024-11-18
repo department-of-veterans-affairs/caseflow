@@ -74,7 +74,7 @@ class LoadingDataDisplay extends React.PureComponent {
         slowLoadMessage: this.props.slowLoadMessage,
         slowLoadThresholdMs: this.props.slowLoadThresholdMs,
         timeoutMs: this.props.timeoutMs,
-        prefetchDisabled: this.props.prefetchDisabled
+        prefetchDisabled: false
       }
     };
 

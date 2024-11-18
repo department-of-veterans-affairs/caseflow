@@ -146,7 +146,7 @@ const DocumentViewer = (props) => {
                   key={file}
                   isFileVisible={doc.content_url === file}
                   rotateDeg={rotateDeg}
-                  setCurrentPage={setCurrentPage}
+                  setCurrentPage={setCurrentPageOnScroll}
                   showPdf={props.showPdf}
                   zoomLevel={props.zoomLevel}
                 />
