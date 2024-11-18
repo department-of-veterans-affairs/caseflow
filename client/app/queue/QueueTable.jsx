@@ -293,7 +293,7 @@ export default class QueueTable extends React.PureComponent {
       Object.assign(state, defaultSort);
     }
 
-    const completedTab = (new URLSearchParams(this.props.taskPagesApiEndpoint.split('?')[1])).has('tab', 'completed');
+    const completedTab = (new URLSearchParams(this.props?.taskPagesApiEndpoint.split('?')[1])).has('tab', 'completed');
 
     if (completedTab && this.props.isVhaOrg && _.isEmpty(state.filteredByList)) {
       state.filteredByList = { closedAt: [`last7,${moment().subtract(7, 'days')},`] };
