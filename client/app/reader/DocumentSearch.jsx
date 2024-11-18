@@ -49,7 +49,7 @@ export class DocumentSearch extends React.PureComponent {
       data: {
         searchCharacters: this.searchTerm.length,
         file: this.props.file,
-        prefetchDisabled: false
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled
       },
     };
 
