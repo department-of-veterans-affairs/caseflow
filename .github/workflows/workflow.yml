@@ -90,8 +90,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: install node version
         uses: actions/setup-node@v4
@@ -120,8 +118,6 @@ jobs:
       # We run yarn install after loading the cache to update any dependencies if their version is different
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Save Yarn Cache
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
@@ -305,6 +301,11 @@ jobs:
           && rm /tmp/chrome.deb
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_ACCESS }}
+
+      - name: Configure Git for Private Repo Access
+        run: git config --global url."https://${{ secrets.REPO_ACCESS }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install Python-2
         run: |
