@@ -9,8 +9,6 @@ import TaskRows from '../components/TaskRows';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import {
-  setWaiveEvidenceAlertBanner,
-  setTaskRelatedToAppealBanner,
   updateExpandedLinkedAppeals
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import AddRelatedTaskModalCorrespondenceDetails from
@@ -265,8 +263,6 @@ CorrespondenceAppealTasks.propTypes = {
   appealUuid: PropTypes.string,
   waivableUser: PropTypes.bool,
   correspondenceInfo: PropTypes.object,
-  setWaiveEvidenceAlertBanner: PropTypes.func,
-  setTaskRelatedToAppealBanner: PropTypes.func,
   expandedLinkedAppeals: PropTypes.array
 };
 
@@ -279,8 +275,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setWaiveEvidenceAlertBanner,
-    setTaskRelatedToAppealBanner,
     updateExpandedLinkedAppeals
   }, dispatch)
 );

@@ -20,36 +20,10 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 
-export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.SET_WAIVE_EVIDENCE_ALERT_BANNER,
-    payload: {
-      waiveEvidenceAlertBanner: {
-        taskId: bannerDetails.taskId,
-        message: bannerDetails.message,
-        type: bannerDetails.type
-      }
-    }
-  });
-};
-
-export const setTaskRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.SET_TASK_RELATED_TO_APPEAL_BANNER,
-    payload: {
-      taskRelatedToAppealBanner: {
-        taskId: bannerDetails.taskId,
-        message: bannerDetails.message,
-        type: bannerDetails.type
-      }
-    }
-  });
-};
-
 export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
     then((response) => {
-      JSON.stringify(`response ${response, 1, 1}`);
+      JSON.stringify(`response ${response, 1, 1}`)
       const responseTasks = JSON.parse(response.text).tasks.data;
 
       // overwrite all correspondence_appeal_tasks in the store with values from response
