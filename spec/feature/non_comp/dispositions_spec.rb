@@ -323,7 +323,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         scroll_to(page, align: :bottom)
         expect(page).to have_button("Complete", disabled: false)
         click_button("Complete")
-        expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1")
+        expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1&filter%5B%5D=col%3DcompletedDateColumn%26val%3Dlast7%2C%2C")
       end
 
       step "completed Decision review task should have specific decision date provided during completion" do
