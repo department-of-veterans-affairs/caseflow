@@ -317,5 +317,21 @@
       "label": "Veteran"
     }],
     "targetId": "veteran uuid"
+  },
+  {
+    "scenario": "organizationUsers",
+    "targetType": [{
+      "value": "Organization",
+      "label": "Organization"
+    }],
+    "targetId": "organization url"
+  },
+  {
+    "scenario": "organizationTasks",
+    "targetType": [{
+      "value": "Organization",
+      "label": "Organization"
+    }],
+    "targetId": "organization url"
   }
 ]

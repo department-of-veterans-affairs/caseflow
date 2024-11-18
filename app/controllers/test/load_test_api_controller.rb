@@ -65,6 +65,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "Organization"
+      target_data_type = Organization
+      target_data_column = "url"
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
