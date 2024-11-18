@@ -42,7 +42,7 @@ export class PdfPage extends React.PureComponent {
       pageIndex: this.props.pageIndex,
       file: this.props.file,
       documentType: this.props.documentType,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      prefetchDisabled: false,
       overscan: this.props.windowingOverscan,
       isPageVisible: this.props.isVisible,
       name: null
@@ -270,7 +270,7 @@ export class PdfPage extends React.PureComponent {
           documentId: this.props.documentId,
           documentType: this.props.documentType,
           file: this.props.file,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled
+          prefetchDisabled: false
         };
         const message = `${id} : setUpPage ${this.props.file} : ${error}`;
 
