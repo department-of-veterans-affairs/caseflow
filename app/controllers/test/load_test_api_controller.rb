@@ -74,9 +74,18 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Private: If no target_id is provided, use the target_id of sample data instead
   # Returns the target_data_id of each target_data_type
   # For Metric returns the entire target_data object
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def get_target_data_id(target_id, target_data_type, target_data_column)
     target_data_id = if target_data_type.to_s == "Metric"
                        target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "Veteran"
+                       target_id.presence ? Veteran.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "SupplementalClaim"
+                       target_id.presence ? SupplementalClaim.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "Appeal"
+                       target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "HearingDay"
+                       target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else
