@@ -28,7 +28,7 @@ const DeleteModal = ({ setShowDeleteModal }) => {
 
   return (
     <Modal
-      title="Delete Search"
+      title={COPY.DELETE_SEARCH_TITLE}
       icon="warning"
       closeHandler={() => setShowDeleteModal(false)}
       confirmButton={<Button id="delete-search" onClick={handleDelete} >Delete</Button>}

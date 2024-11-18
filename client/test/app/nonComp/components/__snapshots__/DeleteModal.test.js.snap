@@ -16,7 +16,7 @@ exports[`DeleteModal renders correctly renders correctly 1`] = `
     >
       <button
         class="cf-modal-close"
-        id="Delete-Search-button-id-close"
+        id="Delete-search-button-id-close"
         type="button"
       >
         <span
@@ -53,7 +53,7 @@ exports[`DeleteModal renders correctly renders correctly 1`] = `
           id="modal_id-title"
           style="flex: 1;"
         >
-          Delete Search
+          Delete search
         </h1>
         <div
           data-css-2flkvz=""

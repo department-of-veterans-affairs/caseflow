@@ -91,7 +91,7 @@ const SavedSearches = () => {
         <TabWindow name="saved-search-queue" tabs={ALL_TABS} onChange={onTabSelected} />
       </NonCompLayout>
       { showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null }
-      <div style = {buttonStyling}>
+      <div style={buttonStyling}>
         { (selectedTab === 0) ? <Button
           label="delete"
           name="delete"
