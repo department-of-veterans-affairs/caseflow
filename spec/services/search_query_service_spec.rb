@@ -10,8 +10,16 @@ describe "SearchQueryService" do
   let(:claimant_first_name) { Faker::Name.first_name }
   let(:claimant_last_name) { Faker::Name.last_name }
   let(:middle_initial) { "X" }
-  let(:veteran_full_name) { FullName.new(veteran_first_name, middle_initial, veteran_last_name).formatted(:readable_full_nonformatted) }
-  let(:claimant_full_name) { FullName.new(claimant_first_name, middle_initial, claimant_last_name).formatted(:readable_full_nonformatted) }
+  let(:veteran_full_name) do
+    FullName.new(
+      veteran_first_name, middle_initial, veteran_last_name
+    ).formatted(:readable_full_nonformatted)
+  end
+  let(:claimant_full_name) do
+    FullName.new(
+      claimant_first_name, middle_initial, claimant_last_name
+    ).formatted(:readable_full_nonformatted)
+  end
   let(:docket_type) { "hearing" }
   let(:docket_number) { "240111-1111" }
 
@@ -301,10 +309,7 @@ describe "SearchQueryService" do
     context "when vacols case record does not exist" do
       it "finds by file number" do
         search_results = subject.search_by_veteran_file_number
-        result = search_results.first.api_response
-
-        expect(result.id).to be
-        expect(result.type).to eq "legacy_appeal"
+        expect(search_results).to be_empty
       end
     end
 

@@ -120,16 +120,16 @@ class SearchQueryService::AppealRow
 
   def appellant_full_name
     FullName.new(
-      query_row["person_first_name"], 
-      query_row["person_middle_name"].to_s.first.upcase, 
+      query_row["person_first_name"],
+      query_row["person_middle_name"].to_s.first.upcase,
       query_row["person_last_name"]
     ).formatted(:readable_full_nonformatted)
   end
 
   def veteran_full_name
     FullName.new(
-      query_row["veteran_first_name"], 
-      query_row["veteran_middle_name"].to_s.first.upcase, 
+      query_row["veteran_first_name"],
+      query_row["veteran_middle_name"].to_s.first.upcase,
       query_row["veteran_last_name"]
     ).formatted(:readable_full_nonformatted)
   end
