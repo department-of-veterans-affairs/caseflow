@@ -321,5 +321,9 @@
   {"scenario": "users",
     "targetType": [],
     "targetId": ""
+  },
+  {"scenario": "help",
+    "targetType": [],
+    "targetId": ""
   }
 ]
