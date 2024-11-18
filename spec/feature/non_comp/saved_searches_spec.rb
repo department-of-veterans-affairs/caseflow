@@ -69,7 +69,7 @@ feature "Saved Searches", :postgres do
         find("button", text: "Delete").click
 
         within ".cf-modal-body" do
-          expect(page).to have_content("Delete Search")
+          expect(page).to have_content(COPY::DELETE_SEARCH_TITLE)
           expect(page).to have_text(COPY::DELETE_SEARCH_DESCRIPTION)
           expect(page).to have_text(user_saved_search.name)
           find("button", text: "Delete").click
