@@ -136,6 +136,7 @@ const NonCompTabsUnconnected = (props) => {
       label: 'Completed Tasks',
       page: <TaskTableTab {...props}
         key="completed"
+        isVhaBusinessLine={isVhaBusinessLine}
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={tabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}

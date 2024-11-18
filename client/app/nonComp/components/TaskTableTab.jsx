@@ -137,6 +137,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
             tasks={[]}
             taskPagesApiEndpoint={this.props.baseTasksUrl}
             useTaskPagesApi
+            isVhaBusinessLine={this.props.isVhaBusinessLine}
             tabPaginationOptions={this.props.tabPaginationOptions} />
         </div>
       </div>
