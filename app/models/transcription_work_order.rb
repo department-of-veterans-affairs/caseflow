@@ -72,7 +72,7 @@ class TranscriptionWorkOrder
     transcription_file_ids = fetch_transcription_file_ids(task_number)
     return if transcription_file_ids.empty?
 
-    Hearings::TranscriptionFile.where(id: transcription_file_ids).update_all(
+    TranscriptionFile.where(id: transcription_file_ids).update_all(
       date_upload_box: nil,
       file_status: "Successful upload (AWS)",
       updated_by_id: current_user.id,

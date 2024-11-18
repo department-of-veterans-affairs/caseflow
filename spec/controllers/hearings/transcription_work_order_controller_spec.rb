@@ -142,7 +142,7 @@ RSpec.describe Hearings::TranscriptionWorkOrderController, type: :controller do
           .to receive(:cancel_by_task_number)
           .with(task_number).and_return(true)
 
-        allow(Hearings::TranscriptionFile)
+        allow(TranscriptionFile)
           .to receive(:reset_files)
           .with(task_number).and_return(true)
 

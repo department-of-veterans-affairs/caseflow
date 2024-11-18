@@ -10,5 +10,7 @@ FactoryBot.define do
     expected_return_date { Time.zone.now + 14.days }
     date_upload_box { Time.utc(2050, 12, 2) }
     date_upload_aws { Time.utc(2050, 12, 3) }
+    status { "Successful Retrieval (BOX)" }
+    contractor { create(:transcription_contractor) }
   end
 end
