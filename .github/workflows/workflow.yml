@@ -302,10 +302,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_ACCESS }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git for Private Repo Access
-        run: git config --global url."https://${{ secrets.REPO_ACCESS }}@github.com/".insteadOf "https://github.com/"
+        run: git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install Python-2
         run: |
