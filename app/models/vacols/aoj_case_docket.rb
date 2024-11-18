@@ -555,7 +555,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where ((((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
                 and (PREV_TYPE_ACTION = '7' or AOD = '1')
                 or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
                 or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
@@ -564,14 +564,14 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
             elsif use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
                 and (PREV_TYPE_ACTION = '7' or AOD = '1')
                 or #{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query}
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
                 and (PREV_TYPE_ACTION = '7' or AOD = '1')
                 or #{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query}
               SQL
