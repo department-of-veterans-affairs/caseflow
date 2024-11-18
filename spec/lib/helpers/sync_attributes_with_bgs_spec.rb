@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "helpers/sync_attributes_with_bgs"
-
 describe SyncAttributesWithBGS::VeteranCacheUpdater do
   describe "#run_by_file_number" do
     subject(:run_by_file_number) { described_class.new.run_by_file_number(file_number) }
