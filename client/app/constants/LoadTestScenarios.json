@@ -317,5 +317,9 @@
       "label": "Veteran"
     }],
     "targetId": "veteran uuid"
+  },
+  {"scenario": "users",
+    "targetType": [],
+    "targetId": ""
   }
 ]
