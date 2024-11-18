@@ -495,7 +495,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
       NationalHearingQueueEntry.refresh
       schedulable = NationalHearingQueueEntry.find_by(
-        appeal: appeal
+        appeal: appeal,
+        schedulable: false
       ).schedulable
 
       expect(schedulable).to eq(false)

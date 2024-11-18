@@ -1,3 +1,10 @@
+WITH latest_cutoff_date AS (
+  SELECT *
+  FROM schedulable_cutoff_dates
+  ORDER BY created_at DESC
+  LIMIT 1
+)
+
 SELECT
   appeals.id AS appeal_id,
   'Appeal' AS appeal_type,
@@ -41,7 +48,7 @@ SELECT
 	    	ELSE FALSE
   		END
      ) IS TRUE
-     OR receipt_date <= COALESCE(schedulable_cutoff_dates.cutoff_date,'2019-12-31')
+     OR receipt_date <= COALESCE((SELECT cutoff_date FROM latest_cutoff_date),'2019-12-31')
     THEN TRUE
     ELSE FALSE
   END AS schedulable
@@ -60,7 +67,6 @@ FROM
       AND claimants.decision_review_type = 'Appeal'
       AND people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
   ) aod_based_on_age_recognized_claimants ON TRUE
-  LEFT JOIN schedulable_cutoff_dates ON schedulable_cutoff_dates.created_by_id = tasks.assigned_to_id
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')

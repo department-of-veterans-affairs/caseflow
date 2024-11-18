@@ -2465,44 +2465,6 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
-  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
-       RETURNS trigger
-       LANGUAGE plpgsql
-      AS $function$
-          declare
-            string_claim_id varchar(25);
-            epe_id integer;
-          begin
-            if (NEW."EP_CODE" LIKE '04%'
-                OR NEW."EP_CODE" LIKE '03%'
-                OR NEW."EP_CODE" LIKE '93%'
-                OR NEW."EP_CODE" LIKE '68%')
-                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
-
-              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
-
-              select id into epe_id
-              from end_product_establishments
-              where (reference_id = string_claim_id
-              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
-
-              if epe_id > 0
-              then
-                if not exists (
-                  select 1
-                  from priority_end_product_sync_queue
-                  where end_product_establishment_id = epe_id
-                ) then
-                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
-                  values (now(), epe_id, now());
-                end if;
-              end if;
-            end if;
-            return null;
-          end;
-        $function$
-  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2524,6 +2486,8 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
       END
       $function$
   SQL
+
+
   create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
       CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
   SQL
@@ -2544,7 +2508,17 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT appeals.id AS appeal_id,
+      WITH latest_cutoff_date AS (
+           SELECT schedulable_cutoff_dates.id,
+              schedulable_cutoff_dates.cutoff_date,
+              schedulable_cutoff_dates.created_by_id,
+              schedulable_cutoff_dates.created_at,
+              schedulable_cutoff_dates.updated_at
+             FROM schedulable_cutoff_dates
+            ORDER BY schedulable_cutoff_dates.created_at DESC
+           LIMIT 1
+          )
+   SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
       replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
@@ -2571,10 +2545,11 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
               CASE
                   WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
                   ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= COALESCE(schedulable_cutoff_dates.cutoff_date, '2019-12-31'::date))) THEN true
+              END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
+                 FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
               ELSE false
           END AS schedulable
-     FROM ((((((appeals
+     FROM (((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
        JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
@@ -2583,7 +2558,6 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
              FROM (claimants
                JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
             WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
-       LEFT JOIN schedulable_cutoff_dates ON ((schedulable_cutoff_dates.created_by_id = tasks.assigned_to_id)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
