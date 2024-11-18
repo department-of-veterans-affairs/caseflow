@@ -9,8 +9,9 @@ describe "SearchQueryService" do
   let(:veteran_last_name) { Faker::Name.last_name }
   let(:claimant_first_name) { Faker::Name.first_name }
   let(:claimant_last_name) { Faker::Name.last_name }
-  let(:veteran_full_name) { FullName.new(veteran_first_name, "", veteran_last_name).to_s }
-  let(:claimant_full_name) { FullName.new(claimant_first_name, "", claimant_last_name).to_s }
+  let(:middle_initial) { "X" }
+  let(:veteran_full_name) { FullName.new(veteran_first_name, middle_initial, veteran_last_name).formatted(:readable_full_nonformatted) }
+  let(:claimant_full_name) { FullName.new(claimant_first_name, middle_initial, claimant_last_name).formatted(:readable_full_nonformatted) }
   let(:docket_type) { "hearing" }
   let(:docket_number) { "240111-1111" }
 
@@ -29,7 +30,7 @@ describe "SearchQueryService" do
           date_of_birth: dob,
           date_of_death: nil,
           first_name: veteran_first_name,
-          middle_name: nil,
+          middle_name: middle_initial,
           last_name: veteran_last_name
         }
       end
@@ -324,8 +325,10 @@ describe "SearchQueryService" do
         let(:vacols_correspondent_attrs) do
           {
             sspare2: veteran_first_name,
+            sspare3: middle_initial,
             sspare1: veteran_last_name,
             snamel: veteran_last_name,
+            snamemi: middle_initial,
             snamef: veteran_first_name,
             stafkey: ssn
           }

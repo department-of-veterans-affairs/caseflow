@@ -109,7 +109,7 @@ class SearchQueryService::AppealRow
 
   def docket_number
     attrs, = JSON.parse query_row["appeal"]
-    attrs["stream_docket_number"]
+    attrs["stream_docket_number"].presence || "Missing Docket Number"
   end
 
   def decision_date
@@ -119,11 +119,19 @@ class SearchQueryService::AppealRow
   end
 
   def appellant_full_name
-    FullName.new(query_row["person_first_name"], "", query_row["person_last_name"]).to_s
+    FullName.new(
+      query_row["person_first_name"], 
+      query_row["person_middle_name"].to_s.first.upcase, 
+      query_row["person_last_name"]
+    ).formatted(:readable_full_nonformatted)
   end
 
   def veteran_full_name
-    FullName.new(query_row["veteran_first_name"], "", query_row["veteran_last_name"]).to_s
+    FullName.new(
+      query_row["veteran_first_name"], 
+      query_row["veteran_middle_name"].to_s.first.upcase, 
+      query_row["veteran_last_name"]
+    ).formatted(:readable_full_nonformatted)
   end
 
   def veteran_file_number

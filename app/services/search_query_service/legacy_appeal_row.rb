@@ -175,11 +175,15 @@ class SearchQueryService::LegacyAppealRow
       vacols_row["sspare2"],
       vacols_row["sspare3"],
       vacols_row["sspare1"]
-    ).to_s.upcase
+    ).formatted(:readable_full_nonformatted).upcase
   end
 
   def veteran_full_name
-    FullName.new(vacols_row["snamef"], vacols_row["snamemi"], vacols_row["snamel"]).to_s
+    FullName.new(
+      vacols_row["snamef"],
+      vacols_row["snamemi"],
+      vacols_row["snamel"]
+    ).formatted(:readable_full_nonformatted)
   end
 
   def aod
