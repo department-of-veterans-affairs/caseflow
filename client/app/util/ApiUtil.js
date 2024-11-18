@@ -78,7 +78,7 @@ const errorHandling = (url, error, method, options = {}) => {
           method,
           url,
           error,
-          prefetchDisabled: options.prefetchDisabled
+          prefetchDisabled: false
         }),
         sent_to: 'javascript_console',
         start: options.start,
@@ -111,7 +111,7 @@ const successHandling = (url, res, method, options = {}) => {
         metric_attributes: JSON.stringify({
           method,
           url,
-          prefetchDisabled: options.prefetchDisabled
+          prefetchDisabled: false
         }),
         sent_to: 'javascript_console',
         sent_to_info: JSON.stringify({

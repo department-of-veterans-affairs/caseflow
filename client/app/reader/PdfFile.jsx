@@ -51,7 +51,7 @@ export class PdfFile extends React.PureComponent {
       pageIndex: null,
       file: this.props.file,
       documentType: this.props.documentType,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      prefetchDisabled: false,
       overscan: this.props.windowingOverscan,
       isPageVisible: this.props.isVisible,
       name: null
@@ -170,7 +170,7 @@ export class PdfFile extends React.PureComponent {
         file,
         step,
         reason,
-        prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        prefetchDisabled: false,
         bandwidth: this.connectionInfo
       };
 
