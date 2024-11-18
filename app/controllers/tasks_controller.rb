@@ -37,6 +37,7 @@ class TasksController < ApplicationController
     JudgeAssignTask: JudgeAssignTask,
     JudgeDispatchReturnTask: JudgeDispatchReturnTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
+    LegacyAppealAssignmentTrackingTask: LegacyAppealAssignmentTrackingTask,
     MailTask: MailTask,
     PrivacyActTask: PrivacyActTask,
     PulacCerulloTask: PulacCerulloTask,
