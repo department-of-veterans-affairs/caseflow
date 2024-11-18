@@ -23,7 +23,9 @@ const AddTaskModalCorrespondenceDetails = ({
 
   // Redux state for unrelatedTaskList, needed to filter task options
   // eslint-disable-next-line max-len
-  const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal);
+  const unrelatedTaskList = useSelector((state) =>
+    state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal || []
+  );
 
   // Track if user is on the second page of the modal (auto-text selection)
   const [isSecondPage, setIsSecondPage] = useState(false);
@@ -44,9 +46,10 @@ const AddTaskModalCorrespondenceDetails = ({
 
   // Filters task type options based on unrelated tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
+    const safeUnrelatedTaskList = Array.isArray(unrelatedTaskList) ? unrelatedTaskList : [];
     return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
       filter((option) =>
-        !unrelatedTaskList.some(
+        !safeUnrelatedTaskList.some(
           (existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase()
         )
       ).
