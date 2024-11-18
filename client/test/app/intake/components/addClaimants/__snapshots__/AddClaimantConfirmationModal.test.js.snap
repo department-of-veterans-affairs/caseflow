@@ -21,6 +21,7 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
@@ -156,6 +157,7 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
@@ -291,6 +293,7 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
@@ -409,6 +412,7 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
@@ -527,6 +531,7 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
@@ -656,6 +661,7 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
       >
         <span
           class="usa-sr-only"
+          style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
         >
           Close
         </span>
