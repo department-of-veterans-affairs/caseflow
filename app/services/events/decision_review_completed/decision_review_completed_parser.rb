@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 # Parser Class that will be used to extract out datapoints from headers & payload for use with
-# DecisionReviewUpdated and it's service Classes
-class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
+# DecisionReviewCompleted and it's service Classes
+
+# This class was created with the assumption that the logic for the Complete event would be
+#  very similar to that of the Update event, and it will need to be adjusted in the future.
+class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
   include Events::VeteranExtractorInterface
   include ParserHelper
 
@@ -163,31 +166,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:auto_remand)
   end
 
-  def added_issues
-    @payload[:added_issues] || []
-  end
-
-  def updated_issues
-    @payload[:updated_issues] || []
-  end
-
-  def eligible_to_ineligible_issues
-    @payload[:eligible_to_ineligible_issues] || []
-  end
-
-  def ineligible_to_eligible_issues
-    @payload[:ineligible_to_eligible_issues] || []
-  end
-
-  def ineligible_to_ineligible_issues
-    @payload[:ineligible_to_ineligible_issues] || []
-  end
-
-  def withdrawn_issues
-    @payload[:withdrawn_issues] || []
-  end
-
-  def removed_issues
-    @payload[:removed_issues] || []
+  def completed_issues
+    @payload[:completed_issues] || []
   end
 end

@@ -104,6 +104,8 @@ Rails.application.routes.draw do
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
         post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
         post '/decision_review_updated_error', to: 'decision_review_updated#decision_review_updated_error'
+        post '/decision_review_completed', to: 'decision_review_completed#decision_review_completed'
+        post '/decision_review_completed_error', to: 'decision_review_completed#decision_review_completed_error'
       end
     end
 

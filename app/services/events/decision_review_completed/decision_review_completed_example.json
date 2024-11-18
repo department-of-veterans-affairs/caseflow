@@ -1,0 +1,54 @@
+{
+  "event_id": 214706,
+  "claim_id": 1234567,
+  "css_id": "BVADWISE101",
+  "detail_type": "HigherLevelReview",
+  "station": "101",
+  "claim_review": {
+    "informal_conference": false,
+    "same_office": false,
+    "legacy_opt_in_approved": false
+  },
+  "end_product_establishment": {
+    "code": "030HLRR",
+    "development_item_reference_id": "1",
+    "reference_id": "1234567",
+    "synced_status": "RFD",
+    "last_synced_at": 1726688419000
+  },
+
+  "completed_issues": [
+    {
+      "original_caseflow_request_issue_id": 12345,
+      "contested_rating_decision_reference_id": null,
+      "contested_rating_issue_reference_id": null,
+      "contested_decision_issue_id": null,
+      "untimely_exemption": false,
+      "untimely_exemption_notes": null,
+      "edited_description": "DIC: Service connection denied (UPDATED)",
+      "vacols_id": null,
+      "vacols_sequence_id": null,
+      "nonrating_issue_bgs_id": null,
+      "type": "RequestIssue",
+      "decision_review_issue_id": 908,
+      "contention_reference_id": 123456,
+      "benefit_type": "compensation",
+      "contested_issue_description": null,
+      "contested_rating_issue_profile_date": null,
+      "decision_date": null,
+      "ineligible_due_to_id": null,
+      "ineligible_reason": null,
+      "unidentified_issue_text": "An unidentified issue added during the edit",
+      "nonrating_issue_category": null,
+      "nonrating_issue_description": null,
+      "closed_at": null,
+      "closed_status": null,
+      "contested_rating_issue_diagnostic_code": null,
+      "rating_issue_associated_at": null,
+      "ramp_claim_id": null,
+      "is_unidentified": true,
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
+    }
+  ]
+}
