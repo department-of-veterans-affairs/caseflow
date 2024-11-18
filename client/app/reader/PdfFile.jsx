@@ -51,7 +51,7 @@ export class PdfFile extends React.PureComponent {
       pageIndex: null,
       file: this.props.file,
       documentType: this.props.documentType,
-      prefetchDisabled: false,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
       overscan: this.props.windowingOverscan,
       isPageVisible: this.props.isVisible,
       name: null
@@ -66,7 +66,7 @@ export class PdfFile extends React.PureComponent {
       responseType: 'arraybuffer',
       metricsLogRestError: this.props.featureToggles.metricsLogRestError,
       metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess,
-      prefetchDisabled: false
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
     };
 
     window.addEventListener('keydown', this.keyListener);
@@ -170,7 +170,7 @@ export class PdfFile extends React.PureComponent {
         file,
         step,
         reason,
-        prefetchDisabled: false,
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled,
         bandwidth: this.connectionInfo
       };
 

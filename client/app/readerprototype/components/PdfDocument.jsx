@@ -230,7 +230,7 @@ const PdfDocument = ({
         currentPage={currentPage}
         docId={doc.id}
         isDocumentLoadError={isDocumentLoadError}
-        numPages={pdfPages.length}
+        numPages={numPages}
         setCurrentPage={setCurrentPage}
         showPdf={showPdf}
       />
