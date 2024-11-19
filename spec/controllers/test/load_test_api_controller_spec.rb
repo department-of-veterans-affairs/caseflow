@@ -83,7 +83,7 @@ describe Test::LoadTestApiController, :postgres, type: :controller do
           appeal_with_uuid.save!
           get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-62963d0fc63e" }
           expect(response.status).to eq 200
-          expect(JSON.parse(response.body)["data"]).to eq(appeal_with_uuid.uuid)
+          expect(JSON.parse(response.body)["data"]["uuid"]).to eq(appeal_with_uuid.uuid)
           get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-incorrectid" }
           expect(response.status).to eq 404
         end
@@ -105,7 +105,7 @@ describe Test::LoadTestApiController, :postgres, type: :controller do
           appeal.reload
           get :target, params: { target_type: "Appeal" }
           expect(response.status).to eq 200
-          expect(JSON.parse(response.body)["data"]).to eq(appeal.uuid)
+          expect(JSON.parse(response.body)["data"]["uuid"]).to eq(appeal.uuid)
         end
 
         it "gets SupplementalClaim target information" do
@@ -113,7 +113,7 @@ describe Test::LoadTestApiController, :postgres, type: :controller do
           supplemental_claim.reload
           get :target, params: { target_type: "SupplementalClaim" }
           expect(response.status).to eq 200
-          expect(JSON.parse(response.body)["data"]).to eq(supplemental_claim.uuid)
+          expect(JSON.parse(response.body)["data"]["uuid"]).to eq(supplemental_claim.uuid)
         end
       end
     end
