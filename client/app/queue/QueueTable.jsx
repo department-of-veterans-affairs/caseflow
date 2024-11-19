@@ -400,7 +400,7 @@ export default class QueueTable extends React.PureComponent {
 
         // Using a more complex split than | to work with issue category strings that contain |
         // This essentially will still split values on '|' but not on ' | '
-        const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
+        const values = columnAndValues[1]?.split('=')[1].split(/(?<!\s)\|(?!\s)/);
 
         if (column) {
           if (column.filterOptions) {
