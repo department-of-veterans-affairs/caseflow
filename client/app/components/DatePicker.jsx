@@ -279,8 +279,6 @@ class DatePicker extends React.PureComponent {
   }
 
   updateMode = (mode) => {
-    const format = 'YYYY-MM-DD';
-
     this.setState({ mode });
     if (mode !== 'between') {
       this.setState({ endDate: '' });

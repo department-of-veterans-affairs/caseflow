@@ -174,6 +174,8 @@ TaskTableUnconnected.propTypes = {
   queueTableResponseCache: PropTypes.object,
   updateQueueTableCache: PropTypes.func,
   useReduxCache: PropTypes.bool,
+  isTaskAssignedToUserSelected: PropTypes.bool,
+  isVhaBusinessLine: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

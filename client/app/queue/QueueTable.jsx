@@ -16,7 +16,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
-import moment from 'moment-timezone';
 
 /**
  * This component can be used to easily build tables.
@@ -933,7 +932,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   preserveFilter: PropTypes.bool,
   useReduxCache: PropTypes.bool,
   reduxCache: PropTypes.object,
-  updateReduxCache: PropTypes.func
+  updateReduxCache: PropTypes.func,
+  isVhaOrg: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
