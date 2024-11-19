@@ -2719,9 +2719,9 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/ftk-clone-hawkes#d5bea9d":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/ftk-clone-hawkes#8773b0f":
   version "2.6.1"
-  resolved "https://github.com/department-of-veterans-affairs/ftk-clone-hawkes#d5bea9db02617d8cc6ef1d558c2d2af22d8ec361"
+  resolved "https://github.com/department-of-veterans-affairs/ftk-clone-hawkes#8773b0fff84f4a7cb9098d00ae30b71c8967f71d"
   dependencies:
     babel-jest "^29.7.0"
     classnames "^2.2.5"
@@ -2739,9 +2739,9 @@
     redux-thunk "^2.2.0"
     regenerator-runtime "^0.14.1"
 
-"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db":
+"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals-internal#8c4e5aa":
   version "1.0.2"
-  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db11bf6c4db8e4c35b6a1517eff702161bb"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals-internal#8c4e5aac6f0f04bb0dc165a5cb8d374523c6d778"
   dependencies:
     babel-eslint "^10.1.0"
     eslint-plugin-import "^2.20.1"
