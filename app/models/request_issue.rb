@@ -48,13 +48,6 @@ class RequestIssue < CaseflowRecord
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
-  # only allow specified characters for description
-  validates(
-    :contested_issue_description,
-    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
-    allow_blank: true
-  )
-
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
     duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
