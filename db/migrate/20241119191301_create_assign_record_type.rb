@@ -1,5 +1,5 @@
 class CreateAssignRecordType < ActiveRecord::Migration[6.1]
-def up
+  def up
     safety_assured do
       execute(
         <<-SQL
