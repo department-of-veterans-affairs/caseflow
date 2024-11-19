@@ -138,6 +138,7 @@ class ExternalApi::VaBoxService
     end
   end
 
+  # Disable Metrics/MethodLength for this method
   # rubocop:disable Metrics/MethodLength
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
