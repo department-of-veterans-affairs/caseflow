@@ -95,6 +95,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '16.16.0'
+          token: ${{ secrets.PRIVATE_REPO_ACCESS_FINE }}
+
+      - name: Set up Git for Private Repositories Access
+        run: |
+          git config --global url."https://${{ secrets.PRIVATE_REPO_ACCESS_FINE }}@github.com/".insteadOf "https://github.com/"
+          echo "Git configured to use PAT for private repositorieszzzz"
 
       # If we don't explicitly set this, the runner doesn't find the path when trying to save the cache
       - name: Set yarn cache directory
@@ -301,6 +307,13 @@ jobs:
           && rm /tmp/chrome.deb
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PRIVATE_REPO_ACCESS_FINE }}
+
+      - name: Set up Git for Private Repositories Access
+        run: |
+          git config --global url."https://${{ secrets.PRIVATE_REPO_ACCESS_FINE }}@github.com/".insteadOf "https://github.com/"
+          echo "Git configured to use PAT for private repositorieszzzz"
 
       - name: Install Python-2
         run: |
