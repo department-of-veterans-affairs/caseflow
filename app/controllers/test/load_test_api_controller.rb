@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-require "./scripts/enable_features_dev"
-require "digest"
-require "securerandom"
-require "base64"
 class Test::LoadTestApiController < Api::ApplicationController
   include ProdtestOnlyConcern
 
-  API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
   LOAD_TESTING_USER = "LOAD_TESTER"
 
