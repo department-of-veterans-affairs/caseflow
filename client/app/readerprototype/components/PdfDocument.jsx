@@ -128,29 +128,28 @@ const PdfDocument = ({
     setMetricsLogged(false);
 
     pdfMetrics.current.getStartTime = new Date().getTime();
-    pdfjsLoadingTaskRef.current = await ApiUtil.get(url, requestOptions).
+
+    await ApiUtil.get(url, requestOptions).
       then((response) => {
-        return getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
+        pdfjsLoadingTaskRef.current = getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
       }).
       catch((error) => {
-        console.error(`ERROR with fetching doc from document API: ${error}`);
+        console.error(`readerlog ERROR with fetching doc from document API: ${error}`);
         setIsDocumentLoadError(true);
-        throw error;
       });
 
     pdfMetrics.current.getEndTime = new Date().getTime();
+
     await pdfjsLoadingTaskRef.current.promise.
       then((pdfDocument) => {
-        if (!pdfDocument) {
-          return setIsDocumentLoadError(true);
-        }
         pdfjsDocumentRef.current = pdfDocument;
         setNumPages(pdfjsDocumentRef.current?.numPages);
       }).
       catch((err) => {
-        console.error(`ERROR with pdfjs: ${err}`);
+        console.error(`readerlog ERROR with pdfjs: ${err}`);
+        pdfjsLoadingTaskRef.current = null;
 
-        return null;
+        return null; // need this to prevent error with Transport destroyed
       });
   };
 
@@ -181,6 +180,15 @@ const PdfDocument = ({
   useMemo(() => {
     getPages(pdfjsDocumentRef.current);
   }, [pdfjsDocumentRef.current]);
+
+  // clean up pdfjs worker
+  useEffect(() => {
+    return () => {
+      // block never reached because PdfDocument key
+      pdfjsLoadingTaskRef.current?.destroy();
+      pdfjsDocumentRef.current?.destroy();
+    };
+  }, [doc.id]);
 
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));
@@ -236,7 +244,7 @@ const PdfDocument = ({
         currentPage={currentPage}
         docId={doc.id}
         isDocumentLoadError={isDocumentLoadError}
-        numPages={pdfPages.length}
+        numPages={numPages}
         setCurrentPage={setCurrentPage}
         showPdf={showPdf}
       />

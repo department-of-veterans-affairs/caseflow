@@ -15,6 +15,7 @@ import ShareModal from './components/Comments/ShareModal';
 import { showSideBarSelector } from './selectors';
 import { getRotationDeg } from './util/documentUtil';
 import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { getFilteredDocuments } from '../reader/selectors';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,15 +25,16 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
+  const filteredDocuments = useSelector((state) => getFilteredDocuments(state));
+  const doc = filteredDocuments.find((x) => x.id === currentDocumentId);
 
   if (!doc) {
     return;
   }
 
-  const currentDocIndex = props.allDocuments.indexOf(doc);
-  const prevDoc = props.allDocuments?.[currentDocIndex - 1];
-  const nextDoc = props.allDocuments?.[currentDocIndex + 1];
+  const currentDocIndex = filteredDocuments.indexOf(doc);
+  const prevDoc = filteredDocuments?.[currentDocIndex - 1];
+  const nextDoc = filteredDocuments?.[currentDocIndex + 1];
 
   /* eslint-disable camelcase */
   const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
