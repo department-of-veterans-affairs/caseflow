@@ -2519,9 +2519,9 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	bfcorkey_ids text;
+      	bfcorkey_ids TEXT;
       BEGIN
-      	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
+      	SELECT string_agg ( DISTINCT quote_literal (bfcorkey), ',' )
       	INTO bfcorkey_ids
       	FROM brieffs_awaiting_hearing_scheduling();
 
