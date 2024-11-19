@@ -41,7 +41,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
       it "updates the EPE accordingly with a Cleared or Canceled status, indicating completion" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
-        post :decision_review_updated, params: valid_params
+        post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:created)
         epe.reload
         expect(epe.code).to eq("030HLRR")
