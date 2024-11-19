@@ -234,8 +234,6 @@ describe('NonCompTabsGeneric', () => {
 
     const tabs = screen.getAllByRole('tab');
 
-    console.log('tabs', tabs);
-
     fireEvent.click(tabs[1]);
 
     await waitFor(() => {
