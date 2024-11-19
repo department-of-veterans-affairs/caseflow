@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION issues_awaiting_hearing_scheduling()
   LANGUAGE plpgsql AS
 $func$
 DECLARE
-	legacy_case_ids text;
+	legacy_case_ids TEXT;
 BEGIN
   SELECT *
   INTO legacy_case_ids
