@@ -19,6 +19,7 @@ Rails.application.config.to_prepare do
       "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
       "heartbeat" => HeartbeatTasksJob,
       "incomplete_distributions_job" => IncompleteDistributionsJob,
+      "monitor_box_job" => Hearings::MonitorBoxJob,
       "monthly_metrics" => MonthlyMetricsReportJob,
       "nightly_syncs" => NightlySyncsJob,
       "out_of_service_reminder" => OutOfServiceReminderJob,
@@ -50,6 +51,7 @@ Rails.application.config.to_prepare do
       "stuck_job_scheduler_job" => StuckJobSchedulerJob,
       "fetch_webex_rooms_list_job" => Hearings::FetchWebexRoomsListJob,
       "refresh_webex_access_token_job" => Hearings::RefreshWebexAccessTokenJob,
-      "ineligible_judges_job" => IneligibleJudgesJob
+      "ineligible_judges_job" => IneligibleJudgesJob,
+      "update_transcription_package_status_job" => Hearings::UpdateTranscriptionPackageStatusJob
   }.freeze
 end
