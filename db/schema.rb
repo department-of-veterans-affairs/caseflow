@@ -2577,8 +2577,8 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_corres WHERE 1 = 0';
       END $function$
   SQL
-  create_function :folder_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.folder_awaiting_hearing_scheduling()
+  create_function :folders_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.folders_awaiting_hearing_scheduling()
        RETURNS SETOF folder_record
        LANGUAGE plpgsql
       AS $function$

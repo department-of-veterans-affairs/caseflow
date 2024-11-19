@@ -1,7 +1,7 @@
 -- Returns records from the VACOLS DB's FOLDER table that are associated with
 --   legacy cases in the National Hearing Queue.
 
-CREATE OR REPLACE FUNCTION folder_awaiting_hearing_scheduling()
+CREATE OR REPLACE FUNCTION folders_awaiting_hearing_scheduling()
   RETURNS SETOF folder_record
   LANGUAGE plpgsql AS
 $func$
