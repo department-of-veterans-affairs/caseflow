@@ -191,7 +191,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         icon="warning"
       >
         {this.modalAlert()}
-        <div {...bottomBorderStyling}>
+        <div {...bottomBorderStyling} id="modal_id-desc">
           <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}<br />
           <strong>Cancellation of task(s) are final.</strong>
         </div>
