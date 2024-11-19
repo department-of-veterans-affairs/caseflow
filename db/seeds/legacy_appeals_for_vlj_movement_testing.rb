@@ -33,15 +33,15 @@ module Seeds
     end
 
     def scenario_7_seeds
-      rewite_one = create_scenario_7_veteran(first_name: "Rewite", last_name: "One")
-      rewite_two = create_scenario_7_veteran(first_name: "Rewite", last_name: "Two")
-      rewite_three = create_scenario_7_veteran(first_name: "Rewite", last_name: "Three")
-      rewite_four = create_scenario_7_veteran(first_name: "Rewite", last_name: "Four")
-      rewite_five = create_scenario_7_veteran(first_name: "Rewite", last_name: "Five")
-      rewite_six = create_scenario_7_veteran(first_name: "Rewite", last_name: "Six")
-      no_rewite_control = create_scenario_7_veteran(first_name: "NoRewite ", last_name: "Control")
+      rewrite_one = create_scenario_7_veteran(first_name: "Rewrite", last_name: "One")
+      rewrite_two = create_scenario_7_veteran(first_name: "Rewrite", last_name: "Two")
+      rewrite_three = create_scenario_7_veteran(first_name: "Rewrite", last_name: "Three")
+      rewrite_four = create_scenario_7_veteran(first_name: "Rewrite", last_name: "Four")
+      rewrite_five = create_scenario_7_veteran(first_name: "Rewrite", last_name: "Five")
+      rewrite_six = create_scenario_7_veteran(first_name: "Rewrite", last_name: "Six")
+      no_rewrite_control = create_scenario_7_veteran(first_name: "NoRewrite ", last_name: "Control")
 
-      # Case 1: Rewite One (Priority, 2 issues)
+      # Case 1: Rewrite One (Priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
@@ -51,11 +51,11 @@ module Seeds
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVALSHIELDS"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_one.file_number}S",
+        bfcorlid: "#{rewrite_one.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
 
-      # Case 2: Rewite Two (Nonpriority, 1 issue)
+      # Case 2: Rewrite Two (Nonpriority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
@@ -64,11 +64,11 @@ module Seeds
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVACOTBJUDGE"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_two.file_number}S",
+        bfcorlid: "#{rewrite_two.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
-      # Case 3: Rewite Three (Nonpriority, 2 issues)
+      # Case 3: Rewrite Three (Nonpriority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
@@ -77,10 +77,10 @@ module Seeds
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: User.find_by_css_id("BVALSHIELDS"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_three.file_number}S",
+        bfcorlid: "#{rewrite_three.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)))
 
-      # Case 4: Rewite Four (Priority, 1 issue)
+      # Case 4: Rewrite Four (Priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
@@ -90,11 +90,11 @@ module Seeds
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAJWEHNER1"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_four.file_number}S",
+        bfcorlid: "#{rewrite_four.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
-      # Case 5: Rewite Five (Priority, 2 issues)
+      # Case 5: Rewrite Five (Priority, 2 issues)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
@@ -104,11 +104,11 @@ module Seeds
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAOTRANTOW"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_five.file_number}S",
+        bfcorlid: "#{rewrite_five.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
 
-      # Case 6: Rewite Six (Nonpriority, 1 issue)
+      # Case 6: Rewrite Six (Nonpriority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
@@ -117,20 +117,21 @@ module Seeds
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: User.find_by_css_id("BVAGSPORER"),
         as_judge_assign_task: false,
-        bfcorlid: "#{rewite_six.file_number}S",
+        bfcorlid: "#{rewrite_six.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
 
-      # Case 7: NoRewite Control (priority, 1 issue)
+      # Case 7: NoRewrite Control (priority, 1 issue)
       create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
         :assigned,
         :aod,
-        bfcorlid: "#{no_rewite_control.file_number}S",
+        assigner: User.find_by_css_id("BVAGSPORER"),
+        bfcorlid: "#{no_rewrite_control.file_number}S",
         user: User.find_by_css_id("BVAOTRANTOW"),
-        assigner: User.find_by_css_id("BVAGSPORER")
+        case_issues: create_list(:case_issue, 1, :compensation)
       ))
     end
   end
