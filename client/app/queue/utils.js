@@ -615,7 +615,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       pact: appeal.attributes.pact,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
-      assignedToLocation: appeal.attributes.assigned_to_location
+      assignedToLocation: appeal.attributes.assigned_to_location,
+      active: appeal.attributes.active
     };
 
     return accumulator;

@@ -6,6 +6,8 @@ class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
     correspondence = find_correspondence(intake_params[:correspondence_uuid])
 
+    verify_correspondence(correspondence)
+
     parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id)
 
     return false unless correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
@@ -20,6 +22,9 @@ class CorrespondenceIntakeProcessor
   def update_correspondence(intake_params)
     # Fetch the correspondence using the UUID from the intake params
     correspondence = find_correspondence(intake_params[:correspondence_uuid])
+
+    # Fail if correspondence is not found
+    verify_correspondence(correspondence)
 
     ActiveRecord::Base.transaction do
       create_correspondence_relations(intake_params, correspondence.id, true)
@@ -39,6 +44,9 @@ class CorrespondenceIntakeProcessor
 
   def create_letter(params, _current_user)
     correspondence = find_correspondence(params[:correspondence_uuid])
+
+    # Fail if correspondence is not found
+    verify_correspondence(correspondence)
     create_response_letter(params, correspondence.id)
   end
 
@@ -91,6 +99,10 @@ class CorrespondenceIntakeProcessor
     Rails.logger.error(error.full_message)
 
     false
+  end
+
+  def verify_correspondence(correspondence)
+    return fail "Correspondence not found" if correspondence.blank?
   end
 
   def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
