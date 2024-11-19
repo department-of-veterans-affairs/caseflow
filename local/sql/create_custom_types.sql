@@ -86,7 +86,7 @@ CREATE TYPE brieff_record AS (
     bfrocdoc VARCHAR(1),
     bfdrocket DATE,
     bfdcertool DATE
-)
+);
 
 CREATE TYPE assign_record AS (
     tasknum VARCHAR(12),
@@ -116,7 +116,7 @@ CREATE TYPE assign_record AS (
     tsread VARCHAR(16),
     tskorder VARCHAR(15),
     tssys VARCHAR(16)
-)
+);
 
 CREATE TYPE corres_record AS (
     stafkey VARCHAR(16),
@@ -175,7 +175,7 @@ CREATE TYPE corres_record AS (
     sals VARCHAR(1),
     spgwv VARCHAR(1),
     sincar VARCHAR(1)
-)
+);
 
 CREATE TYPE folder_record AS (
     ticknum VARCHAR(12),
@@ -241,7 +241,7 @@ CREATE TYPE folder_record AS (
     tisnl VARCHAR(1),
     tivbms VARCHAR(1),
     ticlcw VARCHAR(1)
-)
+);
 
 CREATE TYPE hearsched_record AS (
     hearing_pkseq INTEGER,
@@ -279,7 +279,7 @@ CREATE TYPE hearsched_record AS (
     vdropoc VARCHAR(40),
     canceldate DATE,
     addon VARCHAR(1)
-)
+);
 
 CREATE TYPE issues_record AS (
     isskey VARCHAR(12),
@@ -301,7 +301,7 @@ CREATE TYPE issues_record AS (
     issdev VARCHAR(2),
     issmst VARCHAR(1),
     isspact VARCHAR(1)
-)
+);
 
 CREATE TYPE rep_record AS (
     repkey VARCHAR(12),
@@ -328,4 +328,4 @@ CREATE TYPE rep_record AS (
     repfeedisp DATE,
     repcorkey VARCHAR(16),
     repacknw DATE
-)
+);
