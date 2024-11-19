@@ -8,7 +8,7 @@ import { css } from 'glamor';
 
 import COPY from '../../COPY';
 
-import { onReceiveAmaTasks } from './QueueActions';
+import { legacyBlockedAdvanceToJudge, onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -90,16 +90,24 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
     const { appeal, task, isLegacy } = this.props;
 
-    if (isLegacy) {
-      return;
+    const successMessage = {
+      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
+      detail: this.actionData().message_detail
+    };
+
+    if (isLegacy && this.actionData().type === 'LegacyAppealAssignmentTrackingTask') {
+      return this.props.legacyBlockedAdvanceToJudge({
+        tasks: [task],
+        assigneeId: this.state.selectedAssignee,
+        instructions: this.state.instructions,
+        cancelledTasks: this.actionData().blocking_tasks,
+        cancellationReason: this.state.selectedReason,
+        cancellationInstructions: this.state.cancellationInstructions,
+      }, successMessage).
+        then(() => {
+          this.props.history.replace(`/queue/appeals/${appeal.externalId}`);
+        });
     }
-    // if (isLegacy) {
-    //   return this.props.legacyBlockedAdvanceToJudge({
-    //     tasks: [task],
-    //     assigneeId: this.state.selectedValue,
-    //     instructions: this.state.instructions
-    //   }, successMessage);
-    // }
 
     const payload = {
       data: {
@@ -117,11 +125,6 @@ class BlockedAdvanceToJudgeView extends React.Component {
           }
         ]
       }
-    };
-
-    const successMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
-      detail: this.actionData().message_detail
     };
 
     return this.props.
@@ -281,7 +284,8 @@ BlockedAdvanceToJudgeView.propTypes = {
     instructions: PropTypes.string,
     taskId: PropTypes.string
   }),
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  legacyBlockedAdvanceToJudge: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -298,7 +302,8 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       resetSuccessMessages,
-      highlightInvalidFormItems
+      highlightInvalidFormItems,
+      legacyBlockedAdvanceToJudge
     },
     dispatch
   );
