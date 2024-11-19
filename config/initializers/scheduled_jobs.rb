@@ -1,3 +1,4 @@
+
 Rails.application.config.to_prepare do
   SCHEDULED_JOBS = {
       "amo_metrics_report" => AMOMetricsReportJob,
