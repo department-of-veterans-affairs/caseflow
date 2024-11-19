@@ -25,6 +25,8 @@ class RequestIssue < CaseflowRecord
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
+  SYNCING_DISABLED_BENEFIT_TYPES = %w[compensation pension].freeze
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy

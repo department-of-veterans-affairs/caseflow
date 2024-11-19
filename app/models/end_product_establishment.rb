@@ -222,6 +222,8 @@ class EndProductEstablishment < CaseflowRecord
 
       fail EstablishedEndProductNotFound, id unless result
 
+      return true if vbms_ep_cleared? && syncing_disabled_for_benefit_type?
+
       # load contentions now, in case "source" needs them.
       # this VBMS call is slow and will cause the transaction below to timeout in some cases.
       contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
@@ -276,6 +278,15 @@ class EndProductEstablishment < CaseflowRecord
   def status_active?(sync: false)
     sync! if sync
     synced_status.nil? || !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+  end
+
+  def vbms_ep_cleared?
+    result.status_type_code == EndProduct::STATUSES.key("Cleared")
+  end
+
+  def syncing_disabled_for_benefit_type?
+    source.respond_to?(:benefit_type) &&
+      RequestIssue::SYNCING_DISABLED_BENEFIT_TYPES.include?(source.benefit_type)
   end
 
   def associate_rating_request_issues!
