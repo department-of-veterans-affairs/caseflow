@@ -9,13 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Specifies whether generated namespaced UUIDs follow the RFC 4122 standard for namespace IDs provided as a
-# `String` to `Digest::UUID.uuid_v3` or `Digest::UUID.uuid_v5` method calls.
-#
-# See https://guides.rubyonrails.org/configuring.html#config-active-support-use-rfc4122-namespaced-uuids for
-# more information.
-# Rails.application.config.active_support.use_rfc4122_namespaced_uuids = true
-
 # Change the default headers to disable browsers' flawed legacy XSS protection.
 # Rails.application.config.action_dispatch.default_headers = {
 #   "X-Frame-Options" => "SAMEORIGIN",
