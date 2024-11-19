@@ -190,6 +190,24 @@ module CaseflowCertification
     # Default as of 7.0: true
     config.action_controller.wrap_parameters_by_default = false
 
+    # Change the default headers to disable browsers' flawed legacy XSS protection.
+    # Default as of 7.0: {
+    #   "X-Frame-Options" => "SAMEORIGIN",
+    #   "X-XSS-Protection" => "0",
+    #   "X-Content-Type-Options" => "nosniff",
+    #   "X-Download-Options" => "noopen",
+    #   "X-Permitted-Cross-Domain-Policies" => "none",
+    #   "Referrer-Policy" => "strict-origin-when-cross-origin"
+    # }
+    config.action_dispatch.default_headers = {
+      "X-Frame-Options" => "SAMEORIGIN",
+      "X-XSS-Protection" => "1; mode=block",
+      "X-Content-Type-Options" => "nosniff",
+      "X-Download-Options" => "noopen",
+      "X-Permitted-Cross-Domain-Policies" => "none",
+      "Referrer-Policy" => "strict-origin-when-cross-origin"
+    }
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

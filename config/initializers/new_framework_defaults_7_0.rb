@@ -9,17 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Change the default headers to disable browsers' flawed legacy XSS protection.
-# Rails.application.config.action_dispatch.default_headers = {
-#   "X-Frame-Options" => "SAMEORIGIN",
-#   "X-XSS-Protection" => "0",
-#   "X-Content-Type-Options" => "nosniff",
-#   "X-Download-Options" => "noopen",
-#   "X-Permitted-Cross-Domain-Policies" => "none",
-#   "Referrer-Policy" => "strict-origin-when-cross-origin"
-# }
-
-
 # ** Please read carefully, this must be configured in config/application.rb **
 # Change the format of the cache entry.
 # Changing this default means that all new cache entries added to the cache
