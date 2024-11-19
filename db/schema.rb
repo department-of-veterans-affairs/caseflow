@@ -2513,6 +2513,22 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_brieff WHERE 1 = 0';
       END $function$
   SQL
+  create_function :gather_bfcorkeys_of_hearing_schedulable_legacy_cases, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.gather_bfcorkeys_of_hearing_schedulable_legacy_cases()
+       RETURNS text
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	bfcorkey_ids text;
+      BEGIN
+      	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
+      	INTO bfcorkey_ids
+      	FROM brieffs_awaiting_hearing_scheduling();
+
+      	RETURN bfcorkey_ids;
+      END
+      $function$
+  SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (

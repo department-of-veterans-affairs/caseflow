@@ -460,7 +460,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       expect(schedulable).to eq(true)
     end
 
-    it "is schedulable when AMA appeal receipt date is before 2020" do
+    it "is schedulable when AMA appeal receipt date is before 2020 and no " \
+     "user-specified cutoff dates exist" do
       appeal.update!(receipt_date: Date.new(2019, 12, 31))
 
       NationalHearingQueueEntry.refresh
@@ -477,6 +478,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       entry = NationalHearingQueueEntry.find_by(
         appeal: appeal
       )
+
       expect(entry.schedulable).to eq(false)
       SchedulableCutoffDate.create!(created_by_id: entry.assigned_to_id, cutoff_date: Time.zone.today + 10.days)
       NationalHearingQueueEntry.refresh
@@ -495,8 +497,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
       NationalHearingQueueEntry.refresh
       schedulable = NationalHearingQueueEntry.find_by(
-        appeal: appeal,
-        schedulable: false
+        appeal: appeal
       ).schedulable
 
       expect(schedulable).to eq(false)
