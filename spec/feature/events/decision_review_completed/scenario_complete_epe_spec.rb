@@ -15,6 +15,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         "detail_type": "HigherLevelReview",
         "station": "101",
         "claim_review": {
+          "auto_remand": false,
+          "remand_source_id": nil,
           "informal_conference": false,
           "same_office": false,
           "legacy_opt_in_approved": false
