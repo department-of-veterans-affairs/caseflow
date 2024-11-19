@@ -180,6 +180,10 @@ module CaseflowCertification
     # Default as of 7.0: false
     config.active_record.partial_inserts = true
 
+    # Protect from open redirect attacks in `redirect_back_or_to` and `redirect_to`.
+    # Default as of 7.0: true
+    config.action_controller.raise_on_open_redirects = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

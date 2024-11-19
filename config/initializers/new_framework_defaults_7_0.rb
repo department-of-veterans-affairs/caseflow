@@ -9,9 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Protect from open redirect attacks in `redirect_back_or_to` and `redirect_to`.
-# Rails.application.config.action_controller.raise_on_open_redirects = true
-
 # Change the variant processor for Active Storage.
 # Changing this default means updating all places in your code that
 # generate variants to use image processing macros and ruby-vips
