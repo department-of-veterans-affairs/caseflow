@@ -79,8 +79,8 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     ActiveRecord::Base.transaction do
       update_transcription_package
       update_transcriptions
-      # update_transcription_files
-      # update_vacols_hearsched
+      update_transcription_files
+      update_vacols_hearsched
     end
   end
 
@@ -93,14 +93,15 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   end
 
   def update_transcriptions
-    transcriptions = @transcription_package.transcriptions
-    transcriptions.update_all!(
-      transcription_contractor: @transcription_package.contractor,
-      updated_by_id: RequestStore[:current_user].id,
-      # not 100% sure about this status
-      transcription_status: "Successful Upload (BOX)",
-      sent_to_transcriber_date: Time.current.to_date
-    )
+    @transcription_package.transcriptions.each do |transcription|
+      transcription.update!(
+        transcription_contractor: @transcription_package.contractor,
+        updated_by_id: RequestStore[:current_user].id,
+        # not 100% sure about this status
+        transcription_status: "Successful Upload (BOX)",
+        sent_to_transcriber_date: Time.current.to_date
+      )
+    end
   end
 
   def update_transcription_files

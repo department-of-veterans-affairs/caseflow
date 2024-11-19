@@ -55,17 +55,31 @@ RSpec.describe Hearings::VaBoxUploadJob do
       end
 
       it "updates the transcription_package record" do
-        expect(TranscriptionPackage.first.date_upload_box).to eq(nil)
-        expect(TranscriptionPackage.first.status == "Successful Upload (BOX)").to eq false
+        expect(transcription_package.date_upload_box).to eq(nil)
+        expect(transcription_package.status == "Successful Upload (BOX)").to eq false
 
         subject
 
-        expect(TranscriptionPackage.first.date_upload_box.to_date == Date.today).to eq true
-        expect(TranscriptionPackage.first.status == "Successful Upload (BOX)").to eq true
+        expect(transcription_package.date_upload_box.to_date == Date.today).to eq true
+        expect(transcription_package.status == "Successful Upload (BOX)").to eq true
       end
 
-      xit "updates the associated transcription records" do
-        binding.pry
+      it "updates the associated transcription records" do
+        transcriptions = transcription_package.transcriptions
+
+        transcriptions.each do |t|
+          expect(t.transcription_contractor == transcription_package.contractor).to eq false
+          expect(t.sent_to_transcriber_date == Date.today).to eq false
+          expect(t.transcription_status == "Successful Upload (BOX)").to eq false
+        end
+
+        subject
+
+        transcriptions.each do |t|
+          expect(t.transcription_contractor).to eq(transcription_package.contractor)
+          expect(t.sent_to_transcriber_date).to eq(Date.today)
+          expect(t.transcription_status == "Successful Upload (BOX)").to eq true
+        end
       end
 
       xit "updates the associated transcription_file records" do
