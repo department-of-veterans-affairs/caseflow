@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_13_210338) do
+ActiveRecord::Schema.define(version: 2024_11_19_195426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1775,7 +1775,7 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
   create_table "schedulable_cutoff_dates", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.bigint "created_by_id", null: false
-    t.date "cutoff_date"
+    t.date "cutoff_date", null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
@@ -2446,7 +2446,15 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
-  add_foreign_key "transcriptions", "hearings"
+  add_foreign_key "transcription_files", "users", column: "locked_by_id"
+  add_foreign_key "transcription_package_hearings", "hearings"
+  add_foreign_key "transcription_package_hearings", "transcription_packages"
+  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
+  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
+  add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
+  add_foreign_key "transcriptions", "transcription_contractors"
+  add_foreign_key "transcriptions", "users", column: "created_by_id"
+  add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
@@ -2529,9 +2537,39 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
       END
       $function$
   SQL
+  create_function :assign_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.assign_awaiting_hearing_scheduling()
+       RETURNS SETOF assign_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_assign WHERE tsktknm IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_assign WHERE 1 = 0';
+      END $function$
+  SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT appeals.id AS appeal_id,
+      WITH latest_cutoff_date AS (
+           SELECT schedulable_cutoff_dates.cutoff_date
+             FROM schedulable_cutoff_dates
+            ORDER BY schedulable_cutoff_dates.created_at DESC
+           LIMIT 1
+          )
+   SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
       replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
@@ -2558,7 +2596,8 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
               CASE
                   WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
                   ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
+              END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
+                 FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
               ELSE false
           END AS schedulable
      FROM (((((appeals
