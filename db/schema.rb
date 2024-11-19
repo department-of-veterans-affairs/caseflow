@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_13_210338) do
+ActiveRecord::Schema.define(version: 2024_11_14_170652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1775,7 +1775,7 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
   create_table "schedulable_cutoff_dates", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.bigint "created_by_id", null: false
-    t.date "cutoff_date"
+    t.date "cutoff_date", null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
@@ -2531,7 +2531,13 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT appeals.id AS appeal_id,
+      WITH latest_cutoff_date AS (
+           SELECT schedulable_cutoff_dates.cutoff_date
+             FROM schedulable_cutoff_dates
+            ORDER BY schedulable_cutoff_dates.created_at DESC
+           LIMIT 1
+          )
+   SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
       replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
@@ -2558,7 +2564,8 @@ ActiveRecord::Schema.define(version: 2024_11_13_210338) do
               CASE
                   WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
                   ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
+              END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
+                 FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
               ELSE false
           END AS schedulable
      FROM (((((appeals
