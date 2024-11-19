@@ -205,7 +205,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
         <a
           target="_blank"
         >
-          TEST INTERNAL FTK 123
+          Send feedback
         </a>
       </div>
     </div>
