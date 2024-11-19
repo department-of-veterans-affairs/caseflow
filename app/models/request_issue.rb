@@ -94,6 +94,7 @@ class RequestIssue < CaseflowRecord
         "due to decision date being in the future")
     end
   end
+
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
@@ -110,6 +111,7 @@ class RequestIssue < CaseflowRecord
 
   class NotYetSubmitted < StandardError; end
   class MissingContentionDisposition < StandardError; end
+
   class MissingDecisionDate < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} lacks a decision_date")
@@ -376,7 +378,8 @@ class RequestIssue < CaseflowRecord
     return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
-    return unidentified_issue_text if is_unidentified? || verified_unidentified_issue
+
+    unidentified_issue_text if is_unidentified? || verified_unidentified_issue
   end
 
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
@@ -399,7 +402,7 @@ class RequestIssue < CaseflowRecord
     specials = []
     specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
-    return specials unless specials.empty?
+    specials unless specials.empty?
   end
 
   def contention_type
@@ -568,8 +571,15 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
+  def syncing_disabled_for_benefit_type?
+    SYNCING_DISABLED_BENEFIT_TYPES.include?(benefit_type)
+  end
+
   def sync_decision_issues!
     return if processed?
+
+    # exit if benefit type "compensation" or "pension"
+    return true if syncing_disabled_for_benefit_type?
 
     fail NotYetSubmitted unless submitted_and_ready?
 
@@ -728,7 +738,8 @@ class RequestIssue < CaseflowRecord
 
   def api_status_active?
     return decision_review.active_status? if decision_review.is_a?(ClaimReview)
-    return true if decision_review.is_a?(Appeal)
+
+    true if decision_review.is_a?(Appeal)
   end
 
   def api_status_last_action
