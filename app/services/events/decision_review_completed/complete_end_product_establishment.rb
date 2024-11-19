@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# Service class to handle updates to the EPE
-# This is temporary empty class
+# Service class to handle completion of the EPE in Caseflow after receiving a DecisionReviewCompletedEvent from VBMS
 class Events::DecisionReviewCompleted::CompleteEndProductEstablishment
   class << self
     def process!(params)
