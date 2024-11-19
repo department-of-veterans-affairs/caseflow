@@ -553,9 +553,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when EPs have cleared very recently" do
       before do
+        supplemental_claim.update!(benefit_type: "education")
         ep = supplemental_claim.reload.end_product_establishments.first.result
         ep_store = Fakes::EndProductStore.new
         ep_store.update_ep_status(veteran.file_number, ep.claim_id, "CLR")
+      end
+
+      after do
+        supplemental_claim.update!(benefit_type: benefit_type)
       end
 
       it "syncs on initial GET" do
