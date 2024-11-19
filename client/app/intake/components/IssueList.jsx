@@ -27,7 +27,15 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-  generateIssueActionOptions = (issue, userCanWithdrawIssues, userCanEditIntakeIssues, isDtaError, docketType) => {
+  /* eslint-disable max-params */
+  generateIssueActionOptions = (
+    issue,
+    userCanWithdrawIssues,
+    userCanEditIntakeIssues,
+    isDtaError,
+    docketType,
+    formType
+  ) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
@@ -38,7 +46,7 @@ export default class IssuesList extends React.Component {
         { label: 'Remove issue',
           value: 'remove' }
       );
-      if (userCanEditIntakeIssues) {
+      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
         options.push(
           { label: 'Edit issue',
             value: 'edit' }
@@ -60,7 +68,7 @@ export default class IssuesList extends React.Component {
             value: 'remove' }
         );
       }
-      if (userCanEditIntakeIssues) {
+      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
         options.push(
           { label: 'Edit issue',
             value: 'edit' }
@@ -84,6 +92,7 @@ export default class IssuesList extends React.Component {
           value: 'requestWithdrawal' }
       );
     }
+    /* eslint-enable max-params */
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -111,7 +120,8 @@ export default class IssuesList extends React.Component {
       userCanEditIntakeIssues,
       editPage,
       featureToggles,
-      disableIssueActions
+      disableIssueActions,
+      disableEditingForCompAndPen
     } = this.props;
 
     return <div className="issues">
@@ -127,7 +137,12 @@ export default class IssuesList extends React.Component {
             editableIssueProperties);
 
           const issueActionOptions = this.generateIssueActionOptions(
-            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
+            issue,
+            userCanWithdrawIssues,
+            userCanEditIntakeIssues,
+            intakeData.isDtaError,
+            intakeData.docketType,
+            formType
           );
 
           const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
@@ -167,7 +182,7 @@ export default class IssuesList extends React.Component {
                   onChange={(option) => onClickIssueAction(issue.index, option.value)}
                   searchable={false}
                   doubleArrow
-                  readOnly={disableIssueActions}
+                  readOnly={disableIssueActions || disableEditingForCompAndPen}
                 /> }
                 {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
@@ -194,7 +209,8 @@ export default class IssuesList extends React.Component {
               /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
-              issueIdx={issue.index} />}
+              issueIdx={issue.index}
+              disableEditingForCompAndPen={disableEditingForCompAndPen} />}
           </div>;
         })}
       </div>
@@ -214,5 +230,6 @@ IssuesList.propTypes = {
   showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object,
-  disableIssueActions: PropTypes.bool
+  disableIssueActions: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };

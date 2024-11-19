@@ -1,11 +1,13 @@
 require:
   - rubocop-performance
   - rubocop-rails
+  - .rubocop/custom_cop/top_level_constants_per_file.rb
 
 AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'
+    - 'config.ru'
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
@@ -101,9 +103,9 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
-    - lib/helpers/unrecognized_appellant.rb
+    - lib/helpers/war_room/unrecognized_appellant.rb
     - lib/helpers/duplicate_veteran_checker.rb
-    - lib/helpers/report_load_end_product_sync.rb
+    - lib/helpers/war_room/report_load_end_product_sync.rb
     - lib/helpers/claim_label_change.rb
     - "spec/**/*"
 
@@ -212,7 +214,7 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - lib/helpers/duplicate_veteran_checker.rb
-    - lib/helpers/report_load_end_product_sync.rb
+    - lib/helpers/war_room/report_load_end_product_sync.rb
 
 
 Layout/MultilineMethodCallIndentation:
@@ -223,3 +225,11 @@ Layout/EmptyLinesAroundAttributeAccessor:
 
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
+
+CustomCop/TopLevelConstantsPerFile:
+  Enabled: true
+  Include:
+    - 'app/**/*'
+    - 'lib/**/*'
+  Exclude:
+    - '**/*[^.rb]' # exclude non-.rb files (ex: .rake files)

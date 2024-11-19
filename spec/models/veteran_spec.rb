@@ -316,18 +316,24 @@ describe Veteran, :all_dbs do
       end
     end
 
-    context "when veteran pay grade is invalid" do
-      subject { veteran.validate_veteran_pay_grade }
-      let(:service) do
-        [{ branch_of_service: "Army",
-           entered_on_duty_date: "06282002",
-           released_active_duty_date: "06282003",
-           pay_grade: "not valid",
-           char_of_svc_code: "TBD" }]
-      end
+    context "pay grade" do
+      context "when not in BGS pay grade list" do
+        let(:service) do
+          [{ branch_of_service: "Army",
+             entered_on_duty_date: "06282002",
+             released_active_duty_date: "06282003",
+             pay_grade: "not valid",
+             char_of_svc_code: "TBD" }]
+        end
 
-      it "pay grade invalid" do
-        expect(subject).to eq ["invalid_pay_grade"]
+        it "is invalid within 'bgs' context" do
+          expect(veteran.valid?(:bgs)).to eq(false)
+          expect(veteran.errors.messages_for(:pay_grades)).to eq ["invalid_pay_grade"]
+        end
+
+        it "is valid outside of 'bgs' context" do
+          expect(veteran.valid?).to eq(true)
+        end
       end
     end
   end
@@ -554,11 +560,18 @@ describe Veteran, :all_dbs do
     end
   end
 
-  context "when a zip code is invalid" do
-    let(:zip_code) { "1234" }
+  context "zip code" do
+    context "when not a valid zip code" do
+      let(:zip_code) { "1234" }
 
-    it "zip code has invalid characters" do
-      expect(veteran.validate_zip_code).to eq ["invalid_zip_code"]
+      it "is invalid within 'bgs' context" do
+        expect(veteran.valid?(:bgs)).to eq(false)
+        expect(veteran.errors.messages_for(:zip_code)).to eq ["invalid_zip_code"]
+      end
+
+      it "is valid outside of 'bgs' context" do
+        expect(veteran.valid?).to eq(true)
+      end
     end
   end
 
@@ -573,21 +586,35 @@ describe Veteran, :all_dbs do
     end
   end
 
-  context "given a military address with invalid city characters" do
-    let(:military_postal_type_code) { "AA" }
-    let(:city) { "ÐÐÐÐÐ" }
-    let(:state) { nil }
+  context "city" do
+    context "when a military address with invalid city characters" do
+      let(:military_postal_type_code) { "AA" }
+      let(:city) { "ÐÐÐÐÐ" }
+      let(:state) { nil }
 
-    it "city is considered invalid" do
-      expect(veteran.validate_city).to eq ["invalid_characters"]
+      it "is invalid within 'bgs' context" do
+        expect(veteran.valid?(:bgs)).to eq(false)
+        expect(veteran.errors.messages_for(:city)).to eq ["invalid_characters"]
+      end
+
+      it "is valid outside of 'bgs' context" do
+        expect(veteran.valid?).to eq(true)
+      end
     end
   end
 
-  context "given date of birth is missing leading zeros" do
-    let(:date_of_birth) { "2/2/1956" }
+  context "date of birth" do
+    context "when missing leading zeros" do
+      let(:date_of_birth) { "2/2/1956" }
 
-    it "date_of_birth is considered invalid" do
-      expect(veteran.validate_date_of_birth).to eq ["invalid_date_of_birth"]
+      it "is invalid within 'bgs' context" do
+        expect(veteran.valid?(:bgs)).to eq(false)
+        expect(veteran.errors.messages_for(:date_of_birth)).to eq ["invalid_date_of_birth"]
+      end
+
+      it "is valid outside of 'bgs' context" do
+        expect(veteran.valid?).to eq(true)
+      end
     end
   end
 
@@ -599,21 +626,29 @@ describe Veteran, :all_dbs do
     end
   end
 
-  context "#validate_name_suffix" do
-    subject { veteran.validate_name_suffix }
-    let(:name_suffix) { "JR." }
+  context "name suffix" do
+    context "when containing a special character" do
+      let(:name_suffix) { "JR." }
 
-    it "name_suffix is considered invalid" do
-      expect(subject).to eq ["invalid_character"]
-      expect(veteran.valid?(:bgs)).to eq false
+      it "is invalid within 'bgs' context" do
+        expect(veteran.valid?(:bgs)).to eq false
+        expect(veteran.errors.messages_for(:name_suffix)).to eq(["invalid_character"])
+      end
+
+      it "is valid outside of 'bgs' context" do
+        expect(veteran.valid?).to eq(true)
+      end
     end
 
-    context "name_suffix nil" do
+    context "when nil" do
       let(:name_suffix) { nil }
 
-      it "name_suffix is considered valid" do
-        subject
+      it "is valid within 'bgs' context" do
         expect(veteran.valid?(:bgs)).to eq true
+      end
+
+      it "is valid outside of 'bgs' context" do
+        expect(veteran.valid?).to eq(true)
       end
     end
   end

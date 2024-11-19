@@ -11,6 +11,18 @@ describe ByDocketDateDistribution, :all_dbs do
     def batch_size
       12
     end
+
+    def team_size
+      5
+    end
+
+    def judge_tasks
+      []
+    end
+
+    def judge_legacy_tasks
+      []
+    end
   end
 
   before(:each) do
@@ -25,6 +37,11 @@ describe ByDocketDateDistribution, :all_dbs do
     create(:case_distribution_lever, :ama_hearing_docket_time_goals)
     create(:case_distribution_lever, :disable_legacy_non_priority)
     create(:case_distribution_lever, :disable_legacy_priority)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution
@@ -192,31 +209,94 @@ describe ByDocketDateDistribution, :all_dbs do
 
   context "#ama_statistics" do
     before do
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      create(:case_distribution_lever, :cavc_affinity_days)
       @new_acd.instance_variable_set(:@appeals, [])
     end
 
+    after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+
     it "returns a hash with keys" do
-      statistics = @new_acd.send(:ama_statistics)
+      ama_statistics = @new_acd.send(:ama_statistics)
+      statistics = ama_statistics[:statistics]
 
-      expect(statistics).to include(:batch_size)
-      expect(statistics).to include(:total_batch_size)
-      expect(statistics).to include(:priority_target)
-      expect(statistics).to include(:priority)
-      expect(statistics).to include(:nonpriority)
-      expect(statistics).to include(:algorithm)
+      expect(statistics).to have_key(:batch_size)
+      expect(statistics).to have_key(:total_batch_size)
+      expect(statistics).to have_key(:priority_target)
+      expect(statistics).to have_key(:priority_count)
+      expect(statistics).to have_key(:nonpriority_count)
+      expect(statistics).to have_key(:nonpriority_iterations)
+      expect(statistics).to have_key(:sct_appeals)
 
-      priority_stats = statistics[:priority]
-      nonpriority_stats = statistics[:nonpriority]
+      ineligible_judge_stats = ama_statistics[:ineligible_judge_stats]
+      expect(ineligible_judge_stats).to have_key(:distributed_cases_tied_to_ineligible_judges)
 
-      expect(priority_stats).to include(:count)
-      expect(priority_stats).to include(:legacy_hearing_tied_to)
-      expect(nonpriority_stats).to include(:count)
-      expect(nonpriority_stats).to include(:legacy_hearing_tied_to)
-      expect(nonpriority_stats).to include(:iterations)
+      judge_stats = ama_statistics[:judge_stats]
+
+      expect(judge_stats).to have_key(:team_size)
+      expect(judge_stats).to have_key(:ama_judge_assigned_tasks)
+      expect(judge_stats).to have_key(:legacy_assigned_tasks)
+      expect(judge_stats).to have_key(:settings)
 
       @new_acd.dockets.each_key do |sym|
-        expect(priority_stats).to include(sym)
-        expect(nonpriority_stats).to include(sym)
+        # priority stats
+        expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
+
+        priority_stats = ama_statistics["#{sym}_priority_stats".to_sym]
+        expect(priority_stats).to have_key(:count)
+        expect(priority_stats).to have_key(:affinity_date)
+
+        priority_affinity_date = priority_stats[:affinity_date]
+        expect(priority_affinity_date).to have_key(:in_window)
+        expect(priority_affinity_date).to have_key(:out_of_window)
+
+        # non priority stats
+        expect(ama_statistics).to have_key("#{sym}_stats".to_sym)
+        nonpriority_stats = ama_statistics["#{sym}_stats".to_sym]
+        expect(nonpriority_stats).to have_key(:count)
+        expect(nonpriority_stats).to have_key(:affinity_date)
+
+        nonpriority_affinity_date = nonpriority_stats[:affinity_date]
+        expect(nonpriority_affinity_date).to have_key(:in_window)
+        expect(nonpriority_affinity_date).to have_key(:out_of_window)
+      end
+    end
+
+    context "when individual docket statistics are toggled off" do
+      before do
+        FeatureToggle.enable!("disable_legacy_distribution_stats")
+        FeatureToggle.enable!("disable_direct_review_distribution_stats")
+        FeatureToggle.enable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.enable!("disable_hearing_distribution_stats")
+        FeatureToggle.enable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      after do
+        FeatureToggle.disable!("disable_legacy_distribution_stats")
+        FeatureToggle.disable!("disable_direct_review_distribution_stats")
+        FeatureToggle.disable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.disable!("disable_hearing_distribution_stats")
+        FeatureToggle.disable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      it "does not attempt to generate individual docket statistics" do
+        expect_any_instance_of(LegacyDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(DirectReviewDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(EvidenceSubmissionDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(HearingRequestDocket).not_to receive(:affinity_date_count)
+        expect_any_instance_of(AojLegacyDocket).not_to receive(:affinity_date_count)
+
+        ama_statistics = @new_acd.send(:ama_statistics)
+
+        @new_acd.dockets.each_key do |sym|
+          expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
+          priority_stats = ama_statistics["#{sym}_priority_stats".to_sym]
+          expect(priority_stats).to be_empty
+
+          expect(ama_statistics).to have_key("#{sym}_stats".to_sym)
+          nonpriority_stats = ama_statistics["#{sym}_stats".to_sym]
+          expect(nonpriority_stats).to be_empty
+        end
       end
     end
 

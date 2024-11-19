@@ -25,7 +25,7 @@ namespace :spec do
         task :spec_name do # rubocop:disable Rails/RakeEnvironment
           envs = "export TEST_SUBCATEGORY=#{spec_name} && export RAILS_ENV=test &&"
 
-          ["rake db:create", "rake db:schema:load"].each do |cmd|
+          ["rake db:create:primary", "rake db:schema:load:primary"].each do |cmd|
             ShellCommand.run_and_batch_output("#{envs} #{cmd}")
           end
         end
@@ -76,8 +76,6 @@ namespace :spec do
 
   desc "Setup VACOLS VFTYPES and ISSREF tables"
   task setup_vacols: [:environment] do
-    require_relative "../helpers/vacols_csv_reader"
-
     # We need the VFTYPES and ISSREF tables to do any queries for issues. This code is borrowed from the
     # local:vacols:seed rake task to load all of our dumped data for the VFTYPES and ISSREF tables.
     date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 11, 1)

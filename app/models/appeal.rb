@@ -10,7 +10,7 @@ require "securerandom"
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include BeaamAppealConcern
-  include BgsService
+  include BGSServiceConcern
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
@@ -251,11 +251,15 @@ class Appeal < DecisionReview
 
     category_substrings = %w[Contested Apportionment]
 
-    request_issues.active.any? do |request_issue|
-      category_substrings.any? do |substring|
-        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+    request_issues.each do |request_issue|
+      category_substrings.each do |substring|
+        if request_issue.active? && request_issue.nonrating_issue_category&.include?(substring)
+          return true
+        end
       end
     end
+
+    false
   end
 
   # :reek:RepeatedConditionals

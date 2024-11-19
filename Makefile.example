@@ -35,7 +35,7 @@
 #   # pulled latest from github? try:
 #   % make install migrate
 #
-#   # get fully up to date with master on origin and all deps & db?
+#   # get fully up to date with main on origin and all deps & db?
 #   % make update
 #
 # Hopefully the targets are easy enough to remember to make this useful to others.
@@ -222,32 +222,32 @@ c:  ## Start rails console
 	bundle exec rails console
 
 etl-migrate:	## Migrate ETL database
-	DB=etl bundle exec rake db:migrate
+	bundle exec rake db:migrate:etl
 
 etl-test-prepare:
-	DB=etl bundle exec rake db:test:prepare
+	bundle exec rake db:test:prepare:etl
 
 etl-rollback:	## Rollback ETL database
-	DB=etl bundle exec rake db:rollback
+	bundle exec rake db:rollback:etl
 
 db-migrate:	## Migrate main Caseflow db
-	bundle exec rake db:migrate
+	bundle exec rake db:migrate:primary
 
 db-rollback:	## Rollback main Caseflow db
-	bundle exec rake db:rollback
+	bundle exec rake db:rollback:primary
 
 migrate: external-db-remove etl-migrate etl-test-prepare db-migrate ## Migrate all non-external Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
-fresh:  ## https://github.com/imsky/git-fresh - updates local master to match origin, stashes changes, prunes remote branches
+fresh:  ## https://github.com/imsky/git-fresh - updates local main to match origin, stashes changes, prunes remote branches
 	git fresh
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
-	DB=etl bundle exec rake db:drop db:create db:schema:load
-	bundle exec rake db:drop db:create db:schema:load
+	bundle exec rake db:drop:etl db:create:etl db:schema:load:etl
+	bundle exec rake db:drop:primary db:create:primary db:schema:load:primary
 	make consolidated_db_scripts
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
@@ -260,7 +260,9 @@ seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
-	DB=etl bundle exec rake db:seed
+
+setup-metabase:
+	./metabase/metabase_api_script.sh
 
 enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
@@ -273,7 +275,7 @@ client-install:  ## Installs javascript dependencies
 
 install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate  ## Get fully up to date with origin master - pulls origin, installs all deps and runs any db migrations
+update: fresh install migrate  ## Get fully up to date with origin main - pulls origin, installs all deps and runs any db migrations
 
 client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
@@ -286,8 +288,11 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
 
+one-test-headless: # run the rspec test headless.
+	CI=1 bundle exec rspec $(RUN_ARGS) --format progress
+
 run-all-queues: ## start shoryuken with all queues
-	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
+	bundle exec shoryuken -q caseflow_development_send_notifications.fifo caseflow_development_high_priority caseflow_development_low_priority  -R
 
 run-low-priority: ## start shoryuken with just the low priority queue
 	bundle exec shoryuken -q caseflow_development_low_priority  -R
@@ -296,7 +301,7 @@ run-high-priority: ## start shoryuken with just the high priority queue
 	bundle exec shoryuken -q caseflow_development_high_priority  -R
 
 run-send-notifications: ## start shoryuken with just the send_notification queue
-	bundle exec shoryuken -q caseflow_development_send_notifications  -R
+	bundle exec shoryuken -q caseflow_development_send_notifications.fifo  -R
 
 jest: ## Run jest tests
 	cd client && yarn jest

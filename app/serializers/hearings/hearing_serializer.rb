@@ -4,6 +4,9 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
+  attribute :daily_docket_conference_link do |hearing|
+    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
+  end
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?
@@ -24,9 +27,7 @@ class HearingSerializer
   attribute :appellant_email_address do |hearing|
     hearing.appellant_email_address || hearing.appeal.appellant_email_address
   end
-  attribute :appellant_tz do |hearing|
-    hearing.appellant_tz || hearing.appeal.appellant_tz
-  end
+  attribute :appellant_tz
   attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
   end
@@ -46,6 +47,7 @@ class HearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim?
   end
+  attribute :conference_provider
   attribute :mst do |hearing|
     hearing.appeal.mst?
   end
@@ -65,6 +67,11 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
+  attribute :non_virtual_conference_link do |object|
+    if !object.non_virtual_conference_link.nil?
+      ConferenceLinkSerializer.new(object.non_virtual_conference_link).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :notes
   attribute :paper_case do
     false
@@ -80,9 +87,7 @@ class HearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
-  attribute :representative_tz, if: for_full do |hearing|
-    hearing.representative_tz || hearing.appeal.appellant_tz
-  end
+  attribute :representative_tz
   attribute :representative_email_id, if: for_full do |hearing|
     hearing.representative_recipient&.id.to_s
   end
@@ -96,6 +101,11 @@ class HearingSerializer
   attribute :transcript_requested
   attribute :transcript_sent_date
   attribute :transcription
+  attribute :transcription_files, if: for_worksheet do |hearing|
+    if hearing.conference_provider == "webex"
+      hearing.serialized_transcription_files
+    end
+  end
   attribute :uuid
   attribute :veteran_age, if: for_full
   attribute :veteran_file_number
@@ -123,4 +133,5 @@ class HearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+  attribute :scheduled_in_timezone
 end

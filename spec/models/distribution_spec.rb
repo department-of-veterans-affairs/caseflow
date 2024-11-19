@@ -15,6 +15,10 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :alternative_batch_size)
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
@@ -152,10 +156,19 @@ describe Distribution, :all_dbs do
   context "#distribute!" do
     let(:statistics) do
       {
-        batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
-        evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
-        legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
-        algorithm: "proportions", sct_appeals: 0
+        statistics: {
+          batch_size: 0,
+          direct_review_due_count: 0,
+          direct_review_proportion: 0,
+          evidence_submission_proportion: 0,
+          hearing_proportion: 0,
+          legacy_hearing_backlog_count: 0,
+          legacy_proportion: 0.0,
+          nonpriority_iterations: 0,
+          priority_count: 0,
+          total_batch_size: 0,
+          sct_appeals: 0
+        }
       }
     end
     let(:result_stats) do
@@ -170,14 +183,17 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
+        .with(status: "completed", completed_at: Time.zone.now)
+        .exactly(1).times
+      expect(new_distribution).to receive(:update!)
+        .with(statistics: result_stats)
         .exactly(1).times
 
       new_distribution.distribute!
     end
 
     it "updates status to error if an error is thrown and sends slack notification" do
-      allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
+      allow(new_distribution).to receive(:batch_size).and_raise(StandardError)
       expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
@@ -198,7 +214,7 @@ describe Distribution, :all_dbs do
 
       it "calls requested_distribution" do
         expect(new_distribution).to receive(:requested_distribution)
-        allow(new_distribution).to receive(:ama_statistics).and_return({})
+        allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
       end
@@ -209,108 +225,17 @@ describe Distribution, :all_dbs do
 
       it "calls priority_push_distribution" do
         expect(new_distribution).to receive(:priority_push_distribution)
-        allow(new_distribution).to receive(:ama_statistics).and_return({})
+        allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
       end
     end
-  end
 
-  # The following are specifically testing the priority push code in the AutomaticCaseDistribution module
-  # ByDocketDateDistribution tests are in their own file, by_docket_date_distribution_spec.rb
-  context "priority push distributions" do
-    let(:priority_push) { true }
-
-    context "when there is no limit" do
-      let(:limit) { nil }
-
-      it "distributes priority appeals on the legacy and hearing dockets" do
-        expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: nil, priority: true, genpop: "not_genpop", style: "push")
-          .and_return([])
-
-        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: nil, priority: true, genpop: "not_genpop", style: "push")
-          .and_return([])
-
-        new_distribution.distribute!(limit)
-      end
-    end
-
-    context "when there is a limit set" do
-      let(:limit) { 10 }
-
-      let(:stubbed_appeals) do
-        {
-          legacy: 5,
-          direct_review: 3,
-          evidence_submission: 1,
-          hearing: 1
-        }
-      end
-
-      it "distributes only up to the limit" do
-        expect(new_distribution).to receive(:num_oldest_priority_appeals_by_docket)
-          .with(limit)
-          .and_return stubbed_appeals
-
-        expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: 5, priority: true, style: "push")
-          .and_return(create_list(:appeal, 5))
-
-        expect_any_instance_of(DirectReviewDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: 3, priority: true, style: "push")
-          .and_return(create_list(:appeal, 3))
-
-        expect_any_instance_of(EvidenceSubmissionDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: 1, priority: true, style: "push")
-          .and_return(create_list(:appeal, 1))
-
-        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: 1, priority: true, style: "push")
-          .and_return(create_list(:appeal, 1))
-
-        new_distribution.distribute!(limit)
-      end
-    end
-  end
-
-  context "requested distributions" do
-    context "when priority_acd is enabled" do
-      let(:limit) { 10 }
-      let(:batch_size) { CaseDistributionLever.alternative_batch_size }
-
-      before { FeatureToggle.enable!(:priority_acd) }
-
-      it "calls distribute_appeals with bust_backlog set along with the other calls" do
-        expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
-          .with(new_distribution, limit: batch_size, genpop: "not_genpop", bust_backlog: true, style: "request")
-          .and_return([])
-
-        expect_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals)
-          .with(new_distribution, limit: batch_size, genpop: "not_genpop", style: "request")
-          .and_return([])
-
-        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: batch_size, priority: true, genpop: "not_genpop", style: "request")
-          .and_return([])
-
-        expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
-          .with(new_distribution, limit: batch_size, genpop: "not_genpop", range: 0, style: "request")
-          .and_return([])
-
-        expect_any_instance_of(HearingRequestDocket).to receive(:distribute_appeals)
-          .with(new_distribution, limit: batch_size, priority: false, genpop: "not_genpop", style: "request")
-          .and_return([])
-
-        expect(new_distribution).to receive(:distribute_limited_priority_appeals_from_all_dockets)
-          .with(15, style: "request")
-          .and_return([])
-
-        expect(new_distribution).to receive(:deduct_distributed_actuals_from_remaining_docket_proportions)
-          .with(:legacy, :hearing)
-
-        new_distribution.distribute!(limit)
+    context "distribution lever cache" do
+      it "caches lever properly" do
+        expect(CaseDistributionLever).to receive(:check_distribution_lever_cache).at_least(:once).and_call_original
+        new_distribution.distribute!
+        expect(Rails.cache.exist?("aoj_affinity_days_distribution_lever_cache")).to be false
       end
     end
   end

@@ -8,7 +8,7 @@ class ClaimReview < DecisionReview
 
   has_many :end_product_establishments, as: :source
   has_many :messages, as: :detail
-
+  has_many :event_records, as: :evented_record
   with_options if: :saving_review do
     validate :validate_receipt_date
     validate :validate_veteran
@@ -223,7 +223,8 @@ class ClaimReview < DecisionReview
       receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url,
+      intake_from_vbms: from_decision_review_created_event?
     }
   end
 
@@ -307,6 +308,11 @@ class ClaimReview < DecisionReview
     processed? && cleared_end_products.any?(&:nonrating?)
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    intake&.from_decision_review_created_event? || false
+  end
+
   def sct_appeal?
     false
   end
@@ -323,7 +329,13 @@ class ClaimReview < DecisionReview
 
   def verify_contentions
     # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
-    request_issues.select(&:open?).select(&:contention_missing?).each(&:remove!)
+    # filter for only request issues that have a nil reference_id,
+    # this will filter out any request issues from AMA Event
+    request_issues
+      .select { |issue| issue.reference_id.nil? }
+      .select(&:open?)
+      .select(&:contention_missing?)
+      .each(&:remove!)
   end
 
   def incomplete_tasks?

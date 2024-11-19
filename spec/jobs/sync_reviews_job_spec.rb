@@ -143,7 +143,7 @@ describe SyncReviewsJob, :postgres do
           SyncReviewsJob.perform_now
         end.to have_enqueued_job(
           ProcessDecisionDocumentJob
-        ).with(decision_document_needs_reprocessing.id).exactly(:once)
+        ).with(decision_document_needs_reprocessing.id, false).exactly(:once)
       end
     end
   end

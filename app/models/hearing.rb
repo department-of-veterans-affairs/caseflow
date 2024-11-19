@@ -31,6 +31,7 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
   # VA Notify Hooks
   prepend HearingScheduled
@@ -49,6 +50,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
+  has_many :transcription_files, as: :hearing
 
   class HearingDayFull < StandardError; end
 
@@ -187,12 +189,25 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def daily_docket_conference_link
+    hearing_day.conference_link
+  end
+
+  # returns scheduled datetime object considering the timezones
+  # @return [nil] if hearing_day is nil
+  # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
+  # @return [Time] else datetime in regional office timezone
+  # rubocop:disable Metrics/AbcSize
   def scheduled_for
     return nil unless hearing_day
 
+    # returns datetime in scheduled_in_timezone timezone
+    if scheduled_datetime.present? && scheduled_in_timezone.present?
+      return scheduled_datetime.in_time_zone(scheduled_in_timezone)
+    end
+
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
-    #
     # When a hearing is scheduled, we save the hearing time to the scheduled_time
     # field. The time is converted to UTC upon save *relative to the timezone of
     # the user who saved it*, not relative to the timezone of the RO where the
@@ -211,7 +226,6 @@ class Hearing < CaseflowRecord
     # to explicitly convert it to the time zone of the person who scheduled it,
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
-
     updated_by_timezone = updated_by&.timezone || Time.zone.name
     scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 
@@ -226,9 +240,16 @@ class Hearing < CaseflowRecord
       )
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
+  end
+
+  # Checks the scheduled_datetime value and returns
+  # @return [Boolean] true if scheduled_datetime is not nil, else false
+  def use_hearing_datetime?
+    scheduled_datetime.present?
   end
 
   def worksheet_issues
@@ -240,10 +261,10 @@ class Hearing < CaseflowRecord
 
   def regional_office
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
+                           RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
                            nil
-                          end
+                         end
   end
 
   def regional_office_key

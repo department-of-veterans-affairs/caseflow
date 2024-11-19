@@ -431,6 +431,11 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :remand_task, class: DecisionReviewTask do
+        appeal { create(:remand, benefit_type: "nca") }
+        assigned_by { nil }
+      end
+
       factory :supplemental_claim_poa_task, class: DecisionReviewTask do
         appeal do
           create(:supplemental_claim,
@@ -503,6 +508,19 @@ FactoryBot.define do
             :supplemental_claim,
             :with_vha_issue,
             :with_intake,
+            benefit_type: "vha",
+            claimant_type: :veteran_claimant
+          )
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
+      factory :remand_vha_task, class: DecisionReviewTask do
+        appeal do
+          create(
+            :remand,
+            :with_vha_issue,
             benefit_type: "vha",
             claimant_type: :veteran_claimant
           )
@@ -600,6 +618,20 @@ FactoryBot.define do
         transient do
           associated_judge { nil }
           associated_attorney { nil }
+        end
+
+        trait :advanced_on_docket do
+          appeal do
+            create(:appeal,
+                   :with_vha_issue,
+                   :with_post_intake_tasks,
+                   :direct_review_docket,
+                   :advanced_on_docket_due_to_age)
+          end
+        end
+
+        trait :cavc_type do
+          appeal { create(:appeal, :type_cavc_remand) }
         end
 
         trait :action_required do

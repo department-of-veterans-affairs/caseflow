@@ -3,6 +3,7 @@
 class LegacyIssueOptin < CaseflowRecord
   belongs_to :request_issue
   belongs_to :legacy_issue
+  has_many :event_records, as: :evented_record
 
   VACOLS_DISPOSITION_CODE = "O" # oh not zero
   REMAND_DISPOSITION_CODES = %w[3 L].freeze
@@ -107,6 +108,11 @@ class LegacyIssueOptin < CaseflowRecord
     return unless vacols_id && vacols_sequence_id
 
     AppealRepository.issues(vacols_id).find { |issue| issue.vacols_sequence_id == vacols_sequence_id }
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    request_issue&.from_decision_review_created_event?
   end
 
   private

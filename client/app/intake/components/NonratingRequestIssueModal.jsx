@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
+import { FORM_TYPES } from '../constants';
 
 import BenefitType from '../components/BenefitType';
 import PreDocketRadioField from '../components/PreDocketRadioField';
@@ -240,9 +241,14 @@ class NonratingRequestIssueModal extends React.Component {
   getNonratingRequestIssueOptions() {
     const { intakeData } = this.props;
     const { category } = this.state;
+    const { featureToggles } = this.props;
 
     const options = intakeData.activeNonratingRequestIssues.
       filter((issue) => {
+        if (!featureToggles.disableAmaEventing) {
+          return category;
+        }
+
         return category && issue.category === category.value;
       }).
       map((issue) => {
@@ -368,7 +374,7 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
-    const getSpecialIssues = this.props.userCanEditIntakeIssues ?
+    const getSpecialIssues = (this.props.userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) ?
       this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (

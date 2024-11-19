@@ -1,3 +1,6 @@
+require "active_support/core_ext/integer/time"
+require_relative "../../lib/deprecation_warnings"
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -29,7 +32,7 @@ Rails.application.configure do
   config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = 'http://assets.example.com'
+  # config.asset_host = 'http://assets.example.com'
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
@@ -44,7 +47,10 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
+
+  require_relative "../../app/policies/ssl_redirect_exclusion_policy"
+  config.ssl_options = { redirect: { exclude: SslRedirectExclusionPolicy } }
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
@@ -61,6 +67,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "caseflow_certification_production"
 
   config.action_mailer.perform_caching = false
+  config.action_mailer.show_previews = false
 
   config.action_mailer.delivery_method = :govdelivery_tms
   config.action_mailer.govdelivery_tms_settings = {
@@ -77,16 +84,20 @@ Rails.application.configure do
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
-  # Send deprecation notices to registered listeners.
-  # config.active_support.deprecation = :notify
-  require_relative "../../app/services/deprecation_warnings/production_handler"
-  ActiveSupport::Deprecation.behavior = DeprecationWarnings::ProductionHandler
+  # Send deprecation notices to handler.
+  config.active_support.deprecation = DeprecationWarnings::ProductionHandler
+
+  # Log disallowed deprecations.
+  config.active_support.disallowed_deprecation = :log
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = DeprecationWarnings::DISALLOWED_DEPRECATION_WARNING_REGEXES
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
   # Use a different logger for distributed setups.
-  # require 'syslog/logger'
+  # require "syslog/logger"
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
