@@ -733,42 +733,6 @@ form {
   display: none;
 }
 
-.cf-file-input-container {
-  border: 1px dashed $color-gray-dark;
-  display: block;
-  margin-top: .5rem;
-  margin-bottom: 2rem;
-  position: relative;
-  text-align: center;
-  width: 100%;
-  padding: 2rem;
-}
-
-.cf-file-input-container-selected {
-  border: 1px dashed $color-gray-dark;
-  background-color: $color-primary-alt-lightest;
-  display: flex;
-  position: relative;
-  text-align: center;
-  width: 100%;
-  padding: 1.5rem;
-  justify-content: space-between;
-}
-
-.cf-file-container-selected-container {
-  background: none;
-  border: 2px solid $color-gold;
-  padding: 2px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  margin-left: -6px;
-  margin-right: -6px;
-}
-
-.cf-file-input-row-element {
-  flex-direction: row;
-}
-
 //------ Buttons --------*/
 [type='submit'],
 [type='button'],

@@ -48,11 +48,5 @@ module HearingsConcerns
         end
       end
     end
-
-    def verify_transcription_user
-      if !TranscriptionTeam.singleton.user_has_access?(current_user)
-        redirect_to "/unauthorized"
-      end
-    end
   end
 end

@@ -11,9 +11,7 @@ class TranscriptionFileUpload
     vtt: "transcript_raw",
     rtf: "transcript_text",
     xls: "transcript_text",
-    csv: "transcript_text",
-    zip: "transcript_text",
-    json: "transcript_text"
+    csv: "transcript_text"
   }.freeze
 
   class FileUploadError < StandardError; end

@@ -51,7 +51,7 @@ import COPY from '../../COPY';
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
- *   - @customFilterMethod {function(string, array)} custom method for handling complex front end filtering
+
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -161,10 +161,9 @@ export const HeaderRow = (props) => {
                 valueTransform={column.filterValueTransform}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
-                dateFilter={column.enableFilter === 'date'}
               />
             );
-          } else if (props.useTaskPagesApi && (column.filterOptions || column.filterType)) {
+          } else if (props.useTaskPagesApi && column.filterOptions) {
             filterIcon = (
               <TableFilter
                 {...column}
@@ -172,7 +171,6 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
-                filterType={column.filterType ? column.filterType : ''}
               />
             );
           }
@@ -484,11 +482,6 @@ export default class QueueTable extends React.PureComponent {
             return filteredByList[columnName].includes('null');
           }
 
-          // Use custom filtering method for complex front end filtering such as a date picker
-          if (columnConfig && columnConfig.customFilterMethod) {
-            return columnConfig.customFilterMethod(cellValue, filteredByList[columnName]);
-          }
-
           // This is needed if a column contains multiple values instead of a single value
           if (columnConfig && columnConfig.multiValueDelimiter) {
             return filteredByList[columnName].some((filterValue) => cellValue.includes(filterValue));
@@ -586,23 +579,14 @@ export default class QueueTable extends React.PureComponent {
 
     // Remove paramsToClear from currentParams if they are not in tableParams
     paramsToClear.forEach((param) => {
-      currentParams.delete(param);
+      if (!tableParams.has(param)) {
+        currentParams.delete(param);
+      }
     });
 
     // Merge tableParams and tabParams into currentParams, overwriting any duplicate keys
     for (const [key, value] of [...tabParams.entries(), ...tableParams.entries()]) {
-      if (key.includes('[]')) {
-        // Get all current values for the key
-        const existingValues = currentParams.getAll(key);
-
-        // If the new value doesn't already exist, append it
-        if (!existingValues.includes(value)) {
-          currentParams.append(key, value);
-        }
-      } else {
-        // Set for all other keys (overrides existing values)
-        currentParams.set(key, value);
-      }
+      currentParams.set(key, value);
     }
 
     return `${base}?${currentParams.toString()}`;
@@ -672,7 +656,7 @@ export default class QueueTable extends React.PureComponent {
     const responseFromCache = this.props.useReduxCache ? this.props.reduxCache[endpointUrl] :
       this.state.cachedResponses[endpointUrl];
 
-    if (responseFromCache && !this.props.skipCache) {
+    if (responseFromCache) {
       this.setState({ tasksFromApi: responseFromCache.tasks });
 
       return Promise.resolve(true);
@@ -686,14 +670,9 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        let preparedTasks = tasks;
+        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
-        // modify data from raw tasks if prepareTasks is true
-        if (this.props.prepareTasks) {
-          preparedTasks = tasksWithAppealsFromRawTasks(tasks);
-        }
-
-        const preparedResponse = Object.assign({ ...response.body }, { tasks: preparedTasks });
+        const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
         this.setState({
           // cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
@@ -706,10 +685,6 @@ export default class QueueTable extends React.PureComponent {
           tasksFromApi: preparedTasks,
           loadingComponent: null
         });
-
-        if (this.props.onTableDataUpdated) {
-          this.props.onTableDataUpdated(preparedTasks);
-        }
 
         if (this.props.useReduxCache) {
           this.props.updateReduxCache({ key: endpointUrl, value: preparedResponse });
@@ -913,9 +888,6 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  prepareTasks: PropTypes.bool,
-  onTableDataUpdated: PropTypes.func,
-  skipCache: PropTypes.bool,
   useReduxCache: PropTypes.bool,
   reduxCache: PropTypes.object,
   updateReduxCache: PropTypes.func

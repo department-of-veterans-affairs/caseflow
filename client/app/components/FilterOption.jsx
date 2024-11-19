@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 const listStyling = css({
-  paddingBottom: '1px',
+  paddingBottom: 0,
   margin: 0,
   maxHeight: '345px',
   wordBreak: 'break-word',
-  width: '250px',
+  width: '218px',
   overflowY: 'auto',
   listStyleType: 'none',
   paddingLeft: 0
