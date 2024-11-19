@@ -580,7 +580,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def syncing_disabled_for_benefit_type?
-    SYNCING_DISABLED_BENEFIT_TYPES.value?(benefit_type)
+    SYNCING_DISABLED_BENEFIT_TYPES.include?(benefit_type)
   end
 
   def sync_decision_issues!
