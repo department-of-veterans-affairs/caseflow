@@ -11,6 +11,7 @@ import { cloneDeep, isEmpty, mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -35,7 +36,10 @@ const NonCompTabsUnconnected = (props) => {
   let filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
 
   if (firstLoad && currentTabName === 'completed' && props.businessLineUrl === 'vha' && isEmpty(filter)) {
-    queryParams.append('filter[]', 'col=completedDateColumn&val=last7');
+    const sevenDaysAgoString = moment().subtract(7, 'days').
+      format('YYYY-MM-DD');
+
+    queryParams.append('filter[]', `col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
     filter = queryParams.getAll('filter[]');
     history.replace({ search: queryParams.toString() });
 
@@ -105,7 +109,10 @@ const NonCompTabsUnconnected = (props) => {
       some((item) => item.includes('col=completedDateColumn'));
 
     if (!alreadyContains) {
-      completedTabPaginationOptions['filter[]'].push('col=completedDateColumn&val=last7');
+      const sevenDaysAgoString = moment().subtract(7, 'days').
+        format('YYYY-MM-DD');
+
+      completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
     }
   }
 
