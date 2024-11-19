@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/department-of-veterans-affairs/caseflow-commons
+  remote: https://github.com/department-of-veterans-affairs/caseflow-commons-internal
   revision: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   ref: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   specs:
@@ -13,21 +13,11 @@ GIT
       redis-rails
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/connect-mpi.git
-  revision: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
-  ref: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  remote: https://github.com/department-of-veterans-affairs/connect_vbms-internal.git
+  revision: 1834cf61310001c82e2e96d665518407c3bce947
+  ref: 1834cf61310001c82e2e96d665518407c3bce947
   specs:
-    connect_mpi (0.1)
-      httpclient
-      nokogiri (>= 1.11.0.rc4)
-      savon (~> 2.12)
-
-GIT
-  remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 9807d9c9f0f3e3494a60b6693dc4f455c1e3e922
-  ref: 9807d9c9f0f3e3494a60b6693dc4f455c1e3e922
-  specs:
-    connect_vbms (1.3.0)
+    connect_vbms (1.4.0)
       httpclient (~> 2.8.0)
       httpi (~> 2.4)
       mail
@@ -45,7 +35,7 @@ GIT
       tty-tree (~> 0.3.0)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
+  remote: https://github.com/department-of-veterans-affairs/ruby-bgs-internal.git
   revision: a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d
   ref: a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d
   specs:
@@ -157,7 +147,7 @@ GEM
       activerecord (>= 3.0.0)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
-    akami (1.3.1)
+    akami (1.3.2)
       gyoku (>= 0.4.0)
       nokogiri
     amoeba (3.2.0)
@@ -1631,8 +1621,9 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    gyoku (1.3.1)
+    gyoku (1.4.0)
       builder (>= 2.1.2)
+      rexml (~> 3.0)
     hana (1.3.6)
     hashdiff (1.0.0)
     heapy (0.2.0)
@@ -2099,7 +2090,7 @@ GEM
     uri_template (0.7.0)
     validates_email_format_of (1.6.3)
       i18n
-    wasabi (3.6.1)
+    wasabi (3.7.0)
       addressable
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
@@ -2155,7 +2146,6 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   caseflow!
-  connect_mpi!
   connect_vbms!
   console_tree_renderer!
   countries
