@@ -1,158 +1,143 @@
 # frozen_string_literal: true
 
 class Hearings::VaBoxUploadJob < CaseflowJob
+  include Hearings::EnsureCurrentUserIsSet
   include Shoryuken::Worker
-  queue_as :low_priority
   include Hearings::SendTranscriptionIssuesEmail
+
+  queue_as :low_priority
+  shoryuken_options retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours]
+  before_perform { ensure_current_user_is_set }
 
   S3_BUCKET = "vaec-appeals-caseflow"
 
-  shoryuken_options retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours]
+  VACOLS_CONTRACTORS = {
+    "Genesis Government Solutions, Inc." => "G",
+    "Jamison Professional Services" => "J",
+    "Vet Reporting" => "V"
+  }.freeze
 
   class BoxUploadError < StandardError; end
 
   retry_on StandardError, wait: :exponentially_longer do |job, exception|
-    job.cleanup_tmp_files
+    job.cleanup_tmp_file
     error_details = { error: { type: "upload", message: exception.message }, provider: "Box" }
     job.send_transcription_issues_email(error_details) unless job.email_sent?(:upload)
     job.mark_email_sent(:upload)
     fail BoxUploadError
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-  def perform(file_info, box_folder_id)
-    @all_paths = []
+  def initialize(transcription_package)
+    @transcription_package = transcription_package
+    @master_zip_file_path = ""
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
+  end
 
-    box_service = ExternalApi::VaBoxService.new
-
-    file_info[:hearings].each_with_index do |hearing, index|
-      begin
-        transcription_package = find_transcription_package(hearing)
-        unless transcription_package
-          handle_transcription_package_not_found(hearing)
-          next
-        end
-
-        child_folder_id = box_service.get_child_folder_id(box_folder_id, file_info[:contractor_name])
-        unless child_folder_id
-          handle_invalid_child_folder_id(file_info[:contractor_name])
-          break
-        end
-
-        # Download file from S3
-        local_file_path = download_file_from_s3(transcription_package.aws_link_zip)
-
-        if index == 0
-          upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-        else
-          create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-        end
-
-        # Update transcription files after successful upload
-        update_transcription_files(hearing, file_info, transcription_package)
-
-        update_vacols(hearing) if legacy_hearing?(hearing)
-      rescue StandardError => error
-        binding.pry
-        log_error(error, extra: { transcription_package_id: transcription_package&.id })
-        error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
-        send_transcription_issues_email(error_details) unless email_sent?(:upload)
-        mark_email_sent(:upload)
-        next
-      end
+  def perform
+    begin
+      upload_master_zip_to_box
+      update_database_records
+    rescue StandardError => error
+      log_error(error, extra: { transcription_package_id: @transcription_package&.id })
+      error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
+      send_transcription_issues_email(error_details) unless email_sent?(:upload)
+      mark_email_sent(:upload)
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
-  def find_transcription_package(hearing)
-    if hearing[:hearing_type] == "LegacyHearing"
-      TranscriptionPackageLegacyHearing.find_by(legacy_hearing_id: hearing[:hearing_id])&.transcription_package
-    else
-      TranscriptionPackageHearing.find_by(hearing_id: hearing[:hearing_id])&.transcription_package
-    end
+  def box_service
+    @box_service ||= ExternalApi::VaBoxService.new
   end
 
-  def download_file_from_s3(s3_path)
-    local_path = Rails.root.join("tmp", "transcription_files", File.basename(s3_path))
-    Caseflow::S3Service.fetch_file(s3_path, local_path)
-    @all_paths << local_path
-    Rails.logger.info("File successfully downloaded from S3: #{local_path}")
-    local_path
+  def upload_master_zip_to_box
+    download_file_from_s3(@transcription_package.aws_link_zip)
+    box_service.upload_file(@master_zip_file_path, child_folder_id)
+    Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
   end
 
-  # rubocop:disable Metrics/ParameterLists
-  def upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-    ActiveRecord::Base.transaction do
-      box_service.upload_file(local_file_path, child_folder_id)
-      Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
-      transcription_package.update!(
-        date_upload_box: Time.current,
-        status: "Successful Upload (BOX)",
-        task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
-        updated_by_id: RequestStore[:current_user].id
-      )
-      transcription = ::Transcription.find_or_initialize_by(task_number: file_info[:work_order_name])
-      transcription.update!(
-        expected_return_date: file_info[:return_date],
-        hearing_id: hearing[:hearing_id],
-        sent_to_transcriber_date: Time.current,
-        transcriber: file_info[:contractor_name],
-        transcription_contractor_id: transcription_package.contractor_id,
-        updated_by_id: RequestStore[:current_user].id
-      )
-    end
-  end
-  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
-
-  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
-  def create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-    ActiveRecord::Base.transaction do
-      box_service.upload_file(local_file_path, child_folder_id)
-      Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
-      transcription_package.update!(
-        date_upload_box: Time.current,
-        status: "Successful Upload (BOX)",
-        task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
-        updated_by_id: RequestStore[:current_user].id
-      )
-      transcription = ::Transcription.new(
-        task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
-        hearing_id: hearing[:hearing_id],
-        hearing_type: hearing[:hearing_type],
-        sent_to_transcriber_date: Time.current,
-        transcriber: file_info[:contractor_name],
-        transcription_contractor_id: transcription_package.contractor_id,
-        updated_by_id: RequestStore[:current_user].id
-      )
-      transcription.save!
-    end
-  end
-  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
-
-  def update_transcription_files(hearing, file_info, transcription_package)
-    TranscriptionFile.where(
-      hearing_id: hearing[:hearing_id], hearing_type: hearing[:hearing_type]
-    ).update_all(
-      date_upload_box: Time.current,
-      updated_by_id: RequestStore[:current_user].id,
-      expected_return_date: file_info[:return_date],
-      sent_to_transcriber_date: Time.current,
-      task_number: file_info[:work_order_name],
-      transcriber: file_info[:contractor_name],
-      transcription_contractor_id: transcription_package.contractor_id,
-      transcription_status: "sent"
+  def child_folder_id
+    box_service.get_child_folder_id(
+      ENV["BOX_PARENT_FOLDER_ID"],
+      contractor_name
     )
   end
 
-  def cleanup_tmp_files
-    @all_paths&.each { |path| File.delete(path) if File.exist?(path) }
-    Rails.logger.info("Cleaned up the following files from tmp: #{@all_paths}")
+  def contractor_name
+    @transcription_package.contractor&.name
+  end
+
+  def download_file_from_s3(s3_path)
+    @master_zip_file_path = Rails.root.join("tmp", "transcription_files", File.basename(s3_path))
+    Caseflow::S3Service.fetch_file(s3_path, @master_zip_file_path)
+    Rails.logger.info("File successfully downloaded from S3: #{@master_zip_file_path}")
+    @master_zip_file_path
+  end
+
+  def update_database_records
+    ActiveRecord::Base.transaction do
+      update_transcription_package
+      update_transcriptions
+      # update_transcription_files
+      # update_vacols_hearsched
+    end
+  end
+
+  def update_transcription_package
+    @transcription_package.update!(
+      date_upload_box: Time.current,
+      status: "Successful Upload (BOX)",
+      updated_by_id: RequestStore[:current_user].id
+    )
+  end
+
+  def update_transcriptions
+    transcriptions = @transcription_package.transcriptions
+    transcriptions.update_all!(
+      transcription_contractor: @transcription_package.contractor,
+      updated_by_id: RequestStore[:current_user].id,
+      # not 100% sure about this status
+      transcription_status: "Successful Upload (BOX)",
+      sent_to_transcriber_date: Time.current.to_date
+    )
+  end
+
+  def update_transcription_files
+    @transcription_package.transcriptions&.each do |transcription|
+      transcription.transcription_files&.update_all!(
+        date_upload_box: Time.current,
+        updated_by_id: RequestStore[:current_user].id,
+        # not 100% sure about this status
+        file_status: "sent"
+      )
+    end
+  end
+
+  def update_vacols_hearsched
+    return if @transcription_package.legacy_hearings.blank?
+
+    @transcription_package.legacy_hearings.each do |hearing|
+      vacols_record = VACOLS::CaseHearing.find_by(hearing_pkseq: hearing.vacols_id)
+      vacols_record.update!(
+        taskno: truncate_task_number_for_vacols(@transcription_package.task_number),
+        contapes: VACOLS_CONTRACTORS[@transcription_package.contractor&.name],
+        consent: Time.current.to_date,
+        conret: @transcription_package.expected_return_date
+      )
+    end
+  end
+
+  def truncate_task_number_for_vacols(task_number)
+    # convert "BVA-YYYY-0001" to "YY-0001"
+    task_number[6..-1]
+  end
+
+  def cleanup_tmp_file
+    return if @master_zip_file_path.blank?
+
+    File.exist?(@master_zip_file_path) ? File.delete(@master_zip_file_path) : return
+    Rails.logger.info("Cleaned up the following file from tmp: #{@master_zip_file_path}")
   end
 
   def email_sent?(type)
@@ -161,37 +146,5 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   def mark_email_sent(type)
     @email_sent_flags[type] = true
-  end
-
-  def handle_transcription_package_not_found(hearing)
-    error_details = {
-            error: {
-              type: "transcription_package",
-              message: "Transcription package not found for hearing ID: #{hearing[:hearing_id]}"
-            },
-            provider: "Box"
-          }
-    send_transcription_issues_email(error_details) unless email_sent?(:transcription_package)
-    mark_email_sent(:transcription_package)
-  end
-
-  def handle_invalid_child_folder_id(contractor_name)
-    error_details = {
-            error: {
-              type: "child_folder_id",
-              message: "Child folder ID not found for contractor name: #{contractor_name}"
-            },
-            provider: "Box"
-          }
-    send_transcription_issues_email(error_details) unless email_sent?(:child_folder_id)
-    mark_email_sent(:child_folder_id)
-  end
-
-  def legacy_hearing?(hearing)
-    hearing[:hearing_type] == "LegacyHearing"
-  end
-
-  def update_vacols(hearing)
-    binding.pry
   end
 end
