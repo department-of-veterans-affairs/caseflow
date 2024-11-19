@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -7,12 +7,15 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
-import { mapValues, sumBy } from 'lodash';
+import { cloneDeep, isEmpty, mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
+import { useHistory } from 'react-router-dom';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
+  const [firstLoad, setFirstLoad] = useState(true);
+  const history = useHistory();
 
   // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
   const onHistoryUpdate = (urlString) => {
@@ -29,7 +32,16 @@ const NonCompTabsUnconnected = (props) => {
   const defaultSortColumn = currentTabName === 'completed' ? 'completedDateColumn' : 'daysWaitingColumn';
   const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
   // Read from the url get params and the local filter. The get params should override the local filter.
-  const filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+  let filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+
+  if (firstLoad && currentTabName === 'completed' && props.businessLineUrl === 'vha' && isEmpty(filter)) {
+    queryParams.append('filter[]', 'col=completedDateColumn&val=last7');
+    filter = queryParams.getAll('filter[]');
+    history.replace({ search: queryParams.toString() });
+
+    setFirstLoad(false);
+  }
+
   const tabPaginationOptions = {
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
@@ -86,6 +98,17 @@ const NonCompTabsUnconnected = (props) => {
 
   };
 
+  const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
+
+  if (firstLoad && props.businessLineUrl === 'vha') {
+    const alreadyContains = completedTabPaginationOptions['filter[]'].
+      some((item) => item.includes('col=completedDateColumn'));
+
+    if (!alreadyContains) {
+      completedTabPaginationOptions['filter[]'].push('col=completedDateColumn&val=last7');
+    }
+  }
+
   const ALL_TABS = {
     incomplete: {
       label: `Incomplete Tasks (${taskCounts.incomplete})`,
@@ -132,7 +155,7 @@ const NonCompTabsUnconnected = (props) => {
       page: <TaskTableTab {...props}
         key="completed"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
-        tabPaginationOptions={tabPaginationOptions}
+        tabPaginationOptions={completedTabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
