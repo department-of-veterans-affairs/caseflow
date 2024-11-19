@@ -429,7 +429,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
-      # earlier_date = 3.days.ago.strftime("%m/%d/%y")
+      earlier_date = 3.days.ago.strftime("%m/%d/%y")
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
@@ -444,7 +444,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Date Completed desc
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc&filter%5B%5D=col%3DcompletedDateColumn%26val%3Dlast7%2C%2C"
       )
 
       table_rows = current_table_rows
