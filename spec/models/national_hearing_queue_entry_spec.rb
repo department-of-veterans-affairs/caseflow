@@ -212,6 +212,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
                :with_veteran,
                vacols_case: vacols_case)
       end
+      # substring for single letter suffix
+      let(:ssn) { Veteran.find_by(file_number: vacols_case.bfcorlid[0..vacols_case.bfcorlid.length - 2]).ssn }
+
+      before { VACOLS::Correspondent.find(vacols_case.bfcorkey).update!(ssn: ssn) }
 
       context "AOD motion" do
         context "Has been granted" do
@@ -236,7 +240,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       context "Claimant is a Veteran" do
-        let(:ssn) { Faker::IDNumber.ssn_valid.tr("-", "") }
         let(:claimant) do
           vacols_case.correspondent.tap do |corres|
             corres.update!(ssn: ssn, sspare2: nil)
@@ -249,7 +252,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
           it "aod_indicator is true", bypass_cleaner: true do
             claimant.update!(sdob: claimant_dob)
-
             is_expected.to be true
           end
         end
@@ -266,7 +268,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       context "Claimant is not a Veteran" do
-        let(:ssn) { Faker::IDNumber.ssn_valid.tr("-", "") }
         let(:claimant) do
           vacols_case.correspondent.tap do |corres|
             corres.update!(ssn: ssn, sspare2: "Test")
@@ -341,6 +342,61 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
              vacols_case: case2)
     end
 
+    let(:ssn1) { Veteran.find_by(file_number: case1.bfcorlid[0..case1.bfcorlid.length - 2]).ssn }
+    let(:ssn2) { Veteran.find_by(file_number: case2.bfcorlid[0..case2.bfcorlid.length - 2]).ssn }
+    let(:ssn3) { Veteran.find_by(file_number: case3.bfcorlid[0..case3.bfcorlid.length - 2]).ssn }
+
+    let(:request_issues) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C"),
+        create(:request_issue, nonrating_issue_category: "Category B"),
+        create(:request_issue, nonrating_issue_category: "Category C"),
+        create(:request_issue, nonrating_issue_category: "Category D")
+      ]
+    end
+
+    before do
+      # legacy appeal update
+      cases = [case1, case2, case3]
+      ssns = [ssn1, ssn2, ssn3]
+
+      cases.each_with_index do |c, index|
+        VACOLS::Correspondent.find(c.bfcorkey).update!(ssn: ssns[index])
+
+        file_number = c.bfcorlid[0..c.bfcorlid.length - 2]
+
+        veteran = Veteran.find_by(file_number: file_number)
+        veteran.update!(state_of_residence: "va")
+        veteran.update!(country_of_residence: "usa")
+      end
+
+      # ama state and country update
+      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va")
+      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(country_of_residence: "usa")
+
+      # caching ama appeal
+      ama_with_sched_task.request_issues = request_issues
+      ama_with_sched_task.save
+      CachedAppealService.new.cache_ama_appeals([ama_with_sched_task])
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'rllca'
+         WHERE appeal_id = #{ama_with_sched_task.id} AND appeal_type = 'Appeal'"
+      )
+
+      # caching legacy appeal
+      CachedAppealService.new.cache_legacy_appeal_postgres_data([legacy_with_sched_task])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case1.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case2.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case3.bfkey])
+
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'rllca'
+         WHERE appeal_id = #{legacy_with_sched_task.id} AND appeal_type = 'LegacyAppeal'"
+      )
+    end
+
     let(:ama_hearing_task) { ama_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
     let(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
 
@@ -376,7 +432,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal_stream, :docket_number, :aod_indicator,
           :task_id, :schedulable, :assigned_to_id,
           :assigned_by_id, :days_on_hold, :days_waiting,
-          :task_status
+          :task_status, :state_of_residence, :country_of_residence,
+          :suggested_hearing_location
         )
       ).to match_array [
         [
@@ -394,7 +451,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           ama_hearing_task.assigned_by_id,
           ((Time.zone.now - ama_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
           ((ama_hearing_task.closed_at - ama_hearing_task.created_at) / 60 / 60 / 24).floor,
-          ama_hearing_task.status
+          ama_hearing_task.status,
+          "va",
+          "usa",
+          "rllca"
         ],
         [
           legacy_with_sched_task.id,
@@ -411,7 +471,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           legacy_hearing_task.assigned_by_id,
           ((Time.zone.now - legacy_hearing_task.placed_on_hold_at) / 60 / 60 / 24).floor,
           ((legacy_hearing_task.closed_at - legacy_hearing_task.created_at) / 60 / 60 / 24).floor,
-          legacy_hearing_task.status
+          legacy_hearing_task.status,
+          "va",
+          "usa",
+          "rllca"
         ]
       ]
 
@@ -431,6 +494,10 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
              :with_veteran,
              vacols_case: vacols_case)
     end
+
+    let(:ssn) { Veteran.find_by(file_number: vacols_case.bfcorlid[0..vacols_case.bfcorlid.length - 2]).ssn }
+
+    before { VACOLS::Correspondent.find(vacols_case.bfcorkey).update!(ssn: ssn) }
 
     it "is schedulable when its a legacy appeal", bypass_cleaner: true do
       NationalHearingQueueEntry.refresh

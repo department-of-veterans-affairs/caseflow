@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_12_213951) do
+ActiveRecord::Schema.define(version: 2024_11_18_155614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2158,6 +2158,46 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2468,7 +2508,44 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+          declare
+            string_claim_id varchar(25);
+            epe_id integer;
+          begin
+            if (NEW."EP_CODE" LIKE '04%'
+                OR NEW."EP_CODE" LIKE '03%'
+                OR NEW."EP_CODE" LIKE '93%'
+                OR NEW."EP_CODE" LIKE '68%')
+                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
 
+              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
+
+              select id into epe_id
+              from end_product_establishments
+              where (reference_id = string_claim_id
+              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
+
+              if epe_id > 0
+              then
+                if not exists (
+                  select 1
+                  from priority_end_product_sync_queue
+                  where end_product_establishment_id = epe_id
+                ) then
+                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
+                  values (now(), epe_id, now());
+                end if;
+              end if;
+            end if;
+            return null;
+          end;
+        $function$
+  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2514,7 +2591,51 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_brieff WHERE 1 = 0';
       END $function$
   SQL
+  create_function :gather_bfcorkeys_of_hearing_schedulable_legacy_cases, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.gather_bfcorkeys_of_hearing_schedulable_legacy_cases()
+       RETURNS text
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	bfcorkey_ids TEXT;
+      BEGIN
+      	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
+      	INTO bfcorkey_ids
+      	FROM brieffs_awaiting_hearing_scheduling();
 
+      	RETURN bfcorkey_ids;
+      END
+      $function$
+  SQL
+
+
+  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
+  SQL
+
+  create_view "remands", sql_definition: <<-SQL
+      SELECT supplemental_claims.id,
+      supplemental_claims.benefit_type,
+      supplemental_claims.created_at,
+      supplemental_claims.decision_review_remanded_id,
+      supplemental_claims.decision_review_remanded_type,
+      supplemental_claims.establishment_attempted_at,
+      supplemental_claims.establishment_canceled_at,
+      supplemental_claims.establishment_error,
+      supplemental_claims.establishment_last_submitted_at,
+      supplemental_claims.establishment_processed_at,
+      supplemental_claims.establishment_submitted_at,
+      supplemental_claims.filed_by_va_gov,
+      supplemental_claims.legacy_opt_in_approved,
+      supplemental_claims.receipt_date,
+      supplemental_claims.updated_at,
+      supplemental_claims.uuid,
+      supplemental_claims.veteran_file_number,
+      supplemental_claims.veteran_is_not_claimant,
+      supplemental_claims.type
+     FROM supplemental_claims
+    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
+  SQL
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
@@ -2545,8 +2666,11 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
                   ELSE false
               END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
               ELSE false
-          END AS schedulable
-     FROM (((((appeals
+          END AS schedulable,
+      veterans.state_of_residence,
+      veterans.country_of_residence,
+      cached_appeal_attributes.suggested_hearing_location
+     FROM ((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
        JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
@@ -2555,6 +2679,7 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
              FROM (claimants
                JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
             WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
+       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'Appeal'::text))))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
@@ -2591,14 +2716,19 @@ ActiveRecord::Schema.define(version: 2024_11_12_213951) do
           END AS days_on_hold,
       (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
-      true AS schedulable
-     FROM ((((((legacy_appeals
+      true AS schedulable,
+      veterans.state_of_residence,
+      veterans.country_of_residence,
+      cached_appeal_attributes.suggested_hearing_location
+     FROM ((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
        JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
        LEFT JOIN f_vacols_assign ON (((f_vacols_assign.tsktknm)::text = (f_vacols_brieff.bfkey)::text)))
        LEFT JOIN f_vacols_corres ON (((f_vacols_brieff.bfcorkey)::text = (f_vacols_corres.stafkey)::text)))
        LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
+       JOIN veterans ON (((veterans.ssn)::text = (f_vacols_corres.ssn)::text)))
+       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
