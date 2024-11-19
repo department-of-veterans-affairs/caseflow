@@ -9,4 +9,7 @@
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
   "makefile.configureOnOpen": false,
+  "cSpell.words": [
+    "schedulable"
+  ],
 }
