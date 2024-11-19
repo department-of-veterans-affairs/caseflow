@@ -351,6 +351,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: "0"
+          token: ${{ secrets.PRIVATE_REPO_ACCESS_FINE }}
+
+      - name: Set up Git for Private Repositories Access
+        run: |
+          git config --global url."https://${{ secrets.PRIVATE_REPO_ACCESS_FINE }}@github.com/".insteadOf "https://github.com/"
+          echo "Git configured to use PAT for private repositorieszzzz"
 
       - name: Install Ruby Dependencies
         run: |
