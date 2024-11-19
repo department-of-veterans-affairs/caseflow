@@ -2516,11 +2516,7 @@ ActiveRecord::Schema.define(version: 2024_11_14_170652) do
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
-           SELECT schedulable_cutoff_dates.id,
-              schedulable_cutoff_dates.cutoff_date,
-              schedulable_cutoff_dates.created_by_id,
-              schedulable_cutoff_dates.created_at,
-              schedulable_cutoff_dates.updated_at
+           SELECT schedulable_cutoff_dates.cutoff_date
              FROM schedulable_cutoff_dates
             ORDER BY schedulable_cutoff_dates.created_at DESC
            LIMIT 1

@@ -1,5 +1,5 @@
 WITH latest_cutoff_date AS (
-  SELECT *
+  SELECT cutoff_date
   FROM schedulable_cutoff_dates
   ORDER BY created_at DESC
   LIMIT 1
