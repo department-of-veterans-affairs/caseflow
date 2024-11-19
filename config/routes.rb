@@ -85,9 +85,7 @@ Rails.application.routes.draw do
         namespace :ama do
           get "find_by_veteran/:participant_id", to: "veterans#show"
         end
-        namespace :vacols do
-          get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
-        end
+        get 'vacols/find_by_veteran', to: "v_a_c_o_l_s/veterans#show" # passing in ssn/vfn as a header
       end
     end
     namespace :docs do
