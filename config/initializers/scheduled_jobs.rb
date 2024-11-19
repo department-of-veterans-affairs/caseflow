@@ -20,7 +20,7 @@ Rails.application.config.to_prepare do
       "heartbeat" => HeartbeatTasksJob,
       "incomplete_distributions_job" => IncompleteDistributionsJob,
       "monitor_box_job" => Hearings::MonitorBoxJob,
-    "monthly_metrics" => MonthlyMetricsReportJob,
+      "monthly_metrics" => MonthlyMetricsReportJob,
       "nightly_syncs" => NightlySyncsJob,
       "out_of_service_reminder" => OutOfServiceReminderJob,
       "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
