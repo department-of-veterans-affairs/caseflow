@@ -87,6 +87,7 @@ class AppealsReadyForDistribution
     appeal_affinity&.affinity_start_date
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.ama_rows(appeals, docket, sym)
     appeals.map do |appeal|
       hearing = appeal.hearings.where(disposition: "held").max_by(&:scheduled_for)
@@ -111,6 +112,7 @@ class AppealsReadyForDistribution
       }
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def self.distribution_task_query(appeal)
     appeal.tasks
