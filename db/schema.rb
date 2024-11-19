@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_19_195426) do
+ActiveRecord::Schema.define(version: 2024_11_19_205139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2559,6 +2559,126 @@ ActiveRecord::Schema.define(version: 2024_11_19_195426) do
 
         -- Force a null row return
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_assign WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :corres_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.corres_awaiting_hearing_scheduling()
+       RETURNS SETOF corres_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	correspondent_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO correspondent_ids
+        FROM gather_bfcorkeys_of_hearing_schedulable_legacy_cases();
+
+        if correspondent_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_corres WHERE stafkey IN (%s)',
+              correspondent_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_corres WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :folder_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.folder_awaiting_hearing_scheduling()
+       RETURNS SETOF folder_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_folder WHERE ticknum IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_folder WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :issues_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.issues_awaiting_hearing_scheduling()
+       RETURNS SETOF issues_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_issues WHERE isskey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :rep_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.rep_awaiting_hearing_scheduling()
+       RETURNS SETOF rep_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_rep WHERE repkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :hearsched_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.hearsched_awaiting_hearing_scheduling()
+       RETURNS SETOF hearsched_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
       END $function$
   SQL
 
