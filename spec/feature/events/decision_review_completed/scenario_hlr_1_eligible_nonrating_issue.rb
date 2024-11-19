@@ -121,6 +121,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
         expect(completed_request_issue.nonrating_issue_bgs_id).to eq("13")
         expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
+        expect(completed_request_issue.closed_at).to eq(nil)
+        expect(completed_request_issue.closed_status).to eq(nil)
         expect(completed_request_issue.contested_issue_description).to eq(nil)
         expect(completed_request_issue.contention_reference_id).to eq(7_905_752)
         expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)

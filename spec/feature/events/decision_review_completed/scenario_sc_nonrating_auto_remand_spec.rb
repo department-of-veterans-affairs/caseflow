@@ -129,6 +129,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
         expect(completed_request_issue.contested_rating_issue_profile_date).to eq(nil)
         expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
+        expect(completed_request_issue.closed_at).to eq(nil)
+        expect(completed_request_issue.closed_status).to eq(nil)
         epe = EndProductEstablishment.find_by(reference_id: "337534")
         review = epe.source
         veteran = epe.veteran
