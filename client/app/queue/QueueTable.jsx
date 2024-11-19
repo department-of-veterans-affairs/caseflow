@@ -375,12 +375,13 @@ export default class QueueTable extends React.PureComponent {
     const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
     const filterParams = this.props.tabPaginationOptions?.['filter[]'] || [];
 
-    if (this.props?.isVhaOrg &&
-      currentTabName === 'completed' &&
-      filterParams.length === 0 &&
-      _.isEmpty(previousState.filteredByList?.closedAt) &&
-       !previousState.filteredByList?.clear
-    ) {
+    const shouldDefaultToLastSevenDays = this.props?.isVhaOrg &&
+                                          currentTabName === 'completed' &&
+                                          filterParams.length === 0 &&
+                                          _.isEmpty(previousState.filteredByList?.closedAt) &&
+                                          !previousState.filteredByList?.clear;
+
+    if (shouldDefaultToLastSevenDays) {
       this.updateFilteredByList({ closedAt: ['last7,,'] });
     }
 
