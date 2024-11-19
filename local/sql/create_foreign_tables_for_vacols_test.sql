@@ -95,7 +95,8 @@ TABLE IF NOT EXISTS f_vacols_brieff (
     BFDCERTOOL date
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'BRIEFF'
+    TABLE 'BRIEFF',
+    READONLY 'TRUE'
 );
 
 -- FOLDER Table
@@ -166,7 +167,8 @@ TABLE IF NOT EXISTS f_vacols_folder (
     TICLCW varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'FOLDER'
+    TABLE 'FOLDER',
+    READONLY 'TRUE'
 );
 
 -- HEARSCHED Table
@@ -179,7 +181,7 @@ TABLE IF NOT EXISTS f_vacols_hearsched (
     HEARING_DISP varchar(1),
     BOARD_MEMBER varchar(20),
     NOTES1 varchar(1000),
-    TEAM varchar(10),
+    TEAM varchar(2),
     ROOM varchar(4),
     REP_STATE varchar(2),
     MDUSER varchar(16),
@@ -209,7 +211,8 @@ TABLE IF NOT EXISTS f_vacols_hearsched (
     ADDON varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'HEARSCHED'
+    TABLE 'HEARSCHED',
+    READONLY 'TRUE'
 );
 
 -- CORRES Table
@@ -225,8 +228,8 @@ TABLE IF NOT EXISTS f_vacols_corres (
     SNAMEL varchar(60),
     SLOGID varchar(16),
     STITLE varchar(40),
-    SORG varchar(150),
-    SDEPT varchar(150),
+    SORG varchar(50),
+    SDEPT varchar(50),
     SADDRNUM varchar(10),
     SADDRST1 varchar(60),
     SADDRST2 varchar(60),
@@ -273,7 +276,8 @@ TABLE IF NOT EXISTS f_vacols_corres (
     SINCAR varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'CORRES'
+    TABLE 'CORRES',
+    READONLY 'TRUE'
 );
 
 -- REP Table
@@ -305,13 +309,14 @@ TABLE IF NOT EXISTS f_vacols_rep (
     REPACKNW date
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'REP'
+    TABLE 'REP',
+    READONLY 'TRUE'
 );
 
 -- ISSUES Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_issues (
-    ISSKEY varchar(12),
+    ISSKEY varchar(12) OPTIONS (key 'true') NOT NULL,
     ISSSEQ smallint,
     ISSPROG varchar(6),
     ISSCODE varchar(6),
@@ -332,13 +337,14 @@ TABLE IF NOT EXISTS f_vacols_issues (
     ISSPACT varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'ISSUES'
+    TABLE 'ISSUES',
+    READONLY 'TRUE'
 );
 
 -- STAFF Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_staff (
-    STAFKEY varchar(16),
+    STAFKEY varchar(16) OPTIONS (key 'true') NOT NULL,
     SUSRPW varchar(16),
     SUSRSEC varchar(5),
     SUSRTYP varchar(10),
@@ -388,13 +394,14 @@ TABLE IF NOT EXISTS f_vacols_staff (
     SDOMAINID varchar(20)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'STAFF'
+    TABLE 'STAFF',
+    READONLY 'TRUE'
 );
 
 -- ASSIGN Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_assign (
-    TASKNUM varchar(12),
+    TASKNUM varchar(12) OPTIONS (key 'true') NOT NULL,
     TSKTKNM varchar(12),
     TSKSTFAS varchar(16),
     TSKACTCD varchar(10),
@@ -423,5 +430,6 @@ TABLE IF NOT EXISTS f_vacols_assign (
     TSSYS varchar(16)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_TEST',
-    TABLE 'ASSIGN'
+    TABLE 'ASSIGN',
+    READONLY 'TRUE'
 );
