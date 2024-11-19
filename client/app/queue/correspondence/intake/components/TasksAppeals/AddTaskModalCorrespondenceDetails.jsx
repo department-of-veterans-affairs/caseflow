@@ -47,6 +47,7 @@ const AddTaskModalCorrespondenceDetails = ({
   // Filters task type options based on unrelated tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
     const safeUnrelatedTaskList = Array.isArray(unrelatedTaskList) ? unrelatedTaskList : [];
+
     return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
       filter((option) =>
         !safeUnrelatedTaskList.some(
@@ -64,6 +65,8 @@ const AddTaskModalCorrespondenceDetails = ({
   // Submit disabled if task type is not selected,
   // the page is loading, or task content and additional are not filled out
   const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
+
+  const isNextDisabled = !selectedTaskType;
 
   // Handle task type selection, stores the selected task type
   const updateTaskType = (newType) => setSelectedTaskType(newType.value);
@@ -155,7 +158,7 @@ const AddTaskModalCorrespondenceDetails = ({
         <Button
           // "Submit" on second page, "Next" on first page
           onClick={isSecondPage ? handleSubmit : handleNext}
-          disabled={isSecondPage ? isSubmitDisabled : false}
+          disabled={isSecondPage ? isSubmitDisabled : isNextDisabled}
         >
           {getButtonText()}
         </Button>
