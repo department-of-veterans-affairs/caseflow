@@ -25,9 +25,6 @@ class RequestIssue < CaseflowRecord
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
-  # contested issue description pattern
-  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
-
   SYNCING_DISABLED_BENEFIT_TYPES = %w[compensation pension].freeze
 
   belongs_to :decision_review, polymorphic: true
