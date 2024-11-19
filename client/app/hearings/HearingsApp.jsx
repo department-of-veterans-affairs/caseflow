@@ -1,4 +1,4 @@
-import { BrowserRouter, Switch, useLocation } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import { detect } from 'detect-browser';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import PropTypes from 'prop-types';
@@ -14,7 +14,6 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
-import { TranscriptionSettingsContainer } from './containers/TranscriptionSettingsContainer';
 import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
@@ -24,9 +23,6 @@ import PageRoute from '../components/PageRoute';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
-import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
-import ConfirmWorkOrderModal from './components/transcriptionProcessing/ConfirmWorkOrderModal';
-import { WorkOrderDetails } from './components/WorkOrderDetails';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -123,28 +119,6 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
-  routeForTranscriptionFileDispatch = () =>
-    <TranscriptionFileDispatchView organizations={this.props.organizations} />
-
-  routeForWorkOrderSummary =() => {
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const taskNumber = queryParams.get('taskNumber');
-
-    return <WorkOrderDetails taskNumber={taskNumber} />;
-  }
-  routeForTranscriptionSettings = ({ match: history }) => (
-    <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <TranscriptionSettingsContainer history={history} />
-    </HearingsUserContext.Provider>
-  );
-
-  routeForConfirmWorkOrder = ({ history }) => (
-    <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <ConfirmWorkOrderModal history={history} onCancel={() => history.goBack()} />
-    </HearingsUserContext.Provider>
-  );
-
   render = () => <BrowserRouter basename="/hearings">
     <Switch>
       <PageRoute
@@ -237,30 +211,6 @@ export default class HearingsApp extends React.PureComponent {
               breadcrumb="Assign"
               component={this.routeForAssignHearingsContainer}
             />
-            <PageRoute
-              exact
-              path="/transcription_files"
-              title="Transcription File Dispatch"
-              component={this.routeForTranscriptionFileDispatch}
-            />
-            <PageRoute
-              exact
-              path="/find_by_contractor"
-              title="Transcription Settings"
-              component={this.routeForTranscriptionSettings}
-            />
-            <PageRoute
-              exact
-              path="/transcription_work_order/display_wo_summary"
-              title="Transcription work order"
-              component={this.routeForWorkOrderSummary}
-            />
-            <PageRoute
-              exact
-              path="/confirm_work_order"
-              title="Confirm Work Order"
-              component={this.routeForConfirmWorkOrder}
-            />
           </div>
         </AppFrame>
         <Footer
@@ -300,6 +250,5 @@ HearingsApp.propTypes = {
   mstIdentification: PropTypes.bool,
   pactIdentification: PropTypes.bool,
   legacyMstPactIdentification: PropTypes.bool,
-  userIsNonBoardEmployee: PropTypes.bool,
-  organizations: PropTypes.array,
+  userIsNonBoardEmployee: PropTypes.bool
 };

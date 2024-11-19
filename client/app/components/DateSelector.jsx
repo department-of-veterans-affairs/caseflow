@@ -25,7 +25,6 @@ export const DateSelector = (props) => {
     noFutureDates = false,
     inputStyling,
     validateDate,
-    ariaLabelText,
     ...passthroughProps
   } = props;
 
@@ -77,7 +76,6 @@ export const DateSelector = (props) => {
       max={max}
       dateErrorMessage={dateErrorMessage}
       inputStyling={inputStyling}
-      ariaLabelText={ariaLabelText}
     />
   );
 };
@@ -157,12 +155,7 @@ DateSelector.propTypes = {
   /**
    * Disables form submission if date is empty or invalid
    */
-  validateDate: PropTypes.func,
-
-  /**
-   * Label text for screen readers
-   */
-  ariaLabelText: PropTypes.string
+  validateDate: PropTypes.func
 };
 
 export default DateSelector;

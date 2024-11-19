@@ -46,25 +46,6 @@ RSpec.describe HearingsApplicationController, :postgres, type: :controller do
     end
   end
 
-  context "when user reader permissions" do
-    let!(:user) { User.authenticate!(roles: ["Reader", "Hearing Prep", "Edit HearSched", "Build HearSched"]) }
-
-    it "returns a succcessful response" do
-      get :show_hearing_worksheet_index, params: { hearing_id: 1 }
-      expect(response.status).to eq 200
-    end
-  end
-
-  context "when user has transcriptions permissions" do
-    let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
-
-    it "returns a succcessful response when part of transcriptions team" do
-      TranscriptionTeam.singleton.add_user(user)
-      get :transcription_file_dispatch
-      expect(response.status).to eq 200
-    end
-  end
-
   context "when user has VSO role" do
     before do
       TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)

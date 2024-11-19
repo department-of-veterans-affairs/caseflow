@@ -11,7 +11,6 @@ class HearingsApplicationController < ApplicationController
   before_action :verify_access_to_reader_or_hearings, only: [:show_hearing_worksheet_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
   before_action :check_vso_representation, only: [:show_hearing_details_index]
-  before_action :verify_transcription_user, only: [:transcription_file_dispatch]
 
   def set_application
     RequestStore.store[:application] = "hearings"
@@ -30,10 +29,6 @@ class HearingsApplicationController < ApplicationController
   end
 
   def index
-    render "hearings/index"
-  end
-
-  def transcription_file_dispatch
     render "hearings/index"
   end
 

@@ -1450,7 +1450,6 @@ GEM
     base64 (0.2.0)
     benchmark (0.3.0)
     benchmark-ips (2.14.0)
-    bigdecimal (3.1.8)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
     brakeman (4.7.1)
@@ -1664,8 +1663,6 @@ GEM
       hana (~> 1.3)
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
-    jwt (2.8.2)
-      base64
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -1999,7 +1996,6 @@ GEM
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
     ruby-oci8 (2.2.14)
-    ruby-ole (1.2.13.1)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
@@ -2073,9 +2069,6 @@ GEM
       thor (~> 1.0)
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
-    spreadsheet (1.3.1)
-      bigdecimal
-      ruby-ole
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -2157,7 +2150,6 @@ DEPENDENCIES
   browser
   bullet (~> 6.1.0)
   bummr
-  bundler (~> 2.4.22)
   bundler-audit
   business_time (~> 0.9.3)
   capybara
@@ -2175,8 +2167,6 @@ DEPENDENCIES
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
   faker
-  faraday
-  faraday-multipart
   fast_jsonapi
   fasterer
   foreman
@@ -2187,7 +2177,6 @@ DEPENDENCIES
   icalendar
   immigrant
   json_schemer (~> 0.2.16)
-  jwt
   kaminari
   knapsack_pro (~> 3.8)
   logstasher
@@ -2261,7 +2250,6 @@ DEPENDENCIES
   single_cov
   sniffybara!
   solargraph
-  spreadsheet (~> 1.3)
   sql_tracker
   statsd-instrument
   stringex

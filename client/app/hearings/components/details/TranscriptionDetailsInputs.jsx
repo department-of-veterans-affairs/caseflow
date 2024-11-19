@@ -7,79 +7,76 @@ import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import DateSelector from '../../../components/DateSelector';
 
-const TranscriptionDetailsInputs = ({
-  transcription,
-  update,
-  readOnly,
-  transcriptionContractors = {},
-}) => {
-  const contractorOptions = Object.entries(transcriptionContractors).map(
-    ([id, name]) => ({
-      label: name,
-      value: id,
-    })
-  ).
-    sort((stringA, stringB) => stringA.label.localeCompare(stringB.label));
-
-  return (
-    <React.Fragment>
-      <div {...rowThirds} data-testid="transcription-details-inputs">
-        <TextField
-          name="taskNumber"
-          label="Task #"
-          strongLabel
-          readOnly={readOnly}
-          value={transcription?.taskNumber}
-          onChange={(taskNumber) => update({ taskNumber })}
-        />
-
-        <SearchableDropdown
-          name="transcriber"
-          label="Transcriber"
-          strongLabel
-          readOnly={readOnly}
-          value={transcription?.transcriber}
-          options={contractorOptions}
-          onChange={(option) => {
-            update({ transcriber: (option || {}).value });
-          }}
-        />
-        <div />
-      </div>
-      <div {...rowThirds} data-testid="transcription-details-date-inputs">
-        <DateSelector
-          name="sentToTranscriberDate"
-          label="Sent to Transcriber"
-          strongLabel
-          type="date"
-          readOnly={readOnly}
-          value={transcription?.sentToTranscriberDate}
-          onChange={(sentToTranscriberDate) =>
-            update({ sentToTranscriberDate })
+const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
+  <React.Fragment>
+    <div {...rowThirds} data-testid="transcription-details-inputs">
+      <TextField
+        name="taskNumber"
+        label="Task #"
+        strongLabel
+        readOnly={readOnly}
+        value={transcription?.taskNumber}
+        onChange={(taskNumber) => update({ taskNumber })}
+      />
+      <SearchableDropdown
+        name="transcriber"
+        label="Transcriber"
+        strongLabel
+        readOnly={readOnly}
+        value={transcription?.transcriber}
+        options={[
+          {
+            label: '',
+            value: null
+          },
+          {
+            label: 'Genesis Government Solutions, Inc.',
+            value: 'Genesis Government Solutions, Inc.'
+          },
+          {
+            label: 'Jamison Professional Services',
+            value: 'Jamison Professional Services'
+          },
+          {
+            label: 'Vet Reporting',
+            value: 'Vet Reporting'
           }
-        />
-        <DateSelector
-          name="expectedReturnDate"
-          label="Expected Return Date"
-          strongLabel
-          type="date"
-          readOnly={readOnly}
-          value={transcription?.expectedReturnDate}
-          onChange={(expectedReturnDate) => update({ expectedReturnDate })}
-        />
-        <DateSelector
-          name="uploadedToVbmsDate"
-          label="Transcript Uploaded to VBMS"
-          strongLabel
-          type="date"
-          readOnly={readOnly}
-          value={transcription?.uploadedToVbmsDate}
-          onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}
-        />
-      </div>
-    </React.Fragment>
-  );
-};
+        ]}
+        onChange={(option) => update({ transcriber: (option || {}).value })}
+      />
+      <div />
+    </div>
+    <div {...rowThirds} data-testid="transcription-details-date-inputs">
+      <DateSelector
+        name="sentToTranscriberDate"
+        label="Sent to Transcriber"
+        strongLabel
+        type="date"
+        readOnly={readOnly}
+        value={transcription?.sentToTranscriberDate}
+        onChange={(sentToTranscriberDate) => update({ sentToTranscriberDate })}
+      />
+      <DateSelector
+        name="expectedReturnDate"
+        label="Expected Return Date"
+        strongLabel
+        type="date"
+        readOnly={readOnly}
+        value={transcription?.expectedReturnDate}
+        onChange={(expectedReturnDate) => update({ expectedReturnDate })}
+      />
+      <DateSelector
+        name="uploadedToVbmsDate"
+        label="Transcript Uploaded to VBMS"
+        strongLabel
+        type="date"
+        readOnly={readOnly}
+        value={transcription?.uploadedToVbmsDate}
+        onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}
+      />
+    </div>
+  </React.Fragment>
+);
 
 TranscriptionDetailsInputs.propTypes = {
   transcription: PropTypes.shape({
@@ -90,8 +87,7 @@ TranscriptionDetailsInputs.propTypes = {
     uploadedToVbmsDate: PropTypes.string
   }),
   update: PropTypes.func,
-  readOnly: PropTypes.bool,
-  transcriptionContractors: PropTypes.objectOf(PropTypes.string)
+  readOnly: PropTypes.bool
 };
 
 export default TranscriptionDetailsInputs;

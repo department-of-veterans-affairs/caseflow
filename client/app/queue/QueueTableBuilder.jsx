@@ -121,7 +121,6 @@ const QueueTableBuilder = (props) => {
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
             }
             enablePagination
-            prepareTasks
           />
         </React.Fragment>
       ),

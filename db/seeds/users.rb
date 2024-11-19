@@ -252,11 +252,8 @@ module Seeds
     end
 
     def create_transcription_team
-      transcription_member_1 = create(:user, css_id: "TRANSCRIPTION_USER", full_name: "Noel TranscriptionUser Vasquez")
-      TranscriptionTeam.singleton.add_user(transcription_member_1)
-
-      transcription_member_2 = create(:user, css_id: "TRANSCRIPTION_USER_ALTERNATE", full_name: "Nathan TranscriptionUser Vasquez")
-      TranscriptionTeam.singleton.add_user(transcription_member_2)
+      transcription_member = create(:user, css_id: "TRANSCRIPTION_USER", full_name: "Noel TranscriptionUser Vasquez")
+      TranscriptionTeam.singleton.add_user(transcription_member)
     end
 
     def create_hearings_user

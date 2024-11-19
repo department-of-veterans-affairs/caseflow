@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
+import { startCase } from 'lodash';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -26,21 +27,27 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, name } = this.props;
+
+    // Some of the filter names are camelCase, which would be displayed to the user.
+    // To make this more readable, convert the camelCase text to title case.
+    const displayName = startCase(name);
 
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
-          <div className="cf-filter-option-row clear-wrapper">
-            <button className="cf-text-button cf-btn-link" onClick={this.props.clearFilters}
+          <div className="cf-filter-option-row">
+            <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
-              Clear filter
+              <div className="cf-clear-filter-button-wrapper">
+                Clear {displayName} filter
+              </div>
             </button>
           </div>
         }

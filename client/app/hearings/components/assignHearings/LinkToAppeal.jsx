@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
-const LinkToAppeal = ({ appealExternalId, hearingDay, regionalOffice, children, id = '' }) => {
+const LinkToAppeal = ({ appealExternalId, hearingDay, regionalOffice, children }) => {
   const date = moment(hearingDay?.scheduledFor).format('YYYY-MM-DD');
   const qs = `?hearingDate=${date}&regionalOffice=${regionalOffice}`;
 
   return (
     <Link
-      name={appealExternalId + id}
+      name={appealExternalId}
       href={`/queue/appeals/${appealExternalId}/${qs}`}>
       {children}
     </Link>
@@ -18,7 +18,6 @@ const LinkToAppeal = ({ appealExternalId, hearingDay, regionalOffice, children, 
 
 LinkToAppeal.propTypes = {
   appealExternalId: PropTypes.string,
-  id: PropTypes.string,
   children: PropTypes.node,
   hearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
