@@ -184,6 +184,12 @@ module CaseflowCertification
     # Default as of 7.0: true
     config.action_controller.raise_on_open_redirects = false
 
+    # Enable parameter wrapping for JSON.
+    # Previously this was set in an initializer. It's fine to keep using that initializer if you've customized it.
+    # To disable parameter wrapping entirely, set this config to `false`.
+    # Default as of 7.0: true
+    config.action_controller.wrap_parameters_by_default = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

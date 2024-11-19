@@ -9,11 +9,6 @@
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
 
-# Enable parameter wrapping for JSON.
-# Previously this was set in an initializer. It's fine to keep using that initializer if you've customized it.
-# To disable parameter wrapping entirely, set this config to `false`.
-# Rails.application.config.action_controller.wrap_parameters_by_default = true
-
 # Specifies whether generated namespaced UUIDs follow the RFC 4122 standard for namespace IDs provided as a
 # `String` to `Digest::UUID.uuid_v3` or `Digest::UUID.uuid_v5` method calls.
 #
