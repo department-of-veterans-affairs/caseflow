@@ -1,3 +1,6 @@
+-- Returns records from the VACOLS DB's ASSIGN table that are associated with
+--   legacy cases in the National Hearing Queue.
+
 CREATE OR REPLACE FUNCTION assign_awaiting_hearing_scheduling()
   RETURNS SETOF assign_record
   LANGUAGE plpgsql AS
