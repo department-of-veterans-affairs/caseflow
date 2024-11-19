@@ -54,5 +54,6 @@ SCHEDULED_JOBS = {
     "fetch_webex_rooms_list_job" => Hearings::FetchWebexRoomsListJob,
     "refresh_webex_access_token_job" => Hearings::RefreshWebexAccessTokenJob,
     "ineligible_judges_job" => IneligibleJudgesJob,
-    "update_transcription_package_status_job" => Hearings::UpdateTranscriptionPackageStatusJob
+    "update_transcription_package_status_job" => Hearings::UpdateTranscriptionPackageStatusJob,
+    "ineligible_judges_job" => IneligibleJudgesJob
 }.freeze
