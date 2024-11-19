@@ -2649,8 +2649,8 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
       END $function$
   SQL
-  create_function :hearsched_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.hearsched_awaiting_hearing_scheduling()
+  create_function :hearsched_related_to_cases_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.hearsched_related_to_cases_awaiting_hearing_scheduling()
        RETURNS SETOF hearsched_record
        LANGUAGE plpgsql
       AS $function$

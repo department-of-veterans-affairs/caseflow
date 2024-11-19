@@ -1,7 +1,7 @@
 -- Returns records from the VACOLS DB's HEARSCHED table that are associated with
 --   legacy cases in the National Hearing Queue.
 
-CREATE OR REPLACE FUNCTION hearsched_awaiting_hearing_scheduling()
+CREATE OR REPLACE FUNCTION hearsched_related_to_cases_awaiting_hearing_scheduling()
   RETURNS SETOF hearsched_record
   LANGUAGE plpgsql AS
 $func$
