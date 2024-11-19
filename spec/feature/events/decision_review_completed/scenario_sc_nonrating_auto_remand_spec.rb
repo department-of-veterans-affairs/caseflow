@@ -3,12 +3,12 @@
 require "rails_helper"
 
 RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :controller do
-  describe "POST #decision_review_updated" do
+  describe "POST #decision_review_completed" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
-    # let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
-    # let(:review) { epe.source }
-    # let!(:existing_request_issue) { create(:request_issue, :ineligible, decision_review: review, reference_id: "1234") }
+    let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 337_534) }
+    let(:review) { epe.source }
+    # let!(:existing_request_issue) { create(:request_issue, :ineligible, decision_review: review, reference_id: "1234")}
 
     def json_test_payload
       {
@@ -105,12 +105,12 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
-    context "updates issue" do
+    context "updates issue nonrating_sc_auto_remand" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response" do
+      it "returns success response nonrating_sc_auto_remand" do
         # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
@@ -124,6 +124,29 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
         expect(completed_request_issue.nonrating_issue_bgs_id).to eq("13")
         expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
+        expect(completed_request_issue.contested_issue_description).to eq(nil)
+        expect(completed_request_issue.contention_reference_id).to eq(7_905_752)
+        expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_profile_date).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
+        epe = EndProductEstablishment.find_by(reference_id: "337534")
+        review = epe.source
+        veteran = epe.veteran
+        id = epe.claimant_participant_id
+        claimant = Claimant.find_by(participant_id: id)
+        expect(epe.synced_status).to eq("RW")
+        expect(veteran.participant_id).to eq("1826209")
+        expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
+        expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
+        expect(veteran.name_suffix).to eq(nil)
+        expect(veteran.date_of_death).to eq(nil)
+        expect(review.auto_remand).to eq(true)
+        expect(review.establishment_attempted_at).to eq(1_702_067_145_000)
+        expect(review.establishment_last_submitted_at).to eq(1_702_067_145_000)
+        expect(review.establishment_processed_at).to eq(1_702_067_145_000)
+        expect(review.establishment_submitted_at).to eq(1_702_067_145_000)
+        expect(claimant.type).to eq("VeteranClaimant")
+        expect(claimant.payee_code).to eq("00")
       end
     end
 
