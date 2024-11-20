@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import COPY from '../../../COPY';
 
 import {
   selectFromDropdown,
@@ -152,6 +153,75 @@ describe('DatePicker', () => {
     clickSubmissionButton('Last 30 days');
 
     expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17', false);
+  });
+
+  it('can select last 7 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 7 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last7,2024-01-10,');
+  });
+
+  it('can select last 30 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 30 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last30,2023-12-18,');
+  });
+
+  it('can select last 365 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 365 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last365,2023-01-17,');
+  });
+
+  it('disables Apply Filter button if between is selected and the start date is after the end date', () => {
+    const { container } = setup();
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue(COPY.DATE_PICKER_FROM, '2024-01-17');
+    enterInputValue(COPY.DATE_PICKER_TO, '2020-05-14');
+
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
+  });
+
+  it('should not allow future dates if the noFutureDates setting is true', () => {
+    const { container } = setup({ settings: { additionalOptions: true, noFutureDates: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue(COPY.DATE_PICKER_FROM, '2023-01-16');
+    enterInputValue(COPY.DATE_PICKER_TO, '2024-10-14');
+
+    expect(screen.getByText('Date cannot be in the future.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
   });
 
   describe('datePickerFilterValue', () => {

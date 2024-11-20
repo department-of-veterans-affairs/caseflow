@@ -157,6 +157,34 @@ exports[`DatePicker renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        class="input-wrapper"
+      >
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="start-date"
+          >
+            <span>
+              Date
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="start-date"
+              max="9999-12-31"
+              name="start-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+      <div
         class="button-wrapper"
       >
         <button
@@ -341,6 +369,30 @@ exports[`DatePicker restores input values correctly 1`] = `
           type="date"
           value="2020-05-14"
         />
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="start-date"
+          >
+            <span>
+              From
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="start-date"
+              max="9999-12-31"
+              name="start-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value="2020-05-14"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="input-wrapper"
@@ -357,6 +409,30 @@ exports[`DatePicker restores input values correctly 1`] = `
           type="date"
           value="2024-01-17"
         />
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="end-date"
+          >
+            <span>
+              To
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="end-date"
+              max="9999-12-31"
+              name="end-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value="2024-01-17"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="button-wrapper"
@@ -541,6 +617,30 @@ exports[`DatePicker shows one date field for after mode 1`] = `
           type="date"
           value="2020-05-14"
         />
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="start-date"
+          >
+            <span>
+              Date
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="start-date"
+              max="9999-12-31"
+              name="start-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value="2020-05-14"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="button-wrapper"
@@ -725,6 +825,30 @@ exports[`DatePicker shows one date field for before mode 1`] = `
           type="date"
           value="2020-05-14"
         />
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="start-date"
+          >
+            <span>
+              Date
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="start-date"
+              max="9999-12-31"
+              name="start-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value="2020-05-14"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="button-wrapper"
@@ -909,6 +1033,30 @@ exports[`DatePicker shows one date field for on mode 1`] = `
           type="date"
           value="2020-05-14"
         />
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="start-date"
+          >
+            <span>
+              Date
+            </span>
+          </label>
+          <div
+            class="input-container"
+          >
+            <input
+              class="cf-form-textinput"
+              id="start-date"
+              max="9999-12-31"
+              name="start-date"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value="2020-05-14"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="button-wrapper"

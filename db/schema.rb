@@ -2081,6 +2081,7 @@ ActiveRecord::Schema.define(version: 2024_11_18_075353) do
     t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
     t.index ["hearing_type", "hearing_id"], name: "index_transcriptions_on_hearing_type_and_hearing_id"
     t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
+    t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
@@ -2545,6 +2546,7 @@ ActiveRecord::Schema.define(version: 2024_11_18_075353) do
   add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
   add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "transcription_contractors"
+  add_foreign_key "transcriptions", "hearings"
   add_foreign_key "transcriptions", "users", column: "created_by_id"
   add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"

@@ -1,0 +1,321 @@
+[
+  {"scenario": "hearingsShow",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    },
+    {
+      "value": "LegacyHearing",
+      "label": "Legacy Hearing"
+    }],
+    "targetId": "Hearing uuid, Legacy Hearing vacols_id"
+  },
+  {"scenario": "intake",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "tasksJSON",
+    "targetType": [{
+      "value": "User",
+      "label": "User"
+    }],
+    "targetId": "User id"
+  },
+  {"scenario": "hearingDayJSON",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "supplementalClaimsEdit",
+    "targetType": [{
+      "value": "SupplementalClaim",
+      "label": "Supplemental Claim"
+    }],
+    "targetId": "SupplementalClaim uuid"
+  },
+  {"scenario": "higherLevelReviewPage",
+    "targetType": [{
+      "value": "HigherLevelReview",
+      "label": "Higher Level Review"
+    }],
+    "targetId": "HigherLevelReview uuid"
+  },
+  {"scenario": "advanceOnDocketMotions",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealDocumentCount",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealHearings",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealPowerOfAttorney",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealVeteran",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "claimantsPoa",
+    "targetType": [{
+      "value": "Claimant",
+      "label": "Claimant"
+    }],
+    "targetId": "Participant id"
+  },
+  {"scenario": "higherLevelReviewUpdate",
+    "targetType": [{
+      "value": "HigherLevelReview",
+      "label": "Higher Level Review"
+    }],
+    "targetId": "HigherLevelReview uuid"
+  },
+  {"scenario": "updatePowerOfAttorney",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "schedule",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "search",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "queue",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "queueAppeal",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"},
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "v2MetricLogs",
+    "targetType": [{
+      "value": "Metric",
+      "label": "Metric"
+    }],
+    "targetId": ""
+  },
+  {"scenario": "readerIndex",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealsJSON",
+    "targetType": [{
+      "value": "Veteran",
+      "label": "Veteran"
+    }],
+    "targetId": "Veteran file_number"
+  },
+  {"scenario": "apiV3ContestableIssues",
+    "targetType": [{
+      "value": "SupplementalClaim",
+      "label": "Supplemental Claim"
+    }],
+    "targetId": "Supplemental Claim uuid"
+  },
+  {"scenario": "appealShowJSON",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "hearingDetails",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "findHearingLocations",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    },
+    {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {
+    "scenario": "hearingScheduleAssign",
+    "targetType": [],
+    "targetId": ""
+  },
+  {
+    "scenario": "hearingScheduleAssignHearingDaysJSON",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "hearingWorksheet",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingWorksheetPrint",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingView",
+    "targetType": [{
+      "value": "Hearing",
+      "label": "Hearing"
+    }],
+    "targetId": "Hearing uuid"
+  },
+  {
+    "scenario": "hearingScheduleDocket",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day id"
+  },
+  {
+    "scenario": "scheduleHearingTasksColumnsJSON",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day regional_office"
+  },
+  {"scenario": "readerAppeal",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "idtAppeal",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "idtAppealUserId",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "idtUploadDocument",
+    "targetType": [{
+      "value": "Veteran",
+      "label": "Veteran"
+    }],
+    "targetId": "veteran uuid"
+  },
+  {"scenario": "idtAddressValidation",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "appealTasks",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "vhaDecisionReview",
+    "targetType": [{
+      "value": "Appeal",
+      "label": "Appeal"
+    }, {
+      "value": "LegacyAppeal",
+      "label": "Legacy Appeal"
+    }],
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
+  },
+  {"scenario": "apiAppeal",
+    "targetType": [{
+      "value": "Veteran",
+      "label": "Veteran"
+    }],
+    "targetId": "veteran uuid"
+  }
+]
