@@ -39,11 +39,15 @@ class SearchQueryService
       else
         vacols_row = vacols_results.find { |result| result["vacols_id"] == row["external_id"] }
 
-        Rails.logger.warn(no_vacols_record_warning(row)) if vacols_row.blank?
+        if vacols_row.blank?
+          Rails.logger.warn(no_vacols_record_warning(row))
 
-        LegacyAppealRow.new(row, vacols_row || null_vacols_row).search_response
+          nil
+        else
+          LegacyAppealRow.new(row, vacols_row || null_vacols_row).search_response
+        end
       end
-    end
+    end.compact
   end
 
   def null_vacols_row
