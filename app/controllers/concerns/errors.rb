@@ -10,4 +10,13 @@ module Errors
       ]
     }, status: :bad_request
   end
+
+  def invalid_task_movement_error
+    render json: {
+      "errors": [
+        "title": "Blocked Legacy Appeal Case Movement is Invalid",
+        "detail": "LegacyAppealAssignmentTrackingTask was not created"
+      ]
+    }, status: :bad_request
+  end
 end

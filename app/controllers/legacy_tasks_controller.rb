@@ -92,9 +92,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def blocked_assign_to_judge
-    # If the user being assigned to is a judge, do not create a DECASS record, just
-    # update the location to the assigned judge.
-    LegacyAppealAssignmentTrackingTask.create!(
+    return unless FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+
+    tracking_task = LegacyAppealAssignmentTrackingTask.create!(
       appeal: appeal,
       assigned_to: assigned_to,
       assigned_by_id: current_user.id,
@@ -102,6 +102,8 @@ class LegacyTasksController < ApplicationController
       completed_by_id: current_user.id,
       status: "completed"
     )
+
+    return invalid_task_movement_error if tracking_task.blank?
 
     QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
 

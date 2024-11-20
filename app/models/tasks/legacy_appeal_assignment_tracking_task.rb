@@ -29,8 +29,9 @@ class LegacyAppealAssignmentTrackingTask < Task
   end
 
   def blocked_legacy_appeal?
-    FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user) &&
-      HearingTask.find_by(appeal_id: appeal.id, status: Constants.TASK_STATUSES.on_hold).exists?
+    FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask) &&
+      HearingTask.find_by(appeal_id: appeal.id, status: Constants.TASK_STATUSES.on_hold).present? &&
+      appeal.is_a?(LegacyAppeal)
   end
 
   def cancel_blocking_tasks
