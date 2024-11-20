@@ -521,6 +521,10 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       FeatureToggle.enable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
     end
 
+    after do
+      FeatureToggle.disable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+    end
+
     shared_examples "scm user reassigns case" do
       it "should be successful" do
         expect(VACOLS::Case.find_by(bfkey: blocked_appeal.vacols_id).bfcurloc).to eq assigning_judge.vacols_uniq_id

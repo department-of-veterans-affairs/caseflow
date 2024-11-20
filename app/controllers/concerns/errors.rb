@@ -17,6 +17,6 @@ module Errors
         "title": "Blocked Legacy Appeal Case Movement is Invalid",
         "detail": "LegacyAppealAssignmentTrackingTask was not created"
       ]
-    }, status: :bad_request
+    }, status: :internal_server_error
   end
 end

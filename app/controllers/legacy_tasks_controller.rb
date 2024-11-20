@@ -100,7 +100,7 @@ class LegacyTasksController < ApplicationController
       assigned_by_id: current_user.id,
       instructions: params[:tasks][:instructions],
       completed_by_id: current_user.id,
-      status: "completed"
+      status: Constants.TASK_STATUSES.completed
     )
 
     return invalid_task_movement_error if tracking_task.blank?
