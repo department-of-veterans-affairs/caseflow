@@ -317,9 +317,11 @@ RSpec.feature("The Correspondence Details page") do
         expect(page).to have_selector("h1", text: "Add task to correspondence")
         expect(page).to have_selector(".add-task-modal-container")
         expect(page).to have_field("content")
+        fill_in "content", with: "Test"
+        expect(page).to have_button("Next", disabled: true)
         find(".add-task-dropdown-style").click
         find(".react-select__option", text: "Congressional Interest").click
-        fill_in "content", with: "Test"
+        expect(page).to have_button("Next", disabled: false)
         click_button "Next"
 
         # Test textarea autotext based on radio selection
@@ -327,7 +329,7 @@ RSpec.feature("The Correspondence Details page") do
         find("label", text: "C&P exam report").click
         expect(page).to have_content("Address updated in VACOLS, \nC&P exam report")
 
-        click_button "Submit"
+        click_button "Add task"
         using_wait_time(10) do
           expect(page).to have_content("Congressional Interest")
         end

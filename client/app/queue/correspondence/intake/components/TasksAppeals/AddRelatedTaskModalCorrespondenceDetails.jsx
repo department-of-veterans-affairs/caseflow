@@ -61,7 +61,9 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   // or task content and additional are not filled out
   // const isSubmitDisabled = !(taskContent || additionalContent) || !selectedTaskType || isLoading;
 
-  const isSubmitDisabled = !(taskContent) || !selectedTaskType || isLoading;
+  const isSubmitDisabled = !taskContent || !selectedTaskType || isLoading;
+
+  const isNextDisabled = !selectedTaskType;
 
   // Handle task type selection, stores the selected task type
   const updateTaskType = (newType) => setSelectedTaskType(newType.value);
@@ -154,7 +156,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
           // onClick={isSecondPage ? handleSubmit : handleNext}
           // disabled={isSecondPage ? isSubmitDisabled : false}
           onClick={handleSubmit}
-          disabled={isSubmitDisabled ? isSubmitDisabled : false}
+          disabled={isSubmitDisabled ? isSubmitDisabled : isNextDisabled}
         >
           {isLoading ? 'Loading...' : 'Next'}
         </Button>
