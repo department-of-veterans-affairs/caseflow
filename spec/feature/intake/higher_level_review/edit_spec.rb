@@ -568,7 +568,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         )
       end
 
-      it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
+      it "verifies we can return to the edit page when we have an and displays an error when epe id is nil" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
         expect(page).to have_content("Something went wrong")
       end
