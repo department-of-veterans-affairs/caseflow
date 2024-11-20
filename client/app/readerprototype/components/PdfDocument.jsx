@@ -147,7 +147,7 @@ const PdfDocument = ({
         if (!pdfDocument) {
           return setIsDocumentLoadError(true);
         }
-        dispatch(getDocumentText(pdfDocument, doc.filename));
+        dispatch(getDocumentText(pdfDocument, doc.content_url));
         pdfjsDocumentRef.current = pdfDocument;
         setNumPages(pdfjsDocumentRef.current?.numPages);
       }).
@@ -162,7 +162,11 @@ const PdfDocument = ({
     let promises = [];
     let textContentContainer = [];
 
-    for (let i = 0; i < pdfDocument?.numPages; i++) {
+    // since the promises resolve out of page order, we need to insert text content at the correct position in the
+    // array.
+    textContentContainer.length = pdfDocument.numPages;
+
+    for (let i = 0; i < pdfDocument.numPages; i++) {
       promises.push(pdfDocument.getPage(i + 1));
     }
 
@@ -171,7 +175,7 @@ const PdfDocument = ({
         setPdfPages(pages);
         for (let i = 0; i < pages.length; i++) {
           pages[i].getTextContent().then((text) => {
-            textContentContainer.push(text);
+            textContentContainer[i] = text;
           });
         }
         setTextContent(textContentContainer);
@@ -183,7 +187,9 @@ const PdfDocument = ({
   }, [doc.content_url]);
 
   useMemo(() => {
-    getPages(pdfjsDocumentRef.current);
+    if (pdfjsDocumentRef.current) {
+      getPages(pdfjsDocumentRef.current);
+    }
   }, [pdfjsDocumentRef.current]);
 
   useEffect(() => {
@@ -236,7 +242,6 @@ const PdfDocument = ({
                 setRenderingMetrics={handleRenderingMetrics}
               />
             ))
-
           )}
       </div>
       <ReaderFooter
