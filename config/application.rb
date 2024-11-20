@@ -208,6 +208,14 @@ module CaseflowCertification
       "Referrer-Policy" => "strict-origin-when-cross-origin"
     }
 
+    # Change the format of the cache entry.
+    # Changing this default means that all new cache entries added to the cache
+    # will have a different format that is not supported by Rails 6.1 applications.
+    # Only change this value after your application is fully deployed to Rails 7.0
+    # and you have no plans to rollback.
+    # Default as of 7.0: 7.0
+    config.active_support.cache_format_version = 6.1
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
