@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -7,16 +7,13 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
-import { cloneDeep, isEmpty, mapValues, sumBy } from 'lodash';
+import { cloneDeep, mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
-import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
-  const [firstLoad, setFirstLoad] = useState(true);
-  const history = useHistory();
 
   // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
   const onHistoryUpdate = (urlString) => {
@@ -34,17 +31,6 @@ const NonCompTabsUnconnected = (props) => {
   const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
   // Read from the url get params and the local filter. The get params should override the local filter.
   let filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
-
-  if (firstLoad && currentTabName === 'completed' && props.businessLineUrl === 'vha' && isEmpty(filter)) {
-    const sevenDaysAgoString = moment().subtract(7, 'days').
-      format('YYYY-MM-DD');
-
-    queryParams.append('filter[]', `col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
-    filter = queryParams.getAll('filter[]');
-    history.replace({ search: queryParams.toString() });
-
-    setFirstLoad(false);
-  }
 
   const tabPaginationOptions = {
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
@@ -102,13 +88,15 @@ const NonCompTabsUnconnected = (props) => {
 
   };
 
+  // The VHA completed tasks tab should have an automatic prefilter of 7 days applied to it
+  // A completed date filter in the get parameters should override this.
   const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
 
-  if (props.businessLineUrl === 'vha') {
-    const alreadyContains = completedTabPaginationOptions['filter[]'].
+  if (isVhaBusinessLine) {
+    const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
       some((item) => item.includes('col=completedDateColumn'));
 
-    if (!alreadyContains) {
+    if (!containsCompletedDateFilter) {
       const sevenDaysAgoString = moment().subtract(7, 'days').
         format('YYYY-MM-DD');
 
@@ -143,8 +131,7 @@ const NonCompTabsUnconnected = (props) => {
         tabName="pending"
         filterableTaskTypes={props.taskFilterDetails.pending}
         filterableTaskIssueTypes={props.taskFilterDetails.pending_issue_types}
-        predefinedColumns={{ includeDaysWaiting: true,
-          defaultSortIdx: 3 }} />
+        predefinedColumns={{ includeDaysWaiting: true }} />
     },
     in_progress: {
       label: `In Progress Tasks (${taskCounts.in_progress})`,
