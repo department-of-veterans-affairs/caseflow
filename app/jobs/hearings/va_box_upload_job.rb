@@ -98,8 +98,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       transcription.update!(
         transcription_contractor: @transcription_package.contractor,
         updated_by_id: RequestStore[:current_user].id,
-        # not 100% sure about this status
-        transcription_status: "Successful Upload (BOX)",
+        transcription_status: "in_transcription",
         sent_to_transcriber_date: Time.zone.today
       )
     end
@@ -110,8 +109,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       transcription.transcription_files&.update_all(
         date_upload_box: Time.current,
         updated_by_id: RequestStore[:current_user].id,
-        # not 100% sure about this status
-        file_status: "sent"
+        file_status: "Successful Upload (BOX)"
       )
     end
   end

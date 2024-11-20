@@ -71,7 +71,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
         transcriptions.each do |t|
           expect(t.transcription_contractor == transcription_package.contractor).to eq false
           expect(t.sent_to_transcriber_date == Time.zone.today).to eq false
-          expect(t.transcription_status == "Successful Upload (BOX)").to eq false
+          expect(t.transcription_status == "in_transcription").to eq false
         end
 
         subject
@@ -79,21 +79,21 @@ RSpec.describe Hearings::VaBoxUploadJob do
         transcriptions.each do |t|
           expect(t.transcription_contractor).to eq(transcription_package.contractor)
           expect(t.sent_to_transcriber_date).to eq(Time.zone.today)
-          expect(t.transcription_status == "Successful Upload (BOX)").to eq true
+          expect(t.transcription_status == "in_transcription").to eq true
         end
       end
 
       it "updates the associated transcription_file records" do
         TranscriptionFile.all.each do |tf|
           expect(tf.date_upload_box).to eq nil
-          expect(tf.file_status == "sent").to eq false
+          expect(tf.file_status == "Successful Upload (BOX)").to eq false
         end
 
         subject
 
         TranscriptionFile.all.each do |tf|
           expect(tf.date_upload_box.to_date == Time.zone.today).to eq true
-          expect(tf.file_status == "sent").to eq true
+          expect(tf.file_status == "Successful Upload (BOX)").to eq true
         end
       end
 
@@ -112,6 +112,34 @@ RSpec.describe Hearings::VaBoxUploadJob do
         expect(vacols_record.contapes).to eq "N"
         expect(vacols_record.consent).to eq Time.zone.now.utc.to_date
         expect(vacols_record.conret).to eq transcription_package.expected_return_date
+      end
+    end
+
+    context "sad path" do
+      it "sends an email on failure to upload to box.com" do
+        allow_any_instance_of(described_class).to receive(:upload_master_zip_to_box)
+          .and_raise(StandardError)
+        allow(Raven).to receive(:capture_exception)
+
+        expect_any_instance_of(Hearings::VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
+          error: { type: "upload", message: "StandardError" },
+          provider: "Box"
+        )
+
+        subject
+      end
+
+      it "sends an email on failure to update db records" do
+        allow_any_instance_of(described_class).to receive(:update_database_records)
+          .and_raise(StandardError)
+        allow(Raven).to receive(:capture_exception)
+
+        expect_any_instance_of(Hearings::VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
+          error: { type: "upload", message: "StandardError" },
+          provider: "Box"
+        )
+
+        subject
       end
     end
   end
