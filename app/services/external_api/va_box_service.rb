@@ -49,6 +49,7 @@ class ExternalApi::VaBoxService
       chunkify_and_upload(file_path, folder_id)
     end
   end
+  
 
   def get_folder_items(folder_id:, item_type: "folder", query_string: nil)
     uri = "2.0/folders/#{folder_id}/items"
