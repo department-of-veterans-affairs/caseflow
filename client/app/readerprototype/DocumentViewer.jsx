@@ -136,7 +136,7 @@ const DocumentViewer = (props) => {
             toggleSideBar={() => dispatch(togglePdfSidebar())}
             zoomLevel={props.zoomLevel}
           />
-          {showSearchBar && <ReaderSearchBar file={doc.filename} />}
+          {showSearchBar && <ReaderSearchBar file={doc.content_url} />}
           <div className="cf-pdf-scroll-view">
             {files.map((file) =>
               (
