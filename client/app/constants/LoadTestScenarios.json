@@ -19,7 +19,7 @@
       "value": "User",
       "label": "User"
     }],
-    "targetId": "User id"
+    "targetId": "User css_id"
   },
   {"scenario": "hearingDayJSON",
     "targetType": [],
@@ -279,7 +279,7 @@
       "value": "Veteran",
       "label": "Veteran"
     }],
-    "targetId": "veteran uuid"
+    "targetId": "Veteran file_number"
   },
   {"scenario": "idtAddressValidation",
     "targetType": [{
@@ -316,6 +316,6 @@
       "value": "Veteran",
       "label": "Veteran"
     }],
-    "targetId": "veteran uuid"
+    "targetId": "Veteran file_number"
   }
 ]

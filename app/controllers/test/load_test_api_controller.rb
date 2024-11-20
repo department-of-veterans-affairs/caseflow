@@ -48,6 +48,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
@@ -60,8 +63,13 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "Veteran"
+      target_data_type = Veteran
+      target_data_column = "file_number"
+    when "User"
+      target_data_type = User
+      target_data_column = "css_id"
     end
-
     get_target_data_object(params[:target_id], target_data_type, target_data_column)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
