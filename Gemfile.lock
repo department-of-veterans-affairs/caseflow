@@ -13,6 +13,16 @@ GIT
       redis-rails
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/connect-mpi.git
+  revision: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  ref: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  specs:
+    connect_mpi (0.1)
+      httpclient
+      nokogiri (>= 1.11.0.rc4)
+      savon (~> 2.12)
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms-internal.git
   revision: 1834cf61310001c82e2e96d665518407c3bce947
   ref: 1834cf61310001c82e2e96d665518407c3bce947
@@ -2146,6 +2156,7 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   caseflow!
+  connect_mpi!
   connect_vbms!
   console_tree_renderer!
   countries
