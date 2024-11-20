@@ -136,6 +136,7 @@ const AddTaskModalCorrespondenceDetails = ({
       allClearAndClose();
     } catch (error) {
       console.error('Error while adding task:', error);
+      allClearAndClose();
     } finally {
       setIsLoading(false);
     }
