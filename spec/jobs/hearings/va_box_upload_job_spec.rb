@@ -110,7 +110,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
         expect(vacols_record.taskno).to eq "11-0001"
         expect(vacols_record.contapes).to eq "N"
-        expect(vacols_record.consent).to eq Time.zone.today
+        expect(vacols_record.consent).to eq Time.zone.now.utc.to_date
         expect(vacols_record.conret).to eq transcription_package.expected_return_date
       end
     end
