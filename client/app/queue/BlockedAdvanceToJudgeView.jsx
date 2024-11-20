@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
+import QueueFlowModal from './components/QueueFlowModal';
 
 import COPY from '../../COPY';
 
@@ -17,7 +18,6 @@ import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import RadioField from '../components/RadioField';
-import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 
 const ADVANCEMENT_REASONS = [
@@ -175,22 +175,22 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
     const { highlightFormItems } = this.props;
 
+    const actionData = this.actionData()
     const options = this.actionData().options;
     const selectedJudgeName = this.getAssigneeLabel() || 'judge';
 
+    const modalProps = {
+      title: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+      pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
+      button: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+      submit: this.submit,
+      validateForm: this.validateForm
+    };
+
     return <div className="cf-modal-scroll">
-      <Modal
-        title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE}
-        buttons={[{
-          classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Close',
-          onClick: () => this.setState({ showModal: false })
-        }, {
-          classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
-          name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
-          onClick: this.submit
-        }]}
-        closeHandler={() => this.setState({ showModal: false })}
+      <QueueFlowModal
+        {...modalProps}
+        onCancel={() => this.setState({ showModal: false })}
         icon="warning"
       >
         {this.modalAlert()}
@@ -216,7 +216,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
         />
-      </Modal>
+      </QueueFlowModal>
     </div>;
   }
 
