@@ -85,9 +85,7 @@ Rails.application.routes.draw do
         namespace :ama do
           get "find_by_veteran/:participant_id", to: "veterans#show"
         end
-        namespace :vacols do
-          get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
-        end
+        get 'vacols/find_by_veteran', to: "v_a_c_o_l_s/veterans#show" # passing in ssn/vfn as a header
       end
     end
     namespace :docs do
@@ -102,6 +100,8 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+        post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
+        post '/decision_review_updated_error', to: 'decision_review_updated#decision_review_updated_error'
       end
     end
 
@@ -259,6 +259,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 

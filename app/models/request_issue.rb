@@ -25,9 +25,6 @@ class RequestIssue < CaseflowRecord
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
-  # contested issue description pattern
-  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
-
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy
@@ -38,20 +35,13 @@ class RequestIssue < CaseflowRecord
   has_one :legacy_issue_optin
   has_many :legacy_issues
   has_many :issue_modification_requests, dependent: :destroy
-  has_one :event_record, as: :evented_record
+  has_many :event_records, as: :evented_record
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
-
-  # only allow specified characters for description
-  validates(
-    :contested_issue_description,
-    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
-    allow_blank: true
-  )
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
@@ -62,7 +52,8 @@ class RequestIssue < CaseflowRecord
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
-    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible",
+    contested: "contested"
   }
 
   enum closed_status: {
@@ -127,6 +118,7 @@ class RequestIssue < CaseflowRecord
 
   class << self
     # the umbrella term "rating" here is generalized to the type of EP it refers to.
+
     def rating
       rating_issue.or(rating_decision).or(unidentified)
     end
@@ -202,7 +194,6 @@ class RequestIssue < CaseflowRecord
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
       attrs = attrs.merge(decision_review: decision_review) if decision_review
-
       new(attrs).tap(&:validate_eligibility!)
     end
 
@@ -212,7 +203,6 @@ class RequestIssue < CaseflowRecord
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
       issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
-
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
@@ -243,7 +233,8 @@ class RequestIssue < CaseflowRecord
         mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
         pact_status: data[:pact_status],
         vbms_pact_status: data[:vbms_pact_status],
-        pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
+        pact_status_update_reason_notes: data[:pact_status_update_reason_notes],
+        reference_id: data[:reference_id]
       }
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -264,7 +255,6 @@ class RequestIssue < CaseflowRecord
 
     epe = decision_review.end_product_establishment_for_issue(self, request_issues_update)
     update!(end_product_establishment: epe) if epe
-
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
     handle_legacy_issues!
   end
@@ -449,7 +439,7 @@ class RequestIssue < CaseflowRecord
 
   def fetch_removed_by_user
     if removed?
-      relevant_update = request_issues_updates.find do |update|
+      relevant_update = request_issues_updates&.find do |update|
         update.removed_issues.any? { |issue| issue.id == id }
       end
 
@@ -633,6 +623,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
+    return if reference_id.present?
+
     close!(status: :ineligible) if ineligible_reason?
   end
 
@@ -830,7 +822,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+    duplicate_of_issue_in_active_review? ? ineligible_due_to&.review_title : nil
   end
 
   def handle_legacy_issues!

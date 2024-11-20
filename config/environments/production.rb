@@ -1,6 +1,5 @@
 require "active_support/core_ext/integer/time"
-require_relative "../../app/services/deprecation_warnings/production_handler"
-require_relative "../../config/initializers/deprecation_warnings"
+require_relative "../../lib/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -68,6 +67,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "caseflow_certification_production"
 
   config.action_mailer.perform_caching = false
+  config.action_mailer.show_previews = false
 
   config.action_mailer.delivery_method = :govdelivery_tms
   config.action_mailer.govdelivery_tms_settings = {
