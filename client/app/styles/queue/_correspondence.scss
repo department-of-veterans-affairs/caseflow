@@ -1516,7 +1516,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-case-timeline-container {
   border: 1px solid $color-gray-lighter;
   min-height: 200px;
-  padding-left: 30px;
+  padding-left: 20px;
+
+  #case-timeline-table {
+    margin-top: 20px;
+  }
 
 }
 
@@ -1645,7 +1649,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .correspondence-details-alert-banner {
-  padding-right: 30px;
+  padding-right: 20px;
 }
 .correspondence-details-alert-banner-inner {
 
@@ -1791,6 +1795,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .task-banner-alert .usa-alert.usa-alert-slim {
   padding-top: 4px;
+}
+
+.correspondence-details-alert-banner .usa-alert {
+  margin-top: 20px;
+  .usa-alert-body .usa-alert-text {
+    font-size: 17px;
+  }
 }
 
 .grayLineStyling {
