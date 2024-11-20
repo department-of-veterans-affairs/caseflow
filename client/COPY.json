@@ -1416,6 +1416,7 @@
   "VHA_FIRST_LOGIN_INFO_ALERT_TITLE": "VHA Team Access",
   "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
   "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
+  "DATE_SELECTOR_DATE_RANGE_ERROR": "Decision date must be between Form Receipt Date (%s) and current date (%s).",
   "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
