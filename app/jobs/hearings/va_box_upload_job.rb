@@ -100,7 +100,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
         updated_by_id: RequestStore[:current_user].id,
         # not 100% sure about this status
         transcription_status: "Successful Upload (BOX)",
-        sent_to_transcriber_date: Date.today
+        sent_to_transcriber_date: Time.zone.today
       )
     end
   end
@@ -124,7 +124,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       vacols_record.update!(
         taskno: truncate_task_number_for_vacols(@transcription_package.task_number),
         contapes: VACOLS_CONTRACTORS[@transcription_package.contractor&.name],
-        consent: Date.today,
+        consent: Time.zone.today,
         conret: @transcription_package.expected_return_date
       )
     end

@@ -18,7 +18,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
   before do
     User.authenticate!(user: create(:user))
-    stub_const("Hearings::VaBoxUploadJob::VACOLS_CONTRACTORS", { "Contractor Name" => "N"} )
+    stub_const("Hearings::VaBoxUploadJob::VACOLS_CONTRACTORS", { "Contractor Name" => "N" })
     allow(ExternalApi::VaBoxService).to receive(:new).and_return(box_service)
     allow(box_service).to receive(:get_child_folder_id).and_return("0000001")
     allow(Caseflow::S3Service).to receive(:fetch_file).and_return(master_zip_file_path)
@@ -32,7 +32,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
     )
     [hearing, legacy_hearing].each do |hearing|
       t = create(:transcription, hearing_id: hearing.id, task_number: transcription_package.task_number)
-      ["vtt", "mp3", "zip", "rtf"].each do |ext|
+      %w[vtt mp3 zip rtf].each do |ext|
         create(
           :transcription_file,
           hearing: hearing,
@@ -61,7 +61,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
         subject
 
-        expect(transcription_package.date_upload_box.to_date == Date.today).to eq true
+        expect(transcription_package.date_upload_box.to_date == Time.zone.today).to eq true
         expect(transcription_package.status == "Successful Upload (BOX)").to eq true
       end
 
@@ -70,7 +70,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
         transcriptions.each do |t|
           expect(t.transcription_contractor == transcription_package.contractor).to eq false
-          expect(t.sent_to_transcriber_date == Date.today).to eq false
+          expect(t.sent_to_transcriber_date == Time.zone.today).to eq false
           expect(t.transcription_status == "Successful Upload (BOX)").to eq false
         end
 
@@ -78,7 +78,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
         transcriptions.each do |t|
           expect(t.transcription_contractor).to eq(transcription_package.contractor)
-          expect(t.sent_to_transcriber_date).to eq(Date.today)
+          expect(t.sent_to_transcriber_date).to eq(Time.zone.today)
           expect(t.transcription_status == "Successful Upload (BOX)").to eq true
         end
       end
@@ -92,7 +92,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
         subject
 
         TranscriptionFile.all.each do |tf|
-          expect(tf.date_upload_box.to_date == Date.today).to eq true
+          expect(tf.date_upload_box.to_date == Time.zone.today).to eq true
           expect(tf.file_status == "sent").to eq true
         end
       end
@@ -110,7 +110,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
         expect(vacols_record.taskno).to eq "11-0001"
         expect(vacols_record.contapes).to eq "N"
-        expect(vacols_record.consent).to eq Date.today
+        expect(vacols_record.consent).to eq Time.zone.today
         expect(vacols_record.conret).to eq transcription_package.expected_return_date
       end
     end
