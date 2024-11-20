@@ -115,9 +115,14 @@ module Seeds
     end
 
     def excluded_judge
-      @excluded_judge ||= User.find_by(css_id: "EXCL_JUDGE") ||
-        create(:user, :judge_with_appeals_excluded_from_affinity, :with_vacols_judge_record,
-                      css_id: "EXCL_JUDGE", full_name: "Affinity ExcludedJudge")
+      @excluded_judge ||= (
+        user = User.find_by(css_id: "EXCL_JUDGE") ||
+                 create(:user, :judge_with_appeals_excluded_from_affinity, :with_vacols_judge_record,
+                        css_id: "EXCL_JUDGE", full_name: "Affinity ExcludedJudge")
+
+        JudgeTeam.for_judge(user).update!(accepts_priority_pushed_cases: false)
+        user
+      )
     end
 
     def ineligible_judge
@@ -424,6 +429,12 @@ module Seeds
         # hearing before decision different deciding judge CAVC AOD affinity out of window
         c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, aod: true)
         c.update!(bfmemid: judge_staff.sattyid)
+        # hearing after decision different deciding judge CAVC out of window
+        c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
+        # hearing after decision different deciding judge CAVC AOD out of window
+        c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, aod: true)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
         # no hearings CAVC affinity out of window
         create(:legacy_cavc_appeal, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 2.months.ago)
         # no hearings CAVC AOD affinity out of window
@@ -495,6 +506,12 @@ module Seeds
         # hearing before decision different deciding judge AOJ CAVC AOD affinity out of window
         create(:legacy_aoj_appeal, :aod, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, cavc: true, original_dec_judge_sattyid: judge_staff.sattyid)
 
+        # hearing after decision different deciding judge AOJ out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
+        # hearing after decision different deciding judge AOJ CAVC out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
+        # hearing after decision different deciding judge AOJ CAVC AOD out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
         # no hearings AOJ AOD affinity out of window
         create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 2.months.ago)
         # no hearings AOJ CAVC affinity out of window
