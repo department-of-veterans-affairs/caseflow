@@ -10,7 +10,7 @@
 class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
-  include BgsService
+  include BGSServiceConcern
   include CachedAttributes
   include AddressMapper
   include Taskable
@@ -1117,6 +1117,10 @@ class LegacyAppeal < CaseflowRecord
 
     def repository
       AppealRepository
+    end
+
+    def aoj_appeal_repository
+      AojAppealRepository
     end
 
     # Wraps the closure of appeals in a transaction
