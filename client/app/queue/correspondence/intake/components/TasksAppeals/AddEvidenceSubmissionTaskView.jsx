@@ -39,7 +39,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
           <div className="area-below-evidence-window-submission-task-dropdown" />
           <TextareaField
             name="content"
-            label="Provide context and instruction on this task"
+            label="Provide context and instructions on this task"
             disabled
             textAreaStyling={{ style: { cursor: 'not-allowed' } }}
           />

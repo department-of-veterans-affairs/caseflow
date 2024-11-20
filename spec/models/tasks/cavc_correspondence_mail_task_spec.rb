@@ -147,8 +147,9 @@ describe CavcCorrespondenceMailTask do
     context "on a non-CAVC Appeal Stream" do
       let(:root_task) { create(:root_task) }
 
-      it "fails to create the task" do
-        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      it "create the task" do
+        subject
+        expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
       end
     end
 
@@ -159,16 +160,18 @@ describe CavcCorrespondenceMailTask do
       context "without a CAVC task" do
         before { CavcTask.find_by(appeal: appeal).destroy }
 
-        it "fails to create the task" do
-          expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        it "create the task" do
+          subject
+          expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
         end
       end
 
       context "after the CAVC Lit Support work is complete" do
         before { CavcTask.find_by(appeal: appeal).completed! }
 
-        it "fails to create the task" do
-          expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        it "create the task" do
+          subject
+          expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
         end
       end
 
