@@ -26,6 +26,6 @@ class ErrorHandlers::ClaimEvidenceApiErrorHandler
   end
 
   def use_ce_api?
-    FeatureToggle.enabled?(:use_ce_api)
+    FeatureToggle.enabled?(:use_ce_api, user: RequestStore[:current_user])
   end
 end
