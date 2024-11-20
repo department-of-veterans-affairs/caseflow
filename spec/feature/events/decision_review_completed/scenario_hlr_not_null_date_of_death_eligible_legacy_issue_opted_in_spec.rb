@@ -67,7 +67,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         },
         "request_issues": [
           {
-            "decision_review_issue_id": "1",
+            "decision_review_issue_id": "1234",
             "benefit_type": "compensation",
             "contested_issue_description": null,
             "contention_reference_id": 6_662_231,
@@ -93,7 +93,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
             "ramp_claim_id": null,
             "rating_issue_associated_at": null,
             "nonrating_issue_bgs_id": null,
-            "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE"
+            # "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE"
           }
         ]
       }
@@ -114,40 +114,42 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
         existing_request_issue.reload
-        # completed_request_issue = RequestIssue.find_by(reference_id: "1234")
-        # expect(completed_request_issue.nonrating_issue_category).to eq(nil)
-        # expect(completed_request_issue.nonrating_issue_description).to eq(nil)
-        # expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
-        # expect(completed_request_issue.nonrating_issue_bgs_id).to eq(nil)
-        # expect(completed_request_issue.rating_issue_associated_at).to eq(1_708_533_584_000)
-        # expect(completed_request_issue.closed_at).to eq(nil)
-        # expect(completed_request_issue.closed_status).to eq(nil)
-        # expect(completed_request_issue.contested_issue_description).to eq("PTSD")
-        # expect(completed_request_issue.contention_reference_id).to eq(4_930_630)
-        # expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
-        # expect(completed_request_issue.contested_rating_issue_profile_date).to eq("2017-02-07T07:21:24+00:00")
-        # expect(completed_request_issue.contested_rating_issue_reference_id).to eq("18262091884874")
+        completed_request_issue = RequestIssue.find_by(reference_id: "1234")
+        expect(completed_request_issue.nonrating_issue_category).to eq("Accrued Benefits")
+        expect(completed_request_issue.nonrating_issue_description).to eq("Some issue description")
+        expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
+        expect(completed_request_issue.nonrating_issue_bgs_id).to eq(nil)
+        expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
+        expect(completed_request_issue.closed_at).to eq(nil)
+        expect(completed_request_issue.closed_status).to eq(nil)
+        expect(completed_request_issue.contested_issue_description).to eq(nil)
+        expect(completed_request_issue.contention_reference_id).to eq(6_662_231)
+        expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_profile_date).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(completed_request_issue.vacols_id).to eq("LEGACYID")
         expect(completed_request_issue.vacols_sequence_id).to eq(1)
-        # epe = EndProductEstablishment.find_by(reference_id: "474697")
-        # review = epe.source
-        # veteran = epe.veteran
-        # id = epe.claimant_participant_id
-        # claimant = Claimant.find_by(participant_id: id)
-        # expect(epe.synced_status).to eq("RW")
-        # expect(veteran.participant_id).to eq("1826209")
-        # expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
-        # expect(veteran.name_suffix).to eq(nil)
-        # expect(veteran.date_of_death).to eq(nil)
-        # expect(review.auto_remand).to eq(nil)
-        # expect(review.establishment_attempted_at).to eq(1_708_533_584_000)
-        # expect(review.establishment_last_submitted_at).to eq(1_708_533_584_000)
-        # expect(review.establishment_processed_at).to eq(1_708_533_584_000)
-        # expect(review.establishment_submitted_at).to eq(1_708_533_584_000)
-        # expect(review.legacy_opt_in_approved).to eq(false)
-        # expect(claimant.type).to eq("DependentClaimant")
-        # expect(claimant.payee_code).to eq("11")
-        # expect(claimant.participant_id).to eq("1129318238")
+        epe = EndProductEstablishment.find_by(reference_id: "167936")
+        review = epe.source
+        veteran = epe.veteran
+        id = epe.claimant_participant_id
+        claimant = Claimant.find_by(participant_id: id)
+        expect(epe.synced_status).to eq("RW")
+        expect(veteran.participant_id).to eq("1826209")
+        expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
+        expect(veteran.name_suffix).to eq(nil)
+        expect(veteran.date_of_death).to eq(17_897)
+        expect(review.auto_remand).to eq(nil)
+        expect(review.establishment_attempted_at).to eq(1_708_533_584_000)
+        expect(review.establishment_last_submitted_at).to eq(1_708_533_584_000)
+        expect(review.establishment_processed_at).to eq(1_708_533_584_000)
+        expect(review.establishment_submitted_at).to eq(1_708_533_584_000)
+        expect(review.informal_conference).to eq(false)
+        expect(review.same_office).to eq(nil)
+        expect(review.legacy_opt_in_approved).to eq(true)
+        expect(claimant.type).to eq("VeteranClaimant")
+        expect(claimant.payee_code).to eq("00")
+        expect(claimant.participant_id).to eq("1826209")
       end
     end
   end

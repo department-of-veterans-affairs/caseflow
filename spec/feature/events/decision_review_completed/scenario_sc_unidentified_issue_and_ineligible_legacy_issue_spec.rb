@@ -190,6 +190,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(review.establishment_last_submitted_at).to eq(1_702_067_145_000)
         expect(review.establishment_processed_at).to eq(1_702_067_145_000)
         expect(review.establishment_submitted_at).to eq(1_702_067_145_000)
+        expect(review.informal_conference).to eq(false)
+        expect(review.same_office).to eq(false)
         expect(review.legacy_opt_in_approved).to eq(false)
         expect(claimant.type).to eq("VeteranClaimant")
         expect(claimant.payee_code).to eq("00")
