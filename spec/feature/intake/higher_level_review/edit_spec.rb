@@ -545,7 +545,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       before do
         epe = EndProductEstablishment.last
         untimely_request_issue.update(
-          closed_at: nil, closed_status: nil, ineligible_reason: nil, end_product_establishment_id: epe.id
+          closed_at: nil, closed_status: nil, contention_removed_at: nil, ineligible_reason: nil, end_product_establishment_id: epe.id
         )
       end
 
@@ -564,7 +564,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     context "when updating an ineligible claim without an epe id" do
       before do
         untimely_request_issue.update(
-          closed_at: nil, closed_status: nil, ineligible_reason: nil, end_product_establishment_id: nil
+          closed_at: nil, closed_status: nil, contention_removed_at: nil, ineligible_reason: nil, end_product_establishment_id: nil
         )
       end
 
