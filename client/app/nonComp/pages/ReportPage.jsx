@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
@@ -17,12 +17,15 @@ import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
+import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
+import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-
+import { saveUserSearch, fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
 import { get } from 'lodash';
+import COPY from 'app/../COPY';
 
 import {
   REPORT_TYPE_OPTIONS,
@@ -110,6 +113,7 @@ const ReportPageButtons = ({
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit,
+  handleSaveSearch,
   loading,
   loadingText }) => {
   return (
@@ -124,6 +128,15 @@ const ReportPageButtons = ({
         Cancel
       </Button>
       <div {...buttonInnerContainerStyle}>
+        <Button
+          classNames={['usa-button-secondary']}
+          label="save-search"
+          name="save_search"
+          onClick={handleSaveSearch}
+          disabled={isGenerateButtonDisabled}
+        >
+          Save search
+        </Button>
         <Button
           classNames={['usa-button-secondary']}
           label="clear-filters"
@@ -189,9 +202,12 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
   const [value, setValue] = React.useState({});
 
   const onCheckboxClick = ({ option, val }) => {
-    value[option.id] = val;
-    field.onChange(value);
-    setValue(value);
+    const valueCopy = { ...value };
+
+    // this was necessary as without this it wouldn't let value to get updated in Saved search.
+    valueCopy[option.id] = val;
+    field.onChange(valueCopy);
+    setValue(valueCopy);
   };
 
   const messageStyling = css({
@@ -320,10 +336,17 @@ const ReportPage = ({ history }) => {
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
+  const saveSearchStatus = useSelector((state) => state.savedSearch.status);
+  const saveSearchAlertTitle = useSelector((state) => state.savedSearch.message);
+  const userSearches = useSelector((state) => state.savedSearch.fetchedSearches?.userSearches);
   const isCSVGenerating = csvGeneration === 'loading';
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
+
+  const [showModal, setShowModal] = useState(false);
+
+  const saveLimitCount = userSearches.length;
 
   const processConditionOptions = (condition, options) => {
     let formattedOptions;
@@ -394,11 +417,36 @@ const ReportPage = ({ history }) => {
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
+  const handleSave = (data) => {
+    dispatch(saveUserSearch(data));
+    setShowModal(true);
+  };
+
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
   }, []);
 
-  return (
+  useEffect(() => {
+    dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
+  }, []);
+
+  return (<>
+    { saveSearchStatus === 'succeeded' ?
+      <Alert
+        type="success"
+        title={saveSearchAlertTitle}
+        message={COPY.SEARCH_ALERT_DESCRIPTION}
+        scrollOnAlert /> :
+      null
+    }
+    { saveSearchStatus === 'failed' ?
+      <Alert title="Something went wrong" type="error" scrollOnAlert>
+        If you continue to see this page, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </Alert> :
+      null
+    }
     <NonCompLayout
       buttons={
         <ReportPageButtons
@@ -406,6 +454,7 @@ const ReportPage = ({ history }) => {
           isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
+          handleSaveSearch={handleSubmit(handleSave)}
           loading={isCSVGenerating}
           loadingText="Generating CSV"
         />
@@ -467,10 +516,17 @@ const ReportPage = ({ history }) => {
             <TimingSpecification /> :
             null
           }
+          { showModal && saveLimitCount < 10 ?
+            <SaveSearchModal setShowModal={setShowModal} /> : null
+          }
+          { showModal && (saveLimitCount >= 10) ?
+            <SaveLimitReachedModal setShowLimitModal={setShowModal} /> : null
+          }
           {formState.isDirty ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>
+  </>
   );
 };
 
@@ -479,6 +535,7 @@ ReportPageButtons.propTypes = {
   isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
+  handleSaveSearch: PropTypes.func,
   loading: PropTypes.bool,
   loadingText: PropTypes.string,
 };

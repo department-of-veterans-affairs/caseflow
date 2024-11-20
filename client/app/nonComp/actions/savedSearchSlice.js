@@ -6,9 +6,10 @@ const initialState = {
   fetchedSearches: {
     error: null,
     status: 'idle',
-    searches: {},
-    userSearches: {}
-  }
+    searches: [],
+    userSearches: []
+  },
+  saveUserSearch: {}
 };
 
 export const fetchedSearches = createAsyncThunk(
@@ -35,12 +36,30 @@ export const fetchedSearches = createAsyncThunk(
     }
   });
 
+export const createSearch = createAsyncThunk(
+  'posts/createSearch',
+  async({ organizationUrl, postData }, thunkApi) => {
+    try {
+      const url = `/decision_reviews/${organizationUrl}/searches`;
+      const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
+
+      return thunkApi.fulfillWithValue(response.body);
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Save search creation failed: ${error.message}`, { analytics: true });
+    }
+  });
+
 const savedSearchSlice = createSlice({
   name: 'savedSearch',
   initialState,
   reducers: {
     selectSavedSearch: (state, action) => {
       state.selectedSearch = action.payload;
+    },
+    saveUserSearch: (state, action) => {
+      state.saveUserSearch = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -55,9 +74,20 @@ const savedSearchSlice = createSlice({
       addCase(fetchedSearches.rejected, (state, action) => {
         state.fetchedSearches.status = 'failed';
         state.error = action.error.message;
+      }).
+      addCase(createSearch.pending, (state) => {
+        state.status = 'loading';
+      }).
+      addCase(createSearch.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.message = action.payload.message;
+      }).
+      addCase(createSearch.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       });
   },
 });
 
 export default savedSearchSlice.reducer;
-export const { selectSavedSearch } = savedSearchSlice.actions;
+export const { selectSavedSearch, saveUserSearch } = savedSearchSlice.actions;

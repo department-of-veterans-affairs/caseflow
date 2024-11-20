@@ -517,6 +517,15 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
         <span>
           <button
             class="usa-button-secondary usa-button"
+            id="button-save_search"
+            type="button"
+          >
+            Save search
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
             id="button-clear-filters"
             type="button"
           >

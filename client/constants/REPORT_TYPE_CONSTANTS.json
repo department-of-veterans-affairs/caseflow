@@ -204,7 +204,27 @@
     "label": "Withdrawn",
     "value": "withdrawn"
   }
-]
+  ],
+ "CONDITION_DROPDOWN_LIST": [
+    { "label": "Days Waiting",
+      "value": "daysWaiting"
+    },
+    { "label": "Decision Review Type",
+      "value": "decisionReviewType"
+    },
+    { "label": "Issue Type",
+      "value": "issueType"
+    },
+    { "label": "Issue Disposition",
+      "value": "issueDisposition"
+    },
+    { "label": "Personnel",
+      "value": "personnel"
+    },
+    { "label": "Facility",
+      "value": "facility"
+    }
+  ]
 }
 
 

@@ -4,7 +4,7 @@ class SavedSearch < CaseflowRecord
   belongs_to :user
 
   validates :name, presence: true, length: { maximum: 255 }
-  validates :description, presence: true, length: { maximum: 1000 }
+  validates :description, length: { maximum: 1000 }
   validate :saved_search_limit
 
   scope :for_user, ->(user) { where(user: user).order(created_at: :desc) }
