@@ -25,7 +25,7 @@ describe "gather_bfcorkeys_of_hearing_schedulable_legacy_cases" do
     end
   end
 
-  context "with no legacy apepals meeting the criteria" do
+  context "with no legacy appeals meeting the criteria" do
     it "the function doesn't throw an error" do
       expect { subject }.to_not raise_exception
     end
