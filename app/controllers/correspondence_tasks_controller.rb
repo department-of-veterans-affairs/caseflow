@@ -56,6 +56,10 @@ class CorrespondenceTasksController < TasksController
     end
   end
 
+  def create_return_to_inbound_ops_task
+
+  end
+
   def update
     process_package_action_decision(correspondence_tasks_params[:decision])
   end
