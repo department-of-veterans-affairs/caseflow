@@ -71,7 +71,7 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentSeriesForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api,user: user).and_return(false)
         expect(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
 
@@ -108,7 +108,7 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentsForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api, user: user).and_return(false)
         expect(ExternalApi::VbmsDocumentsForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
 
@@ -179,7 +179,7 @@ describe ExternalApi::VBMSService do
       let(:mock_init_update_response) { double(updated_document_token: "document-token") }
 
       it "calls the SOAP API implementation" do
-        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api, user: user).and_return(false)
         expect(described).to receive(:init_vbms_client)
         expect(described).to receive(:initialize_update).and_return(mock_init_update_response)
         expect(described).to receive(:send_and_log_request)
@@ -229,7 +229,7 @@ describe ExternalApi::VBMSService do
       let(:mock_init_update_response) { double(updated_document_token: "document-token") }
 
       it "calls the SOAP API implementation" do
-        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api, user: user).and_return(false)
         expect(described).to receive(:init_vbms_client)
         expect(described).to receive(:initialize_update).with(appeal, fake_document)
           .and_return(mock_init_update_response)
@@ -249,8 +249,7 @@ describe ExternalApi::VBMSService do
         source: "my_source",
         document_type_id: 1,
         document_type: "test",
-        document_subject: "testing1",
-        new_mail: true
+        document_subject: "testing1"
       )
     end
     let(:veteran_file_number) { "123456789" }
@@ -315,8 +314,7 @@ describe ExternalApi::VBMSService do
         source: "my_source",
         document_type_id: 1,
         document_type: "test",
-        document_subject: "testing1",
-        new_mail: true
+        document_subject: "testing1"
       )
     end
     let(:appeal) { create(:appeal) }
