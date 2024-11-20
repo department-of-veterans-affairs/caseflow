@@ -253,9 +253,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed Tasks"
-      # expect(page).to have_content("Higher-Level Review", count: 2)
-      # Remove this once the pre filter 7 days is added back
-      expect(page).to have_content("Higher-Level Review", count: 3)
+      expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 
       decision_date = hlr_b.tasks.first.closed_at.strftime("%m/%d/%y")
@@ -431,13 +429,23 @@ feature "NonComp Reviews Queue", :postgres do
       click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
-      # earlier_date = 3.days.ago.strftime("%m/%d/%y")
-      # Remove this one the pre filter 7 days is added
-      earlier_date = 7.days.ago.strftime("%m/%d/%y")
+      earlier_date = 3.days.ago.strftime("%m/%d/%y")
+
+      last_seven_days_date_string = 7.days.ago.strftime("%Y-%m-%d")
+
+      params = {
+        tab: "completed",
+        page: 1,
+        sort_by: "completedDateColumn",
+        order: "desc",
+        "filter[]" => "col=completedDateColumn&val=last7,#{last_seven_days_date_string},"
+      }
+
+      query_string = URI.encode_www_form(params)
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+        "#{BASE_URL}?#{query_string}"
       )
 
       table_rows = current_table_rows
@@ -445,10 +453,12 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(earlier_date)).to eq true
       expect(table_rows.first.include?(later_date)).to eq true
 
+      params[:order] = "asc"
+      query_string = URI.encode_www_form(params)
       # Date Completed desc
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
+        "#{BASE_URL}?#{query_string}"
       )
 
       table_rows = current_table_rows
@@ -998,13 +1008,19 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Veterans Health Administration")
       click_on "Completed Tasks"
 
-      # Swap these on once the Last 7 days pre filter is added back
-      # expect(page).to have_content("Cases completed (Last 7 Days)")
-      # expect(page).to have_content("Date Completed (1)")
-      # expect(page).to have_content("Viewing 1-2 of 2 total")
+      expect(page).to have_content("Cases completed (Last 7 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
+      date_string = 7.days.ago.strftime("%Y-%m-%d")
+      find("[aria-label='Filter by completed date. Filtering by last7,#{date_string},']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
 
-      # Remove these 3 once Last 7 days pre filter is added back
-      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      expect(submit_button[:disabled]).to eq "false"
+
+      click_on "Clear all filters"
+
+      expect(page).to have_content("Cases completed")
       expect(page).to_not have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
 
@@ -1013,6 +1029,7 @@ feature "NonComp Reviews Queue", :postgres do
       submit_button = find("button", text: "Apply Filter")
 
       expect(submit_button[:disabled]).to eq "true"
+
       page.find(".cf-select__control", match: :first).click
       page.all("cf-select__option")
       # Verify that all the date picker options are available
@@ -1050,12 +1067,6 @@ feature "NonComp Reviews Queue", :postgres do
 
       click_on "Clear all filters"
 
-      # Swap these on once the Last 7 days pre filter is added back
-      # expect(page).to have_content("Cases completed (Last 7 Days)")
-      # expect(page).to have_content("Date Completed (1)")
-      # expect(page).to have_content("Viewing 1-2 of 2 total")
-
-      # Remove these 3 once Last 7 days pre filter is added back
       expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       expect(page).to_not have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
@@ -1102,13 +1113,12 @@ feature "NonComp Reviews Queue", :postgres do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
       click_on "Completed Tasks"
-      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
-      # Add this back in once the last 7 days pre filter is added again
-      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content("2 total")
+      expect(page).to have_content("Cases completed (Last 7 Days)")
       click_button "Download completed tasks"
 
       # Check the csv to make sure it returns the two task rows within the last week and the header row
-      completed_tasks_csv_file(4)
+      completed_tasks_csv_file(3)
 
       # Filter by Camp Lejune Family Member
       find("[aria-label='Filter by issue type']").click
