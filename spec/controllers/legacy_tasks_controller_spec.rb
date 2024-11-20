@@ -537,7 +537,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         patch :blocked_assign_to_judge, params: { tasks: params }
         expect(response.status).to eq 200
         expect(HearingTask.find_by(appeal_id: blocked_appeal.id).status).to eq(Constants.TASK_STATUSES.cancelled)
-        expect(ScheduleHearingTask.find_by(appeal_id: blocked_appeal.id).status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(ScheduleHearingTask.find_by(appeal_id: blocked_appeal.id).status)
+          .to eq(Constants.TASK_STATUSES.cancelled)
       end
 
       it "should create a LegacyAppealAssignmentTrackingTask" do
