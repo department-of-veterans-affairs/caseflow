@@ -71,7 +71,7 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentSeriesForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api,user: user).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api, user: user).and_return(false)
         expect(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
 
