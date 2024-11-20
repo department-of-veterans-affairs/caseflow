@@ -29,8 +29,6 @@ class TranscriptionPackages
     transcription_package = Hearings::ZipAndUploadTranscriptionPackageJob.perform_now(work_order_params)
     if transcription_package.is_a?(TranscriptionPackage)
       upload_transcription_package(transcription_package)
-    else
-      return
     end
   end
 
