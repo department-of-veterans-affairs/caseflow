@@ -103,10 +103,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         cancelledTasks: this.actionData().blocking_tasks,
         cancellationReason: this.state.selectedReason,
         cancellationInstructions: this.state.cancellationInstructions,
-      }, successMessage).
-        then(() => {
-          this.props.history.replace(`/queue/appeals/${appeal.externalId}`);
-        });
+      }, successMessage);
     }
 
     const payload = {
