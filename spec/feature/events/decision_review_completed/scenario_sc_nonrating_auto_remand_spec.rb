@@ -6,8 +6,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
   describe "POST #decision_review_completed" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
-    let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 337_534) }
-    let(:review) { epe.source }
+    # let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 337_534) }
+    # let(:review) { epe.source }
     # let!(:existing_request_issue) { create(:request_issue, :ineligible, decision_review: review, reference_id: "1234")}
 
     def json_test_payload
@@ -84,7 +84,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
             "nonrating_issue_description": "DTA Error - Other Recs: Dependency: Wendy Boyd,
                                             Not an Award Dependent, Turns 18, effective 01/01/2024",
             "remand_source_id": 1234,
-            "remand_source_contention_reference_id": 12_345,
             "untimely_exemption": null,
             "untimely_exemption_notes": null,
             "vacols_id": null,
@@ -131,6 +130,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(completed_request_issue.closed_at).to eq(nil)
         expect(completed_request_issue.closed_status).to eq(nil)
+        expect(completed_request_issue.vacols_id).to eq(nil)
+        expect(completed_request_issue.vacols_sequence_id).to eq(nil)
         epe = EndProductEstablishment.find_by(reference_id: "337534")
         review = epe.source
         veteran = epe.veteran
@@ -147,8 +148,10 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(review.establishment_last_submitted_at).to eq(1_702_067_145_000)
         expect(review.establishment_processed_at).to eq(1_702_067_145_000)
         expect(review.establishment_submitted_at).to eq(1_702_067_145_000)
+        expect(review.legacy_opt_in_approved).to eq(false)
         expect(claimant.type).to eq("VeteranClaimant")
         expect(claimant.payee_code).to eq("00")
+        expect(claimant.participant_id).to eq("1826209")
       end
     end
 
