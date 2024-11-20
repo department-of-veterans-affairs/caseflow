@@ -1,5 +1,3 @@
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -46,7 +44,9 @@ export default function ScenarioConfiguration(props) {
     if (chosenTarget === null) {
       currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: {} };
     } else {
-      currentScenarios[scenariosArray.indexOf(associatedScenario)] = { [associatedScenario]: { targetType: chosenTarget, targetId: '' } };
+      currentScenarios[scenariosArray.indexOf(associatedScenario)] = {
+        [associatedScenario]: { targetType: chosenTarget, targetId: '' }
+      };
     }
 
     updateState(
@@ -87,6 +87,7 @@ export default function ScenarioConfiguration(props) {
             onChange={(event) => handleTargetSelect(nullCheck(event), scenario)}
             isClearable
           />
+          {props.errors[scenario] && <div className="error">{props.errors[scenario].target_type}</div>}
           <br />
           <TextField
             name="testTargetID"
@@ -106,5 +107,6 @@ ScenarioConfiguration.propTypes = {
   scenario: PropTypes.string,
   targetType: PropTypes.array,
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  errors: PropTypes.object
 };

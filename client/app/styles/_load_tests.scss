@@ -10,6 +10,21 @@
   margin: 1%;
 }
 
+.header-style {
+  margin: 0
+}
+
+.admin-checkbox {
+  margin-left: 20px;
+  font-size: 15px;
+}
+
 .test-class-sizing {
   font-size: 1.5rem;
+}
+
+.error {
+  color: $validation-error-color;
+  font-size: 15px;
+  font-weight: bold;
 }

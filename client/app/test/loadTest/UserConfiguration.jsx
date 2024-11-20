@@ -25,6 +25,7 @@ export default function UserConfiguration(props) {
   const featureToggles = props.featuresList;
   const currentState = props.currentState;
   const updateState = props.updateState;
+  const errors = props.errors;
 
   const handleStationSelect = ({ value }) => {
     setStationSelected(value);
@@ -96,6 +97,7 @@ export default function UserConfiguration(props) {
         filterOption={() => true}
         value={stationSelected}
       />
+      {errors.station_id && <div className="error">{errors.station_id}</div>}
       <br />
       <h3><strong>Regional Office</strong></h3>
       <SearchableDropdown
@@ -108,8 +110,9 @@ export default function UserConfiguration(props) {
         filterOption={() => true}
         value={officeSelected}
       />
+      {errors.regional_office && <div className="error">{errors.regional_office}</div>}
       <br />
-      <h3><strong>Organizations</strong></h3>
+      <h3 className="header-style"><strong>Organizations</strong></h3>
       <div className="load-test-container">
         {organizations.map((organization) => (
           <OrganizationsConfiguration
@@ -121,7 +124,7 @@ export default function UserConfiguration(props) {
         ))}
       </div>
       <br />
-      <h3><strong>Functions</strong></h3>
+      <h3 className="header-style"><strong>Functions</strong></h3>
       <div className="load-test-container test-class-sizing">
         {functionsAvailable.map((functionOption) => (
           <FunctionConfiguration
@@ -133,7 +136,7 @@ export default function UserConfiguration(props) {
         ))}
       </div>
       <br />
-      <h3><strong>Roles</strong></h3>
+      <h3 className="header-style"><strong>Roles</strong></h3>
       <div className="load-test-container test-class-sizing">
         {roles.map((role) => (
           <RoleConfiguration
@@ -145,7 +148,7 @@ export default function UserConfiguration(props) {
         ))}
       </div>
       <br />
-      <h3><strong>Feature Toggles</strong></h3>
+      <h3 className="header-style"><strong>Feature Toggles</strong></h3>
       <div className="load-test-container test-class-sizing">
         {featureToggles.map((featureToggle) => (
           <FeatureToggleConfiguration
@@ -167,5 +170,6 @@ UserConfiguration.propTypes = {
   functions_available: PropTypes.array,
   register: PropTypes.func,
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  errors: PropTypes.object
 };

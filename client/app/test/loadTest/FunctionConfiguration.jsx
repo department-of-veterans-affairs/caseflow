@@ -1,5 +1,3 @@
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 

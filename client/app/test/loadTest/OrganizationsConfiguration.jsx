@@ -1,6 +1,3 @@
-/* eslint-disable import/extensions */
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../../components/Checkbox';
@@ -69,7 +66,7 @@ export default function OrganizationsConfiguration(props) {
         onChange={() => handleOrganizationSelect(org)}
       />
       {organizationChecked &&
-      (<div style={{ marginLeft: '20px' }}>
+      (<div className="admin-checkbox">
         <Checkbox
           label="Admin"
           name={`${org} admin`}
