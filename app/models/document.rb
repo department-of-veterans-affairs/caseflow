@@ -113,7 +113,7 @@ class Document < CaseflowRecord
       file_number: file_number
     )
 
-    if FeatureToggle.enabled?(:use_ce_api)
+    if FeatureToggle.enabled?(:use_ce_api, user: RequestStore[:current_user])
       document.assign_attributes(series_id: vbms_document.series_id)
     end
 

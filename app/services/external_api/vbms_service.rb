@@ -4,7 +4,7 @@ class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
 
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         verify_current_user_veteran_file_number_access(document.file_number)
         VeteranFileFetcher.get_document_content(
@@ -26,7 +26,7 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         verify_current_user_veteran_access(appeal.veteran)
 
@@ -54,7 +54,7 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         verify_current_user_veteran_access(appeal.veteran)
         response = VeteranFileFetcher.fetch_veteran_file_list(
@@ -77,7 +77,7 @@ class ExternalApi::VBMSService
 
   # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms(appeal, uploadable_document)
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
         file_upload_payload = ClaimEvidenceFileUploadPayload.new(
@@ -108,7 +108,7 @@ class ExternalApi::VBMSService
 
   # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
         file_upload_payload = ClaimEvidenceFileUploadPayload.new(
@@ -172,7 +172,7 @@ class ExternalApi::VBMSService
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)
-    if !FeatureToggle.enabled?(:use_ce_api)
+    if !use_ce_api?
       request = VBMS::Requests::UploadDocument.new(
         upload_token: upload_token,
         filepath: filepath
@@ -194,7 +194,7 @@ class ExternalApi::VBMSService
 
   # rubocop:disable Metrics/MethodLength
   def self.update_document(appeal, uploadable_document)
-    if FeatureToggle.enabled?(:use_ce_api)
+    if use_ce_api?
       begin
         file_update_payload = ClaimEvidenceFileUpdatePayload.new(
           date_va_received_document: Time.zone.now.strftime("%Y-%m-%d"),
@@ -385,6 +385,10 @@ class ExternalApi::VBMSService
 
   def self.send_user_info?
     RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
+  end
+
+  def self.use_ce_api?
+    FeatureToggle.enabled?(:use_ce_api, user: RequestStore[:current_user])
   end
 
   class << self
