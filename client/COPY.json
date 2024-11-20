@@ -66,7 +66,7 @@
   "ERROR_OPEN_MODIFICATION_EXISTING_REQUEST": "Cannot exceed more than one issue modification request at a time",
   "ERROR_DECIDING_ISSUE_MODIFICATION_REQUEST": "Must be an admin to approve or deny requests",
   "NULL_FILTER_LABEL": "<<blank>>",
-  "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
+  "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews, Supplemental Claims & Remands",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",
   "OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE": "Review Type",
@@ -74,7 +74,7 @@
   "OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE": "Tracked in Caseflow",
   "OTHER_REVIEWS_TABLE_NO_EPS_NOTE": "No EPs created",
   "OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE": "Receipt Date",
-  "OTHER_REVIEWS_TABLE_EMPTY_TEXT": "This Veteran has no higher level reviews or supplemental claims at this time.",
+  "OTHER_REVIEWS_TABLE_EMPTY_TEXT": "This Veteran has no higher level reviews, supplemental claims, or remands at this time.",
   "OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED": "Establishment failed. Support notified.",
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS": "Syncing decisions...",
@@ -1520,5 +1520,6 @@
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
-  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
+  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand"
 }
