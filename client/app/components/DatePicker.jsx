@@ -247,10 +247,10 @@ class DatePicker extends React.PureComponent {
 
     } else if (this.state.noFutureDates && this.isDateInFuture(this.state.startDate)) {
       disabled = true;
-    } else if (this.state.mode !== '') {
-      disabled = this.state.startDate === '';
     } else if (this.state.mode === 'all') {
       disabled = false;
+    } else if (this.state.mode !== '') {
+      disabled = this.state.startDate === '';
     }
 
     return disabled;
