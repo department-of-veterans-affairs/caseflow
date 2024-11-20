@@ -132,6 +132,7 @@ const DocumentViewer = (props) => {
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
               readerPreferences={props.readerPreferences}
+              featureToggles={props.featureToggles}
               onrequestCancel={() => props.history.push(props.documentPathBase)}
             />
           </div>

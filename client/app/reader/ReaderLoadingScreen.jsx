@@ -70,7 +70,8 @@ ReaderLoadingScreen.propTypes = {
   onReceiveManifests: PropTypes.func,
   vacolsId: PropTypes.string,
   featureToggles: PropTypes.object,
-  readerPreferences: PropTypes.object
+  readerPreferences: PropTypes.object,
+  progressBarOptions: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

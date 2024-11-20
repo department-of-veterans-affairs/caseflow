@@ -63,7 +63,6 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = tags_by_doc_id[document.id].to_a
         object[:file_size] = document.file_size
-        object[:max_wait_time] = max_wait_time
       end
     end
   end
