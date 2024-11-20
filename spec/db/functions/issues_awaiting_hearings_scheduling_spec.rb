@@ -14,10 +14,10 @@ describe "issues_awaiting_hearing_scheduling" do
 
     let!(:issues) do
       legacy_appeals_with_active_sched_task.map do
-        create(:case_issue, isskey: _1.case_record.bfkey)
+        create(:case_issue, isskey: _1.vacols_id)
       end + Array.new(2).map do
         # Places two issues onto this single appeal
-        create(:case_issue, isskey: legacy_appeal_with_two_active_sched_tasks.case_record.bfkey)
+        create(:case_issue, isskey: legacy_appeal_with_two_active_sched_tasks.vacols_id)
       end
     end
 

@@ -1,7 +1,7 @@
 -- Returns records from the VACOLS DB's REP table that are associated with
 --   legacy cases in the National Hearing Queue.
 
-CREATE OR REPLACE FUNCTION rep_awaiting_hearing_scheduling()
+CREATE OR REPLACE FUNCTION reps_awaiting_hearing_scheduling()
   RETURNS SETOF rep_record
   LANGUAGE plpgsql AS
 $func$

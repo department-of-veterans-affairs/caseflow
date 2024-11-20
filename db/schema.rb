@@ -2583,7 +2583,7 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids text;
+      	legacy_case_ids TEXT;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2607,7 +2607,7 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids text;
+      	legacy_case_ids TEXT;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2625,13 +2625,13 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
       END $function$
   SQL
-  create_function :rep_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.rep_awaiting_hearing_scheduling()
+  create_function :reps_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reps_awaiting_hearing_scheduling()
        RETURNS SETOF rep_record
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids text;
+      	legacy_case_ids TEXT;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2655,7 +2655,7 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids text;
+      	legacy_case_ids TEXT;
       BEGIN
         SELECT *
         INTO legacy_case_ids
