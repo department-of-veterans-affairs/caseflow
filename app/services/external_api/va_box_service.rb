@@ -137,7 +137,7 @@ class ExternalApi::VaBoxService
       f.use Faraday::Adapter::NetHttp
     end
   end
-  
+
   # rubocop:disable Metrics/MethodLength
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
