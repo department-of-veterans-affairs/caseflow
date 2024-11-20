@@ -104,7 +104,7 @@ const NonCompTabsUnconnected = (props) => {
 
   const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
 
-  if (firstLoad && props.businessLineUrl === 'vha') {
+  if (props.businessLineUrl === 'vha') {
     const alreadyContains = completedTabPaginationOptions['filter[]'].
       some((item) => item.includes('col=completedDateColumn'));
 
