@@ -9,6 +9,10 @@ module Seeds
 
       # TODO: take the transaction block out after testing
       ApplicationRecord.multi_transaction do
+        # these are not used in the application outside of providing the string on the case details page, and cause
+        # errors when trying to re-run the seed file because of unique constraints on the ID value
+        Document.all.map(&:destroy!)
+
         instantiate_judges
         create_direct_review_cases
         create_evidence_submission_cases
@@ -185,6 +189,25 @@ module Seeds
       create_aoj_legacy_priority_genpop_cases
       create_aoj_legacy_priority_not_ready_cases
       create_aoj_legacy_nonpriority_ready_cases
+    end
+
+    def create_only_genpop_priority_cases
+      ApplicationRecord.multi_transaction do
+        # these are not used in the application outside of providing the string on the case details page, and cause
+        # errors when trying to re-run the seed file because of unique constraints on the ID value
+        Document.all.map(&:destroy!)
+
+        # make this judge active, then inactive again, so that appeals can be assigned to them
+        ineligible_judge.update_status!(Constants.USER_STATUSES.active)
+
+        create_direct_review_priority_genpop_cases
+        create_evidence_submission_priority_genpop_cases
+        create_hearing_priority_genpop_cases
+        create_legacy_priority_genpop_cases
+        create_aoj_legacy_priority_genpop_cases
+
+        ineligible_judge.update_status!(Constants.USER_STATUSES.inactive)
+      end
     end
 
     # these distributions will cause the associated judges to not recieve as many (or any) cases in the push job
