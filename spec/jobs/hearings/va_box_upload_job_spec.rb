@@ -4,8 +4,8 @@ RSpec.describe Hearings::VaBoxUploadJob do
   include ActiveJob::TestHelper
 
   let(:box_service) { Fakes::VaBoxService.new }
-  let(:hearing) { create(:hearing) }
-  let(:legacy_hearing) { create(:legacy_hearing) }
+  let!(:hearing) { create(:hearing) }
+  let!(:legacy_hearing) { create(:legacy_hearing) }
   let(:transcription_package) do
     create(
       :transcription_package,
