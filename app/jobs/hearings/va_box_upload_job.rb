@@ -37,6 +37,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     begin
       upload_master_zip_to_box
       update_database_records
+      true
     rescue StandardError => error
       log_error(error, extra: { transcription_package_id: @transcription_package&.id })
       error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
@@ -99,14 +100,14 @@ class Hearings::VaBoxUploadJob < CaseflowJob
         updated_by_id: RequestStore[:current_user].id,
         # not 100% sure about this status
         transcription_status: "Successful Upload (BOX)",
-        sent_to_transcriber_date: Time.current.to_date
+        sent_to_transcriber_date: Date.today
       )
     end
   end
 
   def update_transcription_files
     @transcription_package.transcriptions&.each do |transcription|
-      transcription.transcription_files&.update_all!(
+      transcription.transcription_files&.update_all(
         date_upload_box: Time.current,
         updated_by_id: RequestStore[:current_user].id,
         # not 100% sure about this status
@@ -123,7 +124,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       vacols_record.update!(
         taskno: truncate_task_number_for_vacols(@transcription_package.task_number),
         contapes: VACOLS_CONTRACTORS[@transcription_package.contractor&.name],
-        consent: Time.current.to_date,
+        consent: Date.today,
         conret: @transcription_package.expected_return_date
       )
     end
