@@ -2079,7 +2079,6 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
             data-event-off="mouseleave keydown"
             data-for="tooltip-500000003"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
@@ -4079,7 +4078,6 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
             data-event-off="mouseleave keydown"
             data-for="tooltip-500000003"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
@@ -6078,7 +6076,6 @@ exports[`Details Matches snapshot with default props 1`] = `
             data-event-off="mouseleave keydown"
             data-for="tooltip-100000005"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
@@ -7920,7 +7917,6 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
             data-event-off="mouseleave keydown"
             data-for="tooltip-100000005"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
