@@ -53,6 +53,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
