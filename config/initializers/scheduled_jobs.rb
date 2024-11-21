@@ -1,4 +1,3 @@
-
 Rails.application.config.to_prepare do
   SCHEDULED_JOBS = {
       "amo_metrics_report" => AMOMetricsReportJob,
@@ -56,3 +55,4 @@ Rails.application.config.to_prepare do
     "update_transcription_package_status_job" => Hearings::UpdateTranscriptionPackageStatusJob
   }.freeze
 end
+
