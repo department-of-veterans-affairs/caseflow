@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Test::TestControllerHelper
-  require "./scripts/enable_features_dev.rb"
   class << self
     def form_values
       {
