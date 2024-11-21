@@ -1,4 +1,5 @@
-class AddPriorCorrespondenceReferenceToCorrespondences < Caseflow::Migrations::AddIndexConcurrently
+class AddPriorCorrespondenceReferenceToCorrespondences < ActiveRecord::Migration[6.1]
+  include Caseflow::Migrations::AddIndexConcurrently
   disable_ddl_transaction!
 
   def change
