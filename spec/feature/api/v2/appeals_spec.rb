@@ -634,4 +634,105 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(json["data"].first["attributes"]["active"]).to eq(true)
     end
   end
+
+  context "with full issue description feature toggle enabled" do
+    let(:veteran) { create(:veteran) }
+    let(:request_issues) { nil }
+    let!(:appeal) { create(:appeal, :with_post_intake_tasks, veteran: veteran, request_issues: request_issues) }
+
+    let(:headers) do
+      {
+        "ssn": veteran.ssn,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+    end
+
+    before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+    after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+    context "for request issues" do
+      let(:edited_description) { "Description edited" }
+      let(:contested_issue_description) { "Contested issue description" }
+      let(:nonrating_issue_description) { "Nonrating issue description" }
+      let(:unidentified_issue_text) { "Unidentified issue text" }
+      let(:is_unidentified) { nil }
+      let(:request_issue) do
+        create(
+          :request_issue,
+          edited_description: edited_description,
+          contested_issue_description: contested_issue_description,
+          nonrating_issue_description: nonrating_issue_description,
+          unidentified_issue_text: unidentified_issue_text,
+          is_unidentified: is_unidentified
+        )
+      end
+      let(:request_issues) { [request_issue] }
+
+      context "with edited description" do
+        it "returns edited description when other description fields are present" do
+          get "/api/v2/appeals", headers: headers
+          response_body = JSON.parse(response.body)
+          issue = response_body["data"].first["attributes"]["issues"].first
+
+          expect(issue["description"]).to eq(edited_description)
+        end
+      end
+
+      context "with contested issue description" do
+        let(:edited_description) { nil }
+
+        it "returns contested issue description" do
+          get "/api/v2/appeals", headers: headers
+          response_body = JSON.parse(response.body)
+          issue = response_body["data"].first["attributes"]["issues"].first
+
+          expect(issue["description"]).to eq(contested_issue_description)
+        end
+      end
+
+      context "with nonrating issue description" do
+        let(:edited_description) { nil }
+        let(:contested_issue_description) { nil }
+
+        it "returns nonrating issue category and description" do
+          get "/api/v2/appeals", headers: headers
+          response_body = JSON.parse(response.body)
+          issue = response_body["data"].first["attributes"]["issues"].first
+
+          expect(issue["description"])
+            .to eq("#{request_issue.nonrating_issue_category} - #{nonrating_issue_description}")
+        end
+      end
+
+      context "with unidentified issue text" do
+        let(:edited_description) { nil }
+        let(:contested_issue_description) { nil }
+        let(:nonrating_issue_description) { nil }
+        let(:is_unidentified) { true }
+
+        it "returns unidentified issue text" do
+          get "/api/v2/appeals", headers: headers
+          response_body = JSON.parse(response.body)
+          issue = response_body["data"].first["attributes"]["issues"].first
+
+          expect(issue["description"]).to eq(unidentified_issue_text)
+        end
+      end
+    end
+
+    context "for decision issues" do
+      let!(:appeal) { create(:appeal, :with_post_intake_tasks, veteran: veteran) }
+      let!(:decision_issue) do
+        create(:decision_issue, :nonrating, decision_review: appeal, description: "Test decision issue")
+      end
+
+      it "returns description field" do;
+        get "/api/v2/appeals", headers: headers
+        response_body = JSON.parse(response.body)
+        issue = response_body["data"].first["attributes"]["issues"].first
+
+        expect(issue["description"]).to eq(decision_issue.description)
+      end
+    end
+  end
 end
