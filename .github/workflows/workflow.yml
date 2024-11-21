@@ -306,7 +306,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PRIVATE_REPO_ACCESS_CLASSIC }}
-          persist-credentials: true
+
+      - name: Configure Git for Private Repo Access
+        run: git config --global url."https://${{ secrets.PRIVATE_REPO_ACCESS_CLASSIC }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install Python-2
         run: |
@@ -358,7 +360,10 @@ jobs:
         with:
           fetch-depth: "0"
           token: ${{ secrets.PRIVATE_REPO_ACCESS_CLASSIC }}
-          persist-credentials: true
+          # persist-credentials: true
+
+      - name: Configure Git for Private Repo Access
+        run: git config --global url."https://${{ secrets.PRIVATE_REPO_ACCESS_CLASSIC }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install Ruby Dependencies
         run: |
