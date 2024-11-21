@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs-inte
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons-internal.git", ref: "9bd3635fbd8094d25160669f38d8699e2f1d7a98"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons-internal.git", ref: "7bda96cebfc01765389f585594466de0336e79ae"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms-internal.git", ref: "1834cf61310001c82e2e96d665518407c3bce947"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
