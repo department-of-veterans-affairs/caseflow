@@ -1,4 +1,6 @@
 class CreateIndividualAutoAssignmentAttempts < ActiveRecord::Migration[6.1]
+  include Caseflow::Migrations::AddIndexConcurrently
+
   def change
     create_table :individual_auto_assignment_attempts do |t|
       t.references :user, foreign_key: true, null: false, index: false,
