@@ -942,6 +942,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def return_to_inbound_ops_team(_task, _user = nil)
+      {}
+    end
+
     private
 
     def select_ama_review_decision_action(task)

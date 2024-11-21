@@ -1640,5 +1640,6 @@
     }
   },
   "ALL_CORRESPONDENCES": "All Correspondence",
-  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
+  "RETURN_TO_INBOUND_OPS_MAIL_TASK_LABEL": "Return to Inbound Ops"
 }
