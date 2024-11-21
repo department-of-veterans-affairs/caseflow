@@ -109,7 +109,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
 
       it "returns success response scenario_hlr_1_eligible_nonrating_issue" do
-        # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
@@ -165,6 +164,20 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(501)
         expect(response.body).to include("API is disabled")
+      end
+    end
+
+    context "Handling of duplicate events" do
+      before do
+        FeatureToggle.disable!(:disable_ama_eventing)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
+
+      it "returns record already exists in Caseflow" do
+        load_headers
+        2.times { post :decision_review_completed, params: valid_params }
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include("Record already exists in Caseflow")
       end
     end
   end
