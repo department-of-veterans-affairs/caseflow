@@ -1,9 +1,14 @@
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import LoadTestForm from './LoadTestForm';
+import PropTypes from 'prop-types';
 
 export default function LoadTest(props) {
+  const currentFeatures = {};
+
+  props.form_values.feature_toggles_available.forEach((feature) => {
+    currentFeatures[feature.name] = feature.default_status;
+  });
+
   const [state, setUpdatedState] = useState(
     {
       scenarios: [],
@@ -13,7 +18,7 @@ export default function LoadTest(props) {
         roles: [],
         functions: {},
         organizations: [],
-        feature_toggles: {}
+        feature_toggles: currentFeatures
       }
     }
   );
@@ -22,6 +27,10 @@ export default function LoadTest(props) {
     <LoadTestForm {...props} currentState={state} updateState={setUpdatedState} />
   </div>;
 }
+
+LoadTest.propTypes = {
+  form_values: PropTypes.object
+};
 
 /*
 This file acts as a container to the LoadTestForm. Consider this a note on what the overall behavior of this

@@ -1,11 +1,6 @@
-/* eslint-disable import/extensions */
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
 import SearchableDropdown from '../../components/SearchableDropdown';
-
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
@@ -18,11 +13,10 @@ export default function UserConfiguration(props) {
 
   const filteredStations = [];
   const stationsMapping = new Map();
-
   const functionsAvailable = props.form_values.functions_available;
   const roles = props.form_values.all_csum_roles;
   const organizations = props.form_values.all_organizations;
-  const featureToggles = props.featuresList;
+  const featureToggles = props.form_values.feature_toggles_available;
   const currentState = props.currentState;
   const updateState = props.updateState;
   const errors = props.errors;
@@ -152,7 +146,7 @@ export default function UserConfiguration(props) {
       <div className="load-test-container test-class-sizing">
         {featureToggles.map((featureToggle) => (
           <FeatureToggleConfiguration
-            key={featureToggle}
+            key={featureToggle.name}
             featureToggle={featureToggle}
             currentState={currentState}
             updateState={props.updateState}
