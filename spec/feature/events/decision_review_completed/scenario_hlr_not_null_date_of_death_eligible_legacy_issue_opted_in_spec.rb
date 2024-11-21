@@ -135,6 +135,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         id = epe.claimant_participant_id
         claimant = Claimant.find_by(participant_id: id)
         expect(epe.synced_status).to eq("RW")
+        expect(epe.limited_poa_access).to eq(nil)
+        expect(epe.limited_poa_code).to eq(nil)
         expect(veteran.participant_id).to eq("1826209")
         expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
         expect(veteran.name_suffix).to eq(nil)
