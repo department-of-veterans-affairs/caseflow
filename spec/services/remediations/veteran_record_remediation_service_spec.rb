@@ -3,7 +3,13 @@
 RSpec.describe Remediations::VeteranRecordRemediationService do
   let(:before_fn) { "12345" }
   let(:after_fn) { "54321" }
-  let(:vet_record_service) { described_class.new(before_fn, after_fn) }
+  let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
+  let!(:event_record) { EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1) }
+  # let(:event) { Event.new(id: 23) }
+  # let(:event_record) do
+  #   EventRecord.new(id: 1, event_id: 23, evented_record_id: 2, evented_record_type: "Veteran")
+  # end
+  let(:vet_record_service) { described_class.new(before_fn, after_fn, event_record) }
 
   # Define a mapping of classes to their file number columns
   let(:column_mapping) do
@@ -26,7 +32,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
   describe "#remediate!" do
     let(:mock_classes) do
       Remediations::VeteranRecordRemediationService::ASSOCIATED_OBJECTS.map do |klass|
-        mock_instance = klass.new
+        mock_instance = klass.new(id: SecureRandom.random_number(1))
         column = column_mapping[klass]
         mock_instance.send("#{column}=", before_fn)
         allow(FixFileNumberWizard::Collection).to receive(:new).with(klass, before_fn).and_return(mock_instance)
