@@ -246,7 +246,7 @@ const CorrespondenceAppealTasks = (props) => {
               correspondence={props.correspondenceInfo}
               appeal={appeal}
               tasks={tasks}
-              // autoTexts= {props.autoTexts}
+              autoTexts= {props.autoTexts}
             />
           }
         </div>
