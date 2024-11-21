@@ -1,9 +1,3 @@
-// Below are customizable values that determine wait times for document loading
-// and are then used to decide whether or not we show the progress bar
-
-// times are in milliseconds
-const delayBeforeProgressBarDefaultValue = 1000;
-const showProgressBarThresholdDefaultValue = 3000;
 
 // Function to calculate download progress as the document loads
 const calculateProgress = ({ loaded, fileSize }) => {
@@ -18,11 +12,14 @@ const calculateProgress = ({ loaded, fileSize }) => {
 
 // Function to check if the progress bar should be shown
 // Returns a boolean based on params passed in and the 2 variables passed in as progressBarOptions
-// top of this util file has default values for if not present (delayBeforeProgressBar, showProgressBarThreshold)
 const shouldShowProgressBar = ({ enlapsedTime, downloadSpeed, percentage, loaded, fileSize, readerPreferences }) => {
-  const delayBeforeProgressBar = readerPreferences.delayBeforeProgressBar || delayBeforeProgressBarDefaultValue;
-  const showProgressBarThreshold = readerPreferences.showProgressBarThreshold || showProgressBarThresholdDefaultValue;
 
+  const delayBeforeProgressBar = readerPreferences.delayBeforeProgressBar;
+  const showProgressBarThreshold = readerPreferences.showProgressBarThreshold;
+
+  if (!delayBeforeProgressBar || !showProgressBarThreshold) {
+    return false;
+  }
   if (percentage < 100 && enlapsedTime > delayBeforeProgressBar) {
     const projectedEndTime = (fileSize - loaded) / downloadSpeed;
 

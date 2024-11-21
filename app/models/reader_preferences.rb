@@ -2,40 +2,48 @@
 class ReaderPreferences
 
   def self.get(preference)
-    preference_name = preference.to_s.upcase
+    preference_name = normalize(preference)
     value = client.get(preference_name) || ENV[preference_name]
 
     if value
       return value.to_i
     end
-
-    "#{preference_name} is not in the list of allowed preferences.. #{valid_preferences}"
   end
 
   def self.set(preference, new_value)
-    preference_name = preference.to_s.upcase
+    preference_name = normalize(preference)
 
     current_value = client.get(preference_name) || ENV[preference_name]
 
     if current_value
       client.set(preference_name, new_value.to_s)
-      "#{preference_name} set to #{new_value}"
-    else
-       "#{preference_name} is not in the list of allowed preferences.. #{valid_preferences}"
+      details_for(preference_name)
     end
   end
 
   def self.delete(preference)
-    preference_name = preference.to_s.upcase
+    preference_name = normalize(preference)
 
     current_value = client.get(preference_name)
 
     if current_value
       client.del preference_name
+      details_for(preference_name)
+    end
+  end
 
-      "#{preference_name} was reset to default value #{ENV[preference_name]}"
-    else
-      "#{preference_name} is not set to a custom value"
+  # Returns an array with current key and value for a given preference
+  def self.details_for(preference)
+    preference_name = normalize(preference)
+    value = get(preference_name)
+    if value
+      ["#{preference_name}", value]
+    end
+  end
+
+  def self.normalize(preference)
+    if preference.is_a?(String) || preference.is_a?(Symbol)
+      preference.to_s.upcase
     end
   end
 
@@ -68,8 +76,4 @@ class ReaderPreferences
     # uat:
     #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
     #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
-
-  def self.valid_preferences
-    @valid_preferences ||= ENV.select { |feature, value| feature.include?("READER") }.keys
-  end
 end

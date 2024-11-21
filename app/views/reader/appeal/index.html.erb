@@ -29,8 +29,8 @@
       readerProgressBar: FeatureToggle.enabled?(:reader_progress_bar, user: current_user),
     },
     readerPreferences: {
-      delayBeforeProgressBar: ReaderPreferences.get(:delay_before_progress_bar),
-      showProgressBarThreshold: ReaderPreferences.get(:show_progress_bar_threshold)
+      delayBeforeProgressBar: ReaderPreferences.get(:reader_delay_before_progress_bar),
+      showProgressBarThreshold: ReaderPreferences.get(:reader_show_progress_bar_threshold)
     },
     buildDate: build_date
   }) %>
