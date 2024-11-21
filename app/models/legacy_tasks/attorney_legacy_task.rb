@@ -30,7 +30,6 @@ class AttorneyLegacyTask < LegacyTask
   end
 
   def legacy_atty_to_atty_special_case_movement(user)
-    FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft, user: user) &&
-      appeal.tasks.open.where(type: AttorneyLegacyTask.name) && appeal.is_a?(LegacyAppeal)
+    FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft, user: user) && appeal.is_a?(LegacyAppeal)
   end
 end
