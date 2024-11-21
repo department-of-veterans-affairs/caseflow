@@ -54,7 +54,9 @@ class Remediations::VeteranRecordRemediationService
       collections.each do |collection|
         before_data = collection.attributes
         collection.update!(file_number)
-        add_remediation_audit(remediated_record: collection, before_data: before_data, after_data: collection.attributes)
+        add_remediation_audit(remediated_record: collection,
+                              before_data: before_data,
+                              after_data: collection.attributes)
       end
     end
   end
