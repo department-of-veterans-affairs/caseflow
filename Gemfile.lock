@@ -52,11 +52,11 @@ GIT
       xmlenc
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/console-tree-renderer.git
-  revision: f0db3565b74d28af3b27f960463e280b4296cafe
-  tag: v0.1.1
+  remote: https://github.com/department-of-veterans-affairs/console-tree-renderer-internal.git
+  revision: 4394c068ac4eefde11a65ea41d99982cf4863c3b
+  ref: 4394c068ac4eefde11a65ea41d99982cf4863c3b
   specs:
-    console_tree_renderer (0.1.0)
+    console_tree_renderer (0.1.1)
       tty-tree (~> 0.3.0)
 
 GIT
