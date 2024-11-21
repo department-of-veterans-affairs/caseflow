@@ -9,8 +9,18 @@ class EventRemediationAudit < CaseflowRecord
 
   def valid_remediated_record
     unless %w[
-      Veteran
-      Person
+      Appeal
+      AvailableHearingLocations
+      BgsPowerOfAttorney
+      Document
+      EndProductEstablishment
+      Form8
+      HigherLevelReview
+      Intake
+      LegacyAppeal
+      RampElection
+      RampRefiling
+      SupplementalClaim
     ].include?(remediated_record_type)
 
       errors.add(:remediated_record_type, "is not a valid remediated record")
