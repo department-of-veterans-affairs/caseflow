@@ -11,12 +11,6 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   S3_BUCKET = "vaec-appeals-caseflow"
 
-  VACOLS_CONTRACTORS = {
-    "Genesis Government Solutions, Inc." => "G",
-    "Jamison Professional Services" => "J",
-    "Vet Reporting" => "V"
-  }.freeze
-
   class BoxUploadError < StandardError; end
 
   retry_on StandardError, wait: :exponentially_longer do |job, exception|
@@ -59,14 +53,30 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   end
 
   def child_folder_id
-    box_service.get_child_folder_id(
-      ENV["BOX_PARENT_FOLDER_ID"],
-      contractor_name
-    )
+    id = box_service.get_child_folder_id(ENV["BOX_PARENT_FOLDER_ID"], contractor_pickup_folder_name)
+    unless id
+      error_details = {
+        error: {
+          type: "child_folder_id",
+          message: "Child folder ID not found for contractor name: #{contractor.name}"
+        },
+        provider: "Box"
+      }
+      send_transcription_issues_email(error_details) unless email_sent?(:child_folder_id)
+      mark_email_sent(:child_folder_id)
+    end
+    id
   end
 
-  def contractor_name
-    @transcription_package.contractor&.name
+  def contractor
+    @transcription_package.contractor
+  end
+
+  def contractor_pickup_folder_name
+    # append " Pickup" to the contractor directory to follow VA Box contractor folder naming convention
+    # e.g. "Genesis Pickup"
+
+    "#{contractor&.directory} Pickup"
   end
 
   def download_file_from_s3(s3_path)
@@ -96,7 +106,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   def update_transcriptions
     @transcription_package.transcriptions.each do |transcription|
       transcription.update!(
-        transcription_contractor: @transcription_package.contractor,
+        transcription_contractor: contractor,
         updated_by_id: RequestStore[:current_user].id,
         transcription_status: "in_transcription",
         sent_to_transcriber_date: Time.zone.today
@@ -121,11 +131,15 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       vacols_record = VACOLS::CaseHearing.find_by(hearing_pkseq: hearing.vacols_id)
       vacols_record.update!(
         taskno: truncate_task_number_for_vacols(@transcription_package.task_number),
-        contapes: VACOLS_CONTRACTORS[@transcription_package.contractor&.name],
+        contapes: vacols_contractor_code,
         consent: Time.zone.today,
         conret: @transcription_package.expected_return_date
       )
     end
+  end
+
+  def vacols_contractor_code
+    contractor&.directory[0].upcase
   end
 
   def truncate_task_number_for_vacols(task_number)

@@ -18,7 +18,6 @@ RSpec.describe Hearings::VaBoxUploadJob do
 
   before do
     User.authenticate!(user: create(:user))
-    stub_const("Hearings::VaBoxUploadJob::VACOLS_CONTRACTORS", { "Contractor Name" => "N" })
     allow(ExternalApi::VaBoxService).to receive(:new).and_return(box_service)
     allow(box_service).to receive(:get_child_folder_id).and_return("0000001")
     allow(Caseflow::S3Service).to receive(:fetch_file).and_return(master_zip_file_path)
@@ -109,13 +108,29 @@ RSpec.describe Hearings::VaBoxUploadJob do
         vacols_record.reload
 
         expect(vacols_record.taskno).to eq "11-0001"
-        expect(vacols_record.contapes).to eq "N"
+        expect(vacols_record.contapes).to eq "D"
         expect(vacols_record.consent).to eq Time.zone.now.utc.to_date
         expect(vacols_record.conret).to eq transcription_package.expected_return_date
       end
     end
 
     context "sad path" do
+      it "sends an email on failure to get child folder id from box.com" do
+        allow(box_service).to receive(:get_child_folder_id)
+          .and_return(nil)
+        allow(Raven).to receive(:capture_exception)
+
+        expect_any_instance_of(Hearings::VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
+          error: {
+            type: "child_folder_id",
+            message: "Child folder ID not found for contractor name: Contractor Name"
+          },
+          provider: "Box"
+        )
+
+        subject
+      end
+
       it "sends an email on failure to upload to box.com" do
         allow_any_instance_of(described_class).to receive(:upload_master_zip_to_box)
           .and_raise(StandardError)
