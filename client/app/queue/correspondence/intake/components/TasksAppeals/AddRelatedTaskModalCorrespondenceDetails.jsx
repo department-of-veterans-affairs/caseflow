@@ -40,7 +40,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   // Options for checkboxes on the second page derived from the `autoTexts` prop
   const checkboxData = autoTexts;
 
-  // Filters task type options based on unrelated tasks, excluding already selected tasks
+  // Filters task type options based on related tasks, excluding already selected tasks
   const getFilteredTaskTypeOptions = () => {
     return INTAKE_FORM_TASK_TYPES.relatedToAppeal.
       filter((option) => !tasks.some((existingTask) =>
@@ -48,7 +48,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
       map((option) => ({ value: option.value, label: option.label }));
   };
 
-  // Set task type options initially based on unrelated tasks
+  // Set task type options initially based on related tasks
   useEffect(() => {
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [tasks]);
@@ -66,6 +66,8 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   // Updates additional content on the second page
   const updateAdditionalContent = (newContent) => setAdditionalContent(newContent);
 
+  const isNextDisabled = !selectedTaskType;
+
   // Helper function to determine the button text
   const getButtonText = () => {
     if (isLoading) {
@@ -79,7 +81,6 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
     setTaskContent('');
     setAdditionalContent('');
     setSelectedTaskType(null);
-    // setIsTasksUnrelatedSectionExpanded(true);
     setIsSecondPage(false);
     setAutoTextSelections([]);
     handleClose();
@@ -149,7 +150,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
         <Button
           // "Submit" on second page, "Next" on first page
           onClick={isSecondPage ? handleSubmit : handleNext}
-          disabled={isSecondPage ? isSubmitDisabled : false}
+          disabled={isSecondPage ? isSubmitDisabled : isNextDisabled}
         >
           {getButtonText()}
         </Button>
@@ -170,6 +171,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
           </Button>
         )
       }
+      className="add-related-task-modal"
     >
       <div className={`add-task-modal-container ${isSecondPage ? 'scrollable-content' : ''}`}>
         {isSecondPage ? (
@@ -223,7 +225,6 @@ AddRelatedTaskModalCorrespondenceDetails.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   correspondence: PropTypes.object.isRequired,
-  setIsTasksUnrelatedSectionExpanded: PropTypes.func.isRequired,
   tasks: PropTypes.array,
   appeal: PropTypes.object.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
