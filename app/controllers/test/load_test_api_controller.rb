@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "./scripts/enable_features_dev"
-require "digest"
-require "securerandom"
-require "base64"
 class Test::LoadTestApiController < Api::ApplicationController
   include ProdtestOnlyConcern
 
