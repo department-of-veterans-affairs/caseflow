@@ -200,6 +200,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def legacy_return_to_attorney_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
+      {
+        selected: nil,
+        options: users_to_options(Attorney.list_all),
+        type: JudgeLegacyDecisionReviewTask.name
+      }
+    end
+
     def assign_to_privacy_team_data(_task, _user = nil)
       org = PrivacyTeam.singleton
 
