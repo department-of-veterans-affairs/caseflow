@@ -908,6 +908,7 @@ ActiveRecord::Schema.define(version: 2024_11_21_143932) do
     t.bigint "remediated_record_id", null: false
     t.string "remediated_record_type", null: false
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_event_remediation_audits_on_info", using: :gin
     t.index ["remediated_record_type", "remediated_record_id"], name: "index_event_remediation_audit_on_remediated_record"
   end
 
