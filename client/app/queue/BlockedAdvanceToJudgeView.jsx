@@ -172,7 +172,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
     const { highlightFormItems } = this.props;
 
-    const actionData = this.actionData()
+    const actionData = this.actionData();
     const options = this.actionData().options;
     const selectedJudgeName = this.getAssigneeLabel() || 'judge';
 
@@ -181,7 +181,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       button: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
       submit: this.submit,
-      validateForm: this.validateForm
+      validateForm: this.validateModal
     };
 
     return <div className="cf-modal-scroll">

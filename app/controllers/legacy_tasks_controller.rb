@@ -99,7 +99,6 @@ class LegacyTasksController < ApplicationController
       assigned_to: assigned_to,
       assigned_by_id: current_user.id,
       instructions: params[:tasks][:instructions],
-      completed_by_id: current_user.id,
       status: Constants.TASK_STATUSES.completed
     )
 
