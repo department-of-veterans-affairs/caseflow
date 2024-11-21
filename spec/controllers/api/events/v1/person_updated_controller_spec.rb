@@ -44,25 +44,6 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
     end
   end
 
-  describe "POST does person exist" do
-    it "should not be successful due to unauthorized request" do
-      # set up the wrong token
-      request.headers["Authorization"] = "BADTOKEN"
-      get :does_person_exist, params: { "participant_id": "NotAPerson" }
-      expect(response.status).to eq 401
-    end
-
-    it "should be successful 204 when person does not exist" do
-      get :does_person_exist, params: { "participant_id": "NotAPerson" }
-      expect(response.status).to eq 204
-    end
-
-    it "should be successful 200 when person exists" do
-      get :does_person_exist, params: { "participant_id": person.participant_id.to_s }
-      expect(response.status).to eq 200
-    end
-  end
-
   describe "POST person updated" do
     let(:payload) { JSON.parse Events::PersonUpdated::PersonUpdatedEvent.example_response }
     let(:person_updated) { double(Events::PersonUpdated) }
@@ -78,6 +59,19 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
           Events::PersonUpdated::Attributes
         ).and(have_attributes(attributes))
       ).and_return(person_updated)
+      person.update!({ participant_id: payload["participant_id"] })
+    end
+
+    it "should not be successful due to unauthorized request" do
+      # set up the wrong token
+      request.headers["Authorization"] = "BADTOKEN"
+      get :person_updated, params: { "participant_id": "NotAPerson" }
+      expect(response).to have_http_status(401)
+    end
+
+    it "should be successful 204 when person does not exist" do
+      get :person_updated, params: { "participant_id": "NotAPerson" }
+      expect(response).to have_http_status(:no_content)
     end
 
     context "with a valid token" do
