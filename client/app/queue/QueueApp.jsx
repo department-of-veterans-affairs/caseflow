@@ -97,6 +97,7 @@ import CorrespondenceReviewPackage from './correspondence/ReviewPackage/Correspo
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
+import CorrespondenceReturnToInboundOpsModal from './components/CorrespondenceReturnToInboundOpsModal'
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -729,6 +730,12 @@ class QueueApp extends React.PureComponent {
       userCssId={this.props.userCssId}
     />
   );
+  routedCorrespondenceReturnToInboundOpsModal = (props) => (
+    <CorrespondenceReturnToInboundOpsModal
+      {...props.match.params}
+      userCssId={this.props.userCssId}
+    />
+  );
 
   routedCorrespondenceCancelTaskModal = (props) => (
     <CorrespondenceCancelTaskModal {...props.match.params} />
@@ -1057,6 +1064,17 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.ASSIGN_TASK} | Caseflow`}
               render={this.routedCorrespondenceAssignTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+                `(${TASK_ACTIONS.COR_RETURN_TO_INBOUND_OPS.value
+                })`
+              }
+              title={`${PAGE_TITLES.RETURN_TO_INBOUND_OPS} | Caseflow`}
+              render={this.routedCorrespondenceReturnToInboundOpsModal}
             />
 
             <PageRoute
