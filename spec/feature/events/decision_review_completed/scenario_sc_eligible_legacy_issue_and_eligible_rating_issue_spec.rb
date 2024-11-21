@@ -141,7 +141,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
 
       it "returns success response sc_eligible_legacy_issue_and_eligible_rating_issue" do
-        # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
@@ -200,6 +199,19 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(claimant.type).to eq("VeteranClaimant")
         expect(claimant.payee_code).to eq("00")
         expect(claimant.participant_id).to eq("1826209")
+      end
+    end
+
+    context "API disabled" do
+      before do
+        FeatureToggle.enable!(:disable_ama_eventing)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
+
+      it "when api is disabled" do
+        post :decision_review_completed, params: valid_params
+        expect(response).to have_http_status(501)
+        expect(response.body).to include("API is disabled")
       end
     end
   end

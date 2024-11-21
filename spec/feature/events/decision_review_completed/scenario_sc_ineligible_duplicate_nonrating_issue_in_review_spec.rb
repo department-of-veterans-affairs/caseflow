@@ -103,12 +103,12 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
-    context "updates issue hlr_dependant_claimant_ineligible_untimely_rating_issue" do
+    context "updates sc_ineligible_duplicate_nonrating_issue_in_review" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response hlr_dependant_claimant_ineligible_untimely_rating_issue" do
+      it "returns success response sc_ineligible_duplicate_nonrating_issue_in_review" do
         # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
@@ -152,6 +152,19 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(claimant.type).to eq("DependentClaimant")
         expect(claimant.payee_code).to eq("11")
         expect(claimant.participant_id).to eq("1129318238")
+      end
+    end
+
+    context "API disabled" do
+      before do
+        FeatureToggle.enable!(:disable_ama_eventing)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
+
+      it "when api is disabled" do
+        post :decision_review_completed, params: valid_params
+        expect(response).to have_http_status(501)
+        expect(response.body).to include("API is disabled")
       end
     end
   end

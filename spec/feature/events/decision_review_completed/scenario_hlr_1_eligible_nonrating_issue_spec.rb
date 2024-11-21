@@ -154,5 +154,18 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(claimant.participant_id).to eq("1826209")
       end
     end
+
+    context "API disabled" do
+      before do
+        FeatureToggle.enable!(:disable_ama_eventing)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
+
+      it "when api is disabled" do
+        post :decision_review_completed, params: valid_params
+        expect(response).to have_http_status(501)
+        expect(response.body).to include("API is disabled")
+      end
+    end
   end
 end

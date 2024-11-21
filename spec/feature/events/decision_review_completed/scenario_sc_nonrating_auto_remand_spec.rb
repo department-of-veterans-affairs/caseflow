@@ -110,7 +110,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
 
       it "returns success response nonrating_sc_auto_remand" do
-        # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
@@ -159,116 +158,17 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
     end
 
-    # context "updated issue with other issues already on the review" do
-    #   let!(:existing_request_issue_2) { create(:request_issue, decision_review: review, reference_id: "6789") }
-    #   before do
-    #     request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-    #   end
+    context "API disabled" do
+      before do
+        FeatureToggle.enable!(:disable_ama_eventing)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
 
-    #   it "returns success response whith updated edited_description" do
-    #     expect(RequestIssue.find_by(reference_id: "6789")).to be
-    #     expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
-    #     post :decision_review_updated, params: valid_params
-    #     expect(response).to have_http_status(:created)
-    #     expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-    #     existing_request_issue.reload
-    #     expect(existing_request_issue.edited_description).to eq("DIC: Service connection denied (UPDATED)")
-    #     expect(existing_request_issue.any_updates?).to eq(true)
-    #     expect(RequestIssue.find_by(reference_id: "6789")).to be
-    #     request_issue_update = review.request_issues_updates.first
-    #     expect(request_issue_update).to be
-    #     expect(request_issue_update.before_request_issue_ids).to eq(
-    #       [existing_request_issue.id, existing_request_issue_2.id]
-    #     )
-    #     expect(request_issue_update.after_request_issue_ids).to eq(
-    #       [existing_request_issue.id, existing_request_issue_2.id]
-    #     )
-    #     expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
-    #     expect(request_issue_update.edited_request_issue_ids).to eq([existing_request_issue.id])
-    #   end
-    # end
-
-    # context "does not update on error" do
-    #   before do
-    #     request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-    #     allow_any_instance_of(RequestIssuesUpdateEvent).to receive(:perform!).and_raise(StandardError.new("Error"))
-    #   end
-
-    #   it "returns success response whith updated edited_description" do
-    #     expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
-    #     post :decision_review_updated, params: valid_params
-    #     expect(response).to have_http_status(:unprocessable_entity)
-    #     expect(response.body).to include("Error")
-    #     existing_request_issue.reload
-    #     expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
-    #     expect(existing_request_issue.any_updates?).to eq(false)
-    #   end
-    # end
-
-    # context "updates multiple issues with already existing issues not edited" do
-    #   let!(:existing_request_issue_2) { create(:request_issue, decision_review: review, reference_id: "6789") }
-    #   let!(:existing_request_issue_3) { create(:request_issue, decision_review: review, reference_id: "123456789") }
-    #   before do
-    #     request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-    #     valid_params[:updated_issues] << {
-    #       "original_caseflow_request_issue_id": 2,
-    #       "contested_rating_decision_reference_id": 1,
-    #       "contested_rating_issue_reference_id": 2,
-    #       "contested_decision_issue_id": nil,
-    #       "untimely_exemption": false,
-    #       "untimely_exemption_notes": "some notes",
-    #       "edited_description": "DIC: Service connection denied 2 (UPDATED)",
-    #       "vacols_id": "some_id",
-    #       "vacols_sequence_id": "some_sequence_id",
-    #       "nonrating_issue_bgs_id": "some_bgs_id",
-    #       "type": "RequestIssue",
-    #       "decision_review_issue_id": 6789,
-    #       "contention_reference_id": 123_456,
-    #       "benefit_type": "compensation",
-    #       "contested_issue_description": "some_description",
-    #       "contested_rating_issue_profile_date": "122255",
-    #       "decision_date": 19_568,
-    #       "ineligible_due_to_id": nil,
-    #       "ineligible_reason": nil,
-    #       "unidentified_issue_text": "An unidentified issue added during the edit",
-    #       "nonrating_issue_category": nil,
-    #       "nonrating_issue_description": nil,
-    #       "closed_at": nil,
-    #       "closed_status": nil,
-    #       "contested_rating_issue_diagnostic_code": "9411",
-    #       "rating_issue_associated_at": nil,
-    #       "ramp_claim_id": nil,
-    #       "is_unidentified": true,
-    #       "nonrating_issue_bgs_source": nil
-    #     }
-    #   end
-
-    #   it "returns success response with updated edited_description" do
-    #     expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
-    #     expect(existing_request_issue_2.edited_description).to_not eq("DIC: Service connection denied 2 (UPDATED)")
-    #     post :decision_review_updated, params: valid_params
-    #     expect(response).to have_http_status(:created)
-    #     expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-    #     existing_request_issue.reload
-    #     existing_request_issue_2.reload
-    #     expect(existing_request_issue.edited_description).to eq("DIC: Service connection denied (UPDATED)")
-    #     expect(existing_request_issue.any_updates?).to eq(true)
-    #     expect(existing_request_issue_2.edited_description).to eq("DIC: Service connection denied 2 (UPDATED)")
-    #     expect(existing_request_issue_2.any_updates?).to eq(true)
-    #     expect(RequestIssue.find_by(reference_id: "123456789")).to be
-    #     request_issue_update = review.request_issues_updates.first
-    #     expect(request_issue_update).to be
-    #     expect(request_issue_update.before_request_issue_ids).to eq(
-    #       [existing_request_issue.id, existing_request_issue_2.id, existing_request_issue_3.id]
-    #     )
-    #     expect(request_issue_update.after_request_issue_ids).to eq(
-    #       [existing_request_issue.id, existing_request_issue_2.id, existing_request_issue_3.id]
-    #     )
-    #     expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
-    #     expect(request_issue_update.edited_request_issue_ids).to eq(
-    #       [existing_request_issue.id, existing_request_issue_2.id]
-    #     )
-    #   end
-    # end
+      it "when api is disabled" do
+        post :decision_review_completed, params: valid_params
+        expect(response).to have_http_status(501)
+        expect(response.body).to include("API is disabled")
+      end
+    end
   end
 end
