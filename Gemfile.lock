@@ -2261,6 +2261,7 @@ DEPENDENCIES
   single_cov
   sniffybara!
   solargraph
+  sprockets-rails
   sql_tracker
   statsd-instrument
   stringex

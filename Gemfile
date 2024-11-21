@@ -91,6 +91,8 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+# Rails 7+ no longer includes Sprockets out-of-the-box, so we must add it explicitly for as long as we rely on Sprockets
+gem "sprockets-rails", require: "sprockets/railtie"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
