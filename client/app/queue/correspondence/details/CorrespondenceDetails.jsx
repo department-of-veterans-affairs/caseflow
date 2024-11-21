@@ -40,6 +40,7 @@ const CorrespondenceDetails = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showFailureBanner, setShowFailureBanner] = useState(false)
   const [selectedPriorMail, setSelectedPriorMail] = useState([]);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
@@ -245,6 +246,7 @@ const CorrespondenceDetails = (props) => {
       // Update the state with the sorted list after saving changes
       setSortedPriorMail(updatedSortedPriorMail);
     } catch (error) {
+      setShowFailureBanner(true)
       console.error('Error during PATCH/POST request:', error.message); // eslint-disable-line no-console
     } finally {
       // Re-enable the button
@@ -940,6 +942,8 @@ const CorrespondenceDetails = (props) => {
             error.message;
 
           console.error(errorMessage);
+
+          setShowFailureBanner(true)
         });
     }
   };
@@ -950,8 +954,25 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
+  const customFailureBannerStyles = {
+    style: {
+      backgroundPosition: ''
+    }
+  }
+
   return (
     <>
+      {
+        showFailureBanner && 
+        <div style={{ padding: '10px' }}>
+            <Alert
+              type="error"
+              title={"Changes were not successfully saved"}
+              message={"Please try again at a later time."}
+              styling={customSuccessBannerStyles}
+            />
+        </div>
+      }
       {
         showSuccessBanner &&
           <div style={{ padding: '10px' }}>
