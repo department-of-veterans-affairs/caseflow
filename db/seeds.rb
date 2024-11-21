@@ -55,6 +55,8 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::IssueModificationRequest
+    # TODO: remove before production release
+    call_and_log_seed_step Seeds::AppealStatusApiTestAppeals
   end
 end
 
