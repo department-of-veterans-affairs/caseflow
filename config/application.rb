@@ -220,6 +220,12 @@ module CaseflowCertification
     # Default as of 7.0: false
     config.action_dispatch.return_only_request_media_type_on_content_type = true
 
+    # Disables the deprecated #to_s override in some Ruby core classes.
+    # This config is for applications that want to take advantage early of a Ruby 3.1 optimization.
+    # See https://guides.rubyonrails.org/v7.0/configuring.html#config-active-support-disable-to-s-conversion for more information.
+    # Default as of 7.0: true
+    config.active_support.disable_to_s_conversion = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
