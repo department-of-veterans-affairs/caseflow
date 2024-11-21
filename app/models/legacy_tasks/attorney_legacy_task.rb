@@ -13,6 +13,11 @@ class AttorneyLegacyTask < LegacyTask
                Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
                Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
 
+    if SpecialCaseMovementTeam.singleton.user_has_access?(current_user) &&
+       legacy_atty_to_atty_special_case_movement(current_user)
+      actions << Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+    end
+
     actions
   end
 
@@ -22,5 +27,10 @@ class AttorneyLegacyTask < LegacyTask
 
   def label
     COPY::ATTORNEY_TASK_LABEL
+  end
+
+  def legacy_atty_to_atty_special_case_movement(user)
+    FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft, user: user) &&
+      appeal.tasks.open.where(type: AttorneyLegacyTask.name) && appeal.is_a?(LegacyAppeal)
   end
 end
