@@ -316,6 +316,14 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let!(:case1) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
     let!(:case2) { create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
     let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
+    let!(:case4) { create(:case, bfhr: "4", bfd19: 3.days.ago, bfac: "9") }
+
+    let(:legacy_request_issues) do
+      [
+        create(:case_issue, isskey: case1.bfkey, issmst: "Y", isspact: "N"),
+        create(:case_issue, isskey: case1.bfkey, issmst: "N", isspact: "Y")
+      ]
+    end
 
     let!(:legacy_with_sched_task) do
       create(:legacy_appeal,
@@ -348,10 +356,19 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     let(:request_issues) do
       [
-        create(:request_issue, nonrating_issue_category: "Category C"),
-        create(:request_issue, nonrating_issue_category: "Category B"),
-        create(:request_issue, nonrating_issue_category: "Category C"),
-        create(:request_issue, nonrating_issue_category: "Category D")
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: true, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: true),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
+      ]
+    end
+
+    let(:request_issues_mst_pact) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
       ]
     end
 
@@ -399,6 +416,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     let(:ama_hearing_task) { ama_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
     let(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let(:legacy_hearing_task2) { legacy_with_sched_task2.tasks.find_by(type: "ScheduleHearingTask") }
 
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
@@ -433,7 +451,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :task_id, :schedulable, :assigned_to_id,
           :assigned_by_id, :days_on_hold, :days_waiting,
           :task_status, :state_of_residence, :country_of_residence,
-          :suggested_hearing_location
+          :suggested_hearing_location, :mst_indicator, :pact_indicator
         )
       ).to match_array [
         [
