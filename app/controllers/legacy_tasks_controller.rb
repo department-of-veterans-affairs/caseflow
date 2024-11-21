@@ -94,17 +94,19 @@ class LegacyTasksController < ApplicationController
   def blocked_assign_to_judge
     return unless FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask)
 
-    tracking_task = LegacyAppealAssignmentTrackingTask.create!(
-      appeal: appeal,
-      assigned_to: assigned_to,
-      assigned_by_id: current_user.id,
-      instructions: params[:tasks][:instructions],
-      status: Constants.TASK_STATUSES.completed
-    )
+    ApplicationRecord.multi_transaction do
+      tracking_task = LegacyAppealAssignmentTrackingTask.create!(
+        appeal: appeal,
+        assigned_to: assigned_to,
+        assigned_by_id: current_user.id,
+        instructions: params[:tasks][:instructions],
+        status: Constants.TASK_STATUSES.completed
+      )
 
-    return invalid_task_movement_error if tracking_task.blank?
+      return invalid_task_movement_error if tracking_task.blank?
 
-    QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
+      QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
+    end
 
     # Remove overtime status of an appeal when reassigning to a judge
     appeal.overtime = false if appeal.overtime?
