@@ -170,7 +170,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
       return;
     }
 
-    const { highlightFormItems } = this.props;
+    const { highlightFormItems, appeal } = this.props;
 
     const actionData = this.actionData();
     const options = this.actionData().options;
@@ -178,7 +178,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
     const modalProps = {
       title: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
-      pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
+      pathAfterSubmit: (actionData && actionData.redirect_after) || `/queue/appeals/${appeal.externalId}`,
       button: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
       submit: this.submit,
       validateForm: this.validateModal
