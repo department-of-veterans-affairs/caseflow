@@ -16,27 +16,23 @@ class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
     end
   end
 
-  def does_person_exist
+  def person_updated
     person = Person.where(participant_id: params["participant_id"])
 
     if person.any?
-      render json: nil, status: :ok
+      Events::PersonUpdated.new(
+        params["event_id"],
+        params["participant_id"],
+        JSON.parse(params["is_veteran"].to_s),
+        Events::PersonUpdated::Attributes.new(
+          person_updated_attributes
+        )
+      ).call
+
+      render json: { message: "PersonUpdated successfully processed" }, status: :ok
     else
       render json: nil, status: :no_content
     end
-  end
-
-  def person_updated
-    Events::PersonUpdated.new(
-      params["event_id"],
-      params["participant_id"],
-      JSON.parse(params["is_veteran"].to_s),
-      Events::PersonUpdated::Attributes.new(
-        person_updated_attributes
-      )
-    ).call
-
-    render json: { message: "PersonUpdated successfully processed" }, status: :ok
   rescue Caseflow::Error::RedisLockFailed
     render json: { message: "Lock failed" }, status: :conflict
   rescue StandardError
