@@ -216,6 +216,10 @@ module CaseflowCertification
     # Default as of 7.0: 7.0
     config.active_support.cache_format_version = 6.1
 
+    # Change the return value of `ActionDispatch::Request#content_type` to the Content-Type header without modification.
+    # Default as of 7.0: false
+    config.action_dispatch.return_only_request_media_type_on_content_type = true
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
