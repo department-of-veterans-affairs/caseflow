@@ -11,8 +11,9 @@ describe "corres_awaiting_hearing_scheduling" do
     include_context "Legacy appeals that may or may not appear in the NHQ"
 
     let(:desired_corres_ids) do
-      legacy_appeals_with_active_sched_task.map { _1.case_record}.pluck(:bfcorkey) + [
-        legacy_appeal_with_two_active_sched_tasks.case_record.bfcorkey]
+      legacy_appeals_with_active_sched_task.map { _1.case_record }.pluck(:bfcorkey) + [
+        legacy_appeal_with_two_active_sched_tasks.case_record.bfcorkey
+      ]
     end
 
     after { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events]) }
