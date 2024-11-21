@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import LoadTestForm from './LoadTestForm';
+import AppFrame from '../../components/AppFrame';
+import Alert from '../../components/Alert';
+import COPY from '../../../COPY';
+import { BrowserRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 export default function LoadTest(props) {
+  const [showAlert, setShowAlert] = useState(false);
   const currentFeatures = {};
 
   props.form_values.feature_toggles_available.forEach((feature) => {
@@ -23,9 +28,25 @@ export default function LoadTest(props) {
     }
   );
 
-  return <div>
-    <LoadTestForm {...props} currentState={state} updateState={setUpdatedState} />
-  </div>;
+  return <BrowserRouter>
+    <div>
+      <AppFrame>
+        {showAlert &&
+      <div className="load-test-success-banner">
+        <Alert type="success" title={COPY.LOAD_TEST_SUCCESS_TITLE} message={COPY.LOAD_TEST_SUCCESS_MESSAGE} />
+      </div>}
+        <div>
+          <LoadTestForm
+            {...props}
+            currentState={state}
+            updateState={setUpdatedState}
+            showAlert={showAlert}
+            setShowAlert={setShowAlert}
+          />
+        </div>
+      </AppFrame>
+    </div>
+  </BrowserRouter>;
 }
 
 LoadTest.propTypes = {

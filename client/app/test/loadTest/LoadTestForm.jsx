@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import AppFrame from '../../components/AppFrame';
-import { BrowserRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
 import Button from '../../components/Button';
@@ -47,47 +45,46 @@ export default function LoadTestForm(props) {
       const payload = JSON.stringify({ currentState });
 
       ApiUtil.post('/test/load_tests/run_load_tests', payload);
+      props.setShowAlert(true);
+      setTimeout(() => {
+        window.location = '/test/load_tests';
+      }, 5000);
     }
   };
 
-  return <BrowserRouter>
-    <div>
-      <AppFrame>
-        <form onSubmit={onSubmit} >
-          <AppSegment filledBackground>
-            <h1>Welcome to the Caseflow Load Test page</h1>
-            <h2>User Configuration</h2>
-            <UserConfiguration {...props} updateState={updateState} currentState={currentState} errors={errors} />
-            <br />
-            <h2 className="header-style">Scenario Groups</h2>
-            {errors.scenarios && <div className="error">{errors.scenarios}</div>}
-            <ScenarioConfigurations {...props} updateState={updateState} currentState={currentState} errors={errors} />
-          </AppSegment>
-          <div {...css({ overflow: 'hidden' })}>
-            <Button
-              id="Cancel"
-              name="Cancel"
-              linkStyling
-              styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
-            >
-              Cancel
-            </Button>
-            <span {...css({ float: 'right' })}>
-              <Button
-                id="Submit"
-                name="Submit"
-                type="submit"
-                className="usa-button"
-              />
-            </span>
-          </div>
-        </form>
-      </AppFrame>
+  return <form onSubmit={onSubmit} >
+    <AppSegment filledBackground>
+      <h1>Welcome to the Caseflow Load Test page</h1>
+      <h2>User Configuration</h2>
+      <UserConfiguration {...props} updateState={updateState} currentState={currentState} errors={errors} />
+      <br />
+      <h2 className="header-style">Scenario Groups</h2>
+      {errors.scenarios && <div className="error">{errors.scenarios}</div>}
+      <ScenarioConfigurations {...props} updateState={updateState} currentState={currentState} errors={errors} />
+    </AppSegment>
+    <div {...css({ overflow: 'hidden' })}>
+      <Button
+        id="Cancel"
+        name="Cancel"
+        linkStyling
+        styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
+      >
+        Cancel
+      </Button>
+      <span {...css({ float: 'right' })}>
+        <Button
+          id="Submit"
+          name="Submit"
+          type="submit"
+          className="usa-button"
+        />
+      </span>
     </div>
-  </BrowserRouter>;
+  </form>;
 }
 
 LoadTestForm.propTypes = {
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  setShowAlert: PropTypes.func
 };
