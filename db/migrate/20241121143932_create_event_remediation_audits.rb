@@ -10,6 +10,7 @@ class CreateEventRemediationAudits < ActiveRecord::Migration[6.1]
 
       # Add an index on remediated_record_type and remediated_record_id for fast lookups
       t.index [:remediated_record_type, :remediated_record_id], name: "index_event_remediation_audit_on_remediated_record"
+      t.index :info, name: "index_event_remediation_audit_on_info"
     end
   end
 end
