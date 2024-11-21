@@ -144,7 +144,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   return (
     <Modal
       // Dynamic title for each page
-      title={isSecondPage ? 'Add autotext to task' : 'Add task to correspondence'}
+      title={isSecondPage ? 'Add autotext to task' : 'Add task to appeal'}
       closeHandler={allClearAndClose}
       confirmButton={
         <Button
