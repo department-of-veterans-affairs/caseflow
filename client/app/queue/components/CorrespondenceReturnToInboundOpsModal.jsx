@@ -16,7 +16,6 @@ import {
   assignTaskToTeam,
   cancelTaskNotRelatedToAppeal
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
-import SearchableDropdown from '../../components/SearchableDropdown';
 
 /* eslint-disable camelcase */
 const CorrespondenceReturnToInboundOpsModal = (props) => {
@@ -35,89 +34,35 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
   const taskData = taskActionData(props);
 
   // Show task instructions by default
-  const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
+  // const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
+  const shouldShowOtherReturnReason = useState(true);
 
-  const [instructions, setInstructions] = useState('');
-  const [instructionsAdded, setInstructionsAdded] = useState(false);
-  const [teamAssignedFlag, setTeamAssignedFlag] = useState(null);
+  const [otherReason, setOtherReason] = useState('');
+  const [otherReasonAdded, setOtherReasonAdded] = useState(false);
+  // const [teamAssignedFlag, setTeamAssignedFlag] = useState(null);
 
   useEffect(() => {
-    setInstructionsAdded(instructions.length > 0);
-  }, [instructions]);
+    setOtherReasonAdded(otherReason.length > 0);
+  }, [otherReason]);
 
   const validateForm = () => {
-    if (shouldShowTaskInstructions) {
-      return instructionsAdded && teamAssignedFlag;
+    if (shouldShowOtherReturnReason) {
+      return otherReasonAdded
     }
 
-    return teamAssignedFlag;
+    return true;
   };
 
-  const formChanged = (organization) => {
-    setTeamAssignedFlag(organization);
-  };
+  // const formChanged = (organization) => {
+  //   setTeamAssignedFlag(organization);
+  // };
 
-  const updateCorrespondence = () => {
-    const updatedCorrespondence = { ...props.correspondenceInfo };
-    const assignedTeam = teamAssignedFlag?.label || '';
-    const taskUpdate = updatedCorrespondence.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId === parseInt(props.task_id, 10)
-    );
-
-    if (taskUpdate) {
-      const previousOrg = taskUpdate.assignedTo;
-      const previousOrgValue = taskUpdate.assignedToValue;
-
-      // Update the assigned organization
-      taskUpdate.assignedTo = assignedTeam;
-      taskUpdate.instructions.push(instructions);
-
-      // remove available actions if the user isn't part of the org
-      if (!props?.userOrganizations?.includes(assignedTeam)) {
-        taskUpdate.availableActions = [];
-      }
-
-      // Remove the newly assigned organization from the list
-      taskUpdate.organizations = taskUpdate.organizations.filter(
-        (org) => org.label !== teamAssignedFlag?.label
-      );
-
-      // Add the previous organization back to the list, if it exists
-      if (previousOrg && previousOrg !== teamAssignedFlag?.label) {
-        taskUpdate.organizations.push({
-          label: previousOrg,
-          value: previousOrgValue,
-        });
-      }
-
-      // Reset the selected organization to show placeholder text
-      setTeamAssignedFlag(null);
-    }
-
-    return updatedCorrespondence;
-  };
+  // Could possibly use updateCorrespondence method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
 
   const submit = () => {
-    if (teamAssignedFlag && typeof teamAssignedFlag === 'object') {
-      const correspondence = updateCorrespondence();
-      const payload = {
-        data: {
-          assigned_to: teamAssignedFlag.label,
-          instructions,
-          ...(taskData?.business_payloads && { business_payloads: taskData.business_payloads })
-        }
-      };
+    // Could possibly use submit method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
 
-      const frontendParams = {
-        taskId: props.task_id,
-        taskName: taskList.label,
-        teamName: teamAssignedFlag.label
-      };
-
-      return props.assignTaskToTeam(payload, frontendParams, correspondence);
-    }
     console.error('No valid organization selected');
-
   };
 
   const modalProps = {
@@ -128,8 +73,8 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title="Assign task"
-      button="Assign task"
+      title={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_TITLE}
+      button="Return"
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
@@ -140,7 +85,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
           <br />
         </>
       )}
-      <SearchableDropdown
+      {/* <SearchableDropdown
         name="Organization dropdown"
         label="Select a team"
         dropdownStyling={{ position: 'relative' }}
@@ -149,13 +94,13 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
         options={organizationOptions}
         value={teamAssignedFlag}
         onChange={formChanged}
-      />
-      {shouldShowTaskInstructions && (
+      /> */}
+      {shouldShowOtherReturnReason && (
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-          id="taskInstructions"
-          onChange={setInstructions}
-          value={instructions}
+          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE}
+          id="otherReturnReason"
+          onChange={setOtherReason}
+          value={otherReason}
         />
       )}
     </QueueFlowModal>
@@ -165,18 +110,15 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
 
 CorrespondenceReturnToInboundOpsModal.propTypes = {
   requestPatch: PropTypes.func,
-  cancelTaskNotRelatedToAppeal: PropTypes.func,
-  assignTaskToTeam: PropTypes.func.isRequired,
   task: PropTypes.shape({
     assignedTo: PropTypes.shape({
       type: PropTypes.string
     }),
     taskId: PropTypes.string,
-    type: PropTypes.string,
-    onHoldDuration: PropTypes.number
+    type: PropTypes.string
   }),
-  task_id: PropTypes.string.isRequired,
-  correspondence_uuid: PropTypes.string.isRequired,
+  task_id: PropTypes.string,
+  correspondence_uuid: PropTypes.string,
   correspondenceInfo: PropTypes.shape({
     tasksUnrelatedToAppeal: PropTypes.arrayOf(PropTypes.shape({
       uniqueId: PropTypes.number,
