@@ -106,14 +106,10 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
     def create_legacy_optin_backfill(event, request_issue, legacy_issue)
       vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
-      optin = LegacyIssueOptin.create!(
+      optin = LegacyIssueOptinCreator.create_optin(
         request_issue: request_issue,
-        original_disposition_code: vacols_issue.disposition_id,
-        original_disposition_date: vacols_issue.disposition_date,
-        legacy_issue: legacy_issue,
-        original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
-        original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
-        folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
+        vacols_issue: vacols_issue,
+        legacy_issue: legacy_issue
       )
       create_event_record(event, optin)
     end
