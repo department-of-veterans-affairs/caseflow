@@ -7,6 +7,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 1234567) }
 
+    # TODO: change test payload as needed as Phase 3 implementation continues
     def json_test_payload
       {
         "event_id": 214706,
