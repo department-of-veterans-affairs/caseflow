@@ -37,8 +37,7 @@ class Events::DecisionReviewCompleted
 
           review = epe&.source
 
-          Events::DecisionReviewCompleted::CompleteInformalConference.process!(event: event, parser: parser)
-          Events::DecisionReviewCompleted::CompleteClaimReview.process!(event: event, parser: parser)
+          Events::DecisionReviewCompleted::CompleteClaimReview.process!(event: event, parser: parser, review: review)
           Events::DecisionReviewCompleted::CompleteEndProductEstablishment.process!(event: event, parser: parser)
           DecisionIssuesCompleteEvent.new(user: user, review: review, parser: parser, event: event, epe: epe).perform!
           # Update the Event after all operations have completed
