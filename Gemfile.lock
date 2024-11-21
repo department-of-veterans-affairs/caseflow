@@ -70,8 +70,8 @@ GIT
       savon (~> 2.12)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
+  remote: https://github.com/department-of-veterans-affairs/sniffybara-internal.git
+  revision: bcd5cb8e6dcb595dd111da5b0758f807d8c7525a
   specs:
     sniffybara (1.1.0)
       rainbow

@@ -144,7 +144,7 @@ group :test, :development, :demo, :make_docs do
   gem "simplecov", require: false
   gem "simplecov-lcov", require: false
   gem "single_cov"
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara-internal.git"
   gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
