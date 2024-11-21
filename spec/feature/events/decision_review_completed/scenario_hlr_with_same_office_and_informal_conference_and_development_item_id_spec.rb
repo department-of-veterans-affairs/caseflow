@@ -15,20 +15,20 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       {
         "event_id": "1",
         "css_id": "BVADWISE",
-        "detail_type": "SupplementalClaim",
+        "detail_type": "HigherLevelReview",
         "station": "101",
         "intake": {
-          "started_at": 1_067_143_435,
+          "started_at": 1_702_067_143_435,
           "completion_started_at": 1_702_067_145_000,
           "completed_at": 1_702_067_145_000,
           "completion_status": "success",
-          "type": "SupplementalClaimIntake",
-          "detail_type": "SupplementalClaim"
+          "type": "HigherLevelReviewIntake",
+          "detail_type": "HigherLevelReview"
         },
         "veteran": {
           "participant_id": "1826209",
           "bgs_last_synced_at": 1_708_533_584_000,
-          # "": null,
+          "name_suffix": null,
           "date_of_death": null
         },
         "claimant": {
@@ -48,14 +48,14 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
           "establishment_last_submitted_at": 1_702_067_145_000,
           "establishment_processed_at": 1_702_067_145_000,
           "establishment_submitted_at": 1_702_067_145_000,
-          "informal_conference": false,
-          "same_office": false
+          "informal_conference": true,
+          "same_office": true
         },
         "end_product_establishment": {
           "benefit_type_code": "1",
           "claim_date": 19_594,
-          "code": "040SCRPMC",
-          "modifier": "040",
+          "code": "030HLRRPMC",
+          "modifier": "030",
           "payee_code": "00",
           "reference_id": "337534",
           "limited_poa_access": null,
@@ -64,7 +64,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
           "established_at": 1_702_067_145_000,
           "last_synced_at": 1_702_067_145_000,
           "synced_status": "RW",
-          "development_item_reference_id": null
+          "development_item_reference_id": "2"
         },
         "request_issues": [
           {
@@ -76,7 +76,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
             "contested_rating_issue_profile_date": null,
             "contested_rating_issue_reference_id": null,
             "contested_decision_issue_id": 25,
-            "decision_date": 17490,
+            "decision_date": 17_490,
             "ineligible_due_to_id": null,
             "ineligible_reason": null,
             "is_unidentified": true,
@@ -134,12 +134,13 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
-    context "updates issue rating_sc_auto_remand" do
+    context "updates issue hlr_dependant_claimant_ineligible_untimely_rating_issue" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response rating_sc_auto_remand" do
+      it "returns success response hlr_dependant_claimant_ineligible_untimely_rating_issue" do
+        # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
@@ -154,12 +155,11 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue1.closed_status).to eq(nil)
         expect(completed_request_issue1.contested_issue_description).to eq("service connection for arthritis denied")
         expect(completed_request_issue1.contention_reference_id).to eq(4_542_785)
-        expect(completed_request_issue1.contested_rating_decision_reference_id).to eq(12)
+        expect(completed_request_issue1.contested_rating_decision_reference_id).to eq(nil)
         expect(completed_request_issue1.contested_rating_issue_profile_date).to eq(nil)
         expect(completed_request_issue1.contested_rating_issue_reference_id).to eq(nil)
         expect(completed_request_issue1.vacols_id).to eq(nil)
         expect(completed_request_issue1.vacols_sequence_id).to eq(nil)
-
         completed_request_issue2 = RequestIssue.find_by(reference_id: "2234")
         expect(completed_request_issue2.nonrating_issue_category).to eq(nil)
         expect(completed_request_issue2.nonrating_issue_description).to eq(nil)
@@ -190,11 +190,11 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(review.establishment_last_submitted_at).to eq(1_702_067_145_000)
         expect(review.establishment_processed_at).to eq(1_702_067_145_000)
         expect(review.establishment_submitted_at).to eq(1_702_067_145_000)
-        expect(review.informal_conference).to eq(false)
-        expect(review.same_office).to eq(false)
+        expect(review.informal_conference).to eq(true)
+        expect(review.same_office).to eq(true)
         expect(review.legacy_opt_in_approved).to eq(false)
         expect(claimant.type).to eq("VeteranClaimant")
-        expect(claimant.payee_code).to eq("00")
+        expect(claimant.payee_code).to eq("11")
         expect(claimant.participant_id).to eq("1826209")
       end
     end
