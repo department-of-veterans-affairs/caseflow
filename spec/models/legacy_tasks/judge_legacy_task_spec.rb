@@ -18,6 +18,13 @@ describe JudgeLegacyTask, :postgres do
       judge
     )
   end
+  let(:legacy_acting_judge_task) do
+    JudgeLegacyTask.from_vacols(
+      case_assignment,
+      LegacyAppeal.create(vacols_id: vacols_id),
+      acting_judge_user
+    )
+  end
   let(:case_assignment) do
     OpenStruct.new(vacols_id: vacols_id,
                    date_due: 1.day.ago,
@@ -30,6 +37,7 @@ describe JudgeLegacyTask, :postgres do
                    assigned_by: OpenStruct.new(first_name: assigned_by_first_name, last_name: assigned_by_last_name))
   end
   let(:judge) { create(:user).tap { |user| create(:staff, :judge_role, user: user) } }
+  let(:acting_judge_user) { create(:user).tap { |user| create(:staff, :attorney_judge_role, user: user) } }
   let(:user) { judge }
 
   context "#from_vacols" do
@@ -78,12 +86,26 @@ describe JudgeLegacyTask, :postgres do
       end
 
       context "when the user is the assignee" do
-        it "returns all judge actions" do
-          expect(subject).to match_array [
-            Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-            Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
-          ]
+        context "and the user is a pure judge in vacols" do
+          it "returns all judge actions" do
+            expect(subject).to match_array [
+              Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            ]
+          end
+        end
+
+        context "and the user is an acting judge in vacols" do
+          subject { legacy_acting_judge_task.available_actions(acting_judge_user, nil) }
+
+          it "returns all judge actions" do
+            expect(subject).to match_array [
+              Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            ]
+          end
         end
       end
 
