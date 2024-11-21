@@ -143,8 +143,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
-        existing_request_issue.reload
         completed_request_issue1 = RequestIssue.find_by(reference_id: "1234")
+        expect(completed_request_issue1).to be
         expect(completed_request_issue1.nonrating_issue_category).to eq(nil)
         expect(completed_request_issue1.nonrating_issue_description).to eq(nil)
         expect(completed_request_issue1.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
@@ -160,6 +160,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue1.vacols_id).to eq(nil)
         expect(completed_request_issue1.vacols_sequence_id).to eq(nil)
         completed_request_issue2 = RequestIssue.find_by(reference_id: "2234")
+        expect(completed_request_issue2).to be
         expect(completed_request_issue2.nonrating_issue_category).to eq(nil)
         expect(completed_request_issue2.nonrating_issue_description).to eq(nil)
         expect(completed_request_issue2.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")

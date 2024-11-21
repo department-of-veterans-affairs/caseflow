@@ -57,8 +57,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
           "modifier": "040",
           "payee_code": "11",
           "reference_id": "474697",
-          "limited_poa_access": "Y",
-          "limited_poa_code": "0U3",
+          "limited_poa_access": null,
+          "limited_poa_code": null,
           "committed_at": 1_708_533_584_000,
           "established_at": 1_708_533_584_000,
           "last_synced_at": 1_708_533_584_000,
@@ -103,17 +103,17 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
-    context "updates sc_with_limited_poa_access" do
+    context "updates sc_ineligible_duplicate_nonrating_issue_in_review" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response sc_with_limited_poa_access" do
+      it "returns success response sc_ineligible_duplicate_nonrating_issue_in_review" do
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
-        existing_request_issue.reload
         completed_request_issue = RequestIssue.find_by(reference_id: "1234")
+        expect(completed_request_issue).to be
         expect(completed_request_issue.nonrating_issue_category).to eq("DIC")
         expect(completed_request_issue.nonrating_issue_description).to eq("Service connection denied")
         expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
@@ -134,8 +134,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         id = epe.claimant_participant_id
         claimant = Claimant.find_by(participant_id: id)
         expect(epe.synced_status).to eq("RW")
-        expect(epe.limited_poa_access).to eq("Y")
-        expect(epe.limited_poa_code).to eq("0U3")
+        expect(epe.limited_poa_access).to eq(nil)
+        expect(epe.limited_poa_code).to eq(nil)
         expect(veteran.participant_id).to eq("1826209")
         expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
         expect(veteran.name_suffix).to eq(nil)

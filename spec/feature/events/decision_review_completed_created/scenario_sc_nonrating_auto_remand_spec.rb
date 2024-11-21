@@ -10,7 +10,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
     # let(:review) { epe.source }
     # let!(:existing_request_issue) { create(:request_issue, :ineligible, decision_review: review, reference_id: "1234")}
 
-    # rubocop:disable Metrics/AbcSize
     def json_test_payload
       {
         "event_id": "1",
@@ -18,7 +17,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         "detail_type": "SupplementalClaim",
         "station": "101",
         "intake": {
-          "started_at": 1_067_143_435,
+          "started_at": 1_702_067_143_435,
           "completion_started_at": 1_702_067_145_000,
           "completed_at": 1_702_067_145_000,
           "completion_status": "success",
@@ -28,7 +27,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         "veteran": {
           "participant_id": "1826209",
           "bgs_last_synced_at": 1_708_533_584_000,
-          # "": null,
+          "name_suffix": null,
           "date_of_death": null
         },
         "claimant": {
@@ -38,8 +37,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
           "name_suffix": null
         },
         "claim_review": {
-          "auto_remand": null,
-          "benefit_type": "pension",
+          "auto_remand": true,
+          "benefit_type": "compensation",
           "filed_by_va_gov": false,
           "legacy_opt_in_approved": false,
           "receipt_date": 19_594,
@@ -54,7 +53,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         "end_product_establishment": {
           "benefit_type_code": "1",
           "claim_date": 19_594,
-          "code": "040SCRPMC",
+          "code": "040HDENR",
           "modifier": "040",
           "payee_code": "00",
           "reference_id": "337534",
@@ -69,39 +68,10 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         "request_issues": [
           {
             "decision_review_issue_id": "1234",
-            "benefit_type": "pension",
-            "contested_issue_description": "service connection for arthritis denied",
-            "contention_reference_id": 4_542_785,
+            "benefit_type": "compensation",
+            "contested_issue_description": null,
+            "contention_reference_id": 7_905_752,
             "contested_rating_decision_reference_id": null,
-            "contested_rating_issue_profile_date": null,
-            "contested_rating_issue_reference_id": null,
-            "contested_decision_issue_id": 25,
-            "decision_date": 17490,
-            "ineligible_due_to_id": null,
-            "ineligible_reason": null,
-            "is_unidentified": true,
-            "unidentified_issue_text": null,
-            "nonrating_issue_category": "DIC",
-            "nonrating_issue_description": null,
-            "remand_source_id": null,
-            "untimely_exemption": null,
-            "untimely_exemption_notes": null,
-            "vacols_id": null,
-            "vacols_sequence_id": null,
-            "closed_at": null,
-            "closed_status": null,
-            "contested_rating_issue_diagnostic_code": null,
-            "ramp_claim_id": null,
-            "rating_issue_associated_at": null,
-            "nonrating_issue_bgs_id": "12",
-            "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE"
-          },
-          {
-            "decision_review_issue_id": "2234",
-            "benefit_type": "pension",
-            "contested_issue_description": "PTSD",
-            "contention_reference_id": 123_456,
-            "contested_rating_decision_reference_id": "12",
             "contested_rating_issue_profile_date": null,
             "contested_rating_issue_reference_id": null,
             "contested_decision_issue_id": null,
@@ -110,71 +80,57 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
             "ineligible_reason": null,
             "is_unidentified": false,
             "unidentified_issue_text": null,
-            "nonrating_issue_category": null,
-            "nonrating_issue_description": null,
-            "remand_source_id": null,
-            "untimely_exemption": false,
+            "nonrating_issue_category": "DEPENDENCY",
+            "nonrating_issue_description": "DTA Error - Other Recs: Dependency: Wendy Boyd,
+                                            Not an Award Dependent, Turns 18, effective 01/01/2024",
+            "remand_source_id": 1234,
+            "untimely_exemption": null,
             "untimely_exemption_notes": null,
             "vacols_id": null,
             "vacols_sequence_id": null,
             "closed_at": null,
             "closed_status": null,
-            "contested_rating_issue_diagnostic_code": null,
+            "contested_rating_issue_diagnostic_code": 5000,
             "ramp_claim_id": null,
             "rating_issue_associated_at": null,
-            "nonrating_issue_bgs_id": null,
-            "nonrating_issue_bgs_source": null
+            "nonrating_issue_bgs_id": "13",
+            "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE"
           }
         ]
       }
     end
-    # rubocop:enable Metrics/AbcSize
 
     let!(:valid_params) do
       json_test_payload
     end
 
-    context "updates sc_prior_cf_decision_nonrating_issue_and_rating_decision" do
+    context "updates issue nonrating_sc_auto_remand" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response sc_prior_cf_decision_nonrating_issue_and_rating_decision" do
+      it "returns success response nonrating_sc_auto_remand" do
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
-        existing_request_issue.reload
-        completed_request_issue1 = RequestIssue.find_by(reference_id: "1234")
-        expect(completed_request_issue1.nonrating_issue_category).to eq("DIC")
-        expect(completed_request_issue1.nonrating_issue_description).to eq(nil)
-        expect(completed_request_issue1.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
-        expect(completed_request_issue1.nonrating_issue_bgs_id).to eq(12)
-        expect(completed_request_issue1.rating_issue_associated_at).to eq(nil)
-        expect(completed_request_issue1.closed_at).to eq(nil)
-        expect(completed_request_issue1.closed_status).to eq(nil)
-        expect(completed_request_issue1.contested_issue_description).to eq("service connection for arthritis denied")
-        expect(completed_request_issue1.contention_reference_id).to eq(4_542_785)
-        expect(completed_request_issue1.contested_rating_decision_reference_id).to eq(12)
-        expect(completed_request_issue1.contested_rating_issue_profile_date).to eq(nil)
-        expect(completed_request_issue1.contested_rating_issue_reference_id).to eq(nil)
-        expect(completed_request_issue1.vacols_id).to eq(nil)
-        expect(completed_request_issue1.vacols_sequence_id).to eq(nil)
-
-        completed_request_issue2 = RequestIssue.find_by(reference_id: "2234")
-        expect(completed_request_issue2.nonrating_issue_category).to eq(nil)
-        expect(completed_request_issue2.nonrating_issue_description).to eq(nil)
-        expect(completed_request_issue2.nonrating_issue_bgs_source).to eq(nil)
-        expect(completed_request_issue2.nonrating_issue_bgs_id).to eq(nil)
-        expect(completed_request_issue2.rating_issue_associated_at).to eq(nil)
-        expect(completed_request_issue2.closed_at).to eq(nil)
-        expect(completed_request_issue2.closed_status).to eq(nil)
-        expect(completed_request_issue2.contested_issue_description).to eq("PTSD")
-        expect(completed_request_issue2.contention_reference_id).to eq(123_456)
-        expect(completed_request_issue2.contested_rating_decision_reference_id).to eq(12)
-        expect(completed_request_issue2.contested_rating_issue_profile_date).to eq(nil)
-        expect(completed_request_issue2.contested_rating_issue_reference_id).to eq(nil)
-        expect(completed_request_issue2.vacols_id).to eq(nil)
-        expect(completed_request_issue2.vacols_sequence_id).to eq(nil)
+        completed_request_issue = RequestIssue.find_by(reference_id: "1234")
+        expect(completed_request_issue).to be
+        expect(completed_request_issue.nonrating_issue_category).to eq("DEPENDENCY")
+        expect(completed_request_issue.nonrating_issue_description).to eq("DTA Error - Other Recs: Dependency:
+                                                                          Wendy Boyd, Not an Award Dependent,
+                                                                          Turns 18, effective 01/01/2024")
+        expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
+        expect(completed_request_issue.nonrating_issue_bgs_id).to eq("13")
+        expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
+        expect(completed_request_issue.contested_issue_description).to eq(nil)
+        expect(completed_request_issue.contention_reference_id).to eq(7_905_752)
+        expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_profile_date).to eq(nil)
+        expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
+        expect(completed_request_issue.closed_at).to eq(nil)
+        expect(completed_request_issue.closed_status).to eq(nil)
+        expect(completed_request_issue.vacols_id).to eq(nil)
+        expect(completed_request_issue.vacols_sequence_id).to eq(nil)
         epe = EndProductEstablishment.find_by(reference_id: "337534")
         review = epe.source
         veteran = epe.veteran
@@ -185,9 +141,10 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(epe.limited_poa_code).to eq(nil)
         expect(veteran.participant_id).to eq("1826209")
         expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
+        expect(veteran.bgs_last_synced_at).to eq(1_708_533_584_000)
         expect(veteran.name_suffix).to eq(nil)
         expect(veteran.date_of_death).to eq(nil)
-        expect(review.auto_remand).to eq(nil)
+        expect(review.auto_remand).to eq(true)
         expect(review.establishment_attempted_at).to eq(1_702_067_145_000)
         expect(review.establishment_last_submitted_at).to eq(1_702_067_145_000)
         expect(review.establishment_processed_at).to eq(1_702_067_145_000)

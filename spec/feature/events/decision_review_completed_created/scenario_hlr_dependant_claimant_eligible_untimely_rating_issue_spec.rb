@@ -54,7 +54,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
           "benefit_type_code": "1",
           "claim_date": 19_594,
           "code": "030HLRR",
-          "modifier": "030",
+          "modifier": "032",
           "payee_code": "11",
           "reference_id": "474697",
           "limited_poa_access": null,
@@ -67,31 +67,31 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         },
         "request_issues": [
           {
-            "decision_review_issue_id": "1",
+            "decision_review_issue_id": "1234",
             "benefit_type": "compensation",
-            "contested_issue_description": "Left knee",
-            "contention_reference_id": null,
+            "contested_issue_description": "PTSD",
+            "contention_reference_id": 4_930_630,
             "contested_rating_decision_reference_id": null,
             "contested_rating_issue_profile_date": "2017-02-07T07:21:24+00:00",
-            "contested_rating_issue_reference_id": "18262093449376",
+            "contested_rating_issue_reference_id": "18262091884874",
             "contested_decision_issue_id": null,
-            "decision_date": 17_490,
+            "decision_date": 18_475,
             "ineligible_due_to_id": null,
-            "ineligible_reason": "untimely",
+            "ineligible_reason": null,
             "is_unidentified": false,
             "unidentified_issue_text": null,
             "nonrating_issue_category": null,
             "nonrating_issue_description": null,
             "remand_source_id": null,
-            "untimely_exemption": false,
-            "untimely_exemption_notes": null,
+            "untimely_exemption": true,
+            "untimely_exemption_notes": "Some reason for time extension",
             "vacols_id": null,
             "vacols_sequence_id": null,
-            "closed_at": 1_708_533_584_000,
-            "closed_status": "ineligible",
+            "closed_at": null,
+            "closed_status": null,
             "contested_rating_issue_diagnostic_code": "5008",
             "ramp_claim_id": null,
-            "rating_issue_associated_at": null,
+            "rating_issue_associated_at": 1_708_533_584_000,
             "nonrating_issue_bgs_id": null,
             "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE"
           }
@@ -103,30 +103,29 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
-    context "updates issue hlr_dependant_claimant_ineligible_untimely_rating_issue" do
+    context "updates issue hlr_dependant_claimant_eligible_untimely_rating_issue" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
-      it "returns success response hlr_dependant_claimant_ineligible_untimely_rating_issue" do
-        # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
+      it "returns success response hlr_dependant_claimant_eligible_untimely_rating_issue" do
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
         expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
-        existing_request_issue.reload
         completed_request_issue = RequestIssue.find_by(reference_id: "1234")
+        expect(completed_request_issue).to be
         expect(completed_request_issue.nonrating_issue_category).to eq(nil)
         expect(completed_request_issue.nonrating_issue_description).to eq(nil)
         expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
         expect(completed_request_issue.nonrating_issue_bgs_id).to eq(nil)
-        expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
-        expect(completed_request_issue.closed_at).to eq(1_708_533_584_000)
-        expect(completed_request_issue.closed_status).to eq("ineligible")
-        expect(completed_request_issue.contested_issue_description).to eq("Left knee")
-        expect(completed_request_issue.contention_reference_id).to eq(nil)
+        expect(completed_request_issue.rating_issue_associated_at).to eq(1_708_533_584_000)
+        expect(completed_request_issue.closed_at).to eq(nil)
+        expect(completed_request_issue.closed_status).to eq(nil)
+        expect(completed_request_issue.contested_issue_description).to eq("PTSD")
+        expect(completed_request_issue.contention_reference_id).to eq(4_930_630)
         expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
         expect(completed_request_issue.contested_rating_issue_profile_date).to eq("2017-02-07T07:21:24+00:00")
-        expect(completed_request_issue.contested_rating_issue_reference_id).to eq("18262093449376")
+        expect(completed_request_issue.contested_rating_issue_reference_id).to eq("18262091884874")
         expect(completed_request_issue.vacols_id).to eq(nil)
         expect(completed_request_issue.vacols_sequence_id).to eq(nil)
         epe = EndProductEstablishment.find_by(reference_id: "474697")
