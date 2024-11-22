@@ -98,7 +98,8 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
           "rating_issue_associated_at": nil,
           "ramp_claim_id": nil,
           "is_unidentified": true,
-          "nonrating_issue_bgs_source": nil
+          "nonrating_issue_bgs_source": nil,
+          "end_product_establishment_id": epe.id
         }
       ],
       "eligible_to_ineligible_issues": [],
@@ -106,20 +107,36 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
     }
   end
 
+  let!(:eligible_request_issue) do
+    create(
+      :request_issue,
+      decision_review: HigherLevelReview.last,
+      nonrating_issue_category: "Military Retired Pay",
+      nonrating_issue_description: "eligible nonrating description",
+      ineligible_reason: nil,
+      benefit_type: "compensation",
+      decision_date: Time.zone.today
+    )
+  end
+
   context "ineligible_to_eligible updates issue" do
     before do
+      allow_any_instance_of(HigherLevelReview).to receive(:validate_prior_to_edit).and_return(true)
       consumer_event_id = json_test_payload[:event_id]
       claim_id = json_test_payload[:claim_id]
       headers = { "Authorization" => "Token token=#{api_key.key_string}" }
       consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
       Events::DecisionReviewUpdated.update!(consumer_and_claim_ids, headers, json_test_payload)
+      hlr = HigherLevelReview.last
+      hlr.create_claimant!(participant_id: 123, payee_code: "10", type: "DependentClaimant")
+      hlr.reload.create_issues!([eligible_request_issue, ineligible_to_eligible_request_issue])
+      hlr.establish!
     end
 
     it "able to render edit page without error after updating ineligible to eligible" do
-      visit "higher_level_reviews/#{12345678}/edit"
+      visit "higher_level_reviews/#{epe.reference_id}/edit"
 
       # Verify that there are no errors displayed
-      save_and_open_page
       expect(page).to have_no_content("Something went wrong")
     end
   end

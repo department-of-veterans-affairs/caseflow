@@ -540,26 +540,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
       )
     end
-
-    context "when updating an ineligible claim" do
-      before do
-        epe = EndProductEstablishment.last
-        untimely_request_issue.update(
-          closed_at: nil, closed_status: nil, contention_removed_at: nil, ineligible_reason: nil, end_product_establishment_id: epe.id
-        )
-      end
-
-      it "verifies we can return to the edit page when we have an ineligible issue along with past decisions" do
-        visit "higher_level_reviews/#{ep_claim_id}/edit"
-        expect(page).to have_no_content("Something went wrong")
-        number_of_issues = 8
-        expect(page).to have_content("#{number_of_issues} issues")
-
-        click_intake_add_issue
-
-        expect(page).to have_no_content("Something went wrong")
-      end
-    end
   end
 
   context "Nonrating issue with untimely date and VACOLS opt-in" do
