@@ -254,17 +254,6 @@ const PdfDocument = memo(({
     };
   }, [file]);
 
-  // the key for PdfDocument prevents this block from being run
-  useEffect(() => {
-    return () => {
-      pdfjsLoadingTaskRef.current?.destroy();
-      pdfjsDocumentRef.current?.destroy();
-
-      pdfjsLoadingTaskRef.current = null;
-      pdfjsDocumentRef.current = null;
-    };
-  }, [doc.content_url]);
-
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));
   }, [doc.id]);
