@@ -1629,5 +1629,11 @@
   "DATE_PICKER_DROPDOWN_ALL": "View All",
   "DATE_PICKER_NO_FUTURE_DATES_ERROR_MESSAGE": "Date cannot be in the future.",
   "DATE_PICKER_BETWEEN_DATES_ERROR_MESSAGE": "\"To\" date cannot occur before the \"From\" date",
+  "WORK_ORDER_BANNER_MESSAGE": "Work Order Transcription Package will need to be manually removed from the box.com folder for %s, please inform %s as they may have picked up the Work Order",
+  "HEARING_BANNER_MESSAGE": "All Hearing files have been set back to the UnAssigned state for Dispatching",
+  "UPLOAD_TRANSCRIPTION_VBMS_TEXT": "By uploading to VBMS, you are confirming that you have reviewed the transcript in Caseflow and have found no errors.",
+  "UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA": "Please provide context and instructions for this action",
+  "UPLOAD_TRANSCRIPTION_VBMS_TITLE": "Upload transcript to VBMS",
+  "UPLOAD_TRANSCRIPTION_VBMS_BUTTON": "Upload to VBMS",
   "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand"
 }
