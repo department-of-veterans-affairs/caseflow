@@ -12,16 +12,18 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   def available_actions(current_user, _role)
     # This must check judge_in_vacols? rather than role as judge, otherwise acting
     # VLJs cannot check out
-    return [] if current_user != assigned_to || !current_user.judge_in_vacols?
+    scm = current_user.can_act_on_behalf_of_judges?
 
-    actions = [
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      review_action
-    ]
+    actions = []
 
-    if SpecialCaseMovementTeam.singleton.user_has_access?(current_user) # logic busted
+    if scm && FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
       actions << reassign_action
     end
+
+    return actions if current_user != assigned_to || !current_user.judge_in_vacols?
+
+    actions << Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+    actions << review_action
   end
 
   def label
