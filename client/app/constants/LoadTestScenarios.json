@@ -325,5 +325,19 @@
   {"scenario": "help",
     "targetType": [],
     "targetId": ""
+  },
+  {"scenario": "scheduleHearingTasksAmaTab",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "HearingDay id"
+  },
+  {"scenario": "scheduleHearingTasksLegacyTab",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "HearingDay id"
   }
 ]
