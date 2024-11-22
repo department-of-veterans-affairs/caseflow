@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :controller do
+RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controller do
   describe "POST #decision_review_completed" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
