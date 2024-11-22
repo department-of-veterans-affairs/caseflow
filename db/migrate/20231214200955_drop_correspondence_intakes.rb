@@ -1,4 +1,6 @@
-class DropCorrespondenceIntakes < ActiveRecord::Migration[5.2]
+class DropCorrespondenceIntakes < ActiveRecord::Migration[6.1]
+  include Caseflow::Migrations::AddIndexConcurrently
+
   def up
     drop_table :correspondence_intakes
   end
@@ -17,5 +19,8 @@ class DropCorrespondenceIntakes < ActiveRecord::Migration[5.2]
       t.references :user, foreign_key: true, index: false, comment: "Foreign key on users table"
       t.references :correspondence, foreign_key: true, index: false, comment: "Foreign key on correspondences table"
     end
+
+    add_safe_index :correspondence_intakes, [:user_id], name: "index_on_user_id"
+    add_safe_index :correspondence_intakes, [:correspondence_id], name: "index_on_correspondence_id"
   end
 end
