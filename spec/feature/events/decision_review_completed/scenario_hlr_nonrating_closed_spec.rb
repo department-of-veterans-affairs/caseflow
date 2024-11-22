@@ -77,6 +77,27 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       json_test_payload
     end
 
+    let!(:invalid_params) do
+      {
+        "css_id": null,
+        "detail_type": "BLA",
+        "station": "SPACE",
+        "event_id": null,
+        "end_product_establishment": {
+          "synced_status": "Something",
+          "last_synced_at": null,
+          "code": "ERROR",
+          "development_item_reference_id": null,
+          "reference_id": "20010065"
+        },
+        "claim_review": {},
+        "completed_issues": [
+          "id": null,
+          "decision_issue": {}
+        ]
+      }
+    end
+
     context "updates issue scenario_hlr_1_eligible_nonrating_issue" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
@@ -163,8 +184,20 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         allow_any_instance_of(DecisionIssuesCompleteEvent).to receive(:perform!).and_raise(StandardError.new("Error"))
       end
 
-      it "returns " do
+      it "returns error" do
         post :decision_review_updated, params: valid_params
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("Error")
+      end
+    end
+
+    context "does not complete invalid params" do
+      before do
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+      end
+
+      it "returns error" do
+        post :decision_review_updated, params: invalid_params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include("Error")
       end
