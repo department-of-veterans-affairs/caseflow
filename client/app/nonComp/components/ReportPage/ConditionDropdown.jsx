@@ -4,17 +4,16 @@ import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-export const ConditionDropdown = ({ control, filteredOptions, name }) => {
+export const ConditionDropdown = ({ control, filteredOptions, name, field }) => {
   let [disabled, setDisabled] = useState(false);
 
   const dropdownName = `${name}.condition`;
-
   const { errors } = useFormContext();
 
   return <Controller
     control={control}
     name={dropdownName}
-    defaultValue={null}
+    defaultValue={field.condition}
     render={({ onChange, ref, ...rest }) => (
       <SearchableDropdown
         {...rest}

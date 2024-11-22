@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
@@ -12,6 +14,7 @@ import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
+import { selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
@@ -163,8 +166,7 @@ const ReportPageButtons = ({
   );
 };
 
-const EventCheckboxGroup = ({ header, options, name, onChange }) => {
-
+const EventCheckboxGroup = ({ header, options, name, onChange, field }) => {
   return (
     <div>
       { header && <h4>{header}</h4> }
@@ -174,6 +176,7 @@ const EventCheckboxGroup = ({ header, options, name, onChange }) => {
             name={`${name}.${option.id}`}
             key={`${name}.${option.id}`}
             label={option.label}
+            defaultValue={get(field.value, option.id)}
             stronglabel
             unpadded
             onChange={(val) => onChange({ option, val })}
@@ -199,8 +202,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
     fieldClasses += ' usa-input-error';
     fieldClasses += ' less-error-padding';
   }
-
-  const [value, setValue] = React.useState({});
+  const [value, setValue] = React.useState(field.value);
 
   const onCheckboxClick = ({ option, val }) => {
     const valueCopy = { ...value };
@@ -232,18 +234,21 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
               header="System"
               options={options[0].system}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
             <EventCheckboxGroup
               header="General"
               options={options[0].general}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
             <EventCheckboxGroup
               header="Requests"
               options={options[0].requests}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
           </div>
@@ -253,6 +258,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
           <EventCheckboxGroup
             options={options}
             name={name}
+            field={field}
             onChange={onCheckboxClick}
           />
         </fieldset>
@@ -285,44 +291,50 @@ const RHFRadioButton = ({ options, name, control, label }) => {
 };
 
 const ReportPage = ({ history }) => {
+  const selectedSearch = useSelector((state) => state.savedSearch.selectedSearch);
+  const savedSearch = selectedSearch?.savedSearch;
+  const conditions = !isEmpty(savedSearch?.conditions) ? Object.values(savedSearch?.conditions) : [];
+  const specificStatus = savedSearch?.specificStatus;
+  const specificEventType = savedSearch?.specificEventType;
+
   const defaultFormValues = {
-    reportType: '',
-    conditions: [],
+    reportType: savedSearch?.reportType || '',
+    conditions,
     timing: {
-      range: null,
-      startDate: '',
-      endDate: '',
+      range: savedSearch?.timing?.range || '',
+      startDate: formatDateStrUtc(savedSearch?.timing?.startDate, 'YYYY-MM-DD') || '',
+      endDate: formatDateStrUtc(savedSearch?.timing?.endDate, 'YYYY-MM-DD') || '',
     },
-    radioEventAction: 'all_events_action',
-    radioStatus: 'all_statuses',
-    radioStatusReportType: 'last_action_taken',
+    radioEventAction: savedSearch?.radioEventAction || 'all_events_action',
+    radioStatus: savedSearch?.radioStatus || 'all_statuses',
+    radioStatusReportType: savedSearch?.radioStatusReportType || 'last_action_taken',
     specificStatus: {
-      incomplete: '',
-      in_progress: '',
-      pending: '',
-      completed: '',
-      cancelled: ''
+      incomplete: specificStatus?.incomplete || '',
+      in_progress: specificStatus?.inProgress || '',
+      pending: specificStatus?.pending || '',
+      completed: specificStatus?.completed || '',
+      cancelled: specificStatus?.cancelled || ''
     },
     specificEventType: {
-      claim_created: '',
-      claim_closed: '',
-      claim_status_incomplete: '',
-      claim_status_pending: '',
-      claim_status_inprogress: '',
-      added_decision_date: '',
-      added_issue: '',
-      added_issue_no_decision_date: '',
-      removed_issue: '',
-      withdrew_issue: '',
-      completed_disposition: '',
-      requested_issue_modification: '',
-      requested_issue_addition: '',
-      requested_issue_removal: '',
-      requested_issue_withdrawal: '',
-      approval_of_request: '',
-      rejection_of_request: '',
-      cancellation_of_request: '',
-      edit_of_request: '',
+      claim_created: specificEventType?.claimCreated || '',
+      claim_closed: specificEventType?.claimClosed || '',
+      claim_status_incomplete: specificEventType?.claimStatusIncomplete || '',
+      claim_status_pending: specificEventType?.claimStatusPending || '',
+      claim_status_inprogress: specificEventType?.claimStatusInprogress || '',
+      added_decision_date: specificEventType?.addedDecisionDate || '',
+      added_issue: specificEventType?.addedIssue || '',
+      added_issue_no_decision_date: specificEventType?.addedIssueNoDecisionDate || '',
+      removed_issue: specificEventType?.removedIssue || '',
+      withdrew_issue: specificEventType?.withdrewIssue || '',
+      completed_disposition: specificEventType?.completedDisposition || '',
+      requested_issue_modification: specificEventType?.requestedIssueModification || '',
+      requested_issue_addition: specificEventType?.requestedIssueAddition || '',
+      requested_issue_removal: specificEventType?.requestedIssueRemoval || '',
+      requested_issue_withdrawal: specificEventType?.requestedIssueWithdrawal || '',
+      approval_of_request: specificEventType?.approvalOfRequest || '',
+      rejection_of_request: specificEventType?.rejectionOfRequest || '',
+      cancellation_of_request: specificEventType?.cancellationOfRequest || '',
+      edit_of_request: specificEventType?.cancellationOfRequest || '',
     }
   };
 
@@ -412,9 +424,12 @@ const ReportPage = ({ history }) => {
     return filters;
   };
 
+  const handleViewSavedSearch = () => {
+    dispatch(selectSavedSearch({}));
+  };
+
   const submitForm = (data) => {
     const filterData = parseFilters(data);
-
     // Generate and trigger the download of the CSV
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
@@ -450,7 +465,7 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty}
+          isGenerateButtonDisabled={!savedSearch?.reportType && !formState.isDirty}
           handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
           handleSaveSearch={handleSubmit(handleSave)}
@@ -461,7 +476,7 @@ const ReportPage = ({ history }) => {
     >
       <div className="report-page-header">
         <h1>Generate task report</h1>
-        <Link button="secondary" to={`/${businessLineUrl}/searches`}>View saved searches</Link>
+        <Link button="secondary" to={`/${businessLineUrl}/searches`} onClick={handleViewSavedSearch}>View saved searches</Link>
       </div>
       <FormProvider {...methods}>
         <form>
@@ -482,8 +497,7 @@ const ReportPage = ({ history }) => {
                 options={SPECIFIC_STATUS_OPTIONS}
                 control={control}
                 name="specificStatus"
-              />) :
-              null
+              />) : null
             }
             <RHFRadioButton
               options={RADIO_STATUS_REPORT_TYPE_OPTIONS}
@@ -491,8 +505,7 @@ const ReportPage = ({ history }) => {
               label="Select type of status report"
               name="radioStatusReportType"
             />
-          </>) :
-            null
+          </>) : null
           }
           {watchReportType === 'event_type_action' ? (
             <RHFRadioButton
@@ -530,7 +543,7 @@ const ReportPage = ({ history }) => {
             /> : null
           }
           {showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null}
-          {formState.isDirty ? <ReportPageConditions /> : null}
+          {formState.isDirty || savedSearch?.reportType ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>

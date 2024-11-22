@@ -1,14 +1,17 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Alert from 'app/components/Alert';
+import { useHistory } from 'react-router-dom';
 import Link from 'app/components/Link';
-import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 import Button from 'app/components/Button';
+import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 import NonCompLayout from '../components/NonCompLayout';
 import { COLORS } from 'app/constants/AppConstants';
 import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
 import TabWindow from 'app/components/TabWindow';
 import SearchTable from 'app/queue/components/SearchTable';
+
 import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 import { isEmpty } from 'lodash';
@@ -23,6 +26,7 @@ const SavedSearches = () => {
 
   const userSearches = savedSearchRows.userSearches;
   const allSearches = savedSearchRows.allSearches;
+  const { push } = useHistory();
 
   const isDisabled = isEmpty(selectedSearch);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -31,7 +35,7 @@ const SavedSearches = () => {
   const dispatch = useDispatch();
 
   const handleApply = () => {
-    // this will come from another story.
+    return push(`/${businessLineUrl}/report`);
   };
 
   const buttonStyling = {
@@ -100,7 +104,7 @@ const SavedSearches = () => {
           onClick={() => setShowDeleteModal(true)}
           disabled={isDisabled}
         >
-           Delete
+          Delete
         </Button> : null }
         <Button
           label="apply"
@@ -108,11 +112,10 @@ const SavedSearches = () => {
           onClick={handleApply}
           disabled={isDisabled}
         >
-           Apply
+          Apply
         </Button>
       </div>
     </div>
-
   );
 };
 
