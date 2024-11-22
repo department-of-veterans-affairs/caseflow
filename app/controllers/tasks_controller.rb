@@ -51,6 +51,8 @@ class TasksController < ApplicationController
     SplitAppealTask: SplitAppealTask
   }.freeze
 
+  S3_BUCKET = "vaec-appeals-caseflow"
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -201,11 +203,81 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
   end
 
-  def error_found_upload_transcription_to_vbms; end
+  def error_found_upload_transcription_to_vbms
+    file_name = params["file_info"]["file_name"]
+    tmp_folder = Base64Service.to_file(params["file_info"]["file"], file_name)
+    #upload_file_S3
+    s3_upload_result = upload_to_s3(tmp_folder, file_name)
+    file_status = s3_upload_result.empty? ? "Failed upload (AWS)" : "Successful upload (AWS)"
+    #modified transcription_files table
+    hearing_id = file_name.split("_")[1]
+    hearing_type = file_name.split("_")[2].split(".")[0]
+    transcription_file = Hearings::TranscriptionFile.where(hearing_id: hearing_id, hearing_type: hearing_type)
+
+    if transcription_file.count > 0
+      aws_link = create_link_aws(file_name, file_status)
+
+      if aws_link &&
+        transcription_file[0].update!(
+          aws_link: aws_link,
+          updated_at: Time.zone.now,
+          date_upload_aws: Time.zone.now
+        )
+
+        appeal = transcription_file[0].hearing.appeal
+        veterant_file_number = appeal.veteran_file_number
+
+        document_params =
+        {
+          veteran_file_number: veterant_file_number,
+          document_type: "Hearing Transcript",
+          document_subject: "notifications",
+          document_name: file_name,
+          application: "notification-report",
+          file: tmp_folder.tempfile
+        }
+
+        #upload pdf to Appellants eFolder VBMS
+        response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
+        if response.success?
+          #change status of ReviewTranscriptTask
+          upload_transcription_to_vbms
+        else
+          render json: response.errors[0], status: :bad_request
+        end
+      end
+    end
+  end
 
   private
+
+  def upload_to_s3(tmp_folder, file_name)
+    begin
+      S3Service.store_file(s3_location(file_name), tmp_folder, :filepath)
+    rescue StandardError => error
+      Rails.logger.error "Error to upload #{file_name} to S3: #{error.message}"
+      raise BoxDownloadJobFileUploadError
+    end
+  end
+
+  def s3_location(file_name)
+    folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
+    "#{folder_name}/transcript_pdf/#{file_name}"
+  end
+
+  def create_link_aws(file_name, file_status)
+    if file_status == "Failed upload (AWS)"
+      nil
+    else
+      "vaec-appeals-caseflow-test/ranscript_pdf/#{file_name}"
+    end
+  end
 
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task

@@ -1667,4 +1667,44 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "PATH tasks/:id/modal/upload_transcription_vbms" do
+    let(:user) { create(:default_user) }
+    let!(:veteran) { create(:veteran) }
+    let!(:appeal) { create(:appeal, veteran: veteran) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
+    let!(:review_transcript_task) do
+      ReviewTranscriptTask.create!(
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: user
+      )
+    end
+
+    let(:params) do
+      {
+        task: {
+          instructions: "testing"
+        },
+        id: review_transcript_task.id.to_s
+      }
+    end
+
+    before do
+      review_transcript_task.update!(status: Constants.TASK_STATUSES.in_progress)
+    end
+
+    subject { patch :upload_transcription_to_vbms, params: params }
+
+    it "updates status to completed" do
+      subject
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)["tasks"]
+      expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
+      expect(response_body.last["attributes"]["instructions"][0]).to eq(COPY::REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS)
+      expect(response_body.last["attributes"]["closed_at"]).to_not be nil
+    end
+  end
 end

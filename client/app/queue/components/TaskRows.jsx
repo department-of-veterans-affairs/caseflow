@@ -314,7 +314,7 @@ class TaskRows extends React.PureComponent {
         <hr></hr>
         <div style={{ ...divStyle, marginBottom: '1rem' }}>
           <b>{instructions[1]}</b>
-          { instructions.size === 4 &&
+          { instructions.length === 4 &&
             <div>
               <small>SELECTED FILE</small>
               <p>{instructions[3]}</p>

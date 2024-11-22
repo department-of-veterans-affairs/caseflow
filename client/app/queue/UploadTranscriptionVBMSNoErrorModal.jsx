@@ -70,7 +70,6 @@ class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
           <TextareaField
             name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
             onChange={(value) => this.setState({ notes: value })}
-            placeholder= "This is the reason this is being put on hold."
             value={notes} />
         </div>
       </div>
