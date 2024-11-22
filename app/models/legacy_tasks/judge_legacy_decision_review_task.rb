@@ -15,7 +15,7 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
       review_action
     ]
 
-    if SpecialCaseMovementTeam.singleton.user_has_access?(current_user) && legacy_blocked_special_case_movement(current_user)
+    if SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
       actions << Constants.TASK_ACTIONS.LEGACY_RETURN_TO_ATTORNEY.to_h
     end
 
@@ -24,10 +24,5 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
 
   def label
     COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
-  end
-
-  def legacy_blocked_special_case_movement(user)
-    FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask, user: user) &&
-      appeal.tasks.open.where(type: JudgeLegacyDecisionReviewTask.name) && appeal.is_a?(LegacyAppeal)
   end
 end
