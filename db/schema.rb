@@ -2711,8 +2711,11 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
               END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
                  FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
               ELSE false
-          END AS schedulable
-     FROM (((((appeals
+          END AS schedulable,
+      veterans.state_of_residence,
+      veterans.country_of_residence,
+      cached_appeal_attributes.suggested_hearing_location
+     FROM ((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
        JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
@@ -2721,6 +2724,7 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
              FROM (claimants
                JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
             WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
+       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'Appeal'::text))))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
@@ -2757,14 +2761,19 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
           END AS days_on_hold,
       (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
       tasks.status AS task_status,
-      true AS schedulable
-     FROM ((((((legacy_appeals
+      true AS schedulable,
+      veterans.state_of_residence,
+      veterans.country_of_residence,
+      cached_appeal_attributes.suggested_hearing_location
+     FROM ((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
        JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
        LEFT JOIN f_vacols_assign ON (((f_vacols_assign.tsktknm)::text = (f_vacols_brieff.bfkey)::text)))
        LEFT JOIN f_vacols_corres ON (((f_vacols_brieff.bfcorkey)::text = (f_vacols_corres.stafkey)::text)))
        LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
+       JOIN veterans ON (((veterans.ssn)::text = (f_vacols_corres.ssn)::text)))
+       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true

@@ -52,7 +52,10 @@ SELECT
      OR receipt_date <= COALESCE((SELECT cutoff_date FROM latest_cutoff_date),'2019-12-31')
     THEN TRUE
     ELSE FALSE
-  END AS schedulable
+  END AS schedulable,
+  veterans.state_of_residence,
+  veterans.country_of_residence,
+  cached_appeal_attributes.suggested_hearing_location
 FROM
   appeals
   JOIN tasks ON tasks.appeal_type = 'Appeal'
@@ -68,6 +71,9 @@ FROM
       AND claimants.decision_review_type = 'Appeal'
       AND people.date_of_birth <= CURRENT_DATE - INTERVAL '75 years'
   ) aod_based_on_age_recognized_claimants ON TRUE
+  LEFT JOIN cached_appeal_attributes ON (
+    cached_appeal_attributes.appeal_id = appeals.id AND cached_appeal_attributes.appeal_type = 'Appeal'
+  )
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
@@ -114,7 +120,10 @@ SELECT
   END AS days_on_hold,
   COALESCE(tasks.closed_at::date, CURRENT_DATE) - tasks.assigned_at::date AS days_waiting,
   tasks.status AS task_status,
-  TRUE as schedulable
+  TRUE as schedulable,
+  veterans.state_of_residence,
+  veterans.country_of_residence,
+  cached_appeal_attributes.suggested_hearing_location
 FROM
   legacy_appeals
   JOIN tasks ON tasks.appeal_type = 'LegacyAppeal'
@@ -126,6 +135,10 @@ FROM
     f_vacols_brieff.bfcorkey = f_vacols_corres.stafkey
   )
   LEFT JOIN people ON (f_vacols_corres.ssn = people.ssn)
+  JOIN veterans ON veterans.ssn = f_vacols_corres.ssn
+  LEFT JOIN cached_appeal_attributes ON (
+    cached_appeal_attributes.appeal_id = legacy_appeals.id AND cached_appeal_attributes.appeal_type = 'LegacyAppeal'
+  )
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
