@@ -67,8 +67,7 @@
       acd_cases_tied_to_judges_no_longer_with_board: FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board, user: current_user),
       admin_case_distribution: FeatureToggle.enabled?(:admin_case_distribution, user: current_user),
       acd_exclude_from_affinity: FeatureToggle.enabled?(:acd_exclude_from_affinity, user: current_user),
-      disable_ama_eventing: FeatureToggle.enabled?(:disable_ama_eventing, user: current_user),
-      legacy_case_movement_vlj_to_atty_for_rewrite: FeatureToggle.enabled?(:legacy_case_movement_vlj_to_atty_for_rewrite, user: current_user)
+      disable_ama_eventing: FeatureToggle.enabled?(:disable_ama_eventing, user: current_user)
     }
   }) %>
 <% end %>
