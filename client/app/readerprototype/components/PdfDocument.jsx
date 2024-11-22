@@ -16,6 +16,7 @@ import { storeMetrics } from '../../util/Metrics';
 import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
 import ReaderFooter from './ReaderFooter';
+import { clearPdfDocument, setPdfDocument } from '../../reader/Pdf/PdfActions';
 
 const PdfDocument = ({
   currentPage,
@@ -131,28 +132,27 @@ const PdfDocument = ({
     setMetricsLogged(false);
 
     pdfMetrics.current.getStartTime = new Date().getTime();
-    pdfjsLoadingTaskRef.current = await ApiUtil.get(url, requestOptions).
+    await ApiUtil.get(url, requestOptions).
       then((response) => {
-        return getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
+        pdfjsLoadingTaskRef.current = getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
       }).
       catch((error) => {
         console.error(`ERROR with fetching doc from document API: ${error}`);
         setIsDocumentLoadError(true);
-        throw error;
       });
 
     pdfMetrics.current.getEndTime = new Date().getTime();
-    await pdfjsLoadingTaskRef.current.promise.
+    await pdfjsLoadingTaskRef.current?.promise.
       then((pdfDocument) => {
-        if (!pdfDocument) {
-          return setIsDocumentLoadError(true);
-        }
-        dispatch(getDocumentText(pdfDocument, doc.content_url));
         pdfjsDocumentRef.current = pdfDocument;
+        dispatch(setPdfDocument(doc.content_url, pdfjsDocumentRef.current));
+
+        dispatch(getDocumentText(pdfDocument, doc.content_url));
         setNumPages(pdfjsDocumentRef.current?.numPages);
       }).
       catch((err) => {
-        console.error(`ERROR with pdfjs: ${err}`);
+        console.error(`ERROR with PDFJS for ${doc.content_url}: ${err}`);
+        dispatch(clearPdfDocument(doc.content_url, pdfjsDocumentRef.current));
 
         return null;
       });
@@ -219,30 +219,30 @@ const PdfDocument = ({
       <div id="pdfContainer" style={containerStyle}>
         {isDocumentLoadError ?
           (<DocumentLoadError doc={doc} />) :
-          (
-            pdfPages.map((page, index) => (
-              <Page
-                setCurrentPage={setCurrentPage}
-                scale={zoomLevel}
-                page={page}
-                rotation={rotateDeg}
-                key={`doc-${doc.id}-page-${index + 1}`}
-                renderItem={(childProps) => (
-                  <Layer isCurrentPage={currentPage === page.pageNumber}
-                    documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-                    <TextLayer
-                      textContent={textContent[index]}
-                      zoomLevel={zoomLevel}
-                      rotation={rotateDeg}
-                      viewport={page.getViewport({ scale: 1 })}
-                      hasSearchMatch={pageIndexWithMatch === index + 1}
-                    />
-                  </Layer>
-                )}
-                setRenderingMetrics={handleRenderingMetrics}
-              />
-            ))
-          )}
+
+          (pdfPages.map((page, index) => (
+            <Page
+              setCurrentPage={setCurrentPage}
+              scale={zoomLevel}
+              page={page}
+              rotation={rotateDeg}
+              key={`doc-${doc.id}-page-${index + 1}`}
+              renderItem={(childProps) => (
+                <Layer isCurrentPage={currentPage === page.pageNumber}
+                  documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+                  <TextLayer
+                    textContent={textContent[index]}
+                    zoomLevel={zoomLevel}
+                    rotation={rotateDeg}
+                    viewport={page.getViewport({ scale: 1 })}
+                    hasSearchMatch={pageIndexWithMatch === index + 1}
+                  />
+                </Layer>
+              )}
+              setRenderingMetrics={handleRenderingMetrics}
+            />
+          )))
+        }
       </div>
       <ReaderFooter
         currentPage={currentPage}
