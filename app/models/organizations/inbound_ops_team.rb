@@ -29,6 +29,7 @@ class InboundOpsTeam < Organization
 
   # inbound ops can only work Correspondence Tasks
   # inbound ops cannot work tasks not related to an appeal
+  # :reek:UtilityFunction
   def can_receive_task?(task)
     return false unless task.is_a?(CorrespondenceTask)
 

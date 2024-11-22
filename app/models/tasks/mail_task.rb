@@ -78,7 +78,8 @@ class MailTask < Task
             appeal: parent_task.appeal,
             parent_id: parent_if_blocking_task(parent_task).id,
             assigned_to: MailTeam.singleton,
-            instructions: [params[:instructions]].flatten
+            instructions: [params[:instructions]].flatten,
+            assigned_by: @assigned_by
           )
         end
 

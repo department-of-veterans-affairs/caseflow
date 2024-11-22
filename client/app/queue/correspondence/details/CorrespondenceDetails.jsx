@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -263,7 +264,6 @@ const CorrespondenceDetails = (props) => {
     }
 
     return true;
-
   };
 
   priorMail.sort((first, second) => {
@@ -286,7 +286,7 @@ const CorrespondenceDetails = (props) => {
     // If neither is in relatedCorrespondenceIds, maintain their original order
     const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
 
-    return returnSort;
+    returnSort;
   });
 
   const onCancel = () => {

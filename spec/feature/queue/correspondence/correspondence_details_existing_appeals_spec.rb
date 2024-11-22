@@ -113,9 +113,11 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       expect(page).to have_content("Add task to appeal")
       expect(page).to have_selector(".add-task-modal-container")
       expect(page).to have_field("content")
+      fill_in "content", with: "Test"
+      expect(page).to have_button("Next", disabled: true)
       find(".add-task-dropdown-style").click
       find(".react-select__option", text: "Congressional Interest").click
-      fill_in "content", with: "Test"
+      expect(page).to have_button("Next", disabled: false)
       click_button "Next"
       using_wait_time(10) do
         expect(page).to have_content("Congressional Interest")
