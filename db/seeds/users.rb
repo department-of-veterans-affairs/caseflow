@@ -403,7 +403,7 @@ module Seeds
       ]
       # Non-admin users
       non_admin_users_info = [
-        { css_id: "IOT_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"] },
+        { css_id: "IOT_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"] },
         { css_id: "IOT_USER_U1", full_name: "Cedar Rain", roles: ["Mail Intake"] }
       ]
 
