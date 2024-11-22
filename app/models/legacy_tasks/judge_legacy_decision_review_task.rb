@@ -5,15 +5,25 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
     Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
   end
 
+  def reassign_action
+    Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+  end
+
   def available_actions(current_user, _role)
     # This must check judge_in_vacols? rather than role as judge, otherwise acting
     # VLJs cannot check out
-    return [] if current_user != assigned_to || !current_user.judge_in_vacols?
+    scm = current_user.can_act_on_behalf_of_judges?
 
-    [
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      review_action
-    ]
+    actions = []
+
+    if scm && FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
+      actions << reassign_action
+    end
+
+    return actions if current_user != assigned_to || !current_user.judge_in_vacols?
+
+    actions << Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+    actions << review_action
   end
 
   def label
