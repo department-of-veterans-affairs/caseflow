@@ -44,33 +44,44 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       value: 'Other'}
   ];
 
-  const shouldShowOtherReturnReason = useState(true);
+  const [reasonSelected, setReasonSelected] = useState(null);
 
   const [otherReason, setOtherReason] = useState('');
-  const [otherReasonAdded, setOtherReasonAdded] = useState(false);
+  // const [otherReasonAdded, setOtherReasonAdded] = useState(false);
 
-  useEffect(() => {
-    setOtherReasonAdded(otherReason.length > 0);
-  }, [otherReason]);
+  // useEffect(() => {
+  //   setOtherReason(otherReason.length > 0);
+  // }, [otherReason]);
+
+  const handleSetOtherReasonChange = (value) => setOtherReason(value)
+  const handleSetReasonSelectedChange = (value) => setReasonSelected(value)
+
+  // useEffect(() => {
+  //   setOtherReasonAdded(otherReason.length > 0);
+  // }, [otherReason]);
 
   const validateForm = () => {
-    if (shouldShowOtherReturnReason) {
-      return otherReasonAdded
+    if (reasonSelected === "Other") {
+      return (otherReason.length > 0)
+    }
+    if (reasonSelected !== null) {
+      return true
     }
 
-    return true;
+    return false;
   };
 
-  // const formChanged = (organization) => {
-  //   setTeamAssignedFlag(organization);
+  // const formChanged = (otherReason) => {
+  //   setOtherReasonAdded(otherReason);
   // };
 
   // Could possibly use updateCorrespondence method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
 
   const submit = () => {
     // Could possibly use submit method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
+    console.log(reasonSelected);
 
-    console.error('No valid organization selected');
+    // console.error('No valid organization selected');
   };
 
   const modalProps = {
@@ -94,13 +105,13 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
         options={returnReasonOptions}
         // value={returnReasonOptions[1]}
         // errorMessage={"Error"}
-        // onChange={changePoaMatches}
+        onChange={handleSetReasonSelectedChange}
       />
-      {shouldShowOtherReturnReason && (
+      { reasonSelected === "Other" && (
         <TextareaField
           name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE}
           id="otherReturnReason"
-          onChange={setOtherReason}
+          onChange={handleSetOtherReasonChange}
           value={otherReason}
         />
       )}
