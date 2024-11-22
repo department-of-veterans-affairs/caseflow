@@ -1,3 +1,11 @@
+WITH
+    latest_cutoff_date AS (
+        SELECT cutoff_date
+        FROM schedulable_cutoff_dates
+        ORDER BY created_at DESC
+        LIMIT 1
+    )
+
 SELECT
   appeals.id AS appeal_id,
   'Appeal' AS appeal_type,

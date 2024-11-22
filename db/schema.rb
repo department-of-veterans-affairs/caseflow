@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_20_101514) do
+ActiveRecord::Schema.define(version: 2024_11_20_101515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2614,7 +2614,13 @@ ActiveRecord::Schema.define(version: 2024_11_20_101514) do
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT appeals.id AS appeal_id,
+      WITH latest_cutoff_date AS (
+           SELECT schedulable_cutoff_dates.cutoff_date
+             FROM schedulable_cutoff_dates
+            ORDER BY schedulable_cutoff_dates.created_at DESC
+           LIMIT 1
+          )
+   SELECT appeals.id AS appeal_id,
       'Appeal'::text AS appeal_type,
       COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
       replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
