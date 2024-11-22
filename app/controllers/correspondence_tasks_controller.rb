@@ -57,7 +57,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def create_return_to_inbound_ops_task
-
+    
   end
 
   def update
@@ -65,40 +65,33 @@ class CorrespondenceTasksController < TasksController
   end
 
   def assign_to_person
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update!(
+    correspondence_task.update!(
       status: Constants.TASK_STATUSES.assigned,
       assigned_to: User.find_by_css_id(correspondence_tasks_params[:assigned_to]),
-      assigned_at: Time.zone.now
+      assigned_at: Time.zone.now,
+      instructions: correspondence_task.instructions << correspondence_tasks_params[:instructions]
     )
-    task.instructions << correspondence_tasks_params[:instructions]
-    task.save!
   end
 
   def assign_to_team
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update!(
+    correspondence_task.update!(
       status: Constants.TASK_STATUSES.assigned,
       assigned_to: Organization.find_by(name: correspondence_tasks_params[:assigned_to]),
-      assigned_at: Time.zone.now
+      assigned_at: Time.zone.now,
+      instructions: correspondence_task.instructions << correspondence_tasks_params[:instructions]
     )
-    task.instructions << correspondence_tasks_params[:instructions]
-    task.save!
   end
 
   def cancel
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update!(status: Constants.TASK_STATUSES.cancelled)
+    correspondence_task.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def complete
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update!(status: Constants.TASK_STATUSES.completed)
+    correspondence_task.update!(status: Constants.TASK_STATUSES.completed)
   end
 
   def change_task_type
-    @task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    @task.update!(
+    correspondence_task.update!(
       type: change_task_type_params[:type],
       instructions: change_task_type_params[:instructions]
     )
@@ -130,18 +123,17 @@ class CorrespondenceTasksController < TasksController
   end
 
   def process_package_action_decision(decision)
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    requesting_user_name = task.assigned_by&.display_name
+    requesting_user_name = correspondence_task.assigned_by&.display_name
     begin
       case decision
       when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["APPROVE"]
-        if task.is_a?(ReassignPackageTask)
-          task.approve(current_user, User.find_by(css_id: correspondence_tasks_params[:new_assignee]))
-        elsif task.is_a?(RemovePackageTask)
-          task.approve(current_user)
+        if correspondence_task.is_a?(ReassignPackageTask)
+          correspondence_task.approve(current_user, User.find_by(css_id: correspondence_tasks_params[:new_assignee]))
+        elsif correspondence_task.is_a?(RemovePackageTask)
+          correspondence_task.approve(current_user)
         end
       when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["REJECT"]
-        task.reject(current_user, correspondence_tasks_params[:decision_reason])
+        correspondence_task.reject(current_user, correspondence_tasks_params[:decision_reason])
       end
       package_action_flash(decision.upcase, requesting_user_name)
     rescue StandardError
@@ -181,5 +173,9 @@ class CorrespondenceTasksController < TasksController
     else
       fail NotImplementedError "Type not implemented"
     end
+  end
+
+  def correspondence_task
+    @correspondence_task ||= CorrespondenceTask.find(correspondence_tasks_params[:task_id])
   end
 end
