@@ -139,7 +139,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   end
 
   def vacols_contractor_code
-    contractor&.directory[0].upcase
+    contractor&.directory[0]
   end
 
   def truncate_task_number_for_vacols(task_number)
