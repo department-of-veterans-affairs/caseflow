@@ -63,6 +63,7 @@ disabled_flags = %w[
   acd_disable_legacy_lock_ready_appeals
   justification_reason
   disable_legacy_distribution_stats
+  prefetchDisabled
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
