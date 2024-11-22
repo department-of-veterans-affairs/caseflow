@@ -225,53 +225,49 @@ const PdfDocument = ({
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
-  if (isDocumentLoadError) {
-    return (
-      <div id="pdfContainer" style={containerStyle}>
-        <DocumentLoadError doc={doc} />
-      </div>
-    );
-  }
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (pdfjsDocumentRef.current && !pdfjsDocumentRef.current._transport.destroyed) {
-    return (
-      <>
-        <div id="pdfContainer" style={containerStyle}>
-          {pdfPages.map((page, index) => (
-            <Page
-              setCurrentPage={setCurrentPage}
-              scale={zoomLevel}
-              page={page}
-              rotation={rotateDeg}
-              key={`doc-${doc.id}-page-${index + 1}`}
-              renderItem={(childProps) => (
-                <Layer isCurrentPage={currentPage === page.pageNumber}
-                  documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-                  <TextLayer
-                    textContent={textContent[index]}
-                    zoomLevel={zoomLevel}
-                    rotation={rotateDeg}
-                    viewport={page.getViewport({ scale: 1 })}
-                    hasSearchMatch={pageIndexWithMatch === index + 1}
-                  />
-                </Layer>
-              )}
-              setRenderingMetrics={handleRenderingMetrics}
-            />
-          ))}
-        </div>
-        <ReaderFooter
-          currentPage={currentPage}
-          docId={doc.id}
-          isDocumentLoadError={isDocumentLoadError}
-          numPages={numPages}
+  const renderPages = () => {
+    // eslint-disable-next-line no-underscore-dangle
+    if (pdfjsDocumentRef.current && !pdfjsDocumentRef.current._transport.destroyed) {
+      return pdfPages.map((page, index) => (
+        <Page
           setCurrentPage={setCurrentPage}
-          showPdf={showPdf}
+          scale={zoomLevel}
+          page={page}
+          rotation={rotateDeg}
+          key={`doc-${doc.id}-page-${index + 1}`}
+          renderItem={(childProps) => (
+            <Layer isCurrentPage={currentPage === page.pageNumber}
+              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+              <TextLayer
+                textContent={textContent[index]}
+                zoomLevel={zoomLevel}
+                rotation={rotateDeg}
+                viewport={page.getViewport({ scale: 1 })}
+                hasSearchMatch={pageIndexWithMatch === index + 1}
+              />
+            </Layer>
+          )}
+          setRenderingMetrics={handleRenderingMetrics}
         />
-      </>
-    );
-  }
+      ));
+    }
+  };
+
+  return (
+    <>
+      <div id="pdfContainer" style={containerStyle}>
+        {isDocumentLoadError ? <DocumentLoadError doc={doc} /> : renderPages()}
+      </div>
+      <ReaderFooter
+        currentPage={currentPage}
+        docId={doc.id}
+        isDocumentLoadError={isDocumentLoadError}
+        numPages={numPages}
+        setCurrentPage={setCurrentPage}
+        showPdf={showPdf}
+      />
+    </>
+  );
 };
 
 PdfDocument.propTypes = {
