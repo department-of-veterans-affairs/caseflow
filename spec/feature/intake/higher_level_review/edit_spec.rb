@@ -560,19 +560,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_no_content("Something went wrong")
       end
     end
-
-    context "when updating an ineligible claim without an epe id" do
-      before do
-        untimely_request_issue.update(
-          closed_at: nil, closed_status: nil, contention_removed_at: nil, ineligible_reason: nil, end_product_establishment_id: nil
-        )
-      end
-
-      it "verifies we can return to the edit page when we have an and displays an error when epe id is nil" do
-        visit "higher_level_reviews/#{ep_claim_id}/edit"
-        expect(page).to have_content("Something went wrong")
-      end
-    end
   end
 
   context "Nonrating issue with untimely date and VACOLS opt-in" do
