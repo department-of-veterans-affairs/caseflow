@@ -192,6 +192,17 @@ const PdfDocument = ({
     }
   }, [pdfjsDocumentRef.current]);
 
+  // the key for PdfDocument prevents this block from being run
+  useEffect(() => {
+    return () => {
+      pdfjsLoadingTaskRef.current?.destroy();
+      pdfjsDocumentRef.current?.destroy();
+
+      pdfjsLoadingTaskRef.current = null;
+      pdfjsDocumentRef.current = null;
+    };
+  }, [doc.content_url]);
+
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));
   }, [doc.id]);
@@ -214,13 +225,20 @@ const PdfDocument = ({
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
-  return (
-    <>
+  if (isDocumentLoadError) {
+    return (
       <div id="pdfContainer" style={containerStyle}>
-        {isDocumentLoadError ?
-          (<DocumentLoadError doc={doc} />) :
+        <DocumentLoadError doc={doc} />
+      </div>
+    );
+  }
 
-          (pdfPages.map((page, index) => (
+  // eslint-disable-next-line no-underscore-dangle
+  if (pdfjsDocumentRef.current && !pdfjsDocumentRef.current._transport.destroyed) {
+    return (
+      <>
+        <div id="pdfContainer" style={containerStyle}>
+          {pdfPages.map((page, index) => (
             <Page
               setCurrentPage={setCurrentPage}
               scale={zoomLevel}
@@ -241,19 +259,19 @@ const PdfDocument = ({
               )}
               setRenderingMetrics={handleRenderingMetrics}
             />
-          )))
-        }
-      </div>
-      <ReaderFooter
-        currentPage={currentPage}
-        docId={doc.id}
-        isDocumentLoadError={isDocumentLoadError}
-        numPages={numPages}
-        setCurrentPage={setCurrentPage}
-        showPdf={showPdf}
-      />
-    </>
-  );
+          ))}
+        </div>
+        <ReaderFooter
+          currentPage={currentPage}
+          docId={doc.id}
+          isDocumentLoadError={isDocumentLoadError}
+          numPages={numPages}
+          setCurrentPage={setCurrentPage}
+          showPdf={showPdf}
+        />
+      </>
+    );
+  }
 };
 
 PdfDocument.propTypes = {
