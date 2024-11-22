@@ -2530,34 +2530,6 @@ ActiveRecord::Schema.define(version: 2024_11_18_155614) do
       $function$
   SQL
 
-
-  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
-  SQL
-
-  create_view "remands", sql_definition: <<-SQL
-      SELECT supplemental_claims.id,
-      supplemental_claims.benefit_type,
-      supplemental_claims.created_at,
-      supplemental_claims.decision_review_remanded_id,
-      supplemental_claims.decision_review_remanded_type,
-      supplemental_claims.establishment_attempted_at,
-      supplemental_claims.establishment_canceled_at,
-      supplemental_claims.establishment_error,
-      supplemental_claims.establishment_last_submitted_at,
-      supplemental_claims.establishment_processed_at,
-      supplemental_claims.establishment_submitted_at,
-      supplemental_claims.filed_by_va_gov,
-      supplemental_claims.legacy_opt_in_approved,
-      supplemental_claims.receipt_date,
-      supplemental_claims.updated_at,
-      supplemental_claims.uuid,
-      supplemental_claims.veteran_file_number,
-      supplemental_claims.veteran_is_not_claimant,
-      supplemental_claims.type
-     FROM supplemental_claims
-    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
-  SQL
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
            SELECT schedulable_cutoff_dates.cutoff_date
