@@ -12,7 +12,7 @@ exports[`DeleteModal renders correctly renders correctly 1`] = `
   >
     <div
       class="cf-modal-body"
-      id=""
+      id="delete_search_modal"
     >
       <button
         class="cf-modal-close"

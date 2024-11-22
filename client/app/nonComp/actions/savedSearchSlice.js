@@ -43,6 +43,8 @@ export const createSearch = createAsyncThunk(
       const url = `/decision_reviews/${organizationUrl}/searches`;
       const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
 
+      thunkApi.dispatch(fetchedSearches({ organizationUrl }));
+
       return thunkApi.fulfillWithValue(response.body);
     } catch (error) {
       console.error(error);

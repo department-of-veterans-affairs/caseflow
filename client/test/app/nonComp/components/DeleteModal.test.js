@@ -10,7 +10,7 @@ import COPY from 'app/../COPY';
 
 const search = {
   savedSearch: {
-    selectedSearch:{
+    selectedSearch: {
       createdAt: '2024-11-14T08:58:19.706-05:00',
       description: 'Ad explicabo earum. Corrupti excepturi reiciendis. Qui eaque dolorem.',
       id: '61',
@@ -21,7 +21,7 @@ const search = {
       }
     }
   }
-}
+};
 
 describe('DeleteModal', () => {
   const setup = (storeValues = {}) => {

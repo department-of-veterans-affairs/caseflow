@@ -2,12 +2,26 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import SavedSearches from './SavedSearches';
+import DeleteModal from 'app/nonComp/components/DeleteModal';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 import { applyMiddleware, createStore, compose } from 'redux';
-import savedSearchesData from '../../../test/data/nonComp/savedSearchesData';
 
 import thunk from 'redux-thunk';
+
+const search = {
+  savedSearch: {
+    selectedSearch: {
+      createdAt: '2024-11-14T08:58:19.706-05:00',
+      description: 'Ad explicabo earum. Corrupti excepturi reiciendis. Qui eaque dolorem.',
+      id: '61',
+      name: 'Search to be deleted',
+      savedSearch: { },
+      type: 'saved_search',
+      user: {
+      }
+    }
+  }
+};
 
 const ReduxDecorator = (Story, options) => {
   const props = {
@@ -28,8 +42,8 @@ const ReduxDecorator = (Story, options) => {
 };
 
 export default {
-  title: 'Queue/NonComp/SavedSearches',
-  component: SavedSearches,
+  title: 'Queue/NonComp/SavedSearches/Delete Modal',
+  component: DeleteModal,
   decorators: [ReduxDecorator],
   parameters: {},
   args: {},
@@ -40,19 +54,19 @@ export default {
 
 const Template = (args) => {
   return (
-    <SavedSearches
+    <DeleteModal
       {...args}
     />
   );
 };
 
-export const SavedSearchesTemplate = Template.bind({});
+export const DeleteModalTemplate = Template.bind({});
 
-SavedSearchesTemplate.story = {
-  name: 'Saved Searches'
+DeleteModalTemplate.story = {
+  name: 'Delete Modal'
 };
 
-SavedSearchesTemplate.args = {
-  data: { nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches }
+DeleteModalTemplate.args = {
+  data: { nonComp: { businessLineUrl: 'vha' }, savedSearch: search.savedSearch }
 };
 

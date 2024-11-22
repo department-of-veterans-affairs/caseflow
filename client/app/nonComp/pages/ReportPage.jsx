@@ -19,6 +19,7 @@ import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
+import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 import Checkbox from 'app/components/Checkbox';
@@ -345,6 +346,7 @@ const ReportPage = ({ history }) => {
   const watchRadioStatus = watch('radioStatus');
 
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const saveLimitCount = userSearches.length;
 
@@ -520,8 +522,9 @@ const ReportPage = ({ history }) => {
             <SaveSearchModal setShowModal={setShowModal} /> : null
           }
           { showModal && (saveLimitCount >= 10) ?
-            <SaveLimitReachedModal setShowLimitModal={setShowModal} /> : null
+            <SaveLimitReachedModal setShowLimitModal={setShowModal} setShowDeleteModal={setShowDeleteModal} /> : null
           }
+          {showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null}
           {formState.isDirty ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>

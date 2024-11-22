@@ -1526,5 +1526,6 @@
   "SAVE_LIMIT_REACH_TITLE": "Limit Reached",
   "SAVE_LIMIT_REACH_MESSAGE": "You've reached the max limit of 10 saved searches. Please select a search to delete before proceeding.",
   "SEARCH_PARAMETERS": "Search Parameters",
-  "SEARCH_ALERT_DESCRIPTION": "To view your saved searches, click on the \"View saved searches\" button."
+  "SEARCH_ALERT_DESCRIPTION": "To view your saved searches, click on the \"View saved searches\" button.",
+  "SAVED_SEARCH_TAB_DESCRIPTION": "Select a search you previously saved or look for ones others have saved by switching between the tabs."
 }

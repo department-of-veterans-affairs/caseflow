@@ -12,6 +12,7 @@ import SearchTable from 'app/queue/components/SearchTable';
 import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 import { isEmpty } from 'lodash';
+import COPY from 'app/../COPY';
 
 const SavedSearches = () => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
@@ -86,7 +87,7 @@ const SavedSearches = () => {
       <NonCompLayout>
         <h1>Saved Searches</h1>
         <div>
-          Select a search you previously saved or look for ones others have saved by switching between the tabs.
+          {COPY.SAVED_SEARCH_TAB_DESCRIPTION}
         </div>
         <TabWindow name="saved-search-queue" tabs={ALL_TABS} onChange={onTabSelected} />
       </NonCompLayout>

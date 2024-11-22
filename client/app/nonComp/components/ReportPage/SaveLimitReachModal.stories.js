@@ -2,12 +2,12 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import SavedSearches from './SavedSearches';
+import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 import { applyMiddleware, createStore, compose } from 'redux';
-import savedSearchesData from '../../../test/data/nonComp/savedSearchesData';
 
 import thunk from 'redux-thunk';
+import savedSearchesData from 'test/data/nonComp/savedSearchesData';
 
 const ReduxDecorator = (Story, options) => {
   const props = {
@@ -28,8 +28,8 @@ const ReduxDecorator = (Story, options) => {
 };
 
 export default {
-  title: 'Queue/NonComp/SavedSearches',
-  component: SavedSearches,
+  title: 'Queue/NonComp/SavedSearches/Save Limit Reach Modal',
+  component: SaveLimitReachedModal,
   decorators: [ReduxDecorator],
   parameters: {},
   args: {},
@@ -40,19 +40,19 @@ export default {
 
 const Template = (args) => {
   return (
-    <SavedSearches
+    <SaveLimitReachedModal
       {...args}
     />
   );
 };
 
-export const SavedSearchesTemplate = Template.bind({});
+export const SaveLimitReachedModalTemplate = Template.bind({});
 
-SavedSearchesTemplate.story = {
-  name: 'Saved Searches'
+SaveLimitReachedModalTemplate.story = {
+  name: 'Save Limit Reach Modal'
 };
 
-SavedSearchesTemplate.args = {
+SaveLimitReachedModalTemplate.args = {
   data: { nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches }
 };
 

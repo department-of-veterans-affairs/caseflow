@@ -54,9 +54,7 @@ exports[`SaveLimitReachModal renders correctly renders correctly 1`] = `
         <div
           data-css-2flkvz=""
         >
-          <p>
-            You've reached the max limit of 10 saved searches. Please select a search to delete before proceeding.
-          </p>
+          You've reached the max limit of 10 saved searches. Please select a search to delete before proceeding.
         </div>
       </div>
       <div
@@ -76,7 +74,8 @@ exports[`SaveLimitReachModal renders correctly renders correctly 1`] = `
         </span>
         <span>
           <button
-            class="usa-button cf_add_margin cf-push-right usa-button"
+            class="cf_add_margin cf-push-right usa-button-disabled usa-button"
+            disabled=""
             id="Limit-Reached-button-id-1"
             type="button"
           >
