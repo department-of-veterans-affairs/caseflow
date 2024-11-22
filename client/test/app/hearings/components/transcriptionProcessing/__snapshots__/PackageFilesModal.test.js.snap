@@ -227,7 +227,8 @@ exports[`Package files modal matches snapshot 1`] = `
         </span>
         <span>
           <button
-            class="usa-button usa-button-primary cf-push-right usa-button"
+            class="cf-push-right usa-button-disabled usa-button"
+            disabled=""
             id="Package-files-button-id-1"
             type="button"
           >
