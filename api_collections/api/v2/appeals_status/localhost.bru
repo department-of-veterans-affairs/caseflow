@@ -1,0 +1,19 @@
+meta {
+  name: localhost
+  type: http
+  seq: 2
+}
+
+get {
+  url: 127.0.0.1:3000/api/v2/appeals
+  body: none
+  auth: bearer
+}
+
+headers {
+  ssn: 123000001
+}
+
+auth:bearer {
+  token: c3806cc857ef441ab780946b7be962a4
+}
