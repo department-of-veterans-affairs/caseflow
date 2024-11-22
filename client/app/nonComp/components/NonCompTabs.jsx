@@ -48,14 +48,7 @@ const NonCompTabsUnconnected = (props) => {
     const tabFromParams = params.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM);
 
     if (completedDateFilter) {
-      // TODO: See if this can be condensed
-      if (currentTabName !== 'completed' && tabFromParams === 'completed' && tempDateFilter) {
-        // From another tab -> completed when you have an existing tempDateFilter then use it somehow
-      } else if (currentTabName !== 'completed' && tabFromParams === 'completed' && !tempDateFilter) {
-        // Navigating from another tab back to completed without an existing tempDateFilter so it was cleared
-      } else {
-        setTempDateFilter(completedDateFilter);
-      }
+      setTempDateFilter(completedDateFilter);
     } else if (!completedDateFilter && tabFromParams === 'completed') {
       // Since it is still in the completed tab without a filter, assume it was cleared
       setTempDateFilter('cleared');
