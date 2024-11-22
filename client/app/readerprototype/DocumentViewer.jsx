@@ -1,17 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { CATEGORIES } from '../reader/analytics';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
+import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { getFilteredDocuments } from '../reader/selectors';
+import DeleteModal from './components/Comments/DeleteModal';
+import ShareModal from './components/Comments/ShareModal';
 import PdfDocument from './components/PdfDocument';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { CATEGORIES } from '../reader/analytics';
-import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
-import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
-import DeleteModal from './components/Comments/DeleteModal';
-import ShareModal from './components/Comments/ShareModal';
 import { showSideBarSelector } from './selectors';
 import { getRotationDeg } from './util/documentUtil';
 import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
@@ -24,15 +25,16 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
+  const filteredDocuments = useSelector((state) => getFilteredDocuments(state));
+  const doc = filteredDocuments.find((x) => x.id === currentDocumentId);
 
   if (!doc) {
     return;
   }
 
-  const currentDocIndex = props.allDocuments.indexOf(doc);
-  const prevDoc = props.allDocuments?.[currentDocIndex - 1];
-  const nextDoc = props.allDocuments?.[currentDocIndex + 1];
+  const currentDocIndex = filteredDocuments.indexOf(doc);
+  const prevDoc = filteredDocuments?.[currentDocIndex - 1];
+  const nextDoc = filteredDocuments?.[currentDocIndex + 1];
 
   /* eslint-disable camelcase */
   const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
