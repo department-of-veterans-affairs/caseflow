@@ -1092,7 +1092,6 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Cases completed (Last 30 Days)")
       expect(page).to have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
-
     end
   end
 
