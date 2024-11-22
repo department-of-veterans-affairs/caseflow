@@ -53,6 +53,37 @@ feature "Saved Searches", :postgres do
         expect(page).to have_text("Viewing 1-1 of 1 total")
         expect(table).to have_selector("tr", count: 1)
       end
+
+      it "should have delete button that is disabled." do
+        delete_buttom = find("button", text: "Delete")
+        expect(delete_buttom[:disabled]).to eq "true"
+      end
+
+      it "should have delete button that will be enabled after radio button is selected." do
+        select_row_radio = page.find(".cf-form-radio-option")
+        select_row_radio.click
+
+        delete_buttom = find("button", text: "Delete")
+
+        expect(delete_buttom[:disabled]).to eq "false"
+      end
+
+      it "should open delete modal and deleting button should remove the saved search" do
+        select_row_radio = page.find(".cf-form-radio-option")
+        select_row_radio.click
+
+        find("button", text: "Delete").click
+
+        within ".cf-modal-body" do
+          expect(page).to have_content(COPY::DELETE_SEARCH_TITLE)
+          expect(page).to have_text(COPY::DELETE_SEARCH_DESCRIPTION)
+          expect(page).to have_text(user_saved_search.name)
+          find("button", text: "Delete").click
+        end
+
+        expect(page).to have_content("You have successfully deleted #{user_saved_search.name}")
+        expect(page).to have_text("Viewing 0-0 of 0 total")
+      end
     end
   end
 

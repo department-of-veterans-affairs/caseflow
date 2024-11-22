@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeleteModal renders correctly renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id=""
+    >
+      <button
+        class="cf-modal-close"
+        id="Delete-search-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <g
+            fill="#212121"
+          >
+            <path
+              d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+            />
+          </g>
+        </svg>
+      </button>
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <i
+          class="fa fa-2x fa-warning"
+          data-css-wfzzkn=""
+        />
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
+        >
+          Delete search
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          Deleting this search will remove it from Saved Searches. Are you sure you want to continue?
+          <ul>
+            <li>
+              <b />
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <div>
+          <span
+            class="cf-push-right"
+          >
+            <span>
+              <button
+                class="cf-submit usa-button"
+                id="delete-search"
+                type="button"
+              >
+                Delete
+              </button>
+            </span>
+          </span>
+          <span
+            class="cf-push-left"
+          >
+            <span>
+              <button
+                class="cf-modal-link cf-btn-link usa-button"
+                id="cancel"
+                type="button"
+              >
+                Cancel
+              </button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;

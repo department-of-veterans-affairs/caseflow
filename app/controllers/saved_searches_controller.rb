@@ -43,7 +43,7 @@ class SavedSearchesController < ApplicationController
     begin
       @search = current_user.saved_searches.find(params[:id])
       @search.destroy!
-      render json: { status: :ok }
+      render json: { message: "You have successfully deleted #{@search.name}" }, status: :ok
     rescue ActiveRecord::RecordNotFound => error
       render json: { error: error.to_s }, status: :not_found
     end

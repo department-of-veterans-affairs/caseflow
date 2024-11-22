@@ -51,6 +51,23 @@ export const createSearch = createAsyncThunk(
     }
   });
 
+export const deleteSearch = createAsyncThunk(
+  'delete/deleteSearch',
+  async({ organizationUrl, data }, thunkApi) => {
+    try {
+      const url = `/decision_reviews/${organizationUrl}/searches/${data.id}`;
+      const response = await ApiUtil.delete(url);
+
+      thunkApi.dispatch(fetchedSearches({ organizationUrl }));
+
+      return thunkApi.fulfillWithValue(response.body);
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Delete Search failed: ${error.message}`, { analytics: true });
+    }
+  });
+
 const savedSearchSlice = createSlice({
   name: 'savedSearch',
   initialState,
@@ -83,6 +100,17 @@ const savedSearchSlice = createSlice({
         state.message = action.payload.message;
       }).
       addCase(createSearch.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      }).
+      addCase(deleteSearch.pending, (state) => {
+        state.status = 'loading';
+      }).
+      addCase(deleteSearch.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.message = action.payload.message;
+      }).
+      addCase(deleteSearch.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
