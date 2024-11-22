@@ -15,6 +15,7 @@ module Seeds
 
     private
 
+    # compensation_all is basically a duplicate of compensation
     ISSUE_CATEGORIES = Constants::ISSUE_CATEGORIES.delete("compensation_all")
 
     def initial_file_number_and_ssn
@@ -63,16 +64,16 @@ module Seeds
       # appeals with nonrating issues
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
       benefit_type, category = generate_nonrating_category_and_description
-      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
+      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: lorem)
       benefit_type, category = generate_nonrating_category_and_description
-      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
+      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: lorem)
 
       # appeals with unidentified issues
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
       create(:request_issue, :unidentified, contested_rating_issue_diagnostic_code: nil, decision_review: appeal)
       # appeals with edited issue descriptions
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
-      create_list(:request_issue, 2, :nonrating, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, edited_description: "Edited issue for testing")
+      create_list(:request_issue, 2, :nonrating, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, edited_description: "Edited issue #{lorem}")
 
       # CAVC remand (for remanded issues)
       create(:appeal, :type_cavc_remand)
@@ -111,6 +112,10 @@ module Seeds
       category = Constants::ISSUE_CATEGORIES[benefit_type].sample
 
       [benefit_type, category]
+    end
+
+    def lorem
+      Faker::Lorem.sentence(word_count: Random.rand(5..15))
     end
   end
 end
