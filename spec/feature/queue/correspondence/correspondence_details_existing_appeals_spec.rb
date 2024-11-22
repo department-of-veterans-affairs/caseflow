@@ -59,6 +59,16 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       expect(current_path).to eq("/queue/correspondence/team")
     end
 
+    it "validate error banner for save changes button" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[0].click
+      page.all(".cf-form-checkbox")[1].click
+      allow_any_instance_of(CorrespondenceDetailsController).to receive(:update_correspondence).and_raise("Internal Server Error")
+      click_button "Save changes"
+      expect(page).to have_content("Changes were not successfully saved")
+      expect(page).to have_content("Please try again at a later time.")
+    end
+
     it "validate return to queue modal cancel" do
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[0].click
