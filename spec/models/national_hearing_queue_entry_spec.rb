@@ -356,8 +356,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     let(:request_issues) do
       [
-        create(:request_issue, nonrating_issue_category: "Category C", mst_status: true, pact_status: false),
-        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: true),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: false),
         create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
         create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
       ]
@@ -365,8 +365,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     let(:request_issues_mst_pact) do
       [
-        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
-        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: true, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: true),
         create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
         create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
       ]
@@ -472,7 +472,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           ama_hearing_task.status,
           "va",
           "usa",
-          "Oakland, CA (RO)"
+          "Oakland, CA (RO)",
+          false,
+          false
         ],
         [
           legacy_with_sched_task.id,
@@ -492,7 +494,40 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           legacy_hearing_task.status,
           "va",
           "usa",
-          "Oakland, CA (RO)"
+          "Oakland, CA (RO)",
+          false,
+          false
+        ]
+      ]
+
+      clean_up_after_threads
+    end
+
+    it "adds the Appeal info columns to the view in the proper format", bypass_cleaner: true do
+      expect(NationalHearingQueueEntry.count).to eq 0
+
+      ama_with_sched_task.request_issues = request_issues_mst_pact
+      ama_with_sched_task.save
+      CachedAppealService.new.cache_ama_appeals([ama_with_sched_task])
+
+      NationalHearingQueueEntry.refresh
+
+      expect(
+        NationalHearingQueueEntry.pluck(
+          :appeal_id, :external_id, :mst_indicator, :pact_indicator
+        )
+      ).to match_array [
+        [
+          ama_with_sched_task.id,
+          ama_with_sched_task.uuid,
+          true,
+          true
+        ],
+        [
+          legacy_with_sched_task.id,
+          case1.bfkey,
+          true,
+          true
         ]
       ]
 
