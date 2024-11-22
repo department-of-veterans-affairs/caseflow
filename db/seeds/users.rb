@@ -399,12 +399,12 @@ module Seeds
       create_auto_assign_permissions
       # Admin user
       admin_user_info = [
-       { css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin", admin: true }
+       { css_id: "IOT_ADMIN_USER", full_name: "Jon MailTeam Snow Admin", admin: true }
       ]
       # Non-admin users
       non_admin_users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"] },
-        { css_id: "INBOUND_OPS_TEAM_USER_U1", full_name: "Cedar Rain", roles: ["Mail Intake"] }
+        { css_id: "IOT_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"] },
+        { css_id: "IOT_USER_U1", full_name: "Cedar Rain", roles: ["Mail Intake"] }
       ]
 
       users_info = admin_user_info + non_admin_users_info
@@ -424,8 +424,8 @@ module Seeds
     def create_inbound_ops_team_auto_assign_user
       create_auto_assign_permissions
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A1", full_name: "Ember Sky" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A2", full_name: "Aspen Ridge" }
+        { css_id: "IOT_AUTO_ASSIGN_A1", full_name: "Ember Sky" },
+        { css_id: "IOT_AUTO_ASSIGN_A2", full_name: "Aspen Ridge" }
       ]
       users_info.map do |user_info|
         new_user = create_user(user_info)
@@ -443,8 +443,8 @@ module Seeds
     def create_inbound_ops_team_user_with_no_permissions
       create_auto_assign_permissions
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP1", full_name: "Noah Taylor" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP2", full_name: "Emma Brown" }
+        { css_id: "IOT_MAIL_INTAKE_USER_NP1", full_name: "Noah Taylor" },
+        { css_id: "IOT_MAIL_INTAKE_USER_NP2", full_name: "Emma Brown" }
       ]
       users_info.map do |user_info|
         new_user = User.find_or_create_by!(
@@ -460,8 +460,8 @@ module Seeds
     def create_inbound_ops_team_supervisor
       create_auto_assign_permissions
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S1", full_name: "Caleb Mitchell" },
-        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S2", full_name: "Scarlett Reed" }
+        { css_id: "IOT_ADMIN_USER_S1", full_name: "Caleb Mitchell" },
+        { css_id: "IOT_ADMIN_USER_S2", full_name: "Scarlett Reed" }
       ]
       users_info.map do |user_info|
         user = User.find_or_create_by!(
@@ -478,8 +478,8 @@ module Seeds
     def create_inbound_ops_team_superuser
       create_auto_assign_permissions
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_SUPERUSER1", full_name: "Willow Green" },
-        { css_id: "INBOUND_OPS_TEAM_SUPERUSER2", full_name: "Jasper Bloom" }
+        { css_id: "IOT_SUPERUSER1", full_name: "Willow Green" },
+        { css_id: "IOT_SUPERUSER2", full_name: "Jasper Bloom" }
       ]
       users_info.map do |user_info|
         new_user = User.find_or_create_by!(
@@ -501,8 +501,8 @@ module Seeds
     def create_inbound_ops_team_nod_user
       create_auto_assign_permissions
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD1", full_name: "Alexandr Johnson" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD2", full_name: "Sopia Williams" }
+        { css_id: "IOT_NOD1", full_name: "Alexandr Johnson" },
+        { css_id: "IOT_NOD2", full_name: "Sopia Williams" }
       ]
       users_info.map do |user_info|
         new_user = create_user(user_info)
