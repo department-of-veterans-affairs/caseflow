@@ -15,6 +15,8 @@ module Seeds
 
     private
 
+    ISSUE_CATEGORIES = Constants::ISSUE_CATEGORIES.delete("compensation_all")
+
     def initial_file_number_and_ssn
       @file_number ||= 456_000_000
       @ssn ||= 123_000_000
@@ -40,7 +42,7 @@ module Seeds
       # :with_request_issues creates appeals with contested rating issues
       # appeals after intake waiting for hearing or evidence submission window
       create(:appeal, :hearing_docket, :with_post_intake_tasks, :with_request_issues, issue_count: 2, veteran: create_veteran)
-      create(:appeal, :evidence_submission_docket, :with_post_intake_tasks, :with_request_issues, issue_count: 2)
+      create(:appeal, :evidence_submission_docket, :with_post_intake_tasks, :with_request_issues, issue_count: 2, veteran: create_veteran)
       # appeals ready for distribution
       create(:appeal, :direct_review_docket, :with_post_intake_tasks, :with_request_issues, issue_count: 2, veteran: create_veteran)
       # appeals awaiting assignment to attorney
@@ -53,20 +55,24 @@ module Seeds
       create(:appeal, :direct_review_docket, :at_judge_review, :with_request_issues, issue_count: 2, associated_judge: judge, associated_attorney: attorney_for_judge(judge), veteran: create_veteran)
       # appeals watiing for dispatch
       judge = judge_pool.sample
-      create(:appeal, :direct_review_docket, :at_bva_dispatch, :with_request_issues, issue_count: 2, associated_judge: judge, associated_attorney: attorney_for_judge(judge), veteran: create_veteran)
+      create(:appeal, :direct_review_docket, :at_bva_dispatch, :with_decision_issue, associated_judge: judge, associated_attorney: attorney_for_judge(judge), veteran: create_veteran)
       # appeals dispatched
       judge = judge_pool.sample
-      create(:appeal, :direct_review_docket, :dispatched, :with_request_issues, issue_count: 2, associated_judge: judge, associated_attorney: attorney_for_judge(judge), veteran: create_veteran)
+      create(:appeal, :direct_review_docket, :dispatched, :with_decision_issue, associated_judge: judge, associated_attorney: attorney_for_judge(judge), veteran: create_veteran)
 
       # appeals with nonrating issues
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
-      create_list(:request_issue, 2, :nonrating, decision_review: appeal)
+      benefit_type, category = generate_nonrating_category_and_description
+      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
+      category, description = generate_nonrating_category_and_description
+      create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
+
       # appeals with unidentified issues
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
-      create(:request_issue, :unidentified, decision_review: appeal)
+      create(:request_issue, :unidentified, contested_rating_issue_diagnostic_code: nil, decision_review: appeal)
       # appeals with edited issue descriptions
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
-      create_list(:request_issue, 2, :nonrating, edited_description: "Edited issue for testing")
+      create_list(:request_issue, 2, :nonrating, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, edited_description: "Edited issue for testing")
 
       # CAVC remand (for remanded issues)
       create(:appeal, :type_cavc_remand)
@@ -98,6 +104,13 @@ module Seeds
 
     def attorney_for_judge(judge)
       JudgeTeam.for_judge(judge)&.attorneys&.sample || default_attorney
+    end
+
+    def generate_nonrating_category_and_description
+      benefit_type = Constants::ISSUE_CATEGORIES.keys.sample
+      category = Constants::ISSUE_CATEGORIES[benefit_type].sample
+
+      [benefit_type, category]
     end
   end
 end
