@@ -110,8 +110,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
 
       it "returns success response hlr_not_null_date_of_death_eligible_legacy_issue_opted_in" do
         post :decision_review_completed, params: valid_params
-        expect(response).to have_http_status(:completed)
-        expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
+        expect(response).to have_http_status(:created)
+        expect(response.body).to include("DecisionReviewCreatedEvent successfully processed and backfilled")
         existing_request_issue.reload
         completed_request_issue = RequestIssue.find_by(reference_id: "1234")
         expect(completed_request_issue).to be

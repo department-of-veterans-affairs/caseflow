@@ -141,8 +141,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
 
       it "returns success response hlr_with_same_office_and_informal_conference_and_development_item_id" do
         post :decision_review_completed, params: valid_params
-        expect(response).to have_http_status(:completed)
-        expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
+        expect(response).to have_http_status(:created)
+        expect(response.body).to include("DecisionReviewCreatedEvent successfully processed and backfilled")
         completed_request_issue1 = RequestIssue.find_by(reference_id: "1234")
         expect(completed_request_issue1).to be
         expect(completed_request_issue1.nonrating_issue_category).to eq("DIC")

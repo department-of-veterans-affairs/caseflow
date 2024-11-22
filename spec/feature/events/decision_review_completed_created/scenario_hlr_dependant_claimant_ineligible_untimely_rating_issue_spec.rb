@@ -111,8 +111,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       it "returns success response hlr_dependant_claimant_ineligible_untimely_rating_issue" do
         # expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_completed, params: valid_params
-        expect(response).to have_http_status(:completed)
-        expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
+        expect(response).to have_http_status(:created)
+        expect(response.body).to include("DecisionReviewCreatedEvent successfully processed and backfilled")
         completed_request_issue = RequestIssue.find_by(reference_id: "1234")
         expect(completed_request_issue).to be
         expect(completed_request_issue.nonrating_issue_category).to eq(nil)
