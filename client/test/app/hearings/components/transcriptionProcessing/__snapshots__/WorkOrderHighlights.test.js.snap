@@ -60,18 +60,19 @@ exports[`WorkOrderHighlights matches snapshot 1`] = `
             ) appeals in this task order:
           </p>
           <table
-            data-css-16wdn9t=""
             style="margin: auto; width: 100%;"
           >
             <tr>
-              <th />
               <th
-                style="font-weight: bold;"
+                style="font-weight: bold; border-bottom: 1px solid; border-color: #d6d7d9;"
+              />
+              <th
+                style="font-weight: bold; border-bottom: 1px solid; border-color: #d6d7d9;"
               >
                 Docket Number
               </th>
               <th
-                style="font-weight: bold;"
+                style="font-weight: bold; border-bottom: 1px solid; border-color: #d6d7d9;"
               >
                 Case Details
               </th>
