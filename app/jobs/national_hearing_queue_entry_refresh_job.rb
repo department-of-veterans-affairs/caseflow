@@ -36,7 +36,7 @@ class NationalHearingQueueEntryRefreshJob < CaseflowJob
   end
 
   def timeout_set(seconds)
-    @timeout_seconds = seconds
+    @timeout_seconds = seconds.to_i
 
     ActiveRecord::Base.connection.execute("SET statement_timeout = '#{seconds}s'")
   end
