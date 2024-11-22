@@ -6,9 +6,7 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   end
 
   def reassign_action
-    if FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
-      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
-    end
+    Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
   end
 
   def available_actions(current_user, _role)
@@ -16,11 +14,14 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
     # VLJs cannot check out
     return [] if current_user != assigned_to || !current_user.judge_in_vacols?
 
-    [
+    actions = [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      review_action,
-      reassign_action
+      review_action
     ]
+
+    if SpecialCaseMovementTeam.singleton.user_has_access?(current_user) # logic busted
+      actions << reassign_action
+    end
   end
 
   def label
