@@ -289,6 +289,8 @@ export const workOrderColumn = () => {
         </Link>
       </div>
     ),
+    backendCanSort: true,
+    getSortValue: (row) => row.workOrder,
   };
 };
 
