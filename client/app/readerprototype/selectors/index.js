@@ -38,3 +38,4 @@ export const pdfSelector = (state) => ({
   pdfDocs: state.pdf.pdfDocuments,
   docLoadErrors: state.pdf.documentErrors
 });
+export const documentLoadErrorsSelector = (state) => state.pdf.documentErrors;
