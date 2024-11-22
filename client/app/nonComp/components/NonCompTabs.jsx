@@ -14,7 +14,7 @@ import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
-  const [tempDateFilter, setTempDateFilter] = useState('');
+  const [savedCompletedDateFilter, setSavedCompletedDateFilter] = useState('');
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
   const queryParams = new URLSearchParams(window.location.search);
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
@@ -48,10 +48,10 @@ const NonCompTabsUnconnected = (props) => {
     const tabFromParams = params.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM);
 
     if (completedDateFilter) {
-      setTempDateFilter(completedDateFilter);
+      setSavedCompletedDateFilter(completedDateFilter);
     } else if (!completedDateFilter && tabFromParams === 'completed') {
       // Since it is still in the completed tab without a filter, assume it was cleared
-      setTempDateFilter('cleared');
+      setSavedCompletedDateFilter('cleared');
     }
 
     setFilter(filterParams);
@@ -103,17 +103,16 @@ const NonCompTabsUnconnected = (props) => {
   // A completed date filter in the get parameters should override this.
   const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
 
-  // TODO: See if this can be condensed by always setting tempDateFilter with a default 7 days
-  // And setting it to empty string when it's cleared and always replacing the date filter that is there
   if (isVhaBusinessLine) {
-    if (tempDateFilter) {
-      if (tempDateFilter === 'cleared') {
+    if (savedCompletedDateFilter) {
+      if (savedCompletedDateFilter === 'cleared') {
         // Filter was cleared so don't set a filter now
       } else {
         // It's an existing filter so add it to the filters like normally
-        completedTabPaginationOptions['filter[]'].push(tempDateFilter);
+        completedTabPaginationOptions['filter[]'].push(savedCompletedDateFilter);
       }
     } else {
+      // Sets the last 7 days filter on first swap to the completed tasks tab if the temp date filter is not set
       const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
         some((item) => item.includes('col=completedDateColumn'));
 
