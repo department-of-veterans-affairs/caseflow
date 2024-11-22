@@ -4,72 +4,76 @@ import React from 'react';
 import COPY from '../../../COPY';
 import TRANSCRIPTION_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import Checkbox from '../../components/Checkbox';
-import { css } from 'glamor';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import LinkToAppeal from '../components/assignHearings/LinkToAppeal';
 import { renderLegacyAppealType } from '../../queue/utils';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-const styles = {
-  checkBoxHeader: css({
-    display: 'flex',
-    '& .cf-form-checkbox': {
-      position: 'relative',
-      bottom: '0.2em',
-      left: '2px',
-    },
-    '& p': {
-      marginBottom: '1em',
-      marginLeft: '0.2em',
-    },
-  }),
-  checkBox: css({
-    '& .cf-form-checkboxes': {
-      marginBottom: '0rem',
-    },
-    '& .checkbox-wrapper-undefined': {
-      marginTop: '1em',
-    },
-    '& .cf-form-checkbox': {
-      bottom: '0.7em',
-      left: '2px',
-    },
-  }),
-  headerWithIcon: css({
-    position: 'relative',
-    top: '0.2em',
-  }),
-  link: {
-    cursor: 'pointer',
-  },
-  unassign: {
-    cursor: 'pointer',
-    margin: '0 3em',
-  },
-  error: {
-    color: '#E60000',
-  },
-  linkIcon: {
-    position: 'relative',
-    marginLeft: '0.4em',
-    top: '3px',
-  },
-  workOrderLink: {
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    paddingRight: '1.3em',
-    position: 'relative',
-  },
-  workOrderLinkIcon: {
-    position: 'absolute',
-    top: '-0.2em',
-    right: 0,
-  },
-  contractor: {
-    maxWidth: '150px',
-  },
+const CheckBoxHeader = styled.div`
+  display: flex;
+
+  & .cf-form-checkbox {
+    position: relative;
+    bottom: 0.2em;
+    left: 2px;
+  }
+
+  & p {
+    margin-bottom: 1em;
+    margin-left: 0.2em;
+  }
+`;
+const CheckBox = styled.div`
+  & .cf-form-checkboxes {
+    margin-bottom: 0rem;
+  }
+
+  & .checkbox-wrapper-undefined {
+    margin-top: 1em;
+  }
+
+  & .cf-form-checkbox {
+    bottom: 0.7em;
+    left: 2px;
+  }
+`;
+
+const HeaderWithIcon = {
+  position: 'relative',
+  top: '0.2em'
+};
+
+const linkStyled = {
+  cursor: 'pointer',
+};
+
+const unassign = {
+  cursor: 'pointer',
+  margin: '0 3em',
+};
+
+const errorText = {
+  color: '#E60000',
+};
+
+const workOrderLink = {
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  paddingRight: '1.3em',
+  position: 'relative',
+};
+
+const workOrderLinkIcon = {
+  position: 'absolute',
+  top: '-0.2em',
+  right: 0,
+};
+
+const contractor = {
+  maxWidth: '150px',
 };
 
 export const selectColumn = (
@@ -93,15 +97,17 @@ export const selectColumn = (
 
   return {
     header: (
-      <div {...styles.checkBoxHeader}>
-        <Checkbox
-          ariaLabel="select all files checkbox"
-          name="select-all"
-          onChange={(val) => selectAll(val)}
-          value={selectAllChecked}
-          label=" "
-        />
-        <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
+      <div>
+        <CheckBoxHeader>
+          <Checkbox
+            ariaLabel="select all files checkbox"
+            name="select-all"
+            onChange={(val) => selectAll(val)}
+            value={selectAllChecked}
+            label=" "
+          />
+          <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
+        </CheckBoxHeader>
       </div>
     ),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
@@ -117,15 +123,17 @@ export const selectColumn = (
         selectedFile && selectedFile.message ? selectedFile.message : row.id;
 
       return (
-        <div {...styles.checkBox} title={title} className="select-file">
-          <Checkbox
-            ariaLabel="select file checkbox"
-            name={`select-file-${row.id}`}
-            onChange={(val) => selectFiles([row.id], val)}
-            label={' '}
-            value={value}
-            disabled={disabled}
-          />
+        <div title={title} className="select-file">
+          <CheckBox>
+            <Checkbox
+              ariaLabel="select file checkbox"
+              name={`select-file-${row.id}`}
+              onChange={(val) => selectFiles([row.id], val)}
+              label={' '}
+              value={value}
+              disabled={disabled}
+            />
+          </CheckBox>
         </div>
       );
     },
@@ -177,7 +185,7 @@ export const caseDetailsColumn = () => {
 export const typesColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME}
       </p>
     ),
@@ -207,7 +215,7 @@ export const typesColumn = () => {
 export const hearingDateColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}
       </p>
     ),
@@ -232,7 +240,7 @@ export const hearingTypeColumn = () => {
   return {
     className: 'test-column-name',
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME}
       </p>
     ),
@@ -257,7 +265,7 @@ export const hearingTypeColumn = () => {
 export const workOrderColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_WORK_ORDER_COLUMN_NAME}
       </p>
     ),
@@ -272,10 +280,10 @@ export const workOrderColumn = () => {
             row.workOrder
           }`}
           target="_blank"
-          style={styles.workOrderLink}
+          style={workOrderLink}
         >
           #{row.workOrder}
-          <span style={styles.workOrderLinkIcon}>
+          <span style={workOrderLinkIcon}>
             <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
           </span>
         </Link>
@@ -287,7 +295,7 @@ export const workOrderColumn = () => {
 export const itemsColumn = (openModal) => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_ITEMS_COLUMN_NAME}
       </p>
     ),
@@ -298,7 +306,7 @@ export const itemsColumn = (openModal) => {
     valueFunction: (row) => (
       <div>
         <a
-          style={styles.link}
+          style={linkStyled}
           onClick={() =>
             openModal({ type: 'highlights', workOrder: row.workOrder })
           }
@@ -313,7 +321,7 @@ export const itemsColumn = (openModal) => {
 export const dateSentColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_DATE_SENT_COLUMN_NAME}
       </p>
     ),
@@ -336,7 +344,7 @@ export const dateSentColumn = () => {
 
 export const returnDateColumn = () => {
   return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_RETURN_DATE_COLUMN_NAME}</p>,
+    header: <p style={HeaderWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_RETURN_DATE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.anyFiltersAreSet,
@@ -356,7 +364,7 @@ export const returnDateColumn = () => {
 export const expectedReturnDateColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_EXPECTED_RETURN_DATE_COLUMN_NAME}
       </p>
     ),
@@ -382,7 +390,7 @@ export const expectedReturnDateColumn = () => {
 export const uploadDateColumn = () => {
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_UPLOAD_DATE_COLUMN_NAME}
       </p>
     ),
@@ -415,7 +423,7 @@ export const contractorColumn = (contractors) => {
 
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME}
       </p>
     ),
@@ -427,7 +435,7 @@ export const contractorColumn = (contractors) => {
     label: 'contractor filter',
     filterOptions,
     valueFunction: (row) => (
-      <div style={styles.contractor}>{row.contractor}</div>
+      <div style={contractor}>{row.contractor}</div>
     ),
     backendCanSort: true,
     getSortValue: (row) => row.expectedReturnDate,
@@ -488,7 +496,7 @@ export const statusColumn = (currentTab) => {
 
   return {
     header: (
-      <p {...styles.headerWithIcon}>
+      <p style={HeaderWithIcon}>
         {COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME}
       </p>
     ),
@@ -516,7 +524,7 @@ export const statusColumn = (currentTab) => {
         <div
           style={
             row.status === 'Overdue' || row.status === 'Failed Retrieval (BOX)' ?
-              styles.error :
+            errorText :
               {}
           }
         >
@@ -534,7 +542,7 @@ export const unassignColumn = (unassignPackage) => {
     valueFunction: (row) => (
       <div>
         <a
-          style={styles.unassign}
+          style={unassign}
           onClick={() => unassignPackage(row.workOrder)}
         >
           Unassign
