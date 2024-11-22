@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        data-css-818q9q=""
+        style="padding-top: 3rem;"
       >
         <span>
           <a
@@ -29,16 +29,18 @@ Object {
               Transcription settings
             </h1>
             <div
-              data-css-89ju4s=""
+              style="padding: 4rem 0px 2.5rem;"
             >
-              <h2>
+              <h2
+                style="display: inline-block; vertical-align: middle; padding-top: 0.5rem;"
+              >
                 Edit current contractors
               </h2>
               <span
                 class="cf-push-right"
               >
                 <div
-                  data-css-19a7m7c=""
+                  style="float: left; padding-left: 2rem;"
                 >
                   <span>
                     <button
@@ -51,7 +53,7 @@ Object {
                   </span>
                 </div>
                 <div
-                  data-css-19a7m7c=""
+                  style="float: left; padding-left: 2rem;"
                 >
                   <span>
                     <button
@@ -69,20 +71,20 @@ Object {
           <div>
             <div>
               <div
-                data-css-u1bxy6=""
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
               >
                 <div
-                  data-css-n9fe5c=""
+                  style="flex: 1;"
                 >
                   <ul
-                    data-css-1pjs74n=""
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                   >
                     <h2
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       Genesis Government Solutions, Inc.
                       <div
-                        data-css-mjitkd=""
+                        style="position: relative; left: 10px; top: -2px;"
                       >
                         <span>
                           <button
@@ -92,7 +94,9 @@ Object {
                             <span>
                               Edit Information
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -143,18 +147,18 @@ Object {
                       John Doe
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       888-888-8888
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       genesisgovernmentsolutions@test.com
                     </li>
                     <span>
                       <li
-                        data-css-1t9uipm=""
+                        style="display: flex; flex-wrap: wrap;"
                       >
                         <strong>
                           Hearings sent to Genesis Government Solutions, Inc. this week: 
@@ -163,7 +167,7 @@ Object {
                         7 of 
                         150
                         <div
-                          data-css-1d9p13s=""
+                          style="position: relative; left: 10px; top: -4px;"
                         >
                           <span>
                             <button
@@ -173,7 +177,9 @@ Object {
                               <span>
                                 Edit Total
                               </span>
-                              <span>
+                              <span
+                                style="position: absolute;"
+                              >
                                 <svg
                                   class=""
                                   height="25"
@@ -215,7 +221,7 @@ Object {
                   </ul>
                 </div>
                 <span
-                  data-css-yl25k8=""
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
                 >
                   <h3>
                     Temporarily stop
@@ -237,20 +243,20 @@ Object {
                 </span>
               </div>
               <div
-                data-css-u1bxy6=""
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
               >
                 <div
-                  data-css-n9fe5c=""
+                  style="flex: 1;"
                 >
                   <ul
-                    data-css-1pjs74n=""
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                   >
                     <h2
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       Jamison Professional Services
                       <div
-                        data-css-mjitkd=""
+                        style="position: relative; left: 10px; top: -2px;"
                       >
                         <span>
                           <button
@@ -260,7 +266,9 @@ Object {
                             <span>
                               Edit Information
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -311,18 +319,18 @@ Object {
                       Jane Doe
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       888-888-8888
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       jamisonprofessionalservices@test.com
                     </li>
                     <span>
                       <li
-                        data-css-1t9uipm=""
+                        style="display: flex; flex-wrap: wrap;"
                       >
                         <strong>
                           Hearings sent to Jamison Professional Services this week: 
@@ -331,7 +339,7 @@ Object {
                         0 of 
                         0
                         <div
-                          data-css-1d9p13s=""
+                          style="position: relative; left: 10px; top: -4px;"
                         >
                           <span>
                             <button
@@ -341,7 +349,9 @@ Object {
                               <span>
                                 Edit Total
                               </span>
-                              <span>
+                              <span
+                                style="position: absolute;"
+                              >
                                 <svg
                                   class=""
                                   height="25"
@@ -383,7 +393,7 @@ Object {
                   </ul>
                 </div>
                 <span
-                  data-css-yl25k8=""
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
                 >
                   <h3>
                     Temporarily stop
@@ -405,20 +415,20 @@ Object {
                 </span>
               </div>
               <div
-                data-css-u1bxy6=""
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
               >
                 <div
-                  data-css-n9fe5c=""
+                  style="flex: 1;"
                 >
                   <ul
-                    data-css-1pjs74n=""
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                   >
                     <h2
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       The Ravens Group, Inc.
                       <div
-                        data-css-mjitkd=""
+                        style="position: relative; left: 10px; top: -2px;"
                       >
                         <span>
                           <button
@@ -428,7 +438,9 @@ Object {
                             <span>
                               Edit Information
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -479,18 +491,18 @@ Object {
                       Johnny Bravo
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       888-888-8888
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       theravensgroup@test.com
                     </li>
                     <span>
                       <li
-                        data-css-1t9uipm=""
+                        style="display: flex; flex-wrap: wrap;"
                       >
                         <strong>
                           Hearings sent to The Ravens Group, Inc. this week: 
@@ -499,7 +511,7 @@ Object {
                         2 of 
                         120
                         <div
-                          data-css-1d9p13s=""
+                          style="position: relative; left: 10px; top: -4px;"
                         >
                           <span>
                             <button
@@ -509,7 +521,9 @@ Object {
                               <span>
                                 Edit Total
                               </span>
-                              <span>
+                              <span
+                                style="position: absolute;"
+                              >
                                 <svg
                                   class=""
                                   height="25"
@@ -551,7 +565,7 @@ Object {
                   </ul>
                 </div>
                 <span
-                  data-css-yl25k8=""
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
                 >
                   <h3>
                     Temporarily stop
@@ -580,7 +594,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      data-css-818q9q=""
+      style="padding-top: 3rem;"
     >
       <span>
         <a
@@ -603,16 +617,18 @@ Object {
             Transcription settings
           </h1>
           <div
-            data-css-89ju4s=""
+            style="padding: 4rem 0px 2.5rem;"
           >
-            <h2>
+            <h2
+              style="display: inline-block; vertical-align: middle; padding-top: 0.5rem;"
+            >
               Edit current contractors
             </h2>
             <span
               class="cf-push-right"
             >
               <div
-                data-css-19a7m7c=""
+                style="float: left; padding-left: 2rem;"
               >
                 <span>
                   <button
@@ -625,7 +641,7 @@ Object {
                 </span>
               </div>
               <div
-                data-css-19a7m7c=""
+                style="float: left; padding-left: 2rem;"
               >
                 <span>
                   <button
@@ -643,20 +659,20 @@ Object {
         <div>
           <div>
             <div
-              data-css-u1bxy6=""
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
             >
               <div
-                data-css-n9fe5c=""
+                style="flex: 1;"
               >
                 <ul
-                  data-css-1pjs74n=""
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                 >
                   <h2
-                    data-css-1t9uipm=""
+                    style="display: flex; flex-wrap: wrap;"
                   >
                     Genesis Government Solutions, Inc.
                     <div
-                      data-css-mjitkd=""
+                      style="position: relative; left: 10px; top: -2px;"
                     >
                       <span>
                         <button
@@ -666,7 +682,9 @@ Object {
                           <span>
                             Edit Information
                           </span>
-                          <span>
+                          <span
+                            style="position: absolute;"
+                          >
                             <svg
                               class=""
                               height="25"
@@ -717,18 +735,18 @@ Object {
                     John Doe
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     888-888-8888
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     genesisgovernmentsolutions@test.com
                   </li>
                   <span>
                     <li
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       <strong>
                         Hearings sent to Genesis Government Solutions, Inc. this week: 
@@ -737,7 +755,7 @@ Object {
                       7 of 
                       150
                       <div
-                        data-css-1d9p13s=""
+                        style="position: relative; left: 10px; top: -4px;"
                       >
                         <span>
                           <button
@@ -747,7 +765,9 @@ Object {
                             <span>
                               Edit Total
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -789,7 +809,7 @@ Object {
                 </ul>
               </div>
               <span
-                data-css-yl25k8=""
+                style="padding: 1.5rem 6rem 2rem 2rem;"
               >
                 <h3>
                   Temporarily stop
@@ -811,20 +831,20 @@ Object {
               </span>
             </div>
             <div
-              data-css-u1bxy6=""
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
             >
               <div
-                data-css-n9fe5c=""
+                style="flex: 1;"
               >
                 <ul
-                  data-css-1pjs74n=""
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                 >
                   <h2
-                    data-css-1t9uipm=""
+                    style="display: flex; flex-wrap: wrap;"
                   >
                     Jamison Professional Services
                     <div
-                      data-css-mjitkd=""
+                      style="position: relative; left: 10px; top: -2px;"
                     >
                       <span>
                         <button
@@ -834,7 +854,9 @@ Object {
                           <span>
                             Edit Information
                           </span>
-                          <span>
+                          <span
+                            style="position: absolute;"
+                          >
                             <svg
                               class=""
                               height="25"
@@ -885,18 +907,18 @@ Object {
                     Jane Doe
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     888-888-8888
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     jamisonprofessionalservices@test.com
                   </li>
                   <span>
                     <li
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       <strong>
                         Hearings sent to Jamison Professional Services this week: 
@@ -905,7 +927,7 @@ Object {
                       0 of 
                       0
                       <div
-                        data-css-1d9p13s=""
+                        style="position: relative; left: 10px; top: -4px;"
                       >
                         <span>
                           <button
@@ -915,7 +937,9 @@ Object {
                             <span>
                               Edit Total
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -957,7 +981,7 @@ Object {
                 </ul>
               </div>
               <span
-                data-css-yl25k8=""
+                style="padding: 1.5rem 6rem 2rem 2rem;"
               >
                 <h3>
                   Temporarily stop
@@ -979,20 +1003,20 @@ Object {
               </span>
             </div>
             <div
-              data-css-u1bxy6=""
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
             >
               <div
-                data-css-n9fe5c=""
+                style="flex: 1;"
               >
                 <ul
-                  data-css-1pjs74n=""
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                 >
                   <h2
-                    data-css-1t9uipm=""
+                    style="display: flex; flex-wrap: wrap;"
                   >
                     The Ravens Group, Inc.
                     <div
-                      data-css-mjitkd=""
+                      style="position: relative; left: 10px; top: -2px;"
                     >
                       <span>
                         <button
@@ -1002,7 +1026,9 @@ Object {
                           <span>
                             Edit Information
                           </span>
-                          <span>
+                          <span
+                            style="position: absolute;"
+                          >
                             <svg
                               class=""
                               height="25"
@@ -1053,18 +1079,18 @@ Object {
                     Johnny Bravo
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     888-888-8888
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     theravensgroup@test.com
                   </li>
                   <span>
                     <li
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       <strong>
                         Hearings sent to The Ravens Group, Inc. this week: 
@@ -1073,7 +1099,7 @@ Object {
                       2 of 
                       120
                       <div
-                        data-css-1d9p13s=""
+                        style="position: relative; left: 10px; top: -4px;"
                       >
                         <span>
                           <button
@@ -1083,7 +1109,9 @@ Object {
                             <span>
                               Edit Total
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -1125,7 +1153,7 @@ Object {
                 </ul>
               </div>
               <span
-                data-css-yl25k8=""
+                style="padding: 1.5rem 6rem 2rem 2rem;"
               >
                 <h3>
                   Temporarily stop
