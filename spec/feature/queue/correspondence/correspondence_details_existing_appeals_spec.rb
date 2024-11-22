@@ -123,5 +123,27 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
         expect(page).to have_content("Congressional Interest")
       end
     end
+
+    it "Displays an error banner when adding a task fails" do
+      existing_apppeals_list(@correspondence)
+      all(".plus-symbol")[1].click
+      click_on(class: "usa-button-secondary tasks-added-button-spacing usa-button", wait: 5)
+      expect(page).to have_content("Add task to appeal")
+      expect(page).to have_selector(".add-task-modal-container")
+      expect(page).to have_field("content")
+      fill_in "content", with: "Test"
+      expect(page).to have_button("Next", disabled: true)
+      find(".add-task-dropdown-style").click
+      find(".react-select__option", text: "Congressional Interest").click
+      expect(page).to have_button("Next", disabled: false)
+      allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task).and_raise("Internal Server Error")
+      click_button "Next"
+
+      # Expect an error banner to be displayed
+      using_wait_time(10) do
+        expect(page).to have_content("Task action could not be completed." \
+         " Please try again at a later time or contact the Help Desk (Error message: Internal Server Error).")
+      end
+    end
   end
 end
