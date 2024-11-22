@@ -47,18 +47,11 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
   const [reasonSelected, setReasonSelected] = useState(null);
 
   const [otherReason, setOtherReason] = useState('');
-  // const [otherReasonAdded, setOtherReasonAdded] = useState(false);
 
-  // useEffect(() => {
-  //   setOtherReason(otherReason.length > 0);
-  // }, [otherReason]);
 
   const handleSetOtherReasonChange = (value) => setOtherReason(value)
   const handleSetReasonSelectedChange = (value) => setReasonSelected(value)
 
-  // useEffect(() => {
-  //   setOtherReasonAdded(otherReason.length > 0);
-  // }, [otherReason]);
 
   const validateForm = () => {
     if (reasonSelected === "Other") {
@@ -71,17 +64,11 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
     return false;
   };
 
-  // const formChanged = (otherReason) => {
-  //   setOtherReasonAdded(otherReason);
-  // };
-
   // Could possibly use updateCorrespondence method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
 
   const submit = () => {
     // Could possibly use submit method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
     console.log(reasonSelected);
-
-    // console.error('No valid organization selected');
   };
 
   const modalProps = {
