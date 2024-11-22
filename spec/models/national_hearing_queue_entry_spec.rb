@@ -380,7 +380,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       CachedAppealService.new.cache_ama_appeals([ama_with_sched_task])
       ActiveRecord::Base.connection.execute(
         "UPDATE cached_appeal_attributes
-         SET suggested_hearing_location = 'rllca'
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
          WHERE appeal_id = #{ama_with_sched_task.id} AND appeal_type = 'Appeal'"
       )
 
@@ -392,7 +392,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
       ActiveRecord::Base.connection.execute(
         "UPDATE cached_appeal_attributes
-         SET suggested_hearing_location = 'rllca'
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
          WHERE appeal_id = #{legacy_with_sched_task.id} AND appeal_type = 'LegacyAppeal'"
       )
     end
@@ -454,7 +454,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           ama_hearing_task.status,
           "va",
           "usa",
-          "rllca"
+          "Oakland, CA (RO)"
         ],
         [
           legacy_with_sched_task.id,
@@ -474,7 +474,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           legacy_hearing_task.status,
           "va",
           "usa",
-          "rllca"
+          "Oakland, CA (RO)"
         ]
       ]
 
