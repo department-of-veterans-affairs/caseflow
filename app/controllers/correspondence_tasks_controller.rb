@@ -57,7 +57,14 @@ class CorrespondenceTasksController < TasksController
   end
 
   def create_return_to_inbound_ops_task
-    
+    cancel
+    root_task = correspondence_task.root
+
+    return_task = ReturnToInboundOpsTask.create_from_params(root_task, current_user)
+    return_task.update!(
+      assigned_to: InboundOpsTeam.singleton,
+      instructions: correspondence_task.instructions << correspondence_tasks_params[:instructions]
+    )
   end
 
   def update
