@@ -72,7 +72,7 @@ const workOrderLinkIcon = {
   right: 0,
 };
 
-const contractor = {
+const contractorWidth = {
   maxWidth: '150px',
 };
 
@@ -437,7 +437,7 @@ export const contractorColumn = (contractors) => {
     label: 'contractor filter',
     filterOptions,
     valueFunction: (row) => (
-      <div style={contractor}>{row.contractor}</div>
+      <div style={contractorWidth}>{row.contractor}</div>
     ),
     backendCanSort: true,
     getSortValue: (row) => row.expectedReturnDate,
@@ -526,7 +526,7 @@ export const statusColumn = (currentTab) => {
         <div
           style={
             row.status === 'Overdue' || row.status === 'Failed Retrieval (BOX)' ?
-            errorText :
+              errorText :
               {}
           }
         >
