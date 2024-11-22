@@ -64,7 +64,7 @@ module Seeds
       appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
       benefit_type, category = generate_nonrating_category_and_description
       create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
-      category, description = generate_nonrating_category_and_description
+      benefit_type, category = generate_nonrating_category_and_description
       create(:request_issue, :nonrating, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil, decision_review: appeal, nonrating_issue_category: category, nonrating_issue_description: "Test description pls ignore")
 
       # appeals with unidentified issues
