@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { get } from 'lodash';
+// import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
@@ -11,6 +11,8 @@ import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
+import RadioField from '../../components/RadioField';
+import { RETURN_TYPES } from '../constants';
 import {
   setTaskNotRelatedToAppealBanner,
   assignTaskToTeam,
@@ -25,21 +27,27 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
     (task) => parseInt(task.uniqueId, 10) === parseInt(task_id, 10)
   );
 
-  const organizations = taskList?.organizations || [];
-  const organizationOptions = organizations.map((org) => ({
-    label: org.label,
-    value: org.value
-  }));
+  // const organizations = taskList?.organizations || [];
+  // const organizationOptions = organizations.map((org) => ({
+  //   label: org.label,
+  //   value: org.value
+  // }));
 
   const taskData = taskActionData(props);
 
-  // Show task instructions by default
-  // const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
+  const returnReasonOptions = [
+    { displayText: RETURN_TYPES.not_appropriate,
+      value: 'Not appropriate'},
+    { displayText: RETURN_TYPES.clarification_needed,
+      value: 'Clarification needed'},
+    { displayText: RETURN_TYPES.other,
+      value: 'Other'}
+  ];
+
   const shouldShowOtherReturnReason = useState(true);
 
   const [otherReason, setOtherReason] = useState('');
   const [otherReasonAdded, setOtherReasonAdded] = useState(false);
-  // const [teamAssignedFlag, setTeamAssignedFlag] = useState(null);
 
   useEffect(() => {
     setOtherReasonAdded(otherReason.length > 0);
@@ -79,22 +87,15 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData?.modal_body && (
-        <>
-          <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
-          <br />
-        </>
-      )}
-      {/* <SearchableDropdown
-        name="Organization dropdown"
-        label="Select a team"
-        dropdownStyling={{ position: 'relative' }}
-        placeholder="Select or search"
-        styling={{ marginBottom: '20px' }}
-        options={organizationOptions}
-        value={teamAssignedFlag}
-        onChange={formChanged}
-      /> */}
+      <RadioField
+        id="returnReasonRadioField"
+        name={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_SUBTITLE}
+        // required
+        options={returnReasonOptions}
+        // value={returnReasonOptions[1]}
+        // errorMessage={"Error"}
+        // onChange={changePoaMatches}
+      />
       {shouldShowOtherReturnReason && (
         <TextareaField
           name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE}
