@@ -104,7 +104,7 @@ const SavedSearches = () => {
         <Button
           label="apply"
           name="apply"
-          onClick={handleApply()}
+          onClick={handleApply}
           disabled={isDisabled}
         >
            Apply

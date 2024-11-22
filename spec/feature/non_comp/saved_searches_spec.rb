@@ -55,17 +55,16 @@ feature "Saved Searches", :postgres do
       end
 
       it "should have delete button that is disabled." do
-        delete_button = find("button", text: "Delete")
-        expect(delete_button[:disabled]).to eq "true"
+        delete_buttom = find("button", text: "Delete")
+        expect(delete_buttom[:disabled]).to eq "true"
       end
 
       it "should have delete button that will be enabled after radio button is selected." do
         select_row_radio = page.find(".cf-form-radio-option")
         select_row_radio.click
 
-        delete_button = find("button", text: "Delete")
-
-        expect(delete_button[:disabled]).to eq "false"
+        delete_buttom = find("button", text: "Delete")
+        expect(delete_buttom[:disabled]).to eq "false"
       end
 
       it "should open delete modal and deleting button should remove the saved search" do
