@@ -33,6 +33,7 @@ describe('FeatureToggleConfiguration', () => {
     };
 
     renderFunctionConfiguration(mockProps);
+    expect(renderFunctionConfiguration(mockProps)).toMatchSnapshot();
     expect(await screen.findByText(/Function1/)).toBeInTheDocument();
   });
 });

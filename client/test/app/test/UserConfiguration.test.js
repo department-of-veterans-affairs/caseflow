@@ -37,6 +37,7 @@ describe('UserConfiguration', () => {
     };
 
     renderUserConfiguration(mockProps);
+    expect(renderUserConfiguration(mockProps)).toMatchSnapshot();
     expect(await screen.findByText(/Station ID/)).toBeInTheDocument();
   });
 

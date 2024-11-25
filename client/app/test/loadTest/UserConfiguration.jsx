@@ -76,8 +76,6 @@ export default function UserConfiguration(props) {
     );
   };
 
-  featureToggles.sort();
-
   return (
     <div>
       <h3><strong>Station ID</strong></h3>

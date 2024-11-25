@@ -8,18 +8,17 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from 'app/queue/reducers';
 
-import ScenarioConfiguration from '../../../app/test/loadTest/ScenarioConfiguration';
+import RoleConfiguration from '../../../app/test/loadTest/RoleConfiguration';
 
-describe('ScenarioConfiguration', () => {
+describe('RoleConfiguration', () => {
   const defaultProps = {
-    scenario: 'scenarioTest',
-    targetType: ['Target1', 'Target2', 'Target3'],
+    role: 'Build HearSched',
     currentState: {
       scenarios: [],
       user: {
         station_id: '',
         regional_office: '',
-        roles: [],
+        roles: ['Edit HearSched'],
         functions: {},
         organizations: [],
         feature_toggles: {
@@ -37,22 +36,23 @@ describe('ScenarioConfiguration', () => {
     render(
       <Provider store={store}>
         <Router>
-          <ScenarioConfiguration {...props} />
+          <RoleConfiguration {...props} />
         </Router>
       </Provider>
     );
 
-  it('renders the ScenarioConfiguration component', async () => {
-    const scenarioComponent = setup(defaultProps);
+  it('renders the RoleConfiguration component', async () => {
+    const roleComponent = setup(defaultProps);
 
-    expect(await scenarioComponent.findByText(/scenarioTest/)).toBeInTheDocument();
+    expect(roleComponent).toMatchSnapshot();
+    expect(await screen.findByText('Build HearSched')).toBeInTheDocument();
   });
 
-  it('displays dropdown when checkbox is clicked', async () => {
+  it('updates state when checkbox is clicked', async () => {
     setup(defaultProps);
-    await userEvent.click(screen.getByRole('checkbox', { name: 'scenarioTest' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Build HearSched' }));
 
-    expect(screen.getAllByText(/Target Type/).length).toEqual(2);
+    expect(defaultProps.currentState.user.roles).toEqual(['Edit HearSched', 'Build HearSched']);
   });
 });
 
