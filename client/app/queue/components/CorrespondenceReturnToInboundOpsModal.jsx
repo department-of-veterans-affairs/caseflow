@@ -79,7 +79,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_TITLE}
+      title={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_TASK_TITLE}
       button="Return"
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}

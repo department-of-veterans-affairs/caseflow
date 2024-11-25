@@ -3,6 +3,6 @@
 # Abstract base class for "tasks not related to an appeal" added to a correspondence during Correspondence Intake.
 class ReturnToInboundOpsTask < CorrespondenceMailTask
   def label
-    COPY::RETURN_TO_INBOUND_OPS_MAIL_TASK_LABEL
+    COPY::CORRESPONDENCE_RETURN_TO_INBOUND_OPS_TASK_TITLE
   end
 end

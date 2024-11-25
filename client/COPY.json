@@ -1519,7 +1519,7 @@
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE": "Provide context and instructions for this action",
   "CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE": "Provide instructions and context for this change",
-  "CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_TITLE": "Return to Inbound Ops",
+  "CORRESPONDENCE_RETURN_TO_INBOUND_OPS_TASK_TITLE": "Return to Inbound Ops",
   "CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_SUBTITLE": "This correspondence will be returned to the Inbound Operations Team. Please select a reason for return.",
   "CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE": "Reason for returning to the Inbound Operations Team",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
@@ -1643,6 +1643,5 @@
     }
   },
   "ALL_CORRESPONDENCES": "All Correspondence",
-  "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
-  "RETURN_TO_INBOUND_OPS_MAIL_TASK_LABEL": "Return to Inbound Ops"
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }
