@@ -516,6 +516,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .cf-modal-body {
   color: $color-black;
+
   .cf-modal-controls {
     .cf-push-left {
       padding-left: 0;
@@ -1670,6 +1671,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-direction: column;
   width: 15%;
   padding: 0 1.5rem 0 0;
+
   .stream-type {
     text-transform: capitalize;
   }
@@ -1697,7 +1699,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 20px;
   //padding-bottom: 20px;
   display: block;
-  .tasks-added-button-spacing{
+
+  .tasks-added-button-spacing {
     margin-left: 20px;
     margin-bottom: 10px;
   }
@@ -1707,7 +1710,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 20px;
   font-weight: bold;
   display: block;
-  .tasks-added-button-spacing{
+
+  .tasks-added-button-spacing {
     margin-left: 20px;
     margin-bottom: 10px;
   }
@@ -1746,6 +1750,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .existing-appeals-table {
   a {
     color: $color-blue;
+
     .cf-pdf-external-link-icon {
       display: inline-flex;
       align-items: center;
@@ -1769,7 +1774,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .tasks-added-banner-alert {
   .correspondence-details-alert-banner {
-    padding-right: 0px;
+    padding-right: 0;
   }
 }
 
@@ -1780,6 +1785,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-details-alert-banner .usa-alert {
   padding-right: 20px;
   margin-top: 20px;
+
   .usa-alert-body .usa-alert-text {
     font-size: 17px;
   }
@@ -1929,6 +1935,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     height: 50px;
     display: flex;
     align-items: center;
+
     &:hover {
       border-color: $color-black;
     }
@@ -1962,6 +1969,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     align-items: center;
     font-size: 5rem;
     font: bold;
+
     &:hover {
       color: $color-black; // Keep arrow black on hover
     }
