@@ -646,7 +646,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
 
     it "is schedulable when AMA appeal receipt date is before the cutoff date" do
-      byebug
       appeal.update!(receipt_date: Time.zone.today)
       NationalHearingQueueEntry.refresh
       entry = NationalHearingQueueEntry.find_by(

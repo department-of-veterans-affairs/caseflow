@@ -49,7 +49,7 @@ SELECT
 	    	ELSE FALSE
   		END
      ) IS TRUE
-     OR receipt_date <= '2019-12-31'
+     OR receipt_date <= COALESCE((SELECT cutoff_date FROM latest_cutoff_date),'2019-12-31')
     THEN TRUE
     ELSE FALSE
   END AS schedulable,

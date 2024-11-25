@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_20_101515) do
+ActiveRecord::Schema.define(version: 2024_11_20_101517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2647,7 +2647,8 @@ ActiveRecord::Schema.define(version: 2024_11_20_101515) do
               CASE
                   WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
                   ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= '2019-12-31'::date)) THEN true
+              END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
+                 FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
               ELSE false
           END AS schedulable,
       veterans.state_of_residence,
