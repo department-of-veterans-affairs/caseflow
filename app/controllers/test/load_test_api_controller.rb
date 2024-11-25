@@ -69,6 +69,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "User"
       target_data_type = User
       target_data_column = "css_id"
+    when "Claimant"
+      target_data_type = Claimant
+      target_data_column = "participant_id"
     end
     get_target_data_object(params[:target_id], target_data_type, target_data_column)
   end

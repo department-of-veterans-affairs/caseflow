@@ -89,12 +89,12 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
-  {"scenario": "claimantsPoa",
+  {"scenario": "claimantsPowerOfAttorney",
     "targetType": [{
       "value": "Claimant",
       "label": "Claimant"
     }],
-    "targetId": "Participant id"
+    "targetId": "Claimant participant_id"
   },
   {"scenario": "higherLevelReviewUpdate",
     "targetType": [{
