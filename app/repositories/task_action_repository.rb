@@ -186,9 +186,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
+        options: attorney_list(task, user),
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
+    end
+
+    def attorney_list(task, user)
+      if (task.is_a?(LegacyTask) && task.assigned_to == user) || user.can_act_on_behalf_of_judges?
+        users_to_options(Attorney.list_all)
+      end
     end
 
     def judge_qr_return_to_attorney_data(task, _user = nil)
