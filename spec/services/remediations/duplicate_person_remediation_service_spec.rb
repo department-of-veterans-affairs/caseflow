@@ -5,11 +5,14 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
   let(:duplicate_person1) { instance_double("Person", id: 2, participant_id: "duplicate_participant_id_1") }
   let(:duplicate_person2) { instance_double("Person", id: 3, participant_id: "duplicate_participant_id_2") }
   let(:duplicate_person_ids) { [duplicate_person1.id, duplicate_person2.id] }
+  let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
+  let!(:event_record) { EventRecord.create!(event_id: event1.id, evented_record_type: "Person", evented_record_id: 1) }
 
   let(:service) do
     described_class.new(
       updated_person_id: updated_person.id,
-      duplicate_person_ids: duplicate_person_ids
+      duplicate_person_ids: duplicate_person_ids,
+      event_record: event_record
     )
   end
 
@@ -53,7 +56,7 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
           expect(klass).to have_received(:where)
             .with(column_name => %w[duplicate_participant_id_1 duplicate_participant_id_2])
           expect(klass.where(column_name => %w[duplicate_participant_id_1 duplicate_participant_id_2]))
-            .to have_received(:update_all).with(column_name => updated_person.participant_id)
+            .to have_received(:update!).with(column_name => updated_person.participant_id)
         end
       end
 
