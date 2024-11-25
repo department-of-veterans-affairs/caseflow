@@ -6,12 +6,14 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
   describe "POST #decision_review_completed" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
+    let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 20_010_065) }
 
     def json_test_payload
       {
         "css_id": "BVADWISE",
         "detail_type": "HigherLevelReview",
         "station": "101",
+        "claim_id": 20_010_065,
         "event_id": 1_234_567,
         "end_product_establishment": {
           "synced_status": "CLR",
@@ -100,18 +102,19 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
 
     context "updates issue scenario_hlr_1_eligible_nonrating_issue" do
       before do
+        FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
       it "returns success response scenario_hlr_1_eligible_nonrating_issue" do
         post :decision_review_completed, params: valid_params
         expect(response).to have_http_status(:completed)
-        expect(response.body).to include("DecisionReviewcompletedEvent successfully processed")
+        expect(response.body).to include("DecisionReviewCompletedEvent successfully processed")
         completed_request_issue = RequestIssue.find_by(reference_id: "1234")
         expect(completed_request_issue).to be
         expect(completed_request_issue.nonrating_issue_category).to eq("Accrued Benefits")
-        expect(completed_request_issue.nonrating_issue_description).to eq("The user entered description
-                                                                          if the issue is a nonrating issue")
+        expect(completed_request_issue.nonrating_issue_description)
+          .to eq("The user entered description if the issue is a nonrating issue")
         expect(completed_request_issue.nonrating_issue_bgs_source).to eq("CORP_AWARD_ATTORNEY_FEE")
         expect(completed_request_issue.nonrating_issue_bgs_id).to eq("13")
         expect(completed_request_issue.rating_issue_associated_at).to eq(nil)
@@ -180,6 +183,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
 
     context "does not comlete on error" do
       before do
+        FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         allow_any_instance_of(DecisionIssuesCompleteEvent).to receive(:perform!).and_raise(StandardError.new("Error"))
       end
@@ -193,6 +197,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
 
     context "does not complete invalid params" do
       before do
+        FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
