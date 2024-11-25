@@ -2,7 +2,7 @@
 
 class JudgeLegacyAssignTask < JudgeLegacyTask
   def available_actions(user, _role)
-    if assigned_to == user && (user.pure_judge_in_vacols? || user.acting_judge_in_vacols?)
+    if assigned_to == user && user.judge_in_vacols?
       [
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
