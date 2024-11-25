@@ -126,11 +126,11 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: functions
   # Response: None
   def grant_or_deny_functions(functions)
-    functions.select { |_k, v| v == true }.each do |k, _v|
-      Functions.grant!(k, users: [LOAD_TESTING_USER])
+    functions.select { |_key, value| value == true }.each do |key, _value|
+      Functions.grant!(key, users: [LOAD_TESTING_USER])
     end
-    functions.select { |_k, v| v == false }.each do |k, _v|
-      Functions.deny!(k, users: [LOAD_TESTING_USER])
+    functions.select { |_key, value| value == false }.each do |key, _value|
+      Functions.deny!(key, users: [LOAD_TESTING_USER])
     end
   end
 
