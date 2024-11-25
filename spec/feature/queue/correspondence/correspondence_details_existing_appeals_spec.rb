@@ -135,8 +135,6 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       find(".react-select__option", text: "Congressional Interest").click
       expect(page).to have_button("Next", disabled: false)
       click_button "Next"
-      # binding.pry
-      # Test textarea autotext based on radio selection
       find("label", text: "Address updated in VACOLS").click
       find("label", text: "C&P exam report").click
       expect(page).to have_content("Address updated in VACOLS, \nC&P exam report")
@@ -165,7 +163,8 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       expect(page).to have_button("Next", disabled: false)
       allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task).and_raise("Internal Server Error")
       click_button "Next"
-
+      click_button "Add task"
+      click_button "Cancel"
       # Expect an error banner to be displayed
       using_wait_time(10) do
         expect(page).to have_content("Task action could not be completed." \
