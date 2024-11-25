@@ -784,9 +784,9 @@ export default class QueueTable extends React.PureComponent {
 
     if (enablePagination && !this.state.loadingComponent) {
       if (searchValue) {
-        currentCases = totalTaskCount = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length
+        currentCases = totalTaskCount = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length;
       } else {
-        currentCases = rowObjects ? rowObjects.length : 0
+        currentCases = rowObjects ? rowObjects.length : 0;
       }
       paginationElements = (
         <Pagination
