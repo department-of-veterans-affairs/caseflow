@@ -339,5 +339,12 @@
       "label": "Hearing Day"
     }],
     "targetId": "HearingDay id"
+  },
+  {"scenario": "apiVaNotifyUpdate",
+    "targetType": [{
+      "value": "Notification",
+      "label": "Notification"
+    }],
+    "targetId": "Notification id"
   }
 ]

@@ -65,6 +65,13 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
+    when "Notification"
+      target_data_type = Notification
+      target_data_column = "email_notification_external_id"
+      # look for another option for this column
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
