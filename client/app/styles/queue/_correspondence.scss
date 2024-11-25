@@ -13,7 +13,7 @@ $color-white: #ffffff;
 $color-black: #323a45;
 $color-background-color: #f1f1f1;
 $color-red: #cd2026;
-$color-dark-red: #ff0000;
+$color-bright-red: #ff0000;
 $color-gray-darker: #5b616b;
 $color-gray: #5b616b;
 $color-bg-hsl: hsl(0, 0%, 100%);
@@ -516,6 +516,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .cf-modal-body {
   color: $color-black;
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
 }
 
 .checkbox-modal-size {
@@ -541,7 +546,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: -15px;
 
   .cf-form-checkboxes {
-    margin-bottom: 0rem;
+    margin-bottom: 0;
     margin-top: 1rem;
   }
 
@@ -1100,12 +1105,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   width: 100%;
   }
 
-.new-tasks-gray-border-styling {
-  display: block;
-  margin-right: 2rem;
-  margin-bottom: 2rem;
-  }
-
 .area-above-add-tasks-button-not-related {
   padding: 0;
   display: flex;
@@ -1242,7 +1241,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
 
     .error-msg {
-      color: $color-dark-red;
+      color: $color-bright-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
@@ -1302,17 +1301,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
 
     .error-msg {
-      color: $color-dark-red;
+      color: $color-bright-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
     }
   }
-}
-
-.select-container-styles {
-  width: 100%;
-  display: inline-block;
 }
 
 .non-related-task {
@@ -1351,14 +1345,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-bottom: 0;
   }
 
-  .cf-modal-controls {
-    .cf-push-left {
-      padding-left: 0;
-    }
-  }
-}
-
-.cf-modal-body {
   .cf-modal-controls {
     .cf-push-left {
       padding-left: 0;
@@ -1644,24 +1630,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .link-icon-spacing {
-  // margin-bottom: -10px;
   margin-left: 10px;
 }
 
-.correspondence-details-alert-banner {
-  padding-right: 20px;
-}
 .correspondence-details-alert-banner-inner {
-
   .usa-alert-text {
-    line-height: 0.8 !important
+    line-height: 0.8;
   }
-
 }
 
 .tasks-added-container {
   border: 1px solid $color-cream;
-  padding: 20px 20px 30px 20px;
+  padding: 20px 20px 30px;
 }
 
 .task-added-header {
@@ -1690,14 +1670,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-direction: column;
   width: 15%;
   padding: 0 1.5rem 0 0;
-  //display: inline-block;
-
   .stream-type {
     text-transform: capitalize;
   }
 }
-.corr-tasks-added-col:not(:last-child) .task-added-value{
-  border-right: 2px solid #ccc;
+
+.corr-tasks-added-col:not(:last-child) .task-added-value {
+  border-right: 2px solid $color-bg-gray;
   margin-right: 3%;
   padding-right: 1.5rem;
 }
@@ -1789,11 +1768,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .tasks-added-banner-alert {
-
   .correspondence-details-alert-banner {
     padding-right: 0px;
   }
-
 }
 
 .task-banner-alert .usa-alert.usa-alert-slim {
@@ -1801,6 +1778,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .correspondence-details-alert-banner .usa-alert {
+  padding-right: 20px;
   margin-top: 20px;
   .usa-alert-body .usa-alert-text {
     font-size: 17px;
@@ -1909,11 +1887,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .add-autotext-button {
     margin-top: 1rem;
-    color: #0071bc;
+    color: $color-blue;
   }
 
   .remove-task-button {
-    color: #e31c3d;
+    color: $color-bright-red;
     float: right;
     margin-top: 1rem;
   }
@@ -1921,17 +1899,20 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .select-container-styles {
+  width: 100%;
+  display: inline-block;
   margin-bottom: 1.5rem;
 }
 
 .new-tasks-gray-border-styling {
-  border: 1px solid #d6d7d9;
+  display: block;
+  border: 1px solid $color-cream;
   padding: 1rem;
   margin-bottom: 1.5rem;
 }
 
 .gray-border {
-  border: 1px solid #d6d7d9;
+  border: 1px solid $color-cream;
   padding: 1.5rem;
 }
 
@@ -1941,75 +1922,74 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 
 .add-task-dropdown-style {
-
-  /* Override the control (outer container) for the select dropdown */
+  // Override the control (outer container) for the select dropdown
   .react-select__control {
-    border-color: black !important;
-    border-radius: 0 !important; /* Make the borders 90 degrees */
-    height: 50px !important; /* Set the height of the select component to 50px */
+    border-color: $color-black;
+    border-radius: 0;
+    height: 50px;
     display: flex;
-    align-items: center; /* Vertically center content in the control */
+    align-items: center;
     &:hover {
-      border-color: black !important; /* Black border on hover */
+      border-color: $color-black;
     }
   }
 
-  /* Adjust the dropdown menu styles */
+  // Adjust the dropdown menu styles
   .react-select__menu {
-    border-radius: 0 !important; /* Make the menu borders 90 degrees as well */
+    border-radius: 0;
   }
 
-  /* Set the color for each option */
+  // Set the color for each option
   .react-select__option {
-    color: $color-black !important; /* Make the text of each option black */
+    color: $color-black;
   }
 
-  /* Style the indicator separator */
+  // Style the indicator separator
   .react-select__indicator-separator {
-    background-color: black !important;
-    width: 1px !important;
-    margin: 0 6px; /* Keep consistent spacing around separator */
+    background-color: $color-black;
+    width: 1px;
+    margin: 0 6px;
     height: 48px;
   }
 
-  /* Style the dropdown indicator (arrow) */
+  // Style the dropdown indicator (arrow)
   .react-select__dropdown-indicator {
-    color: black !important; /* Make the arrow black */
+    color: $color-black;
     padding-right: 15px;
     padding-bottom: 12px;
     display: flex;
-    justify-content: center; /* Center the arrow horizontally */
-    align-items: center; /* Center the arrow vertically */
-    font-size: 5rem !important; /* Increase the size of the dropdown indicator */
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
     font: bold;
     &:hover {
-      color: black !important; /* Keep arrow black on hover */
+      color: $color-black; // Keep arrow black on hover
     }
   }
 
-  /* Hover style for options */
+  // Hover style for options
   .react-select__option--is-focused {
-    background-color: $color-gray-darker !important; /* Dark gray background on hover */
-    color: white !important; /* White text on hover */
+    background-color: $color-gray-darker;
+    color: $color-white;
   }
 
   .react-select__option--is-selected {
     background-color: $color-gray-darker;
-    color: white !important; /* White text on hover */
+    color: $color-white;
   }
 
-  /* Set the value container (where selected option text is displayed) */
+  // Set the value container (where selected option text is displayed)
   .react-select__value-container {
-    padding: 0 8px; /* Add padding to keep the text aligned */
-    line-height: 50px; /* Adjust line-height for vertical centering within the 50px height */
+    padding: 0 8px;
+    line-height: 50px;
     position: unset;
   }
 }
 
 .back-button {
-margin-left: 240px;
+  margin-left: 240px;
 }
 
-th.notes-column {
+notes-column {
   width: 25%;
 }
