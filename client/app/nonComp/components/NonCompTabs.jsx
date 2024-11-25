@@ -7,7 +7,10 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
-import { mapValues, sumBy } from 'lodash';
+import { cloneDeep, mapValues, sumBy } from 'lodash';
+import { sprintf } from 'sprintf-js';
+import { formatDateStr } from '../../util/DateUtil';
+import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -27,7 +30,8 @@ const NonCompTabsUnconnected = (props) => {
   const defaultSortColumn = currentTabName === 'completed' ? 'completedDateColumn' : 'daysWaitingColumn';
   const getParamsFilter = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
   // Read from the url get params and the local filter. The get params should override the local filter.
-  const filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+  let filter = getParamsFilter.length > 0 ? getParamsFilter : localFilter;
+
   const tabPaginationOptions = {
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
@@ -46,6 +50,59 @@ const NonCompTabsUnconnected = (props) => {
   const taskCounts = useMemo(() => (
     mapValues(props.taskFilterDetails, (obj) => sumBy(Object.values(obj)))
   ), [props.taskFilterDetails]);
+
+  const buildCompletedTabDescriptionFromFilter = (filters) => {
+    const completedDateFilter = filters.find((value) => value.includes('col=completedDateColumn'));
+
+    if (!isVhaBusinessLine) {
+      return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
+    } else if (completedDateFilter) {
+      const match = completedDateFilter.match(/val=([^&]*)/);
+
+      if (match) {
+        const dateFilter = match[1];
+        const [mode, startDate = null, endDate = null] = dateFilter.split(',');
+
+        const formattedStartDate = startDate ? formatDateStr(startDate) : '';
+
+        const formattedEndDate = endDate ? formatDateStr(endDate) : '';
+
+        // Object that defines how to build the string based on the mode
+        const completedDateFilterModeHandlers = {
+          before: `Before ${formattedStartDate}`,
+          after: `After ${formattedStartDate}`,
+          on: `On ${formattedStartDate}`,
+          between: `Between ${formattedStartDate} and ${formattedEndDate}`,
+          last7: 'Last 7 Days',
+          last30: 'Last 30 Days',
+          last365: 'Last 365 Days'
+        };
+
+        return sprintf(COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_WITH_FILTER,
+          completedDateFilterModeHandlers[mode]);
+      }
+
+    }
+
+    return COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
+
+  };
+
+  // The VHA completed tasks tab should have an automatic prefilter of 7 days applied to it
+  // A completed date filter in the get parameters should override this.
+  const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
+
+  if (isVhaBusinessLine) {
+    const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
+      some((item) => item.includes('col=completedDateColumn'));
+
+    if (!containsCompletedDateFilter) {
+      const sevenDaysAgoString = moment().subtract(7, 'days').
+        format('YYYY-MM-DD');
+
+      completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
+    }
+  }
 
   const ALL_TABS = {
     incomplete: {
@@ -74,8 +131,7 @@ const NonCompTabsUnconnected = (props) => {
         tabName="pending"
         filterableTaskTypes={props.taskFilterDetails.pending}
         filterableTaskIssueTypes={props.taskFilterDetails.pending_issue_types}
-        predefinedColumns={{ includeDaysWaiting: true,
-          defaultSortIdx: 3 }} />
+        predefinedColumns={{ includeDaysWaiting: true }} />
     },
     in_progress: {
       label: `In Progress Tasks (${taskCounts.in_progress})`,
@@ -93,12 +149,12 @@ const NonCompTabsUnconnected = (props) => {
       page: <TaskTableTab {...props}
         key="completed"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
-        tabPaginationOptions={tabPaginationOptions}
+        tabPaginationOptions={completedTabPaginationOptions}
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
-        description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
-        predefinedColumns={{ includeCompletedDate: true }} />
+        description={buildCompletedTabDescriptionFromFilter(filter)}
+        tabName="completed" />
     }
   };
 
