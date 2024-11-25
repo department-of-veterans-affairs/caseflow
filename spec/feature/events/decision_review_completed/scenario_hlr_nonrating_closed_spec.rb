@@ -195,7 +195,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
     end
 
-    context "does not complete invalid params" do
+    context "does not complete with invalid params" do
       before do
         FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
