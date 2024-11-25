@@ -25,7 +25,7 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
 
     # text-${pageIndex} is the id of the first page's CommentLayer
-    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
+    find('[id^="comment-layer-0"]').click
 
     expect(page).to have_css("#addComment", visible: true)
 
@@ -60,7 +60,7 @@ RSpec.feature "Reader", :all_dbs do
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
-    Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+    Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
     FeatureToggle.disable!(:reader_prototype)
     User.authenticate!(roles: ["Reader"])
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::Vacols::Staff
+class Generators::VACOLS::Staff
   class << self
     # rubocop:disable Metrics/MethodLength
     def staff_attrs

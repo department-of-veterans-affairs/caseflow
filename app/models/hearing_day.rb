@@ -293,7 +293,7 @@ class HearingDay < CaseflowRecord
   # Method to get the associated conference link records if they exist and if not create new ones
   def find_or_create_conference_link!
     if FeatureToggle.enabled?(:pexip_conference_service)
-      PexipConferenceLink.find_or_create_by!(hearing_day: self, created_by: created_by)
+      PexipConferenceLink.find_or_create_by!(hearing_day: self)
     end
   end
 

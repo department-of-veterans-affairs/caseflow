@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::Vacols::TravelBoardSchedule
+class Generators::VACOLS::TravelBoardSchedule
   class << self
     # rubocop:disable Metrics/MethodLength
     def travel_board_sched_attrs

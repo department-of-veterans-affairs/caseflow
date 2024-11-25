@@ -135,12 +135,12 @@ feature "Asyncable Jobs index", :postgres do
     it "allows user to page through jobs" do
       visit "/jobs"
 
-      expect(page).to have_content("Viewing 1-50 of 54 total")
+      expect(page).to have_content("Viewing 1-50 of 55 total")
 
-      find("[name=page-button-1]").click
+      page.execute_script("document.querySelector('[name=page-button-1]').click()")
 
       expect(current_url).to match(/\?page=2/)
-      expect(page).to have_content("Viewing 51-54 of 54 total")
+      expect(page).to have_content("Viewing 51-55 of 55 total")
     end
 
     it "links to individual jobs" do

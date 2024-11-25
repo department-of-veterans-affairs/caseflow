@@ -530,7 +530,7 @@ describe HearingDay, :all_dbs do
   context "bulk persist" do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       create(:ro_schedule_period)
     end
 
@@ -581,6 +581,40 @@ describe HearingDay, :all_dbs do
       it "Only the Pexip conference link is generated whenever requested" do
         expect(subject).to eq nil
       end
+    end
+  end
+
+  context "hearing day is in future, link already exists and its created_by user differs \
+    from that of the hearing day's" do
+    let(:user_1) { User.create(css_id: "user_1", station_id: 101) }
+    let(:user_2) { User.create(css_id: "user_2", station_id: 101) }
+
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: 1.month.from_now,
+        regional_office: "RO01",
+        created_by: user_1,
+        room: "1"
+      )
+    end
+
+    let!(:preexisting_conference_link) do
+      PexipConferenceLink.create!(
+        hearing_day: hearing_day,
+        created_by: user_2
+      )
+    end
+
+    subject { hearing_day.conference_link }
+
+    it "A new link is NOT created" do
+      subject
+
+      expect(
+        ConferenceLink.where(hearing_day: hearing_day).count
+      ).to eq 1
     end
   end
 

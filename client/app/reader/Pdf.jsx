@@ -91,9 +91,7 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const files = this.props.featureToggles.prefetchDisabled ?
-      [this.props.file] :
-      [...this.props.prefetchFiles, this.props.file];
+    const files = [...this.props.prefetchFiles, this.props.file];
 
     return (
       <div className="cf-pdf-scroll-view">
@@ -116,8 +114,8 @@ const mapStateToProps = (state, props) => {
   return {
     ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
-    sidebarHidden: state.pdfViewer.hidePdfSidebar,
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    sidebarHidden: state.pdfViewer?.hidePdfSidebar,
+    isPlacingAnnotation: state.annotationLayer?.isPlacingAnnotation
   };
 };
 
