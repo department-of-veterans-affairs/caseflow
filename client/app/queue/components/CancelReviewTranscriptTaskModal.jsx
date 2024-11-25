@@ -40,7 +40,14 @@ const CancelReviewTranscriptTaskModal = (props) => {
       };
     };
 
-    dispatch(requestPatch(`/tasks/${props.taskId}/cancel_review_transcript_task`, requestParams()));
+    dispatch(
+      requestPatch(
+        `/tasks/${props.taskId}/cancel_review_transcript_task`,
+        requestParams()
+      )
+    ).then(() => {
+      props.closeModal();
+    });
   };
 
   const handleTextareaFieldChange = (event) => {
