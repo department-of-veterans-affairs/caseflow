@@ -164,7 +164,6 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task).and_raise("Internal Server Error")
       click_button "Next"
       click_button "Add task"
-      click_button "Cancel"
       # Expect an error banner to be displayed
       using_wait_time(10) do
         expect(page).to have_content("Task action could not be completed." \
