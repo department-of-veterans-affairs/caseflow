@@ -129,6 +129,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
     } catch (error) {
       console.error('Error while adding task:', error);
     } finally {
+      handleClose();
       setIsLoading(false);
     }
   };

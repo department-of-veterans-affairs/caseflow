@@ -1789,8 +1789,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .tasks-added-banner-alert {
-  margin-left: 1%;
-  width: 98%;
+
+  .correspondence-details-alert-banner {
+    padding-right: 0px;
+  }
+
 }
 
 .task-banner-alert .usa-alert.usa-alert-slim {
