@@ -293,7 +293,7 @@ const CorrespondenceDetails = (props) => {
     // If neither is in relatedCorrespondenceIds, maintain their original order
     const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
 
-    returnSort;
+    return returnSort;
   });
 
   const onCancel = () => {
@@ -559,6 +559,8 @@ const CorrespondenceDetails = (props) => {
                   appealUuid={appeal.appealUuid || appeal.externalId}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
+                  autoTexts= {props.autoTexts}
+
                 />
               ))}
             </div>
