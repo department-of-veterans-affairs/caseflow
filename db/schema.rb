@@ -10,7 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 2024_11_20_101517) do
 
   # These are extensions that must be enabled in order to support this database
@@ -2572,14 +2571,8 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
       veterans.state_of_residence,
       veterans.country_of_residence,
       cached_appeal_attributes.suggested_hearing_location,
-          CASE
-              WHEN (request_issues_status.aggregate_mst_status = true) THEN true
-              ELSE false
-          END AS mst_indicator,
-          CASE
-              WHEN (request_issues_status.aggregate_pact_status = true) THEN true
-              ELSE false
-          END AS pact_indicator
+      (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
+      (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator
      FROM (((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
@@ -2594,7 +2587,7 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
               bool_or(request_issues.mst_status) AS aggregate_mst_status,
               bool_or(request_issues.pact_status) AS aggregate_pact_status
              FROM request_issues
-            WHERE ((request_issues.decision_review_type)::text = 'Appeal'::text)
+            WHERE (((request_issues.decision_review_type)::text = 'Appeal'::text) AND ((request_issues.mst_status IS TRUE) OR (request_issues.pact_status IS TRUE)))
             GROUP BY request_issues.decision_review_id) request_issues_status ON ((appeals.id = request_issues_status.decision_review_id)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
