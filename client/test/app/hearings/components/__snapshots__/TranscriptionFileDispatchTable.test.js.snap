@@ -774,7 +774,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -848,7 +848,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -871,7 +871,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -1010,7 +1010,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1084,7 +1084,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -1107,7 +1107,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -4487,7 +4487,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4561,7 +4561,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -4584,7 +4584,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -4725,7 +4725,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4799,7 +4799,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -4822,7 +4822,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -5043,9 +5043,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                           <span
                             class=""
                           >
-                             
+
                           </span>
-                           
+
                         </label>
                       </div>
                     </div>
@@ -5458,9 +5458,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -5497,7 +5497,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -5571,7 +5571,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -5609,7 +5609,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -5670,9 +5670,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -5709,7 +5709,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -5783,7 +5783,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -5821,7 +5821,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -5881,9 +5881,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -5920,7 +5920,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -5994,7 +5994,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -6032,7 +6032,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -6092,9 +6092,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -6131,7 +6131,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6205,7 +6205,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -6243,7 +6243,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -6303,9 +6303,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -6342,7 +6342,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6416,7 +6416,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -6454,7 +6454,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -6514,9 +6514,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -6553,7 +6553,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6627,7 +6627,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -6665,7 +6665,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     AOD
                   </span>
                   ,
-                   
+
                 </span>
                 <span>
                   Original
@@ -6725,9 +6725,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -6764,7 +6764,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6838,7 +6838,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -6927,9 +6927,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -6966,7 +6966,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7040,7 +7040,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -7129,9 +7129,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -7168,7 +7168,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7242,7 +7242,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -7331,9 +7331,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -7370,7 +7370,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7444,7 +7444,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -7533,9 +7533,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -7572,7 +7572,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7646,7 +7646,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -7735,9 +7735,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -7774,7 +7774,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7848,7 +7848,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -7937,9 +7937,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -7976,7 +7976,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -8050,7 +8050,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -8139,9 +8139,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -8178,7 +8178,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -8252,7 +8252,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
@@ -8341,9 +8341,9 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                       <span
                         class=""
                       >
-                         
+
                       </span>
-                       
+
                     </label>
                   </div>
                 </div>
@@ -8380,7 +8380,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                     role="tooltip"
                   >
                     <style>
-                      
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -8454,7 +8454,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
                     </style>
                     Hearing
                   </div>
