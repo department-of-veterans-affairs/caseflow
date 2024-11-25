@@ -4,7 +4,8 @@ class AttorneyLegacyTask < LegacyTask
   # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(current_user, role)
     if (role != "attorney" || current_user != assigned_to) &&
-       (FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft) && !SpecialCaseMovementTeam.singleton.user_has_access?(current_user))
+       (FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft) &&
+         !current_user&.can_act_on_behalf_of_judges?)
       return []
     end
 
@@ -34,11 +35,12 @@ class AttorneyLegacyTask < LegacyTask
   end
 
   def legacy_atty_to_atty_special_case_movement(user)
-    FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft, user: user) && appeal.is_a?(LegacyAppeal)
+    FeatureToggle.enabled?(:legacy_case_movement_atty_to_atty_for_decisiondraft, user: user) &&
+      appeal.is_a?(LegacyAppeal)
   end
 
   def show_assign_to_attorney_option?(current_user, assigned_to)
-    (current_user == assigned_to || SpecialCaseMovementTeam.singleton.user_has_access?(current_user)) &&
+    (current_user == assigned_to || current_user&.can_act_on_behalf_of_judges?) &&
       legacy_atty_to_atty_special_case_movement(current_user)
   end
 end
