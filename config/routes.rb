@@ -265,7 +265,7 @@ Rails.application.routes.draw do
 
   resources :hearings, only: [:update, :show]
 
-  scope module: 'hearings/national_hearing_queue', path: '/national_hearing_queue' do
+  scope module: "hearings/national_hearing_queue", path: "/national_hearing_queue" do
     get "/cutoff_date", action: "cutoff_date"
   end
 
