@@ -73,11 +73,7 @@ class Docket
   end
 
   def genpop_priority_count
-    # By default all cases are considered genpop. This can be overridden for specific dockets
-    # For evidence submission and direct review docket, all appeals are genpop;
-    # Don't need to specify anything more than "ready" and "priority".
-    # This is overridden in hearing request docket.
-    count(priority: true, ready: true)
+    appeals(priority: true, ready: true).ids.size
   end
 
   def weight
@@ -154,13 +150,13 @@ class Docket
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        new_dist_case = create_distribution_case_for_task(distribution, task, priority)
+        new_dist_case = create_distribution_case_for_task(distribution, task, priority, genpop)
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
-        create_distribution_case_for_task(distribution, task, priority)
+        create_distribution_case_for_task(distribution, task, priority, genpop)
       end
     end
   end
@@ -246,9 +242,10 @@ class Docket
   end
 
   # :reek:FeatureEnvy
-  def create_distribution_case_for_task(distribution, task, priority)
+  def create_distribution_case_for_task(distribution, task, priority, genpop)
     distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                            docket: docket_type,
+                                           genpop_query: genpop,
                                            priority: priority,
                                            ready_at: task.appeal.ready_for_distribution_at,
                                            task: task,

@@ -9,6 +9,10 @@ module Seeds
 
       # TODO: take the transaction block out after testing
       ApplicationRecord.multi_transaction do
+        # these are not used in the application outside of providing the string on the case details page, and cause
+        # errors when trying to re-run the seed file because of unique constraints on the ID value
+        Document.all.map(&:destroy!)
+
         instantiate_judges
         create_direct_review_cases
         create_evidence_submission_cases
@@ -18,6 +22,8 @@ module Seeds
         create_previous_distribtions
       end
 
+      # Make this judge and their judge team inactive in Caseflow; must be done after cases are created to avoid error
+      ineligible_judge.update_status!(Constants.USER_STATUSES.inactive)
       IneligibleJudgesJob.perform_now
     end
 
@@ -113,9 +119,14 @@ module Seeds
     end
 
     def excluded_judge
-      @excluded_judge ||= User.find_by(css_id: "EXCL_JUDGE") ||
-        create(:user, :judge_with_appeals_excluded_from_affinity, :with_vacols_judge_record,
-                      css_id: "EXCL_JUDGE", full_name: "Affinity ExcludedJudge")
+      @excluded_judge ||= (
+        user = User.find_by(css_id: "EXCL_JUDGE") ||
+                 create(:user, :judge_with_appeals_excluded_from_affinity, :with_vacols_judge_record,
+                        css_id: "EXCL_JUDGE", full_name: "Affinity ExcludedJudge")
+
+        JudgeTeam.for_judge(user).update!(accepts_priority_pushed_cases: false)
+        user
+      )
     end
 
     def ineligible_judge
@@ -136,6 +147,9 @@ module Seeds
       judge_one_large_previous_distribution
       excluded_judge
       ineligible_judge
+
+      # This user is not a judge in VACOLS in the seed data, so don't allow them to get cases in the PPJ
+      JudgeTeam.find_by(name: "BVAAWAKEFIELD")&.update!(accepts_priority_pushed_cases: false)
     end
 
     def tied_or_affinity_judges
@@ -177,17 +191,38 @@ module Seeds
       create_aoj_legacy_nonpriority_ready_cases
     end
 
+    def create_only_genpop_priority_cases
+      ApplicationRecord.multi_transaction do
+        # these are not used in the application outside of providing the string on the case details page, and cause
+        # errors when trying to re-run the seed file because of unique constraints on the ID value
+        Document.all.map(&:destroy!)
+
+        # make this judge active, then inactive again, so that appeals can be assigned to them
+        ineligible_judge.update_status!(Constants.USER_STATUSES.active)
+
+        create_direct_review_priority_genpop_cases
+        create_evidence_submission_priority_genpop_cases
+        create_hearing_priority_genpop_cases
+        create_legacy_priority_genpop_cases
+        create_aoj_legacy_priority_genpop_cases
+
+        ineligible_judge.update_status!(Constants.USER_STATUSES.inactive)
+      end
+    end
+
     # these distributions will cause the associated judges to not recieve as many (or any) cases in the push job
     def create_previous_distribtions
-      statistics = { batch_size: 10, info: "See related row in distribution_stats for additional stats" }
       4.times do |n|
-        create(:distribution, :completed, :priority,
-               judge: judge_many_previous_distributions, completed_at: n.weeks.ago, statistics: statistics)
+        d = create(:distribution, :completed, :priority,
+                   judge: judge_many_previous_distributions, completed_at: n.weeks.ago)
+
+        d.update!(statistics: { batch_size: 10, info: "See related row in distribution_stats for additional stats" })
       end
 
-      statistics = { batch_size: 100, info: "See related row in distribution_stats for additional stats" }
-      create(:distribution, :completed, :priority, :this_month,
-             judge: judge_one_large_previous_distribution, statistics: statistics)
+      d = create(:distribution, :completed, :priority, :this_month,
+                 judge: judge_one_large_previous_distribution)
+
+      d.update!(statistics: { batch_size: 100, info: "See related row in distribution_stats for additional stats" })
     end
 
     def create_direct_review_priority_not_genpop_cases
@@ -407,7 +442,7 @@ module Seeds
 
     def create_legacy_priority_genpop_cases
       # no hearing type original AOD
-      create(:case, :type_original, :ready_for_distribution)
+      create(:case, :type_original, :aod, :ready_for_distribution)
 
       tied_or_affinity_judges.each do |judge|
         judge_staff = judge.vacols_staff
@@ -417,6 +452,12 @@ module Seeds
         # hearing before decision different deciding judge CAVC AOD affinity out of window
         c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, aod: true)
         c.update!(bfmemid: judge_staff.sattyid)
+        # hearing after decision different deciding judge CAVC out of window
+        c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
+        # hearing after decision different deciding judge CAVC AOD out of window
+        c = create(:legacy_cavc_appeal, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, aod: true)
+        create(:case_hearing, :disposition_held, folder_nr: (c.bfkey.to_i + 1), hearing_date: Time.zone.today, user: judge)
         # no hearings CAVC affinity out of window
         create(:legacy_cavc_appeal, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 2.months.ago)
         # no hearings CAVC AOD affinity out of window
@@ -467,9 +508,9 @@ module Seeds
         # hearing before decision different deciding judge AOJ CAVC AOD affinity in window
         create(:legacy_aoj_appeal, :aod, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 3.days.ago, cavc: true, original_dec_judge_sattyid: judge_staff.sattyid)
 
-        # no hearings AOJ CAVC affinity in window
-        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago)
         # no hearings AOJ AOD affinity in window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago)
+        # no hearings AOJ CAVC affinity in window
         create(:legacy_aoj_appeal, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
         # no hearings AOJ CAVC AOD affinity in window
         create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
@@ -488,6 +529,12 @@ module Seeds
         # hearing before decision different deciding judge AOJ CAVC AOD affinity out of window
         create(:legacy_aoj_appeal, :aod, judge: other_judge_staff_record, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, cavc: true, original_dec_judge_sattyid: judge_staff.sattyid)
 
+        # hearing after decision different deciding judge AOJ out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
+        # hearing after decision different deciding judge AOJ CAVC out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
+        # hearing after decision different deciding judge AOJ CAVC AOD out of window
+        create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, affinity_start_date: 2.months.ago, original_dec_judge_sattyid: other_judge_staff_record.sattyid)
         # no hearings AOJ AOD affinity out of window
         create(:legacy_aoj_appeal, :aod, judge: judge_staff, attorney: attorney_staff_record, tied_to: false, affinity_start_date: 2.months.ago)
         # no hearings AOJ CAVC affinity out of window

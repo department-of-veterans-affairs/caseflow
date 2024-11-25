@@ -210,14 +210,15 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS = "
-    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD,
+      APPEALS.BFCORLID, APPEALS.HEARING_DATE, APPEALS.BFDPDCN,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
-      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL, STAFF.SDOMAINID as VLJ_ID,
       case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
          PREV_DECIDING_JUDGE
     from (
-      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
-        VLJ_HEARINGS.VLJ,
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID, BFDPDCN,
+        VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -925,7 +926,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       genpop == "not_genpop" || reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], lever_value)
     elsif lever_value == Constants.ACD_LEVERS.infinite
-      return if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
+      return if
+        (deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?) &&
+        genpop != "not_genpop"
 
       appeal["prev_deciding_judge"] != judge_sattyid
     elsif lever_value == Constants.ACD_LEVERS.omit
