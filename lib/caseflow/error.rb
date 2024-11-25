@@ -115,6 +115,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidAppealTypeOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Appeal must be a Legacy Appeal for #{@task_type}"
+    end
+  end
+
   class InvalidTaskTypeOnTaskCreate < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

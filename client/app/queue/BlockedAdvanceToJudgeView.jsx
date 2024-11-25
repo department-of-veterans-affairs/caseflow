@@ -88,7 +88,18 @@ class BlockedAdvanceToJudgeView extends React.Component {
       return;
     }
 
-    const { appeal, task } = this.props;
+    const { appeal, task, isLegacy } = this.props;
+
+    if (isLegacy) {
+      return;
+    }
+    // if (isLegacy) {
+    //   return this.props.legacyBlockedAdvanceToJudge({
+    //     tasks: [task],
+    //     assigneeId: this.state.selectedValue,
+    //     instructions: this.state.instructions
+    //   }, successMessage);
+    // }
 
     const payload = {
       data: {
@@ -180,7 +191,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         icon="warning"
       >
         {this.modalAlert()}
-        <div {...bottomBorderStyling}>
+        <div {...bottomBorderStyling} id="modal_id-desc">
           <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}<br />
           <strong>Cancellation of task(s) are final.</strong>
         </div>
@@ -269,7 +280,8 @@ BlockedAdvanceToJudgeView.propTypes = {
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string
-  })
+  }),
+  isLegacy: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {

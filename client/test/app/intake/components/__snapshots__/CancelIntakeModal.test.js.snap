@@ -27,6 +27,7 @@ Object {
             >
               <span
                 class="usa-sr-only"
+                style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
               >
                 Close
               </span>
@@ -215,6 +216,7 @@ Object {
           >
             <span
               class="usa-sr-only"
+              style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
             >
               Close
             </span>

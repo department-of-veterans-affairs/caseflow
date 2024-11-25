@@ -575,6 +575,8 @@ export const prepareAppealForSearchStore = (appeals) => {
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
+      completedHearingOnPreviousAppeal:
+        appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
       appellantFullName: appeal.attributes.appellant_full_name,
