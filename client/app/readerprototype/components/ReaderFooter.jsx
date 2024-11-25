@@ -9,6 +9,7 @@ import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
 import { annotationPlacement } from '../selectors';
+import { isUserEditingText } from '../../reader/utils/user';
 
 const ReaderFooter = ({
   currentPage,
@@ -58,10 +59,12 @@ const ReaderFooter = ({
 
   useEffect(() => {
     const keyHandler = (event) => {
-      if (event.key === 'ArrowLeft' && !isPlacingAnnotation) {
+      const isEditingText = isUserEditingText();
+
+      if (event.key === 'ArrowLeft' && !isPlacingAnnotation && !isEditingText) {
         showPdf(getPrevDocId())();
       }
-      if (event.key === 'ArrowRight' && !isPlacingAnnotation) {
+      if (event.key === 'ArrowRight' && !isPlacingAnnotation && !isEditingText) {
         showPdf(getNextDocId())();
       }
     };
