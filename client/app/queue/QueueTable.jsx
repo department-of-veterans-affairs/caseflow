@@ -423,7 +423,7 @@ export default class QueueTable extends React.PureComponent {
       });
     }
 
-    return filters;
+    return _.omit(filters, 'undefined');
   };
 
   defaultRowClassNames = () => '';
@@ -696,7 +696,6 @@ export default class QueueTable extends React.PureComponent {
         const preparedResponse = Object.assign({ ...response.body }, { tasks: preparedTasks });
 
         this.setState({
-          // cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
           ...(!this.props.useReduxCache && {
             cachedResponses: {
               ...this.state.cachedResponses,

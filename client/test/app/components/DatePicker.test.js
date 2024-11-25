@@ -1,10 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import COPY from '../../../COPY';
+import { render, screen } from '@testing-library/react';
 
 import {
   selectFromDropdown,
   clickSubmissionButton,
-  enterInputValue
+  enterInputValue,
+  openFilter
 } from '../queue/components/modalUtils';
 
 import { axe } from 'jest-axe';
@@ -15,7 +17,7 @@ describe('DatePicker', () => {
   const handleChange = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2024-01-17T03:00:00.000-04:00'));
   });
 
   const setup = (props = {}) => {
@@ -23,17 +25,6 @@ describe('DatePicker', () => {
       label="date-picker"
       onChange={handleChange} {...props}
     />);
-  };
-
-  const openFilter = async (container) => {
-    const svg = container.querySelectorAll('svg');
-
-    const filter = svg[svg.length - 1];
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
   };
 
   it('renders default state correctly', async () => {
@@ -91,8 +82,8 @@ describe('DatePicker', () => {
 
     selectFromDropdown('Date filter parameters', 'Between these dates');
 
-    enterInputValue('start-date', '2020-05-14');
-    enterInputValue('end-date', '2024-01-17');
+    enterInputValue(COPY.DATE_PICKER_FROM, '2020-05-14');
+    enterInputValue(COPY.DATE_PICKER_TO, '2024-01-17');
 
     clickSubmissionButton('Apply Filter');
 
@@ -143,6 +134,7 @@ describe('DatePicker', () => {
   });
 
   it('quick buttons can select last 30 days', async () => {
+
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
     const { container } = setup({ settings: { buttons: true } });
@@ -152,6 +144,75 @@ describe('DatePicker', () => {
     clickSubmissionButton('Last 30 days');
 
     expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17', false);
+  });
+
+  it('can select last 7 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 7 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last7,2024-01-10,');
+  });
+
+  it('can select last 30 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 30 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last30,2023-12-18,');
+  });
+
+  it('can select last 365 days filter with additional options enabled', async () => {
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 365 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last365,2023-01-17,');
+  });
+
+  it('disables Apply Filter button if between is selected and the start date is after the end date', () => {
+    const { container } = setup();
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue(COPY.DATE_PICKER_FROM, '2024-01-17');
+    enterInputValue(COPY.DATE_PICKER_TO, '2020-05-14');
+
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
+  });
+
+  it('should not allow future dates if the noFutureDates setting is true', () => {
+    const { container } = setup({ settings: { additionalOptions: true, noFutureDates: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue(COPY.DATE_PICKER_FROM, '2023-01-16');
+    enterInputValue(COPY.DATE_PICKER_TO, '2024-10-14');
+
+    expect(screen.getByText('Date cannot be in the future.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
   });
 
   describe('datePickerFilterValue', () => {

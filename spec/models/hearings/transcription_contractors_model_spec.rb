@@ -5,8 +5,8 @@ require "rails_helper"
 RSpec.describe TranscriptionContractor, type: :model do
   before do
     @transcription_contractor = TranscriptionContractor.new(
-      name: "Genesis Government Solutions, Inc.",
-      directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc.",
+      name: "Vet Reporting",
+      directory: "BVA Hearing Transcripts/Vet Reporting",
       poc: "Example POC",
       phone: "888-888-8888",
       email: "test_email@bah.com"
