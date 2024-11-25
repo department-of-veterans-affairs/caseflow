@@ -9,6 +9,6 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     return [] unless user_can_work_task_correspondence_mail_task(user)
 
     options = super
-    options.insert(options.length - 1, Constants.TASK_ACTIONS.COR_RETURN_TO_INBOUND_OPS.to_h)
+    options.insert(options.length, Constants.TASK_ACTIONS.COR_RETURN_TO_INBOUND_OPS.to_h)
   end
 end
