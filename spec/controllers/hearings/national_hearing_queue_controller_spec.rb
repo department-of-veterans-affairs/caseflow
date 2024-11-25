@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Hearings::NationalHearingQueueController, type: :controller do
   before { User.authenticate!(roles: ["Build Hearsched", "Edit Hearsched"]) }
 
