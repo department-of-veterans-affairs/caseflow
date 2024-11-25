@@ -63,8 +63,11 @@ class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   private
 
   def person_updated_attributes
-    params.permit(
-      *Events::PersonUpdated::Attributes.members
-    ).to_h
+    map = Events::PersonUpdated::PersonUpdatedEvent.header_attribute_map
+
+    map.reduce({}) do |attributes, (header, attribute)|
+      attributes[attribute] = request.headers[header]
+      attributes
+    end
   end
 end
