@@ -286,7 +286,6 @@ class DatePicker extends React.PureComponent {
       this.setState({ startDate: moment().subtract(365, 'days').
         format(format) });
     }
-
   }
 
   quickButtons = (option) => {
