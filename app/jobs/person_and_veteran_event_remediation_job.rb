@@ -21,7 +21,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
       dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
       if dup_ids.size >= 1
         Remediations::DuplicatePersonRemediationService
-          .new(updated_person_id: original_id, duplicate_person_ids: dup_ids).remediate!
+          .new(updated_person_id: original_id, duplicate_person_ids: dup_ids, event_record: event_record).remediate!
       end
     end
   end
