@@ -69,6 +69,30 @@ module CorrespondenceHelpers
     click_button("Continue")
   end
 
+  def visit_intake_form_step_2_with_inactive_appeals
+    setup_access
+    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    appeals = (1..10).map { create(:appeal, veteran_file_number: veteran.file_number, docket_type: "direct_review") }
+    appeals.each do |appeal|
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+    appeals.each do |appeal|
+      appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+    end
+    3.times do
+      create(
+        :correspondence,
+        :with_correspondence_intake_task,
+        assigned_to: current_user,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+    end
+    find_and_route_to_intake
+    click_button("Continue")
+  end
+
   def visit_intake_form_step_2_with_appeals_without_initial_tasks
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
@@ -167,6 +191,10 @@ module CorrespondenceHelpers
       user: current_user
     ).update!(admin: true)
     User.authenticate!(user: current_user)
+  end
+
+  def click_page_body
+    find("body").click
   end
 
   # rubocop:enable Metrics/ModuleLength

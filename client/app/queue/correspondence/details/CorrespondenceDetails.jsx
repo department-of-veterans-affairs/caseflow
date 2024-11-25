@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -40,6 +41,7 @@ const CorrespondenceDetails = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showFailureBanner, setShowFailureBanner] = useState(false);
   const [selectedPriorMail, setSelectedPriorMail] = useState([]);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
@@ -84,6 +86,13 @@ const CorrespondenceDetails = (props) => {
     setCheckboxStates(initialStates);
     setOriginalStates(initialStates);
   }, [priorMail, relatedCorrespondenceIds]);
+
+  
+  useEffect(() => {
+    if (showSuccessBanner) {
+      setShowFailureBanner(false);
+    }
+  }, [showSuccessBanner]);
 
   useEffect(() => {
     // Initialize sortedPriorMail with the initial priorMail list
@@ -245,6 +254,7 @@ const CorrespondenceDetails = (props) => {
       // Update the state with the sorted list after saving changes
       setSortedPriorMail(updatedSortedPriorMail);
     } catch (error) {
+      setShowFailureBanner(true);
       console.error('Error during PATCH/POST request:', error.message); // eslint-disable-line no-console
     } finally {
       // Re-enable the button
@@ -261,7 +271,6 @@ const CorrespondenceDetails = (props) => {
     }
 
     return true;
-
   };
 
   priorMail.sort((first, second) => {
@@ -284,7 +293,7 @@ const CorrespondenceDetails = (props) => {
     // If neither is in relatedCorrespondenceIds, maintain their original order
     const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
 
-    return returnSort;
+    returnSort;
   });
 
   const onCancel = () => {
@@ -940,6 +949,8 @@ const CorrespondenceDetails = (props) => {
             error.message;
 
           console.error(errorMessage);
+
+          setShowFailureBanner(true);
         });
     }
   };
@@ -952,6 +963,17 @@ const CorrespondenceDetails = (props) => {
 
   return (
     <>
+      {
+        showFailureBanner &&
+        <div style={{ padding: '10px' }}>
+          <Alert
+            type="error"
+            title="Changes were not successfully saved"
+            message="Please try again at a later time."
+            styling={customSuccessBannerStyles}
+          />
+        </div>
+      }
       {
         showSuccessBanner &&
           <div style={{ padding: '10px' }}>
