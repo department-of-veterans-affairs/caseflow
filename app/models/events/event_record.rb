@@ -18,6 +18,7 @@ class EventRecord < CaseflowRecord
       Veteran
       Person
       RequestIssue
+      DecisionIssue
       LegacyIssue
       LegacyIssueOptin
       User
