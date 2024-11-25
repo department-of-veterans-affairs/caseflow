@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { LoadingIcon } from '../../components/icons/LoadingIcon';
-import { LOGO_COLORS } from '../../constants/AppConstants';
 import usePageVisibility from '../hooks/usePageVisibility';
 import { ROTATION_DEGREES } from '../util/readerConstants';
 
@@ -73,14 +71,12 @@ const Page = memo(({
     height: `${rotatedHeight}px`,
     width: `${rotatedWidth}px`,
     position: 'relative',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
   };
   let canvasStyle = {
     rotate: rotation,
     position: 'relative',
     top,
-    // removes offscreen canvas from rendering calculations to improve performance
-    // contentVisibility: 'auto',
   };
 
   const render = async () => {
@@ -157,7 +153,6 @@ const Page = memo(({
   }
 
   const showCanvas = !isLoading;
-  const loadingIconSize = 50;
 
   return (
     <div
@@ -185,20 +180,6 @@ const Page = memo(({
           },
           rotation,
         })}
-      {
-        isLoading && (
-          <span style={{
-            position: 'absolute',
-            top: `calc(50% - ${loadingIconSize / 2}px)`,
-            left: `calc(50% - ${loadingIconSize / 2}px)`
-          }}>
-            <LoadingIcon
-              size={loadingIconSize}
-              color={LOGO_COLORS.READER.ACCENT}
-            />
-          </span>
-        )
-      }
     </div>
   );
 });
