@@ -14,8 +14,9 @@ export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 const onDemo = process.env.DEPLOY_ENV === 'demo';
 
 const defaultTimeoutSettings = {
-  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS,
-  deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
+  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS
+  // removed 5 min timeout:
+  // deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
 };
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
