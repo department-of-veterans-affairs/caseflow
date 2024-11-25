@@ -1,30 +1,7 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { MemoryRouter as Router } from 'react-router-dom';
-
-import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
-import { applyMiddleware, createStore, compose } from 'redux';
-import thunk from 'redux-thunk';
+import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';;
 import userSearchParamWithCondition from 'test/data/nonComp/userSearchParamWithConditionData';
-
-const ReduxDecorator = (Story, options) => {
-  const props = {
-    ...options.args.data
-  };
-
-  const store = createStore(
-    CombinedNonCompReducer,
-    props,
-    compose(applyMiddleware(thunk))
-  );
-
-  return <Provider store={store} >
-    <Router>
-      <Story />
-    </Router>
-  </Provider>;
-};
+import ReduxDecorator from 'test/app/nonComp/nonCompReduxDecorator';
 
 export default {
   title: 'Queue/NonComp/SavedSearches/Save Search Modal',

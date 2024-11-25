@@ -1,12 +1,6 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { MemoryRouter as Router } from 'react-router-dom';
-
 import DeleteModal from 'app/nonComp/components/DeleteModal';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
-import { applyMiddleware, createStore, compose } from 'redux';
-
-import thunk from 'redux-thunk';
+import ReduxDecorator from 'test/app/nonComp/nonCompReduxDecorator';
 
 const search = {
   savedSearch: {
@@ -21,24 +15,6 @@ const search = {
       }
     }
   }
-};
-
-const ReduxDecorator = (Story, options) => {
-  const props = {
-    ...options.args.data
-  };
-
-  const store = createStore(
-    CombinedNonCompReducer,
-    props,
-    compose(applyMiddleware(thunk))
-  );
-
-  return <Provider store={store} >
-    <Router>
-      <Story />
-    </Router>
-  </Provider>;
 };
 
 export default {
@@ -69,4 +45,3 @@ DeleteModalTemplate.story = {
 DeleteModalTemplate.args = {
   data: { nonComp: { businessLineUrl: 'vha' }, savedSearch: search.savedSearch }
 };
-

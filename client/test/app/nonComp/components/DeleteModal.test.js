@@ -37,7 +37,11 @@ describe('DeleteModal', () => {
   };
 
   describe('renders correctly', () => {
-    it('passes a11y testing', async () => {
+    it('snapshot test', () => {
+      expect(setup()).toMatchSnapshot();
+    });
+
+    it('passes a11y', async () => {
       const { container } = setup();
 
       const results = await axe(container);
@@ -45,25 +49,20 @@ describe('DeleteModal', () => {
       expect(results).toHaveNoViolations();
     });
 
-    it('renders correctly', () => {
-      const { container } = setup();
-
-      expect(container).toMatchSnapshot();
-    });
   });
 
   describe('Different elements of Modal', () => {
-    it('should display title and description of the modal', () => {
-      setup();
+    beforeEach(() => {
+      setup(search);
+    });
 
+    it('should display title and description of the modal', () => {
       expect(screen.getByText(COPY.DELETE_SEARCH_TITLE)).toBeTruthy();
 
       expect(screen.getByText(COPY.DELETE_SEARCH_DESCRIPTION)).toBeTruthy();
     });
 
     it('should have Delete and Cancel button', () => {
-      setup();
-
       const deleteButton = screen.getByText('Delete');
 
       const cancelButton = screen.getByText('Cancel');
@@ -72,9 +71,7 @@ describe('DeleteModal', () => {
       expect(cancelButton).toBeTruthy();
     });
 
-    it('should have the name of the save search to be deleted', () =>{
-      setup(search);
-
+    it('should have the name of the save search to be deleted', () => {
       expect(screen.getByText('Search to be deleted')).toBeTruthy();
     });
   });

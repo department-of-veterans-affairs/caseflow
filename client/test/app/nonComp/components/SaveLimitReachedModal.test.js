@@ -32,9 +32,7 @@ describe('SaveLimitReachModal', () => {
     });
 
     it('renders correctly', () => {
-      const { container } = setup();
-
-      expect(container).toMatchSnapshot();
+      expect(setup()).toMatchSnapshot();
     });
   });
 
