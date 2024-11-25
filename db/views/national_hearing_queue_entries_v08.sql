@@ -56,14 +56,8 @@ SELECT
   veterans.state_of_residence,
   veterans.country_of_residence,
   cached_appeal_attributes.suggested_hearing_location,
-  CASE
-    WHEN (request_issues_status.aggregate_mst_status = true) THEN true
-    ELSE false
-  END AS mst_indicator,
-  CASE
-    WHEN (request_issues_status.aggregate_pact_status = true) THEN true
-    ELSE false
-  END AS pact_indicator
+  COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE AS mst_indicator,
+  COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE AS pact_indicator
 FROM
   appeals
   JOIN tasks ON tasks.appeal_type = 'Appeal'
@@ -86,6 +80,7 @@ FROM
     SELECT decision_review_id, bool_or(mst_status) AS aggregate_mst_status, bool_or(pact_status) AS aggregate_pact_status
     FROM request_issues
     WHERE decision_review_type = 'Appeal'
+    AND (mst_status IS TRUE OR pact_status IS TRUE)
     GROUP BY decision_review_id
   ) AS request_issues_status ON (appeals.id = request_issues_status.decision_review_id)
 WHERE
