@@ -46,11 +46,17 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
   describe "POST person updated" do
     let(:payload) { JSON.parse Events::PersonUpdated::PersonUpdatedEvent.example_response }
+    let(:params) { payload.without("attributes") }
+    let(:attributes) { payload["attributes"] }
     let(:person_updated) { double(Events::PersonUpdated) }
-    let(:attributes) { payload.slice(*Events::PersonUpdated::Attributes.members) }
     let(:is_veteran) { true }
+    let(:header_attributes) { Events::PersonUpdated::PersonUpdatedEvent.header_attribute_map }
 
     before do
+      header_attributes.each do |header, attribute|
+        request.headers[header] = attributes[attribute]
+      end
+
       allow(Events::PersonUpdated).to receive(:new).with(
         payload["event_id"],
         payload["participant_id"],
@@ -59,6 +65,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
           Events::PersonUpdated::Attributes
         ).and(have_attributes(attributes))
       ).and_return(person_updated)
+
       person.update!({ participant_id: payload["participant_id"] })
     end
 
@@ -76,11 +83,9 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
     context "with a valid token" do
       it "returns 200 status response" do
-        load_headers
-
         expect(person_updated).to receive(:call)
 
-        post :person_updated, params: payload
+        post :person_updated, params: params
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to eq(JSON.dump({ "message": "PersonUpdated successfully processed" }))
@@ -95,7 +100,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
       end
 
       it "returns a 409 status and error message" do
-        post :person_updated, params: payload
+        post :person_updated, params: params
         expect(response).to have_http_status(:conflict)
         expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
       end
@@ -107,7 +112,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
       end
 
       it "returns a 422 status and error message" do
-        post :person_updated, params: payload
+        post :person_updated, params: params
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
       end
@@ -177,13 +182,5 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
       end
     end
-  end
-
-  def load_headers
-    request.headers["X-VA-Vet-SSN"] = "123456789"
-    request.headers["X-VA-File-Number"] = "77799777"
-    request.headers["X-VA-Vet-First-Name"] = "John"
-    request.headers["X-VA-Vet-Last-Name"] = "Smith"
-    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
   end
 end
