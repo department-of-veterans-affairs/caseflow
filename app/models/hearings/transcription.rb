@@ -8,6 +8,7 @@ class Transcription < CaseflowRecord
   belongs_to :transcription_package, foreign_key: :task_number, primary_key: :task_number
   before_create :sequence_task_id
 
+
   validates :hearing_type, inclusion: { in: %w[Hearing LegacyHearing] }
   validates :hearing, presence: true
 
