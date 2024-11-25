@@ -87,7 +87,6 @@ jobs:
         CI: true
         REDIS_URL_CACHE: redis://redis:6379/0/cache/
         TEST_VACOLS_HOST: facols_db
-        HEADLESS: true
 
     steps:
       - uses: actions/checkout@v3
