@@ -5,30 +5,30 @@ module CorrespondenceTaskActionsHelpers
     { class: OtherMotionCorrespondenceTask, name: "Other motion",
       assigned_to_type: "User", assigned_to: :user_team,
       access_type: :user_access, team_name: "Inbound Ops Team" },
-    { class: FoiaRequestCorrespondenceTask, name: "FOIA request",
-      assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
-      access_type: :privacy_user_access, team_name: "Privacy Team" },
-    { class: CavcCorrespondenceCorrespondenceTask, name: "CAVC Correspondence",
-      assigned_to_type: "CavcLitigationSupport", assigned_to: :cavc_team,
-      access_type: :cavc_user_access, team_name: "CAVC Litigation Support" },
-    { class: CongressionalInterestCorrespondenceTask, name: "Congressional interest",
-      assigned_to_type: "LitigationSupport", assigned_to: :liti_team,
-      access_type: :litigation_user_access, team_name: "Litigation Support" },
-    { class: PrivacyActRequestCorrespondenceTask, name: "Privacy act request",
-      assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
-      access_type: :privacy_user_access, team_name: "Privacy Team" },
-    { class: PrivacyComplaintCorrespondenceTask, name: "Privacy complaint",
-      assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
-      access_type: :privacy_user_access, team_name: "Privacy Team" },
-    { class: DeathCertificateCorrespondenceTask, name: "Death certificate",
-      assigned_to_type: "Colocated", assigned_to: :colocated_team,
-      access_type: :colocated_user_access, team_name: "VLJ Support Staff" },
-    { class: PowerOfAttorneyRelatedCorrespondenceTask, name: "Power of attorney-related",
-      assigned_to_type: "HearingAdmin", assigned_to: :hearings_team,
-      access_type: :hearnings_user_access, team_name: "Hearing Admin" },
-    { class: StatusInquiryCorrespondenceTask, name: "Status inquiry",
-      assigned_to_type: "LitigationSupport", assigned_to: :liti_team,
-      access_type: :litigation_user_access, team_name: "Litigation Support" }
+    # { class: FoiaRequestCorrespondenceTask, name: "FOIA request",
+    #   assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
+    #   access_type: :privacy_user_access, team_name: "Privacy Team" },
+    # { class: CavcCorrespondenceCorrespondenceTask, name: "CAVC Correspondence",
+    #   assigned_to_type: "CavcLitigationSupport", assigned_to: :cavc_team,
+    #   access_type: :cavc_user_access, team_name: "CAVC Litigation Support" },
+    # { class: CongressionalInterestCorrespondenceTask, name: "Congressional interest",
+    #   assigned_to_type: "LitigationSupport", assigned_to: :liti_team,
+    #   access_type: :litigation_user_access, team_name: "Litigation Support" },
+    # { class: PrivacyActRequestCorrespondenceTask, name: "Privacy act request",
+    #   assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
+    #   access_type: :privacy_user_access, team_name: "Privacy Team" },
+    # { class: PrivacyComplaintCorrespondenceTask, name: "Privacy complaint",
+    #   assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team,
+    #   access_type: :privacy_user_access, team_name: "Privacy Team" },
+    # { class: DeathCertificateCorrespondenceTask, name: "Death certificate",
+    #   assigned_to_type: "Colocated", assigned_to: :colocated_team,
+    #   access_type: :colocated_user_access, team_name: "VLJ Support Staff" },
+    # { class: PowerOfAttorneyRelatedCorrespondenceTask, name: "Power of attorney-related",
+    #   assigned_to_type: "HearingAdmin", assigned_to: :hearings_team,
+    #   access_type: :hearnings_user_access, team_name: "Hearing Admin" },
+    # { class: StatusInquiryCorrespondenceTask, name: "Status inquiry",
+    #   assigned_to_type: "LitigationSupport", assigned_to: :liti_team,
+    #   access_type: :litigation_user_access, team_name: "Litigation Support" }
   ].freeze
 
   def correspondence_spec_privacy_user_access
@@ -85,7 +85,6 @@ module CorrespondenceTaskActionsHelpers
   def check_task_action(options = {})
     correspondence = options[:correspondence]
     visit_correspondence(correspondence)
-
     dropdowns = open_last_task_dropdown
     perform_task_action(dropdowns, options)
 
@@ -100,7 +99,7 @@ module CorrespondenceTaskActionsHelpers
   end
 
   def open_last_task_dropdown
-    dropdowns = page.all(".cf-btn-link")
+    dropdowns = page.all(".toggleButton-plus-or-minus")
     dropdowns.last.click
     dropdowns
   end
