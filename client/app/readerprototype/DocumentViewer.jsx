@@ -133,6 +133,7 @@ const DocumentViewer = (props) => {
               zoomLevel={props.zoomLevel}
               readerPreferences={props.readerPreferences}
               featureToggles={props.featureToggles}
+              userId={props.userId}
               onrequestCancel={() => props.history.push(props.documentPathBase)}
             />
           </div>
@@ -171,6 +172,7 @@ DocumentViewer.propTypes = {
   zoomLevel: PropTypes.number,
   onZoomChange: PropTypes.func,
   readerPreferences: PropTypes.object,
+  userId: PropTypes.any
 };
 
 export default DocumentViewer;

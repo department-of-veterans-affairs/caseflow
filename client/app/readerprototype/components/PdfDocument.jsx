@@ -25,7 +25,7 @@ const PdfDocument = ({
   onrequestCancel,
   zoomLevel,
   featureToggles,
-  readerPreferences }) => {
+  readerPreferences, userId }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -113,7 +113,14 @@ const PdfDocument = ({
   const handleCancelRequest = () => {
     if (requestRef.current) {
       // Abort the download
-      requestRef.current.abort();
+      requestRef.current.abort().then(
+        ProgressBarUtil.logCancelRequest({
+          progressData,
+          documentId: doc.id,
+          userId,
+          getStartTime: pdfMetrics.current.getStartTime
+        })
+      );
       // Redirect
       onrequestCancel();
     }
@@ -134,10 +141,10 @@ const PdfDocument = ({
         responseType: 'arraybuffer',
         onProgress: ({ loaded }) => {
           const percentage = ProgressBarUtil.calculateProgress({ loaded, fileSize });
-          const enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
-          const downloadSpeed = Number((loaded / (enlapsedTime)).toFixed(0));
+          const elapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
+          const downloadSpeed = Number((loaded / (elapsedTime)).toFixed(0));
           const shouldShow = ProgressBarUtil.shouldShowProgressBar({
-            enlapsedTime,
+            elapsedTime,
             downloadSpeed,
             percentage,
             loaded,
@@ -213,8 +220,7 @@ const PdfDocument = ({
 
   useEffect(() => {
     return () => {
-      if (!metricsLoggedRef.current) {
-
+      if (!metricsLoggedRef.current && pdfMetrics.current.renderedPageCount > 0) {
         logMetrics();
       }
     };
@@ -280,6 +286,7 @@ PdfDocument.propTypes = {
   onrequestCancel: PropTypes.func,
   readerPreferences: PropTypes.object,
   featureToggles: PropTypes.object,
+  userId: PropTypes.any,
 };
 
 export default PdfDocument;

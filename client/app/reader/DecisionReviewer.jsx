@@ -152,6 +152,7 @@ export class DecisionReviewer extends React.PureComponent {
         featureToggles={this.props.featureToggles}
         onZoomChange={this.updateZoomLevel}
         readerPreferences={this.props.readerPreferences}
+        userId={this.props.userId}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -217,7 +218,8 @@ DecisionReviewer.propTypes = {
   singleDocumentMode: PropTypes.bool,
   stopPlacingAnnotation: PropTypes.func,
   storeDocuments: PropTypes.any,
-  userDisplayName: PropTypes.string
+  userDisplayName: PropTypes.string,
+  userId: PropTypes.any
 };
 
 const mapStateToProps = (state, props) => {
