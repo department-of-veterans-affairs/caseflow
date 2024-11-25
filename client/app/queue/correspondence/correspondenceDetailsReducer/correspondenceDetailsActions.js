@@ -300,3 +300,41 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
       console.error(errorMessage);
     });
 };
+
+export const returnTaskToInboundOps = (payload, frontendParams, correspondence) => () => {
+  const { taskName, assignedName, taskID } = frontendParams;
+
+  return ApiUtil.post(`/queue/correspondence/tasks/${taskID}/return_to_inbound_ops`, payload).
+    then((response) => {
+      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner;
+      const returnToInboundOpsTask = response.body;
+
+      const updatedCorrespondence = correspondence.tasksUnrelatedToAppeal.push(returnToInboundOpsTask)
+
+      setTaskNotRelatedToAppealBanner({
+        title,
+        message: sprintf(message,
+          taskName,
+          assignedName),
+        type
+      });
+
+      updateCorrespondenceInfo(updatedCorrespondence);
+
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner;
+
+      setTaskNotRelatedToAppealBanner({
+        title,
+        message: sprintf(message, errorMessage),
+        type
+      });
+
+      console.error(error);
+    });
+};
