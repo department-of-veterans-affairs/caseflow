@@ -454,6 +454,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let!(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
     let!(:legacy_hearing_task2) { legacy_with_sched_task2.tasks.find_by(type: "ScheduleHearingTask") }
 
+
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
 
