@@ -68,8 +68,8 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
-    # organization being handled a bit differently.
     when "Organization"
+      # organization being handled a bit differently, can use url.
       target_data_type = Organization
       target_data_column = "url"
     end
@@ -94,7 +94,7 @@ class Test::LoadTestApiController < Api::ApplicationController
                      elsif target_data_type.to_s == "HearingDay"
                        target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
                      elsif target_data_type.to_s == "Organization"
-                       target_id.presence ? Organization.find(target_id) : target_data_type.all.sample
+                       target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else
