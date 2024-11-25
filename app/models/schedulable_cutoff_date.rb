@@ -18,7 +18,15 @@
 # If no user-provided cutoff dates exist then December 31, 2019 should be utilized whenever determining if AMA appeals
 # are schedulable.
 class SchedulableCutoffDate < CaseflowRecord
-  # Returns the most recently added cutoff date if one exists.
-  # @return [SchedulableCutoffDate, nil]
-  scope :most_recently_added, -> { order(created_at: :desc).limit(1) }
+  # Returns a relation of cutoff dates in descending order of when they've been added.
+  # @return [SchedulableCutoffDate::ActiveRecord_Relation]
+  scope :ordered_by_most_recent_first, -> { order(created_at: :desc).limit(1) }
+
+  class << self
+    # Returns the most recently added cutoff date record if one exists.
+    # @return [SchedulableCutoffDate, nil]
+    def most_recently_added
+      ordered_by_most_recent_first.take
+    end
+  end
 end
