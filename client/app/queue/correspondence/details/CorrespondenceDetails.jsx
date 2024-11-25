@@ -292,8 +292,7 @@ const CorrespondenceDetails = (props) => {
     // If neither is in relatedCorrespondenceIds, maintain their original order
     const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
 
-    // eslint-disable-next-line babel/no-unused-expressions
-    returnSort;
+    return returnSort;
   });
 
   const onCancel = () => {
