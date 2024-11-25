@@ -87,6 +87,13 @@ const CorrespondenceDetails = (props) => {
     setOriginalStates(initialStates);
   }, [priorMail, relatedCorrespondenceIds]);
 
+  
+  useEffect(() => {
+    if (showSuccessBanner) {
+      setShowFailureBanner(false);
+    }
+  }, [showSuccessBanner]);
+
   useEffect(() => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
