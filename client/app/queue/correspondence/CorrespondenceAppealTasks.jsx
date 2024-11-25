@@ -202,7 +202,7 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
           </div>
           <div className="tasks-added-banner-alert">
-            <div className="task-banner-alert">
+            <div className="correspondence-details-alert-banner">
               {appeal &&
                 waiveEvidenceAlertBanner &&
                 waiveEvidenceAlertBanner.message &&
@@ -212,13 +212,14 @@ const CorrespondenceAppealTasks = (props) => {
                 <Alert
                   type={waiveEvidenceAlertBanner.type}
                   message={waiveEvidenceAlertBanner.message}
+                  styling= "correspondence-details-alert-banner-inner"
                   scrollOnAlert={false}
                 />
               )}
             </div>
           </div>
           <div className="tasks-added-banner-alert">
-            <div className="task-banner-alert">
+            <div className="correspondence-details-alert-banner">
               {appeal &&
                 taskRelatedToAppealBanner &&
                 taskRelatedToAppealBanner?.message &&
@@ -228,6 +229,7 @@ const CorrespondenceAppealTasks = (props) => {
                 <Alert
                   type={taskRelatedToAppealBanner.type}
                   message={taskRelatedToAppealBanner.message}
+                  styling= "correspondence-details-alert-banner-inner"
                   scrollOnAlert={false}
                 />
               )}

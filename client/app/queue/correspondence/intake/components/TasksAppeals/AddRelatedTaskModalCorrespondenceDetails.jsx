@@ -117,7 +117,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
     setIsLoading(true);
 
     try {
-      dispatch(createCorrespondenceAppealTask(newTask, correspondence, appeal.id));
+      await dispatch(createCorrespondenceAppealTask(newTask, correspondence, appeal.id));
 
       // Resets fields and state after submission
       setTaskContent('');
@@ -125,10 +125,10 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
       setSelectedTaskType(null);
       // setIsSecondPage(false);
       // setAutoTextSelections([]);
-      handleClose();
     } catch (error) {
       console.error('Error while adding task:', error);
     } finally {
+      handleClose();
       setIsLoading(false);
     }
   };
