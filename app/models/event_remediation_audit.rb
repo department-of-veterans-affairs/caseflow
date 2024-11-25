@@ -2,7 +2,7 @@
 
 class EventRemediationAudit < CaseflowRecord
   belongs_to :event_record
-  has_one :remediated_record
+  belongs_to :remediated_record, polymorphic: true
   store_accessor :info
 
   validate :valid_remediated_record
