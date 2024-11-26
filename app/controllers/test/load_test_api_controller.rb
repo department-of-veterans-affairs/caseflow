@@ -92,7 +92,6 @@ class Test::LoadTestApiController < Api::ApplicationController
   # rubocop:disable Layout/LineLength
   def get_target_data_object(target_id, target_data_type, target_data_column)
     target_data_object = if target_data_type.to_s == "Organization"
-
                            target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.all.sample
                          elsif target_id.presence
                            target_data_type.find_by("#{target_data_column}": target_id)
@@ -109,7 +108,6 @@ class Test::LoadTestApiController < Api::ApplicationController
     target_data_object
   end
   # rubocop:enable Layout/LineLength
-
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
