@@ -51,8 +51,6 @@ class TasksController < ApplicationController
     SplitAppealTask: SplitAppealTask
   }.freeze
 
-  S3_BUCKET = "vaec-appeals-caseflow"
-
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -215,45 +213,48 @@ class TasksController < ApplicationController
 
     info_file = split_filename(file_name)
     # upload_file_S3 and modified transcription_files table
-    transcription_file = Hearings::TranscriptionFile.find_by(hearing_id: info_file[:hearing_id],
-      hearing_type: info_file[:hearing_type], file_type: info_file[:extension])
+    transcription_file = Hearings::TranscriptionFile.find_by(
+      hearing_id: info_file[:hearing_id],
+      hearing_type: info_file[:hearing_type],
+      file_type: info_file[:extension]
+    )
     transcription_file.upload_content_to_s3!(tmp_folder.tempfile)
 
     appeal = transcription_file.hearing.appeal
     veterant_file_number = appeal.veteran_file_number
 
     document_params =
-    {
-      veteran_file_number: veterant_file_number,
-      document_type: "Hearing Transcript",
-      document_subject: "notifications",
-      document_name: file_name,
-      application: "notification-report",
-      file: tmp_folder.tempfile
-    }
+      {
+        veteran_file_number: veterant_file_number,
+        document_type: "Hearing Transcript",
+        document_subject: "notifications",
+        document_name: file_name,
+        application: "notification-report",
+        file: tmp_folder.tempfile
+      }
     response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
     if response.success?
-      #change status of ReviewTranscriptTask
-      change_status_review_transcript_task
+      # change status of ReviewTranscriptTask
+      complete_transcript_review
     else
-      render json: response.errors[0], status: :bad_request
+      render json: { success: false }, status: :bad_request
     end
   end
 
   private
 
-  def split_filename(filename)
-    hearing_id = filename.split("_")[1]
-    hearing_type = filename.split("_")[2].split(".")[0]
-    extension = filename.split(".")[1]
-      {
-        hearing_id: hearing_id,
-        hearing_type: hearing_type,
-        extension: extension
-      }
+  def split_filename(file_name)
+    hearing_id = file_name.split("_")[1]
+    hearing_type = file_name.split("_")[2].split(".")[0]
+    extension = file_name.split(".")[1]
+    {
+      hearing_id: hearing_id,
+      hearing_type: hearing_type,
+      extension: extension
+    }
   end
 
-  def change_status_review_transcript_task
+  def complete_transcript_review
     return unless task.type == "ReviewTranscriptTask" && task.status == "in_progress"
 
     Transcription.where(task_id: task.id).update_all(
@@ -262,16 +263,14 @@ class TasksController < ApplicationController
       updated_at: Time.zone.now
     )
 
-    Task.where(id: task.id).update_all(
+    task.update!(
       instructions: params[:task][:instructions],
       status: Constants.TASK_STATUSES.completed,
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
 
-    render json: {
-      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
-    }
+    render json: { success: true }, status: :ok
   end
 
   def send_initial_notification_letter
