@@ -808,6 +808,12 @@ describe EndProductEstablishment, :postgres do
       subject { end_product_establishment.status_active?(sync: true) }
 
       context "when the EP is cleared" do
+        before do
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
+        after do
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
         let(:synced_status) { "PEND" }
         let(:ep_status_code) { "CLR" }
 

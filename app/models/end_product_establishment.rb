@@ -276,7 +276,6 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def status_active?(sync: false)
-    byebug
     sync! if sync
     synced_status.nil? || !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
