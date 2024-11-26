@@ -5,20 +5,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
     allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
 
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :alternative_batch_size)
-    create(:case_distribution_lever, :nod_adjustment)
-    create(:case_distribution_lever, :batch_size_per_attorney)
-    create(:case_distribution_lever, :cavc_affinity_days)
-    create(:case_distribution_lever, :cavc_aod_affinity_days)
-    create(:case_distribution_lever, :aoj_cavc_affinity_days)
-    create(:case_distribution_lever, :aoj_aod_affinity_days)
-    create(:case_distribution_lever, :aoj_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
-    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
-    create(:case_distribution_lever, :disable_legacy_non_priority)
-    create(:case_distribution_lever, :nonsscavlj_number_of_appeals_to_move)
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   def to_judge_hash(arr)
@@ -33,22 +20,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { described_class.perform_now }
 
-    it "using Automatic Case Distribution module", skip: "Automatic Case Distribution is deprecated" do
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:distribute_non_genpop_priority_appeals).and_return([])
-
-      subject
-    end
-
-    it "using By Docket Date Distribution module" do
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
-
-      subject
-    end
-
-    it "queues the UpdateAppealAffinityDatesJob" do
+    it "queues the UpdateAppealAffinityDatesJob and ReturnLegacyAppealsToBoardJob" do
       expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+      expect_any_instance_of(ReturnLegacyAppealsToBoardJob).to receive(:perform).with(no_args)
 
       subject
     end
@@ -59,184 +33,167 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       subject
     end
+
+    context "acd_ppj_distribute_not_genpop feature toggle" do
+      context "with feature toggle disabled" do
+        it "does not distribute not_genpop appeals" do
+          expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
+
+          subject
+        end
+      end
+
+      context "with feature toggle enabled" do
+        before { FeatureToggle.enable!(:acd_ppj_distribute_not_genpop) }
+        after { FeatureToggle.disable!(:acd_ppj_distribute_not_genpop) }
+
+        it "does distribute not_genpop appeals if the feature toggle is enabled" do
+          expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to receive(:distribute_non_genpop_priority_appeals).and_return([])
+
+          subject
+        end
+
+        context "distributing appeals" do
+          let!(:judge_with_cases) { create(:user, :judge, :with_vacols_judge_record) }
+          let!(:judge_with_no_affinity_cases) { create(:user, :judge, :with_vacols_judge_record) }
+
+          let!(:direct_review_cavc_affinity) do
+            create(:appeal, :direct_review_docket, :type_cavc_remand, :cavc_ready_for_distribution,
+                   judge: judge_with_cases)
+          end
+          let!(:hearing_affinity) do
+            create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+                   tied_judge: judge_with_cases)
+          end
+          let!(:direct_review_aod) do
+            create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+          end
+
+          it "distributes non-genpop before calculating priority target" do
+            job = PushPriorityAppealsToJudgesJob.new
+            job.perform_now
+
+            expect(job.send(:priority_distributions_this_month_for_eligible_judges))
+              .to eq({ judge_with_cases.id => 2, judge_with_no_affinity_cases.id => 0 })
+            expect(job.send(:ready_genpop_priority_appeals_count)).to eq(1)
+            expect(job.send(:priority_target)).to eq(1)
+          end
+        end
+      end
+    end
   end
 
   context ".distribute_non_genpop_priority_appeals" do
-    let(:ready_priority_bfkey) { "12345" }
-    let(:ready_priority_bfkey2) { "12346" }
-    let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
-    let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
-    let(:receipt_date) { 30.days.ago }
-    let!(:judge_with_ready_priority_cases) do
-      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          :aod,
-          bfkey: ready_priority_bfkey,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801003", titrnum: "123456789S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
+    before { FeatureToggle.enable!(:acd_ppj_distribute_not_genpop) }
+    after { FeatureToggle.disable!(:acd_ppj_distribute_not_genpop) }
 
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          :advanced_on_docket_due_to_age,
-          :with_appeal_affinity,
-          uuid: ready_priority_uuid,
-          docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
+    # judges with non-genpop cases who should receive those cases
+    let!(:judge_with_cases_1) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:judge_with_cases_1_staff) { judge_with_cases_1.vacols_staff }
+    let!(:judge_with_cases_2) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:judge_with_cases_2_staff) { judge_with_cases_2.vacols_staff }
+
+    # judges without non-genpop cases who should receive nothing
+    let!(:judge_with_no_affinity_cases) { create(:user, :judge, :with_vacols_judge_record) }
+
+    # judge who is not eligible to be distribute cases in the push job
+    let!(:judge_cannot_receive_push_cases) do
+      user = create(:user, :judge, :with_vacols_judge_record)
+      JudgeTeam.for_judge(user).update!(accepts_priority_pushed_cases: false)
+      user
     end
 
-    let!(:judge_with_ready_nonpriority_cases) do
-      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801002", titrnum: "123456782S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          :with_appeal_affinity,
-          docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
+    # genpop cases that shouldn't distribute
+    let!(:direct_review_aod) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+    end
+    let!(:direct_review_out_of_window) do
+      create(:appeal, :direct_review_docket, :type_cavc_remand, :cavc_ready_for_distribution, :with_appeal_affinity,
+             judge: judge_with_cases_1, affinity_start_date: 3.months.ago)
+    end
+    let!(:evidence_aod) do
+      create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+    end
+    let!(:evidence_out_of_window) do
+      create(:appeal, :evidence_submission_docket, :type_cavc_remand, :cavc_ready_for_distribution,
+             :with_appeal_affinity, judge: judge_with_cases_2, affinity_start_date: 3.months.ago)
+    end
+    let!(:hearing_aod_cancelled_hearing) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks,
+             :cancelled_hearing_and_ready_to_distribute)
+    end
+    let!(:hearing_out_of_window) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: judge_with_cases_1, affinity_start_date: 3.months.ago)
+    end
+    let!(:legacy_aod) do
+      create(:case, :type_original, :aod, :ready_for_distribution)
+    end
+    let!(:legacy_out_of_window) do
+      create(:legacy_cavc_appeal, judge: judge_with_cases_2_staff, tied_to: false, affinity_start_date: 2.months.ago)
+    end
+    let!(:aoj_out_of_window) do
+      create(:legacy_aoj_appeal, :aod,
+             judge: judge_with_cases_1_staff, tied_to: false, affinity_start_date: 2.months.ago)
     end
 
-    let!(:judge_with_nonready_priority_cases) do
-      create(:user, :judge).tap do |judge|
-        create(:staff, :judge_role, user: judge)
-        vacols_case = create(
-          :case,
-          :aod,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "not ready",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801003", titrnum: "123456783S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :advanced_on_docket_due_to_age,
-          docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
+    # not genpop cases which should all distribute
+    let!(:direct_review_cavc_affinity) do
+      create(:appeal, :direct_review_docket, :type_cavc_remand, :cavc_ready_for_distribution,
+             judge: judge_with_cases_2)
     end
-    let!(:ama_only_judge_with_ready_priority_cases) do
-      create(:user, :ama_only_judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          :aod,
-          bfkey: ready_priority_bfkey2,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801005", titrnum: "923456790S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          :advanced_on_docket_due_to_age,
-          :with_appeal_affinity,
-          uuid: ready_priority_uuid2,
-          docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
+    let!(:evidence_cavc_affinity) do
+      create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :type_cavc_remand,
+             :cavc_ready_for_distribution, judge: judge_with_cases_1)
     end
-    let(:eligible_judges) do
-      [
-        judge_with_ready_priority_cases,
-        judge_with_ready_nonpriority_cases,
-        judge_with_nonready_priority_cases,
-        ama_only_judge_with_ready_priority_cases
-      ]
+    let!(:hearing_affinity) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+             tied_judge: judge_with_cases_2)
+    end
+    let!(:legacy_cavc_affinity) do
+      create(:legacy_cavc_appeal, judge: judge_with_cases_1_staff, tied_to: false, affinity_start_date: 3.days.ago)
+    end
+    let!(:aoj_cavc_affinity) do
+      create(:legacy_aoj_appeal, :aod, judge: judge_with_cases_2_staff, tied_to: false, affinity_start_date: 3.days.ago)
+    end
+    let!(:legacy_aod_tied) do
+      create(:case, :type_original, :aod, :tied_to_judge, :ready_for_distribution, tied_judge: judge_with_cases_1)
+    end
+    let!(:aoj_aod_tied) do
+      create(:legacy_aoj_appeal, :aod, judge: judge_with_cases_2_staff)
     end
 
-    before do
-      allow_any_instance_of(DirectReviewDocket)
-        .to receive(:nonpriority_receipts_per_year)
-        .and_return(100)
+    subject { PushPriorityAppealsToJudgesJob.new.send(:distribute_non_genpop_priority_appeals) }
 
-      allow(Docket)
-        .to receive(:nonpriority_decisions_per_year)
-        .and_return(1000)
-    end
+    it "distributes only non-genpop appeals and doesn't calculate priority target" do
+      # assert that the job will not try to calculate the priority target when this method is run
+      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to_not receive(:priority_distributions_this_month_for_eligible_judges)
 
-    subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
+      subject
 
-    context "using By Docket Date Distribution module" do
-      before do
-        FeatureToggle.enable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-      end
-      after do
-        FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.disable!(:acd_exclude_from_affinity)
-      end
+      distributed_judges = Distribution.all.map(&:judge)
+      distributed_case_ids = DistributedCase.all.map(&:case_id)
+      not_distributed_ama_appeals = DistributionTask.assigned.map(&:appeal)
+      not_distributed_legacy_appeals = VACOLS::Case.where(bfcurloc: %w[81 83])
+
+      expect(distributed_judges).to_not include(judge_cannot_receive_push_cases)
+      expect(Distribution.find_by(judge: judge_with_no_affinity_cases).distributed_cases.count).to eq(0)
+
+      expect(not_distributed_ama_appeals).to match_array(
+        [direct_review_aod, direct_review_out_of_window, evidence_aod, evidence_out_of_window,
+         hearing_aod_cancelled_hearing, hearing_out_of_window]
+      )
+      # correct the legacy_out_of_window and legacy_cavc_affinity bfkeys because of factory behavior
+      expect(not_distributed_legacy_appeals.map(&:bfkey)).to match_array(
+        [legacy_aod.bfkey, (legacy_out_of_window.bfkey.to_i + 1).to_s, aoj_out_of_window.bfkey]
+      )
+      expect(distributed_case_ids).to match_array(
+        [direct_review_cavc_affinity.uuid, evidence_cavc_affinity.uuid, hearing_affinity.uuid,
+         (legacy_cavc_affinity.bfkey.to_i + 1).to_s, aoj_cavc_affinity.bfkey, legacy_aod_tied.bfkey, aoj_aod_tied.bfkey]
+      )
     end
   end
 
@@ -355,73 +312,35 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       ready_priority_evidence_cases.each { |appeal| appeal.update(receipt_date: 1.month.ago) }
     end
 
-    context "using Automatic Case Distribution module", skip: "Automatic Case Distribution is deprecated" do
-      it "should distribute ready priority appeals to the judges" do
-        expect(subject.count).to eq judges.count
+    it "should distribute ready priority appeals to the judges" do
+      expect(subject.count).to eq judges.count
 
-        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq priority_count
-        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+      # Ensure we distributed all available ready cases from any docket that are not tied to a judge
+      distributed_cases = DistributedCase.where(distribution: subject)
+      expect(distributed_cases.count).to eq priority_count
+      expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
+      expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
+      expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+      expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4, 8]
+    end
 
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
-      end
-
-      it "distributes cases to each judge based on their priority target" do
-        judges.each_with_index do |judge, i|
-          target_distributions = priority_target - judge_distributions_this_month[i]
-          distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.statistics["batch_size"]).to eq target_distributions
-          distributed_cases = DistributedCase.where(distribution: distribution)
-          expect(distributed_cases.count).to eq target_distributions
-        end
-      end
-
-      context "where there is an ama-only judge" do
-        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-        let(:judges) { [ama_only_judge] }
-        it "only distributes ama cases to ama-only judge" do
-          distributed_cases = DistributedCase.where(distribution: subject)
-          distributed_cases.each do |distributed_case|
-            expect(distributed_case.docket).not_to eq("legacy")
-          end
-        end
+    it "distributes cases to each judge based on their priority target" do
+      judges.each_with_index do |judge, i|
+        target_distributions = priority_target - judge_distributions_this_month[i]
+        distribution = subject.detect { |dist| dist.judge_id == judge.id }
+        expect(distribution.statistics["batch_size"]).to eq target_distributions
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq target_distributions
       end
     end
 
-    context "using By Docket Date Distribution module" do
-      it "should distribute ready priority appeals to the judges" do
-        expect(subject.count).to eq judges.count
-
-        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
+    context "where there is an ama-only judge" do
+      let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
+      let(:judges) { [ama_only_judge] }
+      it "only distributes ama cases to ama-only judge" do
         distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq priority_count
-        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4, 8]
-      end
-
-      it "distributes cases to each judge based on their priority target" do
-        judges.each_with_index do |judge, i|
-          target_distributions = priority_target - judge_distributions_this_month[i]
-          distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.statistics["batch_size"]).to eq target_distributions
-          distributed_cases = DistributedCase.where(distribution: distribution)
-          expect(distributed_cases.count).to eq target_distributions
-        end
-      end
-
-      context "where there is an ama-only judge" do
-        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-        let(:judges) { [ama_only_judge] }
-        it "only distributes ama cases to ama-only judge" do
-          distributed_cases = DistributedCase.where(distribution: subject)
-          distributed_cases.each do |distributed_case|
-            expect(distributed_case.docket).not_to eq("legacy")
-          end
+        distributed_cases.each do |distributed_case|
+          expect(distributed_case.docket).not_to eq("legacy")
         end
       end
     end

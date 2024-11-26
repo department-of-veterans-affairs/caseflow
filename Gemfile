@@ -89,7 +89,7 @@ gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
 gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "4ed23adddb3f584d3a530ef64dcb9ea0cf0eb2b3"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
