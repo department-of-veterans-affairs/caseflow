@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_20_101517) do
+ActiveRecord::Schema.define(version: 2024_11_26_181511) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2737,25 +2737,25 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
   UNION
    SELECT legacy_appeals.id AS appeal_id,
       'LegacyAppeal'::text AS appeal_type,
-      f_vacols_brieff.bfhr AS hearing_request_type,
-      replace((f_vacols_brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
-      f_vacols_brieff.bfkey AS external_id,
+      brieff.bfhr AS hearing_request_type,
+      replace((brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
+      brieff.bfkey AS external_id,
           CASE
-              WHEN ((f_vacols_brieff.bfac)::text = '1'::text) THEN 'Original'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '2'::text) THEN 'Supplemental'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '3'::text) THEN 'Post Remand'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '4'::text) THEN 'Reconsideration'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '5'::text) THEN 'Vacate'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
-              WHEN ((f_vacols_brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakable Error'::text
+              WHEN ((brieff.bfac)::text = '1'::text) THEN 'Original'::text
+              WHEN ((brieff.bfac)::text = '2'::text) THEN 'Supplemental'::text
+              WHEN ((brieff.bfac)::text = '3'::text) THEN 'Post Remand'::text
+              WHEN ((brieff.bfac)::text = '4'::text) THEN 'Reconsideration'::text
+              WHEN ((brieff.bfac)::text = '5'::text) THEN 'Vacate'::text
+              WHEN ((brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
+              WHEN ((brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
+              WHEN ((brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
+              WHEN ((brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakable Error'::text
               ELSE NULL::text
           END AS appeal_stream,
-      f_vacols_folder.tinum AS docket_number,
+      folder.tinum AS docket_number,
           CASE
-              WHEN (((f_vacols_corres.sspare2 IS NULL) AND (f_vacols_corres.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
-              WHEN ((f_vacols_assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
+              WHEN (((correspondent.sspare2 IS NULL) AND (correspondent.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
+              WHEN ((assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
               ELSE false
           END AS aod_indicator,
       tasks.id AS task_id,
@@ -2783,18 +2783,18 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
           END AS pact_indicator
      FROM (((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
-       JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
-       JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
-       LEFT JOIN f_vacols_assign ON (((f_vacols_assign.tsktknm)::text = (f_vacols_brieff.bfkey)::text)))
-       LEFT JOIN f_vacols_corres ON (((f_vacols_brieff.bfcorkey)::text = (f_vacols_corres.stafkey)::text)))
-       LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
-       JOIN veterans ON (((veterans.ssn)::text = (f_vacols_corres.ssn)::text)))
+       JOIN brieffs_awaiting_hearing_scheduling() brieff(bfkey, bfddec, bfcorkey, bfcorlid, bfdcn, bfdocind, bfpdnum, bfdpdcn, bforgtic, bfdorg, bfdthurb, bfdnod, bfdsoc, bfd19, bf41stat, bfmstat, bfmpro, bfdmcon, bfregoff, bfissnr, bfrdmref, bfcasev, bfcaseva, bfcasevb, bfcasevc, bfboard, bfbsasgn, bfattid, bfdasgn, bfcclkid, bfdqrsnt, bfdlocin, bfdloout, bfstasgn, bfcurloc, bfnrcopy, bfmemid, bfdmem, bfnrci, bfcallup, bfcallyymm, bfhines, bfdcfld1, bfdcfld2, bfdcfld3, bfac, bfdc, bfha, bfic, bfio, bfms, bfoc, bfsh, bfso, bfhr, bfst, bfdrodec, bfssoc1, bfssoc2, bfssoc3, bfssoc4, bfssoc5, bfdtb, bftbind, bfdcue, bfddvin, bfddvout, bfddvwrk, bfddvdsp, bfddvret, bfddro, bfdroid, bfdrortr, bfro1, bflot, bfbox, bfdtbready, bfarc, bfdarcin, bfdarcout, bfarcdisp, bfsub, bfrocdoc, bfdrocket, bfdcertool) ON (((legacy_appeals.vacols_id)::text = (brieff.bfkey)::text)))
+       JOIN folders_awaiting_hearing_scheduling() folder(ticknum, ticorkey, tistkey, tinum, tifiloc, tiaddrto, titrnum, ticukey, tidsnt, tidrecv, tiddue, tidcls, tiwpptr, tiwpptrt, tiaduser, tiadtime, timduser, timdtime, ticlstme, tiresp1, tikeywrd, tiactive, tispare1, tispare2, tispare3, tiread1, tiread2, timt, tisubj1, tisubj, tisubj2, tisys, tiagor, tiasbt, tigwui, tihepc, tiaids, timgas, tiptsd, tiradb, tiradn, tisarc, tisexh, titoba, tinosc, ti38us, tinnme, tinwgr, tipres, titrtm, tinoot, tioctime, tiocuser, tidktime, tidkuser, tipulac, ticerullo, tiplnod, tiplwaiver, tiplexpress, tisnl, tivbms, ticlcw) ON (((brieff.bfkey)::text = (folder.ticknum)::text)))
+       LEFT JOIN assign_awaiting_hearing_scheduling() assign(tasknum, tsktknm, tskstfas, tskactcd, tskclass, tskrqact, tskrspn, tskdassn, tskdtc, tskddue, tskdcls, tskstown, tskstat, tskownts, tskclstm, tskadusr, tskadtm, tskmdusr, tskmdtm, tsactive, tsspare1, tsspare2, tsspare3, tsread1, tsread, tskorder, tssys) ON (((assign.tsktknm)::text = (brieff.bfkey)::text)))
+       LEFT JOIN corres_awaiting_hearing_scheduling() correspondent(stafkey, susrpw, susrsec, susrtyp, ssalut, snamef, snamemi, snamel, slogid, stitle, sorg, sdept, saddrnum, saddrst1, saddrst2, saddrcty, saddrstt, saddrcnty, saddrzip, stelw, stelwex, stelfax, stelh, staduser, stadtime, stmduser, stmdtime, stc1, stc2, stc3, stc4, snotes, sorc1, sorc2, sorc3, sorc4, sactive, ssys, sspare1, sspare2, sspare3, sspare4, ssn, sfnod, sdob, sgender, shomeless, stermill, sfinhard, sadvage, smoh, svsi, spow, sals, spgwv, sincar) ON (((brieff.bfcorkey)::text = (correspondent.stafkey)::text)))
+       LEFT JOIN people ON (((correspondent.ssn)::text = (people.ssn)::text)))
+       JOIN veterans ON (((veterans.ssn)::text = (correspondent.ssn)::text)))
        LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
-       LEFT JOIN ( SELECT f_vacols_issues.isskey,
-              max((f_vacols_issues.issmst)::text) AS mst,
-              max((f_vacols_issues.isspact)::text) AS pact
-             FROM f_vacols_issues
-            GROUP BY f_vacols_issues.isskey) fvi ON (((fvi.isskey)::text = (f_vacols_brieff.bfkey)::text)))
+       LEFT JOIN ( SELECT issues_awaiting_hearing_scheduling.isskey,
+              max((issues_awaiting_hearing_scheduling.issmst)::text) AS mst,
+              max((issues_awaiting_hearing_scheduling.isspact)::text) AS pact
+             FROM issues_awaiting_hearing_scheduling() issues_awaiting_hearing_scheduling(isskey, issseq, issprog, isscode, isslev1, isslev2, isslev3, issdc, issdcls, issadtime, issaduser, issmdtime, issmduser, issdesc, isssel, issgr, issdev, issmst, isspact)
+            GROUP BY issues_awaiting_hearing_scheduling.isskey) fvi ON (((fvi.isskey)::text = (brieff.bfkey)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
