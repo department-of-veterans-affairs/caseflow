@@ -16,7 +16,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
@@ -76,6 +76,7 @@ class AssignToView extends React.Component {
   };
 
   submit = () => {
+
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
 
     const action = getAction(this.props);
@@ -270,7 +271,7 @@ class AssignToView extends React.Component {
   }
 
   render = () => {
-    const { assigneeAlreadySelected, task } = this.props;
+    const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
@@ -327,11 +328,13 @@ class AssignToView extends React.Component {
                 name="Assign to selector"
                 searchable
                 hideLabel={actionData.drop_down_label ? null : true}
+                errorMessage={highlightFormItems && highlightInvalidFormItems ? 'This field is required' : null}
                 label={this.determineDropDownLabel(actionData)}
                 placeholder={this.determinePlaceholder(this.props, actionData)}
                 value={this.state.selectedValue}
                 onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
                 options={this.determineOptions(actionData)}
+                required={this.props.task.type === 'JudgeLegacyDecisionReviewTask'}
               />
             )}
             {this.isVHAAssignToRegional() &&
@@ -353,6 +356,8 @@ class AssignToView extends React.Component {
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
             optional={actionData.body_optional}
+            errorMessage={highlightFormItems && !validInstructions(this.state.instructions) ? 'Instructions field is required' : null}
+            required={this.props.task.type === 'JudgeLegacyDecisionReviewTask'}
           />
         )}
         {isPulacCerullo && (
@@ -373,6 +378,8 @@ AssignToView.propTypes = {
     veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
+  highlightInvalidFormItems: PropTypes.func,
+  highlightFormItems: PropTypes.bool,
   isReassignAction: PropTypes.bool,
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
@@ -392,6 +399,7 @@ AssignToView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
@@ -403,6 +411,7 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       requestSave,
       onReceiveAmaTasks,
+      highlightInvalidFormItems,
       legacyReassignToJudge,
       setOvertime,
       resetSuccessMessages
