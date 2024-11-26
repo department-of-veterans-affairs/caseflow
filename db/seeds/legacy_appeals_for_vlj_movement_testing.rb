@@ -165,7 +165,7 @@ module Seeds
       no_rewrite_control = create_scenario_7_veteran(first_name: "NoRewrite ", last_name: "Control")
 
       # Case 1: Rewrite One (Priority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_1 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
         :status_active,
@@ -177,9 +177,10 @@ module Seeds
         bfcorlid: "#{rewrite_one.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
+      create_attorney_case_review_task(appeal_1)
 
       # Case 2: Rewrite Two (Nonpriority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_2 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
@@ -190,9 +191,10 @@ module Seeds
         bfcorlid: "#{rewrite_two.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      create_attorney_case_review_task(appeal_2)
 
       # Case 3: Rewrite Three (Nonpriority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_3 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
@@ -201,10 +203,12 @@ module Seeds
         assigner: User.find_by_css_id("BVALSHIELDS"),
         as_judge_assign_task: false,
         bfcorlid: "#{rewrite_three.file_number}S",
-        case_issues: create_list(:case_issue, 2, :compensation)))
+        case_issues: create_list(:case_issue, 2, :compensation)
+      ))
+      create_attorney_case_review_task(appeal_3)
 
       # Case 4: Rewrite Four (Priority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_4 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
         :status_active,
@@ -216,9 +220,10 @@ module Seeds
         bfcorlid: "#{rewrite_four.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      create_attorney_case_review_task(appeal_4)
 
       # Case 5: Rewrite Five (Priority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_5 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
@@ -230,9 +235,10 @@ module Seeds
         bfcorlid: "#{rewrite_five.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
+      create_attorney_case_review_task(appeal_5)
 
       # Case 6: Rewrite Six (Nonpriority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_6 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
@@ -243,9 +249,10 @@ module Seeds
         bfcorlid: "#{rewrite_six.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      create_attorney_case_review_task(appeal_6)
 
       # Case 7: NoRewrite Control (priority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      appeal_7 = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
@@ -256,6 +263,12 @@ module Seeds
         user: User.find_by_css_id("BVAOTRANTOW"),
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      create_attorney_case_review_task(appeal_7)
+    end
+
+    def create_attorney_case_review_task(appeal)
+      created_at = VACOLS::Decass.where(defolder: appeal.vacols_id).first.deadtim
+      create(:attorney_case_review, task_id: "#{appeal.vacols_id}-#{created_at}")
     end
   end
 end
