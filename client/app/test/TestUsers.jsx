@@ -11,7 +11,6 @@ import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import { trim, escapeRegExp } from 'lodash';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 export default function TestUsers(props) {
