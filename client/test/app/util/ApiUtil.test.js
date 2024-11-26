@@ -202,18 +202,20 @@ describe('ApiUtil', () => {
       const req = ApiUtil.get('/foo', options);
 
       // Simulate 2 progress events
-      const progressHandler = req.on.mock.calls.find(call => call[0] === 'progress')[1];
-      progressHandler({loaded: 50});
-      progressHandler({loaded: 100});
+      const progressHandler = req.on.mock.calls.find((call) => call[0] === 'progress')[1];
+
+      progressHandler({ loaded: 50 });
+      progressHandler({ loaded: 100 });
 
       expect(onProgressMock).toHaveBeenCalledTimes(2);
-      expect(onProgressMock).toHaveBeenNthCalledWith(1, {loaded: 50});
-      expect(onProgressMock).toHaveBeenNthCalledWith(2, {loaded: 100});
+      expect(onProgressMock).toHaveBeenNthCalledWith(1, { loaded: 50 });
+      expect(onProgressMock).toHaveBeenNthCalledWith(2, { loaded: 100 });
     });
 
     test('does not set up progress handler when onProgress is not provided', () => {
       const req = ApiUtil.get('/foo');
       const progressCall = req.on.mock.calls.find(call => call[0] === 'progress');
+
       expect(progressCall).toBeUndefined();
     });
 
@@ -223,7 +225,42 @@ describe('ApiUtil', () => {
       };
 
       const req = ApiUtil.get('/foo', options);
+
       expect(req.responseType).toHaveBeenCalledWith('arraybuffer');
+    });
+  });
+
+  describe('testing the removal of the 5-minute timeout', () => {
+    test('verify the standard response timeout is still intact (60 s timeout)', () => {
+      const options = {};
+      const req = ApiUtil.get('/foo', options);
+
+      // should only be called with response now and no presence of deadline
+      expect(req.timeout).toHaveBeenCalledWith({ response: 60000 });
+    });
+
+    test('5-min timeout has been removed', () => {
+      const options = {};
+      const req = ApiUtil.get('/foo', options);
+
+      expect(req.timeout).not.toHaveBeenCalledWith(expect.objectContaining({ deadline: expect.any(Number) }));
+    });
+
+    test('now allows downloads longer than 5 mins', () => {
+      const options = {
+        responseType: 'arraybuffer',
+        onProgress: jest.fn()
+      };
+
+      jest.useFakeTimers();
+      const req = ApiUtil.get('/foo', options);
+
+      req.on('progress', options.onProgress);
+      options.onProgress({ loaded: 50 });
+      jest.advanceTimersByTime(310000); // 5 mins and 10 s
+      options.onProgress({ loaded: 100 });
+      expect(options.onProgress).toHaveBeenCalledTimes(2);
+      jest.useRealTimers();
     });
   });
 });
