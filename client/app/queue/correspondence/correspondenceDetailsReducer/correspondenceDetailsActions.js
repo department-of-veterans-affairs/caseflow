@@ -301,32 +301,37 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
     });
 };
 
-export const returnTaskToInboundOps = (payload, frontendParams, correspondence) => () => {
-  // We may not need all the frontend params to be passed here...
-  // The banner doesn't appear to need more info than the
-  const { taskName, assignedName, taskID } = frontendParams;
+export const returnTaskToInboundOps = (payload, frontendParams, correspondenceInfo) => (dispatch) => {
+  const { taskId } = frontendParams;
 
-  // If we are posting a task id of a return to inbound ops task, then how would we specify what task is getting cancelled?
-  return ApiUtil.post(`/queue/correspondence/tasks/${taskID}/return_to_inbound_ops`, payload).
+  return ApiUtil.post(`/queue/correspondence/tasks/${taskId}/return_to_inbound_ops`, payload).
     then((response) => {
       const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.returnToInboundOpsBanner;
-      const returnToInboundOpsTask = response.body;
+      const updatedTasks = response.body;
 
-      const updatedCorrespondence = correspondence.tasksUnrelatedToAppeal.push(returnToInboundOpsTask);
+      correspondenceInfo.tasksUnrelatedToAppeal = correspondenceInfo.tasksUnrelatedToAppeal.filter(
+        (task) => task.uniqueID !== taskId
+      );
+      correspondenceInfo.tasksUnrelatedToAppeal.push(updatedTasks.return_task);
+      correspondenceInfo.closedTasksUnrelatedToAppeal.push(updatedTasks.closed_task);
 
-      // console.log(taskName, assignedName);
-
-      setTaskNotRelatedToAppealBanner({
-        title,
-        message: message,
-        // sprintf(message,
-        //   taskName,
-        //   assignedName),
-        type
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title,
+            message,
+            type
+          }
+        }
       });
 
-      updateCorrespondenceInfo(updatedCorrespondence);
-
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondenceInfo
+        }
+      });
     }).
     catch((error) => {
       const errorMessage = error?.response?.body?.message ?
@@ -335,10 +340,15 @@ export const returnTaskToInboundOps = (payload, frontendParams, correspondence) 
 
       const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner;
 
-      setTaskNotRelatedToAppealBanner({
-        title,
-        message: sprintf(message, errorMessage),
-        type
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title,
+            message: sprintf(message, errorMessage),
+            type
+          }
+        }
       });
 
       console.error(error);
