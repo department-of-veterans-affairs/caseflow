@@ -30,6 +30,7 @@ feature "Individual Claim History", :postgres do
     sort.click
 
     clear_button_filter = page.first(:css, ".cf-clear-filter-button-wrapper, .clear-wrapper")
+    clear_button_filter = page.find(class: "cf-clear-filter-button-wrapper", wait: 10)
     clear_button_filter.click
   end
 

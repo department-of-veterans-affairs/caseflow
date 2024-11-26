@@ -47,20 +47,4 @@ export const transcriptionContractors = [
     updated_at: '2024-07-17T11:54:10.371-04:00',
     transcription_count_this_week: 2
   },
-  {
-    created_at: '2024-07-15T11:55:12.842-04:00',
-    current_goal: 100,
-    deleted_at: null,
-    directory: 'BVA Hearing Transcripts/Vet Reporting',
-    email: 'vetreporting@test.com',
-    id: 4,
-    inactive: false,
-    is_available_for_work: true,
-    name: 'Vet Reporting',
-    phone: '888-888-8888',
-    poc: 'Sam Smith',
-    previous_goal: 0,
-    updated_at: '2024-07-17T11:54:10.371-04:00',
-    transcription_count_this_week: 5
-  },
 ];

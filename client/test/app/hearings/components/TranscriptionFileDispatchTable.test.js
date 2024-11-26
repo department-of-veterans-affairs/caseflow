@@ -341,7 +341,7 @@ const mockTranscriptionPackages = [
     items: 15,
     dateSent: '01/01/2024',
     expectedReturnDate: '01/15/2024',
-    contractor: 'Vet Reporting',
+    contractor: 'Genesis Government Solutions, Inc.',
     status: 'Sent',
   },
   {
@@ -422,7 +422,7 @@ const mockTranscriptionPackages = [
     items: 14,
     dateSent: '01/12/2024',
     expectedReturnDate: '01/27/2024',
-    contractor: 'Vet Reporting',
+    contractor: 'The Ravens Group, Inc.',
     status: 'Sent',
   },
   {
