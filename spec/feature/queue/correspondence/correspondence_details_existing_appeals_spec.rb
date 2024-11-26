@@ -63,7 +63,8 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[0].click
       page.all(".cf-form-checkbox")[1].click
-      allow_any_instance_of(CorrespondenceDetailsController).to receive(:update_correspondence).and_raise("Internal Server Error")
+      allow_any_instance_of(CorrespondenceDetailsController).to receive(:update_correspondence)
+        .and_raise("Internal Server Error")
       click_button "Save changes"
       expect(page).to have_content("Changes were not successfully saved")
       expect(page).to have_content("Please try again at a later time.")
@@ -145,7 +146,7 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       end
 
       # Test status change from completed to pending
-      find_button('View task instructions', id: '11').click
+      find_button("View task instructions", id: "11").click
       expect(page).to have_content("Address updated in VACOLS")
     end
 
@@ -161,7 +162,8 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       find(".add-task-dropdown-style").click
       find(".react-select__option", text: "Congressional Interest").click
       expect(page).to have_button("Next", disabled: false)
-      allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task).and_raise("Internal Server Error")
+      allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task)
+        .and_raise("Internal Server Error")
       click_button "Next"
       click_button "Add task"
       # Expect an error banner to be displayed
