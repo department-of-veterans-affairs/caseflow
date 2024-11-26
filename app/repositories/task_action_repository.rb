@@ -161,7 +161,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def reassign_to_judge_data(task, _user = nil)
       {
         selected: nil,
-        options: (user.can_act_on_behalf_of_judges? || user.acting_judge_in_vacols?) ? users_to_options(Attorney.list_all) : nil, # rubocop:disable Layout/LineLength
+        options: users_to_options(Judge.list_all),
         type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
