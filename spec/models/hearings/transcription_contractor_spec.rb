@@ -5,7 +5,6 @@ require "rails_helper"
 RSpec.describe TranscriptionContractor, type: :model do
   let!(:transcription_contractor_1) { create(:transcription_contractor, name: "The Ravens Group, Inc.") }
   let!(:transcription_contractor_2) { create(:transcription_contractor, name: "Genesis Government Solutions, Inc.") }
-  let!(:transcription_contractor_3) { create(:transcription_contractor, name: "Vet Reporting") }
   let!(:transcription_1) { create(:transcription, transcription_contractor_id: transcription_contractor_1.id) }
   let!(:transcription_2) { create(:transcription, transcription_contractor_id: transcription_contractor_1.id) }
 
@@ -25,7 +24,7 @@ RSpec.describe TranscriptionContractor, type: :model do
   describe ".all_contractors" do
     it "returns all contractors ordered alphabetically" do
       expect(described_class.all_contractors).to eq(
-        [transcription_contractor_2, transcription_contractor_1, transcription_contractor_3]
+        [transcription_contractor_2, transcription_contractor_1]
       )
     end
   end

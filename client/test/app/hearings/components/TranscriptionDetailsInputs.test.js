@@ -11,8 +11,7 @@ describe('TranscriptionDetailsInputs', () => {
   const transcriptionContractors = {
     1: 'Genesis Government Solutions, Inc.',
     2: 'Jamison Professional Services',
-    3: 'The Ravens Group, Inc.',
-    4: 'Vet Reporting'
+    3: 'The Ravens Group, Inc.'
   };
 
   it('renders correctly', async () => {
