@@ -36,7 +36,7 @@ class Test::LoadTestApiController < Api::ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -48,6 +48,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "LegacyHearing"
+      target_data_type = LegacyHearing
+      target_data_column = "vacols_id"
     when "HearingDay"
       target_data_type = HearingDay
       target_data_column = "id"
@@ -72,15 +75,26 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Claimant"
       target_data_type = Claimant
       target_data_column = "participant_id"
+    when "Notification"
+      target_data_type = Notification
+      target_data_column = "id"
+    when "Organization"
+      target_data_type = Organization
+      target_data_column = "url"
+      # name will also work because find_by_name_or_url is used
     end
     get_target_data_object(params[:target_id], target_data_type, target_data_column)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
 
   # Private: If no target_id is provided, sample an object of the specified type instead
   # Returns the target_data_object of each target_data_type
+  # rubocop:disable Layout/LineLength
   def get_target_data_object(target_id, target_data_type, target_data_column)
-    target_data_object = if target_id.presence
+    target_data_object = if target_data_type.to_s == "Organization"
+
+                           target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.all.sample
+                         elsif target_id.presence
                            target_data_type.find_by("#{target_data_column}": target_id)
                          else
                            target_data_type.all.sample
@@ -94,6 +108,8 @@ class Test::LoadTestApiController < Api::ApplicationController
 
     target_data_object
   end
+  # rubocop:enable Layout/LineLength
+
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
