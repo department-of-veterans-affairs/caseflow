@@ -68,13 +68,15 @@ module DistributionConcern
       .limit(limit)
       .includes(:request_issues)
 
-    sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
-                    sct_appeals = appeals.select(&:sct_appeal?)
-                    appeals -= sct_appeals
-                    sct_appeals
-                  else
-                    []
-                  end
+    sct_appeals =
+      if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user]) &&
+         limit.present?
+        sct_appeals = appeals.select(&:sct_appeal?)
+        appeals -= sct_appeals
+        sct_appeals
+      else
+        []
+      end
 
     if sct_appeals.any?
       loop do
