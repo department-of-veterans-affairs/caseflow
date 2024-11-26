@@ -158,14 +158,13 @@ class Test::LoadTestApiController < Api::ApplicationController
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
 
-    organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
+    organizations.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
-      OrganizationsUser.make_user_admin(user, organization)
     end
-    organizations.select { |organization| organization[:admin] == false || "false" }.each do |org|
+    organizations.select { |orgs| orgs[:admin].to_s == "true" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
-      organization.add_user(user) unless organization.users.include?(user)
+      OrganizationsUser.make_user_admin(user, organization)
     end
   end
 
