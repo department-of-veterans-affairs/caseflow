@@ -30,7 +30,7 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
     records = []
     column_mapping.map do |klass, column_name|
       record = instance_double(klass.to_s, id: SecureRandom.random_number(1000), "#{column_name}": "987654321")
-      record2 = instance_double(klass.to_s, id: SecureRandom.random_number(1000), "#{column_name}": "987654321")
+      record2 = instance_double(klass.to_s, id: SecureRandom.random_number(1000), "#{column_name}": "324576891")
       allow(record).to receive(:update!).with("#{column_name}": updated_person.participant_id)
       allow(record).to receive(:class).and_return(klass)
       allow(record).to receive(:attributes).and_return("#{column_name}": "987654321")
