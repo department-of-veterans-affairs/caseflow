@@ -230,6 +230,7 @@ module Seeds
         create(:appeal, :direct_review_docket, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
         create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
         create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_motion, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
+        create(:appeal, :direct_review_docket, :with_vha_issue, :type_cavc_remand, :cavc_ready_for_distribution, judge: judge)
       end
     end
 
@@ -320,6 +321,9 @@ module Seeds
                tied_judge: judge)
         # aod motion hearing in window
         create(:appeal, :hearing_docket, :advanced_on_docket_due_to_motion, :held_hearing_and_ready_to_distribute,
+               tied_judge: judge)
+        # aod age hearing in window with VHA request issues for SCT distribution
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :with_vha_issue, :held_hearing_and_ready_to_distribute,
                tied_judge: judge)
 
         # cavc no hearing in window
