@@ -2,6 +2,7 @@
 
 class DecisionIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
+  include EventConcern
 
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
@@ -22,6 +23,8 @@ class DecisionIssue < CaseflowRecord
 
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
+
+  has_one :event_record, as: :evented_record
 
   # NOTE: These are the string identifiers for remand dispositions returned from VBMS.
   #       The characters and encoding are precise so don't change these unless you
