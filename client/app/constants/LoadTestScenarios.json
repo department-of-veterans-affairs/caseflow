@@ -237,12 +237,20 @@
     "targetId": "Hearing Day id"
   },
   {
-    "scenario": "scheduleHearingTasksColumnsJSON",
+    "scenario": "scheduleHearingTasksColumnsAMATabJSON",
     "targetType": [{
       "value": "HearingDay",
       "label": "Hearing Day"
     }],
-    "targetId": "Hearing Day regional_office"
+    "targetId": "Hearing Day id"
+  },
+  {
+    "scenario": "scheduleHearingTasksColumnsLegacyTabJSON",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "Hearing Day id"
   },
   {"scenario": "readerAppeal",
     "targetType": [{
@@ -317,5 +325,36 @@
       "label": "Veteran"
     }],
     "targetId": "veteran uuid"
+  },
+  {
+    "scenario": "organizationUsers",
+    "targetType": [{
+      "value": "Organization",
+      "label": "Organization"
+    }],
+    "targetId": "Organization url"
+  },
+  {
+    "scenario": "organizationTasks",
+    "targetType": [{
+      "value": "Organization",
+      "label": "Organization"
+    }],
+    "targetId": "Organization url"
+  },
+  {
+    "scenario": "teamManagement",
+    "targetType": [],
+    "targetId": ""
+  },
+  {
+    "scenario": "healthCheck",
+    "targetType": [],
+    "targetId": ""
+  },
+  {
+    "scenario": "dependenciesCheck",
+    "targetType": [],
+    "targetId": ""
   }
 ]
