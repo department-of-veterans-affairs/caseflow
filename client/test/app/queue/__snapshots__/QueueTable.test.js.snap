@@ -222,6 +222,34 @@ exports[`QueueTable DatePicker filter Back end filtering renders in a queue tabl
                     </div>
                   </div>
                   <div
+                    class="input-wrapper"
+                  >
+                    <div
+                      class="cf-form-textinput   "
+                    >
+                      <label
+                        for="start-date"
+                      >
+                        <span>
+                          Date
+                        </span>
+                      </label>
+                      <div
+                        class="input-container"
+                      >
+                        <input
+                          class="cf-form-textinput"
+                          id="start-date"
+                          max="9999-12-31"
+                          name="start-date"
+                          placeholder="mm/dd/yyyy"
+                          type="date"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
                     class="button-wrapper"
                   >
                     <button
@@ -712,6 +740,34 @@ exports[`QueueTable DatePicker filter Front end filtering renders in a queue tab
                             />
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="input-wrapper"
+                  >
+                    <div
+                      class="cf-form-textinput   "
+                    >
+                      <label
+                        for="start-date"
+                      >
+                        <span>
+                          Date
+                        </span>
+                      </label>
+                      <div
+                        class="input-container"
+                      >
+                        <input
+                          class="cf-form-textinput"
+                          id="start-date"
+                          max="9999-12-31"
+                          name="start-date"
+                          placeholder="mm/dd/yyyy"
+                          type="date"
+                          value=""
+                        />
                       </div>
                     </div>
                   </div>
