@@ -88,7 +88,9 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       it "does not update unrelated records" do
         service.remediate!
 
-        unrelated_records = mock_records.reject { |record| %w[987654321 324576891].include?(record.attributes.values.first) }
+        unrelated_records = mock_records.reject do |record|
+          %w[987654321 324576891].include?(record.attributes.values.first)
+        end
 
         unrelated_records.each do |unrelated_record|
           expect(unrelated_record).not_to have_received(:update!)
