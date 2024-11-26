@@ -212,71 +212,66 @@ class TasksController < ApplicationController
   def error_found_upload_transcription_to_vbms
     file_name = params["file_info"]["file_name"]
     tmp_folder = Base64Service.to_file(params["file_info"]["file"], file_name)
-    #upload_file_S3
-    s3_upload_result = upload_to_s3(tmp_folder, file_name)
-    file_status = s3_upload_result.empty? ? "Failed upload (AWS)" : "Successful upload (AWS)"
-    #modified transcription_files table
-    hearing_id = file_name.split("_")[1]
-    hearing_type = file_name.split("_")[2].split(".")[0]
-    transcription_file = Hearings::TranscriptionFile.where(hearing_id: hearing_id, hearing_type: hearing_type)
 
-    if transcription_file.count > 0
-      aws_link = create_link_aws(file_name, file_status)
+    info_file = split_filename(file_name)
+    # upload_file_S3 and modified transcription_files table
+    transcription_file = Hearings::TranscriptionFile.find_by(hearing_id: info_file[:hearing_id],
+      hearing_type: info_file[:hearing_type], file_type: info_file[:extension])
+    transcription_file.upload_content_to_s3!(tmp_folder.tempfile)
 
-      if aws_link &&
-        transcription_file[0].update!(
-          aws_link: aws_link,
-          updated_at: Time.zone.now,
-          date_upload_aws: Time.zone.now
-        )
+    appeal = transcription_file.hearing.appeal
+    veterant_file_number = appeal.veteran_file_number
 
-        appeal = transcription_file[0].hearing.appeal
-        veterant_file_number = appeal.veteran_file_number
-
-        document_params =
-        {
-          veteran_file_number: veterant_file_number,
-          document_type: "Hearing Transcript",
-          document_subject: "notifications",
-          document_name: file_name,
-          application: "notification-report",
-          file: tmp_folder.tempfile
-        }
-
-        #upload pdf to Appellants eFolder VBMS
-        response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
-        if response.success?
-          #change status of ReviewTranscriptTask
-          upload_transcription_to_vbms
-        else
-          render json: response.errors[0], status: :bad_request
-        end
-      end
+    document_params =
+    {
+      veteran_file_number: veterant_file_number,
+      document_type: "Hearing Transcript",
+      document_subject: "notifications",
+      document_name: file_name,
+      application: "notification-report",
+      file: tmp_folder.tempfile
+    }
+    response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
+    if response.success?
+      #change status of ReviewTranscriptTask
+      change_status_review_transcript_task
+    else
+      render json: response.errors[0], status: :bad_request
     end
   end
 
   private
 
-  def upload_to_s3(tmp_folder, file_name)
-    begin
-      S3Service.store_file(s3_location(file_name), tmp_folder, :filepath)
-    rescue StandardError => error
-      Rails.logger.error "Error to upload #{file_name} to S3: #{error.message}"
-      raise BoxDownloadJobFileUploadError
-    end
+  def split_filename(filename)
+    hearing_id = filename.split("_")[1]
+    hearing_type = filename.split("_")[2].split(".")[0]
+    extension = filename.split(".")[1]
+      {
+        hearing_id: hearing_id,
+        hearing_type: hearing_type,
+        extension: extension
+      }
   end
 
-  def s3_location(file_name)
-    folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
-    "#{folder_name}/transcript_pdf/#{file_name}"
-  end
+  def change_status_review_transcript_task
+    return unless task.type == "ReviewTranscriptTask" && task.status == "in_progress"
 
-  def create_link_aws(file_name, file_status)
-    if file_status == "Failed upload (AWS)"
-      nil
-    else
-      "vaec-appeals-caseflow-test/ranscript_pdf/#{file_name}"
-    end
+    Transcription.where(task_id: task.id).update_all(
+      updated_by_id: current_user.id,
+      uploaded_to_vbms_date: Time.zone.now,
+      updated_at: Time.zone.now
+    )
+
+    Task.where(id: task.id).update_all(
+      instructions: params[:task][:instructions],
+      status: Constants.TASK_STATUSES.completed,
+      closed_at: Time.zone.now,
+      completed_by_id: current_user.id
+    )
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
   end
 
   def send_initial_notification_letter
