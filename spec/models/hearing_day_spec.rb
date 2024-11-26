@@ -423,8 +423,12 @@ describe HearingDay, :all_dbs do
 
       def format_begins_at_from_db(time_string, scheduled_for)
         db_hour, db_minute = time_string.split(":")
-
-        scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
+        timezone = if regional_office_key.nil?
+                     "America/New_York"
+                   else
+                     Constants::REGIONAL_OFFICE_INFORMATION[regional_office_key]["timezone"]
+                   end
+        scheduled_for.in_time_zone(timezone).change(hour: db_hour, min: db_minute)
       end
 
       context "a virtual day" do
