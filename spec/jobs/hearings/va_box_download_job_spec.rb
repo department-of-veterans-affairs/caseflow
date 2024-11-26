@@ -3,13 +3,9 @@
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   # open question:
 
-  # 1. How do we handle failed s3 and transcription files?
-  # do we just not stop on that error and upate transcription file anyway?
-  # also there's no way to delete from s3 using the commons service
+  # 3. Account for XLS, make sure it has a package
 
-  # 2. What is the case for a transcription_file already existing?
-
-  # 3. Account for XLS
+  # 4. Held hearings
 
   def create_file_info(hearing, file_id, file_type)
     {
@@ -29,6 +25,8 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   let!(:hearing_2) { create(:hearing) }
   let!(:hearing_3) { create(:hearing) }
   let!(:transcription_3) { create(:transcription, hearing: hearing_3, hearing_type: "Hearing") }
+
+  let!(:transcription_package_1) { create(:transcription_package, task_number: "BVA2024001") }
 
   let(:file_info) do
     [
@@ -70,6 +68,28 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   let(:file_info_existing_transcript) do
     [
       create_file_info(hearing_3, "164008615821", "pdf")
+    ]
+  end
+
+  let(:file_info_xls_good) do
+    [
+      {
+        name: "Completed BVA2024001.xls",
+        id: "164008615821",
+        created_at: "2024-09-05T061314-0700",
+        modified_at: "2024-09-05T061314-0700"
+      }
+    ]
+  end
+
+  let(:file_info_xls_bad) do
+    [
+      {
+        name: "Completed BVA2024002.xls",
+        id: "164008615821",
+        created_at: "2024-09-05T061314-0700",
+        modified_at: "2024-09-05T061314-0700"
+      }
     ]
   end
 
@@ -115,26 +135,55 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
     end
 
     it "handles valid zip files" do
-      allow_any_instance_of(Hearings::VaBoxDownloadJob).to receive(:unzip_file).and_return(
-        [
-          {
-            name: "150000248910004_" + legacy_hearing_1.id.to_s + "_LegacyHearing.pdf",
-            created_at: "2024-09-05T061314-0700",
-            path: "",
-            type: "pdf"
-          }
-        ]
-      )
+      # write mock file from pretend zip
+      tmp_unzip_file_name = "150000248910004_" + legacy_hearing_1.id.to_s + "_LegacyHearing.pdf"
+      tmp_folder = Rails.root.join("tmp", "file_from_box", "pdf")
+      tmp_unzip_file_path = Rails.root.join("tmp", "file_from_box", "pdf", tmp_unzip_file_name)
+      tmp_zip_file_path = Rails.root.join("tmp", "mock_file.zip")
+
+      FileUtils.mkdir_p(tmp_folder) unless File.directory?(tmp_folder)
+      File.open(tmp_unzip_file_path.to_s, "w") { |f| f.write "test" }
+
+      File.delete(tmp_zip_file_path) if File.exist?(tmp_zip_file_path)
+      Zip::File.open(tmp_zip_file_path, create: true) do |zip_file|
+        zip_file.add(File.basename(tmp_unzip_file_path), tmp_unzip_file_path)
+      end
+
+      mock_file = Zip::File.open(tmp_zip_file_path)
+      allow(Zip::File).to receive(:open) { |&block| block.call(mock_file) }
 
       described_class.perform_now(file_info_zip)
 
       transcription_files = TranscriptionFile.all
       expect(transcription_files.count).to eq(2)
+
+      File.delete(tmp_zip_file_path) if File.exist?(tmp_zip_file_path)
     end
 
     it "handles errors with zip files" do
       expect { described_class.perform_now(file_info_zip) }.to raise_error(
         Hearings::VaBoxDownloadJob::VaBoxDownloadUnzipError
+      )
+    end
+
+    it "handles valid xls files" do
+      described_class.perform_now(file_info_xls_good)
+      transcription_files = TranscriptionFile.all
+      expect(transcription_files.count).to eq(1)
+
+      tf = transcription_files[0]
+      expect(tf.file_name).to eq("Completed BVA2024001.xls")
+      expect(tf.docket_number).to be_nil
+      expect(tf.hearing_type).to be_nil
+      expect(tf.hearing_id).to be_nil
+      expect(tf.file_status).to eq("Successful upload (AWS)")
+      expect(tf.file_type).to eq("xls")
+      expect(tf.transcription_id).to be_nil
+    end
+
+    it "handles errors when xls files are missing packages" do
+      expect { described_class.perform_now(file_info_xls_bad) }.to raise_error(
+        Hearings::VaBoxDownloadJob::VaBoxDownloadTranscriptionPackageError
       )
     end
 
@@ -156,8 +205,15 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
       )
     end
 
-    it "handles errors from s3 upload" do
-      # ???
+    it "handles s3 errors by setting failed status" do
+      expect(S3Service).to receive(:store_file).exactly(2).times.and_raise(StandardError)
+
+      described_class.perform_now(file_info)
+
+      transcription_files = TranscriptionFile.all
+      expect(transcription_files.count).to eq(2)
+      expect(transcription_files[0].file_status).to eq("Failed upload (AWS)")
+      expect(transcription_files[1].file_status).to eq("Failed upload (AWS)")
     end
 
     it "handles updating an existing transcription file" do
@@ -189,37 +245,37 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
       )
       expect(tf.file_status).to eq("Successful upload (AWS)")
     end
-  end
 
-  it "calls clean up on temp files when it finishes successfully" do
-    file_1 = Rails.root.join(
-      "tmp", "file_from_box", "pdf", hearing_1.docket_number + "_" + hearing_1.id.to_s + "_Hearing.pdf"
-    )
-    file_2 = Rails.root.join(
-      "tmp", "file_from_box", "doc",
-      legacy_hearing_1.docket_number + "_" + legacy_hearing_1.id.to_s + "_LegacyHearing.doc"
-    )
+    it "calls clean up on temp files when it finishes successfully" do
+      file_1 = Rails.root.join(
+        "tmp", "file_from_box", "pdf", hearing_1.docket_number + "_" + hearing_1.id.to_s + "_Hearing.pdf"
+      )
+      file_2 = Rails.root.join(
+        "tmp", "file_from_box", "doc",
+        legacy_hearing_1.docket_number + "_" + legacy_hearing_1.id.to_s + "_LegacyHearing.doc"
+      )
 
-    described_class.perform_now(file_info)
+      described_class.perform_now(file_info)
 
-    expect(File.exist?(file_1)).to be_falsy
-    expect(File.exist?(file_2)).to be_falsy
-  end
+      expect(File.exist?(file_1)).to be_falsy
+      expect(File.exist?(file_2)).to be_falsy
+    end
 
-  it "calls cleanup on exception" do
-    file_1 = Rails.root.join(
-      "tmp", "file_from_box", "pdf", hearing_1.docket_number + "_" + hearing_1.id.to_s + "_Hearing.pdf"
-    )
-    file_2 = Rails.root.join(
-      "tmp", "file_from_box", "zip",
-      legacy_hearing_1.docket_number + "_" + legacy_hearing_1.id.to_s + "_LegacyHearing.zip"
-    )
+    it "calls cleanup on exception" do
+      file_1 = Rails.root.join(
+        "tmp", "file_from_box", "pdf", hearing_1.docket_number + "_" + hearing_1.id.to_s + "_Hearing.pdf"
+      )
+      file_2 = Rails.root.join(
+        "tmp", "file_from_box", "zip",
+        legacy_hearing_1.docket_number + "_" + legacy_hearing_1.id.to_s + "_LegacyHearing.zip"
+      )
 
-    expect { described_class.perform_now(file_info_zip) }.to raise_error(
-      Hearings::VaBoxDownloadJob::VaBoxDownloadUnzipError
-    )
+      expect { described_class.perform_now(file_info_zip) }.to raise_error(
+        Hearings::VaBoxDownloadJob::VaBoxDownloadUnzipError
+      )
 
-    expect(File.exist?(file_1)).to be_falsy
-    expect(File.exist?(file_2)).to be_falsy
+      expect(File.exist?(file_1)).to be_falsy
+      expect(File.exist?(file_2)).to be_falsy
+    end
   end
 end

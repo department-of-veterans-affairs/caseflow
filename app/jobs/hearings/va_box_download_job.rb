@@ -9,12 +9,13 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   class VaBoxDownloadUnzipError < StandardError; end
   class VaBoxDownloadHearingError < StandardError; end
   class VaBoxDownloadTranscriptionError < StandardError; end
+  class VaBoxDownloadTranscriptionPackageError < StandardError; end
 
   def perform(files_info)
     @files = []
     download_files_from_box(files_info)
     handle_zip_files
-    confirm_hearings_and_transcriptions
+    confirm_hearing_or_package
     upload_files_to_s3
     create_or_update_transcription_files
     cleanup_tmp_files
@@ -57,20 +58,44 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     end
   end
 
-  def confirm_hearings_and_transcriptions
+  def confirm_hearing_or_package
     non_zip(@files).each do |file|
-      file = update_hearing_information(file)
-      hearing = find_hearing(file)
-      if hearing
-        transcription = find_transcription(file)
-        if transcription
-          file[:transcription_id] = transcription.id
-        else
-          raise_error("Missing transcription for #{file[:name]}", VaBoxDownloadTranscriptionError)
-        end
+      if file[:type] == "xls"
+        confirm_package(file)
       else
-        raise_error("Missing hearing for #{file[:name]}", VaBoxDownloadHearingError)
+        confirm_hearing(file)
       end
+    end
+  end
+
+  def confirm_package(file)
+    file[:task_number] = file[:name].gsub(/[_.]/, " ").split(" ").select { |e| e.include? "BVA" }
+
+    package = find_package(file)
+
+    if package
+      file[:package_id] = package.id
+    else
+      raise_error("Missing transcription package for #{file[:name]}", VaBoxDownloadTranscriptionPackageError)
+    end
+  end
+
+  def confirm_hearing(file)
+    file[:hearing_id] = file[:name].split("_")[1].to_i
+    file[:hearing_type] = file[:name].split("_")[2].split(".")[0]
+    file[:docket_number] = file[:name].split("_")[0]
+
+    hearing = find_hearing(file)
+
+    if hearing
+      transcription = find_transcription(file)
+      if transcription
+        file[:transcription_id] = transcription.id
+      else
+        raise_error("Missing transcription for #{file[:name]}", VaBoxDownloadTranscriptionError)
+      end
+    else
+      raise_error("Missing hearing for #{file[:name]}", VaBoxDownloadHearingError)
     end
   end
 
@@ -78,11 +103,10 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     non_zip(@files).each do |file|
       begin
         file[:aws_link] = s3_location(file[:name], file[:type])
-        # S3Service.store_file(file[:aws_link], file[:path], :filepath)
-        # file_status = (s3_upload_result == file_path) ? "Failed upload (AWS)" : "Successful upload (AWS)"
+        S3Service.store_file(file[:aws_link], file[:path], :filepath)
         file[:status] = "Successful upload (AWS)"
-      rescue StandardError => error
-        raise_error("Error uploading file #{file[:path]} to S3: #{error.message}")
+      rescue StandardError
+        file[:status] = "Failed upload (AWS)"
       end
     end
   end
@@ -96,6 +120,12 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         create_transcription_file(file)
       end
     end
+  end
+
+  def find_package(file)
+    TranscriptionPackage.where(
+      task_number: file[:task_number]
+    ).first
   end
 
   def find_hearing(file)
@@ -173,13 +203,6 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     rescue StandardError => error
       raise_error("Error unzipping file #{file[:path]}: #{error.message}", VaBoxDownloadUnzipError)
     end
-  end
-
-  def update_hearing_information(file)
-    file[:hearing_id] = file[:name].split("_")[1].to_i
-    file[:hearing_type] = file[:name].split("_")[2].split(".")[0]
-    file[:docket_number] = file[:name].split("_")[0]
-    file
   end
 
   def non_zip(files)
