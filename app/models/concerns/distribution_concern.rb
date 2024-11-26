@@ -69,16 +69,15 @@ module DistributionConcern
       .includes(:request_issues)
 
     sct_appeals =
-      if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user]) &&
-         limit.present?
+      if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
         sct_appeals = appeals.select(&:sct_appeal?)
         appeals -= sct_appeals
         sct_appeals
       else
         []
       end
-
-    if sct_appeals.any?
+0
+    if sct_appeals.any? && limit.present?
       loop do
         inner_appeals = ready_priority_nonpriority_appeals(appeals_args)
           .limit(limit - appeals.count)
