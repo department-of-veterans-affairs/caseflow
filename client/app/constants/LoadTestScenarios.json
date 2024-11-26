@@ -109,14 +109,6 @@
     "targetId": "Claimant participant_id"
   },
   {
-    "scenario": "higherLevelReviewUpdate",
-    "targetType": [{
-      "value": "HigherLevelReview",
-      "label": "Higher Level Review"
-    }],
-    "targetId": "HigherLevelReview uuid"
-  },
-  {
     "scenario": "updatePowerOfAttorney",
     "targetType": [{
       "value": "Appeal",
