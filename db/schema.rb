@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_19_205139) do
+ActiveRecord::Schema.define(version: 2024_11_20_101517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2714,8 +2714,10 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
           END AS schedulable,
       veterans.state_of_residence,
       veterans.country_of_residence,
-      cached_appeal_attributes.suggested_hearing_location
-     FROM ((((((appeals
+      cached_appeal_attributes.suggested_hearing_location,
+      (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
+      (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator
+     FROM (((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
        JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
@@ -2725,6 +2727,12 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
                JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
             WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
        LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'Appeal'::text))))
+       LEFT JOIN ( SELECT request_issues.decision_review_id,
+              bool_or(request_issues.mst_status) AS aggregate_mst_status,
+              bool_or(request_issues.pact_status) AS aggregate_pact_status
+             FROM request_issues
+            WHERE (((request_issues.decision_review_type)::text = 'Appeal'::text) AND ((request_issues.mst_status IS TRUE) OR (request_issues.pact_status IS TRUE)))
+            GROUP BY request_issues.decision_review_id) request_issues_status ON ((appeals.id = request_issues_status.decision_review_id)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
   UNION
    SELECT legacy_appeals.id AS appeal_id,
@@ -2764,8 +2772,16 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
       true AS schedulable,
       veterans.state_of_residence,
       veterans.country_of_residence,
-      cached_appeal_attributes.suggested_hearing_location
-     FROM ((((((((legacy_appeals
+      cached_appeal_attributes.suggested_hearing_location,
+          CASE
+              WHEN (fvi.mst = 'Y'::text) THEN true
+              ELSE false
+          END AS mst_indicator,
+          CASE
+              WHEN (fvi.pact = 'Y'::text) THEN true
+              ELSE false
+          END AS pact_indicator
+     FROM (((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
        JOIN f_vacols_folder ON (((f_vacols_brieff.bfkey)::text = (f_vacols_folder.ticknum)::text)))
@@ -2774,6 +2790,11 @@ ActiveRecord::Schema.define(version: 2024_11_19_205139) do
        LEFT JOIN people ON (((f_vacols_corres.ssn)::text = (people.ssn)::text)))
        JOIN veterans ON (((veterans.ssn)::text = (f_vacols_corres.ssn)::text)))
        LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
+       LEFT JOIN ( SELECT f_vacols_issues.isskey,
+              max((f_vacols_issues.issmst)::text) AS mst,
+              max((f_vacols_issues.isspact)::text) AS pact
+             FROM f_vacols_issues
+            GROUP BY f_vacols_issues.isskey) fvi ON (((fvi.isskey)::text = (f_vacols_brieff.bfkey)::text)))
     WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
   SQL
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
