@@ -92,11 +92,11 @@ class Test::LoadTestApiController < Api::ApplicationController
   # rubocop:disable Layout/LineLength
   def get_target_data_object(target_id, target_data_type, target_data_column)
     target_data_object = if target_data_type.to_s == "Organization"
-                           target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.all.sample
+                           target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.order("RANDOM()").limit(10).first
                          elsif target_id.presence
                            target_data_type.find_by("#{target_data_column}": target_id)
                          else
-                           target_data_type.all.sample
+                           target_data_type.order("RANDOM()").limit(1).first
                          end
 
     if target_data_object.nil?
