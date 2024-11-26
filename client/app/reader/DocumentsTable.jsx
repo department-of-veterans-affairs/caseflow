@@ -720,13 +720,13 @@ class DocumentsTable extends React.Component {
         ),
         valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size}
           browserSpeedInBytes={mbpsToBps}
-          warningThreshold={this.props.readerPreferences} />,
+          warningThreshold={this.props.readerPreferences}
+          showBandwidthWarning={this.props.showBandwidthWarning} />,
       },
     ];
   };
 
   render() {
-
     const rowObjects = getRowObjects(
       this.props.documents,
       this.props.annotationsPerDocument
@@ -778,6 +778,7 @@ DocumentsTable.propTypes = {
   setClearAllFiltersCallbacks: PropTypes.func.isRequired,
   featureToggles: PropTypes.object,
   readerPreferences: PropTypes.object,
+  showBandwidthWarning: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) =>

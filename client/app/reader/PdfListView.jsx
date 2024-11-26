@@ -20,6 +20,11 @@ import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
+
+  toggleShowBandwidthBanner = () => {
+    this.setState({ warningIconShown: true });
+  };
+
   setClearAllFiltersCallbacks = (callbacks) => {
     this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
   };
@@ -27,7 +32,8 @@ export class PdfListView extends React.Component {
   constructor() {
     super();
     this.state = {
-      clearAllFiltersCallbacks: []
+      clearAllFiltersCallbacks: [],
+      warningIconShown: false
     };
   }
 
@@ -71,6 +77,7 @@ export class PdfListView extends React.Component {
         setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
         featureToggles={this.props.featureToggles}
         readerPreferences={this.props.readerPreferences}
+        showBandwidthWarning={this.toggleShowBandwidthBanner}
       />;
     }
 
@@ -87,7 +94,7 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          {this.props.featureToggles.bandwidthBanner && <BandwidthAlert /> }
+          {this.props.featureToggles.bandwidthBanner && this.state.warningIconShown && <BandwidthAlert /> }
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}

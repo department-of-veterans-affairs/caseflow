@@ -9,10 +9,20 @@ const DocSizeIndicator = (props) => {
   const downloadTime = documentDownloadTime(props.docSize, props.browserSpeedInBytes);
   const waitTime = parseInt(props.warningThreshold, 10) || 15;
 
+  const showIcon = () => {
+    if (downloadTime > waitTime) {
+      props.showBandwidthWarning();
+
+      return true;
+    }
+  };
+
   return (
-    <div data-warning-threshold={waitTime} data-bandwidth={filesize(props.browserSpeedInBytes)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div data-warning-threshold={waitTime}
+      data-bandwidth={filesize(props.browserSpeedInBytes)}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {filesize(props.docSize, { round: 1 })}&nbsp;
-      {downloadTime > waitTime ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
+      {showIcon() ? <SizeWarningIcon size={ICON_SIZES.SMALL} /> : ''}
     </div>
   );
 };
@@ -20,7 +30,8 @@ const DocSizeIndicator = (props) => {
 DocSizeIndicator.propTypes = {
   docSize: PropTypes.number.isRequired,
   browserSpeedInBytes: PropTypes.number.isRequired,
-  warningThreshold: PropTypes.number.isRequired
+  warningThreshold: PropTypes.number.isRequired,
+  showBandwidthWarning: PropTypes.func.isRequired
 };
 
 export default DocSizeIndicator;
