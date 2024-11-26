@@ -27,7 +27,7 @@ const validInstructions = (instructions) => {
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
-  return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected) : null;
+  return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
 };
 
 const getAction = (props) => {

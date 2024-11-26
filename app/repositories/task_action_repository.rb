@@ -201,9 +201,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def legacy_return_to_attorney_data(task, _user = nil)
-      attorney = task.appeal.attorney_case_review&.attorney_id
       {
-        selected: attorney,
+        selected: nil,
         options: users_to_options(Attorney.list_all),
         type: AttorneyLegacyTask.name
       }
