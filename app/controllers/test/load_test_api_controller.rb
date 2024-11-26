@@ -96,6 +96,8 @@ class Test::LoadTestApiController < Api::ApplicationController
 
     target_data_id
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
+
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
