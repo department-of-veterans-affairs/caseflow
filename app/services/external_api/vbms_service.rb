@@ -13,9 +13,11 @@ class ExternalApi::VBMSService
     result&.content
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.fetch_documents_for(appeal, _user = nil)
     ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.fetch_document_series_for(appeal)
     ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch

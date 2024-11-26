@@ -57,6 +57,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       click_dropdown(name: "optionalHearingTime0", text: updated_video_hearing_time)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
+
       expect(page).to have_content("Time: #{expected_central_office_time} / #{expected_regional_office_time}")
       click_button(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
 
@@ -182,6 +183,8 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   context "Updating a hearing's time" do
+    let(:fall_date) { "#{1.year.from_now.year}-11-11" }
+
     shared_examples "The hearing time is updated correctly" do
       scenario do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
@@ -197,7 +200,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       let(:initial_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
 
       # Ensure that the times are always in standard time.
-      before { initial_hearing.hearing_day.update!(scheduled_for: "2024-11-11") }
+      before { initial_hearing.hearing_day.update!(scheduled_for: fall_date) }
 
       context "With a pre-existing scheduled_in_timezone value" do
         let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
@@ -205,7 +208,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         let(:expected_post_update_time) { "10:00 AM CST" }
 
         before do
-          hearing.hearing_day.update!(regional_office: "RO30", request_type: "V", scheduled_for: "2024-11-11")
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "V", scheduled_for: fall_date)
         end
 
         include_examples "The hearing time is updated correctly"
@@ -217,7 +220,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         let(:expected_post_update_time) { "3:00 PM CST" }
 
         before do
-          hearing.hearing_day.update!(regional_office: "RO30", request_type: "T", scheduled_for: "2024-11-11")
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "T", scheduled_for: fall_date)
         end
 
         include_examples "The hearing time is updated correctly"
