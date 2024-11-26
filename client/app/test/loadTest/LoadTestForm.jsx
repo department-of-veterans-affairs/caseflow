@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import Button from '../../components/Button';
-
+import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios';
 import UserConfiguration from './UserConfiguration';
 import ScenarioConfigurations from './ScenarioConfigurations';
 import ApiUtil from '../../util/ApiUtil';
@@ -18,6 +18,7 @@ export default function LoadTestForm(props) {
     event.preventDefault();
     setErrors({});
     const newErrors = {};
+    const importedScenarios = LOAD_TEST_SCENARIOS;
 
     if (currentState.user.station_id.length === 0) {
       newErrors.station_id = 'Station ID Required';
@@ -30,8 +31,9 @@ export default function LoadTestForm(props) {
     } else {
       currentState.scenarios.forEach((scenario) => {
         const key = Object.keys(scenario)[0];
+        const chosenScenario = importedScenarios.find((currentScenario) => currentScenario.scenario === key);
 
-        if (!scenario[key].targetType) {
+        if ((!scenario[key].targetType) && (chosenScenario.targetType.length > 0)) {
           newErrors[key] = { target_type: '' };
           newErrors[key].target_type = 'Target Type Required';
         }
