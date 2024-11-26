@@ -13,8 +13,8 @@ class Remediations::DuplicatePersonRemediationService
     @updated_person_id = updated_person_id
     @duplicate_person_ids = duplicate_person_ids
     @event_record = event_record
-    @dup_persons = Person.where(id: @duplicate_person_ids)
-    @og_person = Person.find_by(id: @updated_person_id)
+    @dup_persons = Person.where(id: duplicate_person_ids)
+    @og_person = Person.find_by(id: updated_person_id)
   end
 
   def remediate!
@@ -31,7 +31,7 @@ class Remediations::DuplicatePersonRemediationService
         ASSOCIATIONS.each do |klass|
           column = klass.column_names.find { |name| name.end_with?("participant_id") }
           records = klass.where("#{column}": @dup_persons.map(&:participant_id))
-          records.each do |record|
+          records.map do |record|
             before_data = record.attributes
             record.update!("#{column}": @og_person.participant_id)
             add_remediation_audit(remediated_record: record,
