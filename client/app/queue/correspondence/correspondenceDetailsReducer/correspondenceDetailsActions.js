@@ -302,20 +302,26 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
 };
 
 export const returnTaskToInboundOps = (payload, frontendParams, correspondence) => () => {
+  // We may not need all the frontend params to be passed here...
+  // The banner doesn't appear to need more info than the
   const { taskName, assignedName, taskID } = frontendParams;
 
+  // If we are posting a task id of a return to inbound ops task, then how would we specify what task is getting cancelled?
   return ApiUtil.post(`/queue/correspondence/tasks/${taskID}/return_to_inbound_ops`, payload).
     then((response) => {
-      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner;
+      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.returnToInboundOpsBanner;
       const returnToInboundOpsTask = response.body;
 
-      const updatedCorrespondence = correspondence.tasksUnrelatedToAppeal.push(returnToInboundOpsTask)
+      const updatedCorrespondence = correspondence.tasksUnrelatedToAppeal.push(returnToInboundOpsTask);
+
+      // console.log(taskName, assignedName);
 
       setTaskNotRelatedToAppealBanner({
         title,
-        message: sprintf(message,
-          taskName,
-          assignedName),
+        message: message,
+        // sprintf(message,
+        //   taskName,
+        //   assignedName),
         type
       });
 
