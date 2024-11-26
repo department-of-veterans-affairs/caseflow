@@ -27,6 +27,11 @@ module Seeds
           directory: "BVA Hearing Transcripts/Actual Contractor, Inc.",
           poc: "Johnny Cash",
           email: "actualcontractor@test.com",
+          phone: "888-888-8888"},
+        { name: "Vet Reporting",
+          directory: "BVA Hearing Transcripts/Vet Reporting",
+          poc: "Johnny Cash",
+          email: "vetreporting@test.com",
           phone: "888-888-8888"}
       ]
 
