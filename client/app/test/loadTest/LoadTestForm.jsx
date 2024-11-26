@@ -41,9 +41,8 @@ export default function LoadTestForm(props) {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      const payload = JSON.stringify({ currentState });
 
-      ApiUtil.post('/test/load_tests/run_load_tests', payload);
+      ApiUtil.post('/test/load_tests/run_load_tests', { currentState });
       props.setShowAlert(true);
       setTimeout(() => {
         window.location = '/test/load_tests';

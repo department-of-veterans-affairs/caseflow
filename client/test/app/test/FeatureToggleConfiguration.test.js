@@ -49,7 +49,6 @@ describe('FeatureToggleConfiguration', () => {
       updateState: jest.fn()
     };
 
-    renderFeatureToggleConfiguration(mockProps);
     expect(renderFeatureToggleConfiguration(mockProps)).toMatchSnapshot();
     expect(await screen.findByText('listed_granted_substitution_before_dismissal')).toBeInTheDocument();
   });

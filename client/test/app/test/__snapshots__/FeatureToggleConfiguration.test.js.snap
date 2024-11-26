@@ -35,37 +35,6 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        class="load-test-container-checkbox"
-      >
-        <div
-          class="checkbox-wrapper-listed_granted_substitution_before_dismissal cf-form-checkboxes"
-        >
-          <div
-            class="cf-form-checkbox"
-          >
-            <input
-              aria-label="listed_granted_substitution_before_dismissal"
-              checked=""
-              id="listed_granted_substitution_before_dismissal"
-              name="listed_granted_substitution_before_dismissal"
-              type="checkbox"
-            />
-            <label
-              for="listed_granted_substitution_before_dismissal"
-            >
-              <span
-                class=""
-              >
-                listed_granted_substitution_before_dismissal
-              </span>
-               
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
   </body>,
   "container": <div>
     <div

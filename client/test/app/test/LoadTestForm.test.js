@@ -92,4 +92,3 @@ describe('LoadTestForm', () => {
     expect(await defaultProps.setShowAlert).toHaveBeenCalledTimes(1);
   });
 });
-

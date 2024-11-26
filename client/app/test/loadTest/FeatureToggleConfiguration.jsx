@@ -19,8 +19,7 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
         ...currentState.user,
         feature_toggles: currentFeatureToggles
       }
-    }
-    );
+    });
   };
 
   return (

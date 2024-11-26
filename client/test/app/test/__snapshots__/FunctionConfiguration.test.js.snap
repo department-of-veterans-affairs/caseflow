@@ -1,39 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FeatureToggleConfiguration renders the FeatureToggleConfiguration component 1`] = `
+exports[`FunctionConfiguration renders the Function component 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
-    <div>
-      <div
-        class="load-test-container-checkbox"
-      >
-        <div
-          class="checkbox-wrapper-Function1 cf-form-checkboxes"
-        >
-          <div
-            class="cf-form-checkbox"
-          >
-            <input
-              aria-label="Function1"
-              id="Function1"
-              name="Function1"
-              type="checkbox"
-            />
-            <label
-              for="Function1"
-            >
-              <span
-                class=""
-              >
-                Function1
-              </span>
-               
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
     <div>
       <div
         class="load-test-container-checkbox"
