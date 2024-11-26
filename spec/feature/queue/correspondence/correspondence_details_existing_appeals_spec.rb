@@ -146,7 +146,7 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       end
 
       # Test status change from completed to pending
-      find_button('View task instructions', id: '11').click
+      find_button("View task instructions", id: "11").click
       expect(page).to have_content("Address updated in VACOLS")
     end
 
