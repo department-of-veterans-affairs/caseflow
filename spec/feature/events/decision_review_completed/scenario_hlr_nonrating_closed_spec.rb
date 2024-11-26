@@ -180,7 +180,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
     end
 
-    context "does not comlete on error" do
+    context "does not complete on error" do
       before do
         FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
@@ -194,7 +194,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
       end
     end
 
-    context "does not complete invalid params" do
+    context "does not complete with invalid params" do
       before do
         FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
