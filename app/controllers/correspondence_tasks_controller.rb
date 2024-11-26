@@ -56,15 +56,32 @@ class CorrespondenceTasksController < TasksController
     end
   end
 
+  # Currently used only for OtherMotionMailTask unrelated to Appeal
   def create_return_to_inbound_ops_task
-    cancel
-    root_task = correspondence_task.root
+    # Requires current correspondence mail task to be cancelled
+    ActiveRecord::Base.transaction do
+      cancel
+      root_task = correspondence_task.root
+      params = { assigned_to: InboundOpsTeam.singleton }
+      return_task = ReturnToInboundOpsTask.create_child_task(
+        root_task,
+        current_user,
+        params
+      )
 
-    return_task = ReturnToInboundOpsTask.create_from_params(root_task, current_user)
-    return_task.update!(
-      assigned_to: InboundOpsTeam.singleton,
-      instructions: correspondence_task.instructions << correspondence_tasks_params[:instructions]
-    )
+      return_task.correspondence.update!(
+        notes: params[:return_reason]
+      )
+      render json: {
+        return_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(return_task).serializable_hash,
+        closed_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(correspondence_task).serializable_hash
+      }
+    end
+  rescue StandardError => error
+    uuid = SecureRandom.uuid
+    Rails.logger.error(error.to_s + "Error ID: " + uuid)
+    Raven.capture_exception(error, extra: { error_uuid: uuid })
+    render json: { "error": error.message, "error_id": uuid }, status: :internal_server_error
   end
 
   def update
@@ -119,7 +136,8 @@ class CorrespondenceTasksController < TasksController
       :correspondence_uuid,
       :assigned_to,
       :instructions,
-      :type
+      :type,
+      :return_reason
     )
   end
 
