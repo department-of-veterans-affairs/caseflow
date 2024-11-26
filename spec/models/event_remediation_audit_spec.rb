@@ -96,7 +96,7 @@ RSpec.describe EventRemediationAudit, type: :model do
       )
 
       expect(event_remediation_audit).to be_invalid
-      expect(event_remediation_audit.errors[:remediated_record_type]).to include("is not a valid remediated record type")
+      expect(event_remediation_audit.errors[:remediated_record_type]).to include("is not a valid remediated record")
     end
   end
 end
