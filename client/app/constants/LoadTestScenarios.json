@@ -287,7 +287,7 @@
       "value": "Veteran",
       "label": "Veteran"
     }],
-    "targetId": "veteran uuid"
+    "targetId": "Veteran uuid"
   },
   {"scenario": "idtAddressValidation",
     "targetType": [{
@@ -324,7 +324,7 @@
       "value": "Veteran",
       "label": "Veteran"
     }],
-    "targetId": "veteran uuid"
+    "targetId": "Veteran uuid"
   },
   {
     "scenario": "organizationUsers",
@@ -356,5 +356,34 @@
     "scenario": "dependenciesCheck",
     "targetType": [],
     "targetId": ""
+  },
+  {"scenario": "users",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "help",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "scheduleHearingTasksAmaTab",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "HearingDay id"
+  },
+  {"scenario": "scheduleHearingTasksLegacyTab",
+    "targetType": [{
+      "value": "HearingDay",
+      "label": "Hearing Day"
+    }],
+    "targetId": "HearingDay id"
+  },
+  {"scenario": "apiVaNotifyUpdate",
+    "targetType": [{
+      "value": "Notification",
+      "label": "Notification"
+    }],
+    "targetId": "Notification id"
   }
 ]

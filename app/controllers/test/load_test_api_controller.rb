@@ -64,6 +64,10 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "Notification"
+      target_data_type = Notification
+      target_data_column = "email_notification_external_id"
+      # look for another option for this column
     when "Organization"
       # organization being handled a bit differently, can use url.
       target_data_type = Organization
