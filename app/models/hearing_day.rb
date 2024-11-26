@@ -197,7 +197,9 @@ class HearingDay < CaseflowRecord
   def begins_at
     # If 'first_slot_time' column has a value, use that
     if first_slot_time.present?
-      combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
+      combine_time_and_date(first_slot_time,
+                            Constants::REGIONAL_OFFICE_INFORMATION[regional_office]["timezone"],
+                            scheduled_for)
     end
   end
 
