@@ -5,6 +5,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
     FeatureToggle.enable!(:acd_exclude_from_affinity)
     allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
+
     Seeds::CaseDistributionLevers.new.seed!
   end
 
