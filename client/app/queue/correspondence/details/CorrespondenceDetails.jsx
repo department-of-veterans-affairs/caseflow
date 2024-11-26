@@ -87,7 +87,6 @@ const CorrespondenceDetails = (props) => {
     setOriginalStates(initialStates);
   }, [priorMail, relatedCorrespondenceIds]);
 
-  
   useEffect(() => {
     if (showSuccessBanner) {
       setShowFailureBanner(false);
