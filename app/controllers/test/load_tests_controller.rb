@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Test::LoadTestsController < ApplicationController
-  # include ProdtestOnlyConcern
+  include ProdtestOnlyConcern
 
   LOAD_TESTING_USER = "LOAD_TESTER"
 

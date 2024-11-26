@@ -45,12 +45,13 @@ describe('ScenarioConfiguration', () => {
   it('renders the ScenarioConfiguration component', async () => {
     const scenarioComponent = setup(defaultProps);
 
+    expect(scenarioComponent).toMatchSnapshot();
     expect(await scenarioComponent.findByText(/scenarioTest/)).toBeInTheDocument();
   });
 
   it('displays dropdown when checkbox is clicked', async () => {
     setup(defaultProps);
-    await userEvent.click(screen.getByRole('checkbox', { name: 'scenarioTest' }));
+    userEvent.click(screen.getByRole('checkbox', { name: 'scenarioTest' }));
 
     expect(screen.getAllByText(/Target Type/).length).toEqual(2);
   });

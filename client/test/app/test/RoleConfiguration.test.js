@@ -50,7 +50,7 @@ describe('RoleConfiguration', () => {
 
   it('updates state when checkbox is clicked', async () => {
     setup(defaultProps);
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Build HearSched' }));
+    userEvent.click(screen.getByRole('checkbox', { name: 'Build HearSched' }));
 
     expect(defaultProps.currentState.user.roles).toEqual(['Edit HearSched', 'Build HearSched']);
   });
