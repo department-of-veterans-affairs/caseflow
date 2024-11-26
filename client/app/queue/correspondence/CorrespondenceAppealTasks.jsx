@@ -248,7 +248,7 @@ const CorrespondenceAppealTasks = (props) => {
               correspondence={props.correspondenceInfo}
               appeal={appeal}
               tasks={tasks}
-              // autoTexts= {props.autoTexts}
+              autoTexts= {props.autoTexts}
             />
           }
         </div>
@@ -265,6 +265,7 @@ CorrespondenceAppealTasks.propTypes = {
   appealUuid: PropTypes.string,
   waivableUser: PropTypes.bool,
   correspondenceInfo: PropTypes.object,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   expandedLinkedAppeals: PropTypes.array
 };
 

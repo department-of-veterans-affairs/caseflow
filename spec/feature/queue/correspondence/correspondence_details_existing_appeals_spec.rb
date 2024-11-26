@@ -117,6 +117,12 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       end
     end
 
+    before :each do
+      require Rails.root.join("db/seeds/base.rb").to_s
+      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+      Seeds::Correspondence.new.create_auto_text_data
+    end
+
     it "Adds a new task related to appeal on Correspondence Details page" do
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[1].click
@@ -130,9 +136,18 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       find(".react-select__option", text: "Congressional Interest").click
       expect(page).to have_button("Next", disabled: false)
       click_button "Next"
-      using_wait_time(10) do
+      find("label", text: "Address updated in VACOLS").click
+      find("label", text: "C&P exam report").click
+      expect(page).to have_content("Address updated in VACOLS, \nC&P exam report")
+      click_button "Add task"
+
+      using_wait_time(20) do
         expect(page).to have_content("Congressional Interest")
       end
+
+      # Test status change from completed to pending
+      find_button('View task instructions', id: '11').click
+      expect(page).to have_content("Address updated in VACOLS")
     end
 
     it "Displays an error banner when adding a task fails" do
@@ -150,7 +165,7 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       allow_any_instance_of(CorrespondenceDetailsController).to receive(:create_correspondence_appeal_task)
         .and_raise("Internal Server Error")
       click_button "Next"
-
+      click_button "Add task"
       # Expect an error banner to be displayed
       using_wait_time(10) do
         expect(page).to have_content("Task action could not be completed." \

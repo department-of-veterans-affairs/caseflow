@@ -558,6 +558,8 @@ const CorrespondenceDetails = (props) => {
                   appealUuid={appeal.appealUuid || appeal.externalId}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
+                  autoTexts= {props.autoTexts}
+
                 />
               ))}
             </div>
