@@ -3,9 +3,14 @@
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
   before do
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    FeatureToggle.enable!(:acd_exclude_from_affinity)
     allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
-
     Seeds::CaseDistributionLevers.new.seed!
+  end
+
+  after do
+    FeatureToggle.disable!(:acd_distribute_by_docket_date)
+    FeatureToggle.disable!(:acd_exclude_from_affinity)
   end
 
   def to_judge_hash(arr)
@@ -161,6 +166,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:aoj_aod_tied) do
       create(:legacy_aoj_appeal, :aod, judge: judge_with_cases_2_staff)
     end
+    # VHA appeals are routed separately to the SCT org and we need to ensure that workflow is not affected
+    # by not_genpop distributions
     let!(:priority_sct_appeal) do
       create(:appeal, :direct_review_docket, :with_vha_issue, :type_cavc_remand, :cavc_ready_for_distribution,
              judge: judge_with_cases_2)
