@@ -2529,6 +2529,150 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
       END
       $function$
   SQL
+  create_function :assign_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.assign_awaiting_hearing_scheduling()
+       RETURNS SETOF assign_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_assign WHERE tsktknm IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_assign WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :corres_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.corres_awaiting_hearing_scheduling()
+       RETURNS SETOF corres_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	correspondent_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO correspondent_ids
+        FROM gather_bfcorkeys_of_hearing_schedulable_legacy_cases();
+
+        if correspondent_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_corres WHERE stafkey IN (%s)',
+              correspondent_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_corres WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :folders_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.folders_awaiting_hearing_scheduling()
+       RETURNS SETOF folder_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_folder WHERE ticknum IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_folder WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :issues_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.issues_awaiting_hearing_scheduling()
+       RETURNS SETOF issues_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_issues WHERE isskey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :reps_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reps_awaiting_hearing_scheduling()
+       RETURNS SETOF rep_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_rep WHERE repkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :hearsched_related_to_cases_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.hearsched_related_to_cases_awaiting_hearing_scheduling()
+       RETURNS SETOF hearsched_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
+      END $function$
+  SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
