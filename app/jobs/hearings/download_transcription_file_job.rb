@@ -139,7 +139,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       error: { type: "disposition", explanation: "Hearing disposition is not set to 'held'" },
       provider: "webex",
       docket_number: hearing.docket_number,
-      appeal_id: hearing.appeal.external_id,
+      appeal_id: hearing.appeal.docket_number,
       subject: "Hearing #{hearing.appeal.external_id} not set to \"Held\" and audio files " \
             "have been returned for this Hearing from Webex"
     }
