@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "./scripts/enable_features_dev"
-require "digest"
-require "securerandom"
-require "base64"
 class Test::LoadTestApiController < Api::ApplicationController
   include ProdtestOnlyConcern
 
@@ -53,6 +49,9 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
@@ -65,13 +64,14 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
-    when "HearingDay"
-      target_data_type = HearingDay
-      target_data_column = "id"
     when "Notification"
       target_data_type = Notification
       target_data_column = "email_notification_external_id"
       # look for another option for this column
+    when "Organization"
+      # organization being handled a bit differently, can use url.
+      target_data_type = Organization
+      target_data_column = "url"
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
@@ -93,6 +93,8 @@ class Test::LoadTestApiController < Api::ApplicationController
                        target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
                      elsif target_data_type.to_s == "HearingDay"
                        target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
+                     elsif target_data_type.to_s == "Organization"
+                       target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.all.sample
                      elsif target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
                      else
