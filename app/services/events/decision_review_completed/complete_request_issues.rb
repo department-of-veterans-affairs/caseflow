@@ -28,13 +28,15 @@ class Events::DecisionReviewCompleted::CompleteRequestIssues
         end
 
         # fetch existing RequestIssue in CF
-        ri = RequestIssue.find(parser_issue.ri_reference_id)
+        ri = RequestIssue.find(reference_id: parser_issue.ri_reference_id)
 
         # TODO: update all RI fields; RequestIssueUpdate model needed?
         # TODO: create new EventRecord(s) for each RI to show an update was performed
 
         # create DI backfill and associated Records
         create_decision_issue_backfill(issue, ri)
+
+        # TODO: determine what the return object should be
       end
     end
 
