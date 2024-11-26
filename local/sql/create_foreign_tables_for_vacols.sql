@@ -95,7 +95,8 @@ TABLE IF NOT EXISTS f_vacols_brieff (
     BFDCERTOOL date
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'BRIEFF'
+    TABLE 'BRIEFF',
+    READONLY 'TRUE'
 );
 
 -- FOLDER Table
@@ -166,7 +167,8 @@ TABLE IF NOT EXISTS f_vacols_folder (
     TICLCW varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'FOLDER'
+    TABLE 'FOLDER',
+    READONLY 'TRUE'
 );
 
 -- HEARSCHED Table
@@ -179,7 +181,7 @@ TABLE IF NOT EXISTS f_vacols_hearsched (
     HEARING_DISP varchar(1),
     BOARD_MEMBER varchar(20),
     NOTES1 varchar(1000),
-    TEAM varchar(10),
+    TEAM varchar(2),
     ROOM varchar(4),
     REP_STATE varchar(2),
     MDUSER varchar(16),
@@ -209,7 +211,8 @@ TABLE IF NOT EXISTS f_vacols_hearsched (
     ADDON varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'HEARSCHED'
+    TABLE 'HEARSCHED',
+    READONLY 'TRUE'
 );
 
 -- CORRES Table
@@ -225,8 +228,8 @@ TABLE IF NOT EXISTS f_vacols_corres (
     SNAMEL varchar(60),
     SLOGID varchar(16),
     STITLE varchar(40),
-    SORG varchar(150),
-    SDEPT varchar(150),
+    SORG varchar(50),
+    SDEPT varchar(50),
     SADDRNUM varchar(10),
     SADDRST1 varchar(60),
     SADDRST2 varchar(60),
@@ -246,7 +249,7 @@ TABLE IF NOT EXISTS f_vacols_corres (
     STC2 integer,
     STC3 integer,
     STC4 integer,
-    SNOTES varchar(1000),
+    SNOTES varchar(80),
     SORC1 integer,
     SORC2 integer,
     SORC3 integer,
@@ -273,7 +276,8 @@ TABLE IF NOT EXISTS f_vacols_corres (
     SINCAR varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'CORRES'
+    TABLE 'CORRES',
+    READONLY 'TRUE'
 );
 
 -- REP Table
@@ -305,13 +309,14 @@ TABLE IF NOT EXISTS f_vacols_rep (
     REPACKNW date
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'REP'
+    TABLE 'REP',
+    READONLY 'TRUE'
 );
 
 -- ISSUES Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_issues (
-    ISSKEY varchar(12),
+    ISSKEY varchar(12) OPTIONS (key 'true') NOT NULL,
     ISSSEQ smallint,
     ISSPROG varchar(6),
     ISSCODE varchar(6),
@@ -332,96 +337,99 @@ TABLE IF NOT EXISTS f_vacols_issues (
     ISSPACT varchar(1)
 ) SERVER vacols_sv OPTIONS (
     SCHEMA 'VACOLS_DEV',
-    TABLE 'ISSUES'
+    TABLE 'ISSUES',
+    READONLY 'TRUE'
 );
 
 -- STAFF Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_staff (
-  STAFKEY varchar(16),
-	SUSRPW varchar(16),
-	SUSRSEC varchar(5),
-	SUSRTYP varchar(10),
-	SSALUT varchar(15),
-	SNAMEF varchar(24),
-	SNAMEMI varchar(4),
-	SNAMEL varchar(60),
-	SLOGID varchar(16),
-	STITLE varchar(60),
-	SORG varchar(60),
-	SDEPT varchar(60),
-	SADDRNUM varchar(10),
-	SADDRST1 varchar(30),
-	SADDRST2 varchar(30),
-	SADDRCTY varchar(20),
-	SADDRSTT varchar(4),
-	SADDRCNTY varchar(6),
-	SADDRZIP varchar(10),
-	STELW varchar(20),
-	STELWEX varchar(20),
-	STELFAX varchar(20),
-	STELH varchar(20),
-	STADUSER varchar(16),
-	STADTIME date,
-	STMDUSER varchar(16),
-	STMDTIME date,
-	STC1 integer,
-	STC2 integer,
-	STC3 integer,
-	STC4 integer,
-	SNOTES varchar(80),
-	SORC1 integer,
-	SORC2 integer,
-	SORC3 integer,
-	SORC4 integer,
-	SACTIVE varchar(1),
-	SSYS varchar(16),
-	SSPARE1 varchar(20),
-	SSPARE2 varchar(20),
-	SSPARE3 varchar(20),
-	SMEMGRP varchar(16),
-	SFOIASEC integer,
-	SRPTSEC integer,
-	SATTYID varchar(4),
-	SVLJ varchar(1),
-	SINVSEC varchar(1),
-	SDOMAINID varchar(20)
+    STAFKEY varchar(16) OPTIONS (key 'true') NOT NULL,
+    SUSRPW varchar(16),
+    SUSRSEC varchar(5),
+    SUSRTYP varchar(10),
+    SSALUT varchar(15),
+    SNAMEF varchar(24),
+    SNAMEMI varchar(4),
+    SNAMEL varchar(60),
+    SLOGID varchar(16),
+    STITLE varchar(60),
+    SORG varchar(60),
+    SDEPT varchar(60),
+    SADDRNUM varchar(10),
+    SADDRST1 varchar(30),
+    SADDRST2 varchar(30),
+    SADDRCTY varchar(20),
+    SADDRSTT varchar(4),
+    SADDRCNTY varchar(6),
+    SADDRZIP varchar(10),
+    STELW varchar(20),
+    STELWEX varchar(20),
+    STELFAX varchar(20),
+    STELH varchar(20),
+    STADUSER varchar(16),
+    STADTIME date,
+    STMDUSER varchar(16),
+    STMDTIME date,
+    STC1 integer,
+    STC2 integer,
+    STC3 integer,
+    STC4 integer,
+    SNOTES varchar(80),
+    SORC1 integer,
+    SORC2 integer,
+    SORC3 integer,
+    SORC4 integer,
+    SACTIVE varchar(1),
+    SSYS varchar(16),
+    SSPARE1 varchar(20),
+    SSPARE2 varchar(20),
+    SSPARE3 varchar(20),
+    SMEMGRP varchar(16),
+    SFOIASEC integer,
+    SRPTSEC integer,
+    SATTYID varchar(4),
+    SVLJ varchar(1),
+    SINVSEC varchar(1),
+    SDOMAINID varchar(20)
 ) SERVER vacols_sv OPTIONS (
-  SCHEMA 'VACOLS_DEV',
-  TABLE 'STAFF'
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'STAFF',
+    READONLY 'TRUE'
 );
 
 -- ASSIGN Table
 CREATE FOREIGN
 TABLE IF NOT EXISTS f_vacols_assign (
-  TASKNUM varchar(12),
-	TSKTKNM varchar(12),
-	TSKSTFAS varchar(16),
-	TSKACTCD varchar(10),
-	TSKCLASS varchar(10),
-	TSKRQACT varchar(280),
-	TSKRSPN varchar(200),
-	TSKDASSN date,
-	TSKDTC integer,
-	TSKDDUE date,
-	TSKDCLS date,
-	TSKSTOWN varchar(16),
-	TSKSTAT varchar(1),
-	TSKOWNTS varchar(12),
-	TSKCLSTM date,
-	TSKADUSR varchar(16),
-	TSKADTM date,
-	TSKMDUSR varchar(16),
-	TSKMDTM date,
-	TSACTIVE varchar(1),
-	TSSPARE1 varchar(30),
-	TSSPARE2 varchar(30),
-	TSSPARE3 varchar(30),
-	TSREAD1 varchar(28),
-	TSREAD varchar(16),
-	TSKORDER varchar(15),
-	TSSYS varchar(16)
+    TASKNUM varchar(12) OPTIONS (key 'true') NOT NULL,
+    TSKTKNM varchar(12),
+    TSKSTFAS varchar(16),
+    TSKACTCD varchar(10),
+    TSKCLASS varchar(10),
+    TSKRQACT varchar(280),
+    TSKRSPN varchar(200),
+    TSKDASSN date,
+    TSKDTC integer,
+    TSKDDUE date,
+    TSKDCLS date,
+    TSKSTOWN varchar(16),
+    TSKSTAT varchar(1),
+    TSKOWNTS varchar(12),
+    TSKCLSTM date,
+    TSKADUSR varchar(16),
+    TSKADTM date,
+    TSKMDUSR varchar(16),
+    TSKMDTM date,
+    TSACTIVE varchar(1),
+    TSSPARE1 varchar(30),
+    TSSPARE2 varchar(30),
+    TSSPARE3 varchar(30),
+    TSREAD1 varchar(28),
+    TSREAD varchar(16),
+    TSKORDER varchar(15),
+    TSSYS varchar(16)
 ) SERVER vacols_sv OPTIONS (
-  SCHEMA 'VACOLS_DEV',
-  TABLE 'ASSIGN'
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'ASSIGN',
+    READONLY 'TRUE'
 );
