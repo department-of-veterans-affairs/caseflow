@@ -122,7 +122,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.closed_status).to eq("closed")
         expect(completed_request_issue.contested_issue_description).to eq(nil)
         expect(completed_request_issue.contention_reference_id).to eq(7_905_752)
-        # expect(completed_request_issue.contested_rating_decision_reference_id).to eq(nil)
         expect(completed_request_issue.contested_rating_issue_profile_date).to eq(nil)
         expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(completed_request_issue.vacols_id).to eq(nil)
