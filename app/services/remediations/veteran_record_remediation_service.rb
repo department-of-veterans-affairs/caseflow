@@ -66,7 +66,6 @@ class Remediations::VeteranRecordRemediationService
       event_record: @event_record,
       remediated_record_type: remediated_record.class.name,
       remediated_record_id: remediated_record.id,
-      # remediated_record: remediated_record,
       info: {
         remediation_type: "VeteranRecordRemediationService",
         after_data: after_data,
