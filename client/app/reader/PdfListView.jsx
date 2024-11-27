@@ -18,108 +18,80 @@ import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
+import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 
 export class PdfListView extends React.Component {
-  setClearAllFiltersCallbacks = (callbacks) => {
-    this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
-  };
-
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      clearAllFiltersCallbacks: []
+      clearAllFiltersCallbacks: [],
     };
   }
 
-  componentDidMount() {
-    if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
-      // if the appeal is fetched through case selected appeals, re-use that existing appeal
-      // information.
-      if (this.props.caseSelectedAppeal &&
-        (this.props.caseSelectedAppeal.vacols_id === this.props.match.params.vacolsId)) {
-        this.props.onReceiveAppealDetails(this.props.caseSelectedAppeal);
-      } else {
-        this.props.fetchAppealDetails(this.props.match.params.vacolsId);
-      }
+  setClearAllFiltersCallbacks = (callbacks) => {
+    this.setState((prevState) => ({
+      clearAllFiltersCallbacks: [...prevState.clearAllFiltersCallbacks, ...callbacks],
+    }));
+  };
 
-      // if appeal is loaded from the assignments and it matches the vacols id
-      // in the url
-    } else if (this.props.appeal.vacols_id === this.props.match.params.vacolsId) {
-      this.props.onReceiveAppealDetails(this.props.appeal);
+  componentDidMount() {
+    const { appeal, match, caseSelectedAppeal, fetchAppealDetails, onReceiveAppealDetails } = this.props;
+
+    if (shouldFetchAppeal(appeal, match.params.vacolsId)) {
+      if (caseSelectedAppeal && caseSelectedAppeal.vacols_id === match.params.vacolsId) {
+        onReceiveAppealDetails(caseSelectedAppeal);
+      } else {
+        fetchAppealDetails(match.params.vacolsId);
+      }
+    } else if (appeal?.vacols_id === match.params.vacolsId) {
+      onReceiveAppealDetails(appeal);
     }
   }
 
   render() {
-    const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
-    let tableView;
+    const { documents, docFilterCriteria, viewingDocumentsOrComments, featureToggles } = this.props;
+    const noDocuments = !_.size(documents) && _.size(docFilterCriteria?.searchQuery) > 0;
 
+    let tableView;
     if (noDocuments) {
       tableView = <NoSearchResults />;
-    } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
-      tableView = <CommentsTable
-        documents={this.props.documents}
-        onJumpToComment={this.props.onJumpToComment}
-      />;
+    } else if (viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
+      tableView = <CommentsTable {...this.props} />;
     } else {
-      tableView = <DocumentsTable
-        documents={this.props.documents}
-        documentPathBase={this.props.documentPathBase}
-        onJumpToComment={this.props.onJumpToComment}
-        sortBy={this.props.sortBy}
-        docFilterCriteria={this.props.docFilterCriteria}
-        showPdf={this.props.showPdf}
-        setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
-        featureToggles={this.props.featureToggles}
-        readerPreferences={this.props.readerPreferences}
-      />;
+      tableView = <DocumentsTable {...this.props} setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks} />;
     }
 
-    return <div>
-      {this.props.queueRedirectUrl && <BackToQueueLink
-        queueRedirectUrl={this.props.queueRedirectUrl}
-        queueTaskType={this.props.queueTaskType}
-        veteranFullName={this.props.appeal.veteran_full_name}
-        vbmsId={this.props.appeal.vbms_id} />}
-      <LastRetrievalAlert
-        userHasEfolderRole={this.props.userHasEfolderRole}
-        efolderExpressUrl={this.props.efolderExpressUrl}
-        appeal={this.props.appeal} />
-      <AppSegment filledBackground>
-        <div className="section--document-list">
-          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          {this.props.featureToggles.bandwidthBanner && <BandwidthAlert /> }
-          <DocumentListHeader
-            documents={this.props.documents}
-            noDocuments={noDocuments}
-            clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
+    return (
+      <div>
+        {this.props.queueRedirectUrl && (
+          <BackToQueueLink
+            queueRedirectUrl={this.props.queueRedirectUrl}
+            queueTaskType={this.props.queueTaskType}
+            veteranFullName={this.props.appeal?.veteran_full_name}
+            vbmsId={this.props.appeal?.vbms_id}
           />
-          {tableView}
-        </div>
-      </AppSegment>
-      <LastRetrievalInfo appeal={this.props.appeal} />
-    </div>;
+        )}
+        {featureToggles?.isWarningIconAndBannerEnabled && (
+          <SizeWarningIcon size={32} className="size-warning-icon" />
+        )}
+        <LastRetrievalAlert {...this.props} />
+        <AppSegment filledBackground>
+          <div className="section--document-list">
+            <ClaimsFolderDetails {...this.props} />
+            {featureToggles?.bandwidthBanner && <BandwidthAlert />}
+            <DocumentListHeader
+              documents={documents}
+              noDocuments={noDocuments}
+              clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
+            />
+            {tableView}
+          </div>
+        </AppSegment>
+        <LastRetrievalInfo {...this.props} />
+      </div>
+    );
   }
 }
-
-const mapStateToProps = (state, props) => {
-  return {
-    documents: getFilteredDocuments(state),
-    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
-    appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
-      state.pdfViewer.loadedAppeal,
-    caseSelectedAppeal: state.caseSelect.selectedAppeal,
-    manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    queueRedirectUrl: state.documentList.queueRedirectUrl,
-    queueTaskType: state.documentList.queueTaskType
-  };
-};
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    onReceiveAppealDetails,
-    fetchAppealDetails
-  }, dispatch)
-);
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -128,22 +100,36 @@ PdfListView.propTypes = {
   appeal: PropTypes.object,
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
-  readerSearchImprovements: PropTypes.bool,
   featureToggles: PropTypes.object,
-  match: PropTypes.object,
+  match: PropTypes.object.isRequired,
   caseSelectedAppeal: PropTypes.object,
-  onReceiveAppealDetails: PropTypes.func,
-  fetchAppealDetails: PropTypes.func,
+  onReceiveAppealDetails: PropTypes.func.isRequired,
+  fetchAppealDetails: PropTypes.func.isRequired,
   docFilterCriteria: PropTypes.object,
-  viewingDocumentsOrComments: PropTypes.string,
+  viewingDocumentsOrComments: PropTypes.oneOf(Object.values(DOCUMENTS_OR_COMMENTS_ENUM)),
   documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
   queueRedirectUrl: PropTypes.string,
   queueTaskType: PropTypes.node,
-  readerPreferences: PropTypes.object
+  readerPreferences: PropTypes.object,
 };
 
-export default connect(
-  mapStateToProps, mapDispatchToProps
-)(PdfListView);
+const mapStateToProps = (state, props) => ({
+  documents: getFilteredDocuments(state),
+  ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
+  appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) || state.pdfViewer.loadedAppeal,
+  caseSelectedAppeal: state.caseSelect.selectedAppeal,
+  queueRedirectUrl: state.documentList.queueRedirectUrl,
+  queueTaskType: state.documentList.queueTaskType,
+});
 
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      onReceiveAppealDetails,
+      fetchAppealDetails,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(PdfListView);

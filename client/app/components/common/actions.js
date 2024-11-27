@@ -121,6 +121,13 @@ export const setScheduledHearing = (payload) => ({
   payload,
 });
 
+export const setFeatureToggles = (toggles) => ({
+  type: ACTIONS.SET_FEATURE_TOGGLES,
+  payload: {
+    toggles
+  },
+});
+
 export const fetchScheduledHearings = (hearingDay) => (dispatch) => {
   // Dispatch the action to set the pending state for the hearing time
   dispatch({ type: ACTIONS.REQUEST_SCHEDULED_HEARINGS });

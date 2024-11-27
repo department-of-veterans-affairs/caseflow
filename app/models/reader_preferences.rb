@@ -69,6 +69,11 @@ class ReaderPreferences
     #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
     #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
 
+  def self.bandwidth_warning_enabled?
+    max_file_wait_time = ENV.fetch("MAX_FILE_WAIT_TIME", nil)
+    max_file_wait_time.present? && max_file_wait_time.to_i > 0
+  end
+
   def self.valid_preferences
     @valid_preferences ||= ENV.select { |feature, value| feature.include?("READER") }.keys
   end
