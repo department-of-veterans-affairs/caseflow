@@ -283,6 +283,7 @@ const CorrespondenceDetails = (props) => {
         return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
       }
       // Ensure that items in relatedCorrespondenceIds come first
+
       return firstInRelated ? -1 : 1;
     }
 
