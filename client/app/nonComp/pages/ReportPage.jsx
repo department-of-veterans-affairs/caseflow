@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable max-lines */
 import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
@@ -6,7 +7,7 @@ import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
-import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
+import { formatDateStrUtc } from '../../util/DateUtil';
 
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
@@ -27,7 +28,9 @@ import { timingSchema, TimingSpecification } from 'app/nonComp/components/Report
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
+// eslint-disable-next-line no-duplicate-imports
 import { saveUserSearch, fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
+// eslint-disable-next-line no-duplicate-imports
 import { get } from 'lodash';
 import COPY from 'app/../COPY';
 
@@ -166,7 +169,7 @@ const ReportPageButtons = ({
   );
 };
 
-const EventCheckboxGroup = ({ header, options, name, onChange, field }) => {
+const EventCheckboxGroup = ({ header, options, name, onChange, field: { value } }) => {
   return (
     <div>
       { header && <h4>{header}</h4> }
@@ -176,7 +179,7 @@ const EventCheckboxGroup = ({ header, options, name, onChange, field }) => {
             name={`${name}.${option.id}`}
             key={`${name}.${option.id}`}
             label={option.label}
-            defaultValue={get(field.value, option.id)}
+            defaultValue={get(value, option.id)}
             stronglabel
             unpadded
             onChange={(val) => onChange({ option, val })}
@@ -293,6 +296,7 @@ const RHFRadioButton = ({ options, name, control, label }) => {
 const ReportPage = ({ history }) => {
   const selectedSearch = useSelector((state) => state.savedSearch.selectedSearch);
   const savedSearch = selectedSearch?.savedSearch;
+  // eslint-disable-next-line no-negated-condition
   const conditions = !isEmpty(savedSearch?.conditions) ? Object.values(savedSearch?.conditions) : [];
   const specificStatus = savedSearch?.specificStatus;
   const specificEventType = savedSearch?.specificEventType;
@@ -338,6 +342,47 @@ const ReportPage = ({ history }) => {
     }
   };
 
+  const resetFormValues = {
+    reportType: '',
+    conditions: [],
+    timing: {
+      range: null,
+      startDate: '',
+      endDate: '',
+    },
+    radioEventAction: 'all_events_action',
+    radioStatus: 'all_statuses',
+    radioStatusReportType: 'last_action_taken',
+    specificStatus: {
+      incomplete: '',
+      in_progress: '',
+      pending: '',
+      completed: '',
+      cancelled: ''
+    },
+    specificEventType: {
+      claim_created: '',
+      claim_closed: '',
+      claim_status_incomplete: '',
+      claim_status_pending: '',
+      claim_status_inprogress: '',
+      added_decision_date: '',
+      added_issue: '',
+      added_issue_no_decision_date: '',
+      removed_issue: '',
+      withdrew_issue: '',
+      completed_disposition: '',
+      requested_issue_modification: '',
+      requested_issue_addition: '',
+      requested_issue_removal: '',
+      requested_issue_withdrawal: '',
+      approval_of_request: '',
+      rejection_of_request: '',
+      cancellation_of_request: '',
+      edit_of_request: '',
+    }
+  };
+
   const methods = useForm({
     defaultValues: { ...defaultFormValues },
     resolver: yupResolver(schema),
@@ -345,7 +390,7 @@ const ReportPage = ({ history }) => {
     reValidateMode: 'onSubmit'
   });
 
-  const { reset, watch, formState, control, handleSubmit } = methods;
+  const { reset, watch, formState: { isDirty }, control, handleSubmit } = methods;
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
@@ -356,6 +401,7 @@ const ReportPage = ({ history }) => {
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
+  const onInvalid = (errors) => console.error(errors);
 
   const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -423,6 +469,10 @@ const ReportPage = ({ history }) => {
 
     return filters;
   };
+  console.log("isDirty", !isDirty);
+  console.log("savedSearch?.reportType", !savedSearch?.reportType);
+  console.log("disabled", !isDirty && !savedSearch?.reportType);
+  let isDisabledGroup = !isDirty && !savedSearch?.reportType;
 
   const handleViewSavedSearch = () => {
     dispatch(selectSavedSearch({}));
@@ -430,14 +480,22 @@ const ReportPage = ({ history }) => {
 
   const submitForm = (data) => {
     const filterData = parseFilters(data);
+
     // Generate and trigger the download of the CSV
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
   const handleSave = (data) => {
+    // console.log("defaultFormValues",defaultFormValues);
     dispatch(saveUserSearch(data));
     setShowSaveSearchModal(true);
   };
+
+  const handleClearFilters = () => {
+    reset(resetFormValues, { keepDirty: false });
+  };
+
+  console.log("isDisabledGroup", isDisabledGroup);
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
@@ -465,9 +523,11 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!savedSearch?.reportType && !formState.isDirty}
-          handleClearFilters={() => reset()}
-          handleSubmit={handleSubmit(submitForm)}
+          isDirty
+          isGenerateButtonDisabled={isDisabledGroup}
+          savedSearch={savedSearch}
+          handleClearFilters={handleClearFilters}
+          handleSubmit={handleSubmit(submitForm, onInvalid)}
           handleSaveSearch={handleSubmit(handleSave)}
           loading={isCSVGenerating}
           loadingText="Generating CSV"
@@ -543,7 +603,7 @@ const ReportPage = ({ history }) => {
             /> : null
           }
           {showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null}
-          {formState.isDirty || savedSearch?.reportType ? <ReportPageConditions /> : null}
+          {isDirty || savedSearch?.reportType ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>
@@ -554,6 +614,7 @@ const ReportPage = ({ history }) => {
 ReportPageButtons.propTypes = {
   history: PropTypes.object,
   isGenerateButtonDisabled: PropTypes.bool,
+  saveSearch: PropTypes.object,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
   handleSaveSearch: PropTypes.func,
