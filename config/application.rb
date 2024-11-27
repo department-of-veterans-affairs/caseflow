@@ -99,10 +99,6 @@ module CaseflowCertification
     # Default as of 6.0: true
     config.action_dispatch.use_cookies_with_metadata = false
 
-    # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
-    # Default as of 6.0: false
-    config.action_dispatch.return_only_media_type_on_content_type = true
-
     # Enable the same cache key to be reused when the object being cached of type
     # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
     # of the relation's cache key into the cache version to support recycling cache key.
