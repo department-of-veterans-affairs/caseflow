@@ -1,5 +1,3 @@
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -33,10 +31,7 @@ export default function FunctionConfiguration(props) {
           ...currentState,
           user: {
             ...currentState.user,
-            user: {
-              ...currentState.user.user,
-              functions: updatedSelections
-            }
+            functions: updatedSelections
           }
         }
       );
