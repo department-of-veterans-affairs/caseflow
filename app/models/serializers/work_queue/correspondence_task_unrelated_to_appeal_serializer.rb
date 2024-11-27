@@ -22,6 +22,10 @@ class WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer
     task.available_actions_unwrapper(RequestStore[:current_user])
   end
 
+  attribute :assigned_by do |task|
+    task.assigned_by.css_id
+  end
+
   attribute :reassign_users, if: proc { |task| task.open? }, &:reassign_users
 
   attribute :assigned_to_org, if: proc { |task| task.open? } do |task|
