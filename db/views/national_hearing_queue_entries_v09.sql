@@ -58,7 +58,7 @@ SELECT
   cached_appeal_attributes.suggested_hearing_location,
   COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE AS mst_indicator,
   COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE AS pact_indicator,
-  COALESCE(veterans.date_of_death IS NOT NULL, false) IS TRUE AS veteran_deceased_indicator
+  veterans.date_of_death IS NOT NULL AS veteran_deceased_indicator
 FROM
   appeals
   JOIN tasks ON tasks.appeal_type = 'Appeal'
@@ -142,7 +142,7 @@ SELECT
     WHEN fvi.pact = 'Y' then true
     ELSE false
   END AS pact_indicator,
-  COALESCE(f_vacols_corres.sfnod IS NOT NULL, false) IS TRUE AS veteran_deceased_indicator
+  f_vacols_corres.sfnod IS NOT NULL AS veteran_deceased_indicator
 FROM
   legacy_appeals
   JOIN tasks ON tasks.appeal_type = 'LegacyAppeal'

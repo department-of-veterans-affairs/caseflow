@@ -2717,7 +2717,7 @@ ActiveRecord::Schema.define(version: 2024_11_27_181409) do
       cached_appeal_attributes.suggested_hearing_location,
       (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
       (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator,
-      (COALESCE((veterans.date_of_death IS NOT NULL), false) IS TRUE) AS veteran_deceased_indicator
+      (veterans.date_of_death IS NOT NULL) AS veteran_deceased_indicator
      FROM (((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
@@ -2782,7 +2782,7 @@ ActiveRecord::Schema.define(version: 2024_11_27_181409) do
               WHEN (fvi.pact = 'Y'::text) THEN true
               ELSE false
           END AS pact_indicator,
-      (COALESCE((f_vacols_corres.sfnod IS NOT NULL), false) IS TRUE) AS veteran_deceased_indicator
+      (f_vacols_corres.sfnod IS NOT NULL) AS veteran_deceased_indicator
      FROM (((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
