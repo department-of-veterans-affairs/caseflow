@@ -26,7 +26,7 @@
   "returnToInboundOpsBanner": {
     "title": "Success",
     "message": "You have successfully returned the correspondence to Inbound Operations team.",
-    "type": "Success"
+    "type": "success"
   },
 
   "taskActionFailBanner": {
