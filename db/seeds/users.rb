@@ -234,6 +234,7 @@ module Seeds
         judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
         judge.roles = judge.roles << "Hearing Prep" unless judge.roles.include?("Hearing Prep")
         judge.save!
+        create(:staff, :judge_role) if judge.vacols_staff.nil?
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         h[:attorneys].each do |css_id|
           judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
@@ -252,8 +253,11 @@ module Seeds
     end
 
     def create_transcription_team
-      transcription_member = create(:user, css_id: "TRANSCRIPTION_USER", full_name: "Noel TranscriptionUser Vasquez")
-      TranscriptionTeam.singleton.add_user(transcription_member)
+      transcription_member_1 = create(:user, css_id: "TRANSCRIPTION_USER", full_name: "Noel TranscriptionUser Vasquez")
+      TranscriptionTeam.singleton.add_user(transcription_member_1)
+
+      transcription_member_2 = create(:user, css_id: "TRANSCRIPTION_USER_ALTERNATE", full_name: "Nathan TranscriptionUser Vasquez")
+      TranscriptionTeam.singleton.add_user(transcription_member_2)
     end
 
     def create_hearings_user

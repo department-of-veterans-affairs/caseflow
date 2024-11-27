@@ -1,0 +1,39 @@
+.load-test-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.load-test-container-checkbox {
+  width: 30%;
+  box-sizing: border-box;
+  flex-grow: 1;
+  margin: 1%;
+}
+
+.load-test-submit {
+  float: right;
+  padding-bottom: 1.5em;
+}
+
+.header-style {
+  margin: 0
+}
+
+.admin-checkbox {
+  margin-left: 20px;
+  font-size: 15px;
+}
+
+.test-class-sizing {
+  font-size: 1.5rem;
+}
+
+.error {
+  color: $validation-error-color;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.load-test-success-banner {
+  margin-bottom: 1.5em;
+}

@@ -97,6 +97,7 @@ export default class SearchBar extends React.Component {
       id = uuid.v4(),
       inputProps,
       value,
+      defaultValue,
       loading,
       onClearSearch,
       isSearchAhead,
@@ -153,6 +154,7 @@ export default class SearchBar extends React.Component {
           }
           placeholder={placeholder}
           value={value}
+          defaultValue={defaultValue}
           {...inputProps}
         />
         {hasInternalText && (
@@ -255,6 +257,11 @@ SearchBar.propTypes = {
    * The value of the `input` element
    */
   value: PropTypes.string,
+
+  /**
+   * The defaultValue of the `input` element
+   */
+  defaultValue: PropTypes.string,
 
   /**
    * Callback fired when search is initiated, either but pressing search or enter if `submitUsingEnterKey` is true

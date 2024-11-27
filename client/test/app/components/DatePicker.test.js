@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
 import COPY from '../../../COPY';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 import {
   selectFromDropdown,
@@ -134,6 +134,9 @@ describe('DatePicker', () => {
   });
 
   it('quick buttons can select last 30 days', async () => {
+
+    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
+
     const { container } = setup({ settings: { buttons: true } });
 
     openFilter(container);

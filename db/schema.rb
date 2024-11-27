@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_12_181521) do
+ActiveRecord::Schema.define(version: 2024_11_18_075353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1763,12 +1763,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -1981,12 +1981,30 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
+  create_table "transcription_contractors", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.datetime "deleted_at"
+    t.string "directory", null: false, comment: "The contract house box.com folder full path"
+    t.string "email", null: false, comment: "The contract house contact email address"
+    t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
+    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
+    t.string "name", null: false, comment: "The contract house name"
+    t.string "phone", null: false, comment: "The contract house contact phone number"
+    t.string "poc", null: false, comment: "The contract house poc name"
+    t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
+    t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
+  end
+
   create_table "transcription_files", force: :cascade do |t|
     t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The user who created the transcription record"
     t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
-    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_receipt_recording", comment: "Timestamp when file was added to webex"
+    t.datetime "date_returned_box", comment: "Timestamp when file was added to the Box.com return folder by a QAT contractor. Used for performance metrics."
     t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
     t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
     t.string "docket_number", null: false, comment: "Docket number of associated hearing"
@@ -1995,6 +2013,11 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
     t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
     t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.datetime "locked_at", comment: "Locked record timeout field"
+    t.bigint "locked_by_id", comment: "ID of user who locked the record"
+    t.string "recording_task_number", comment: "Number associated with recording, is the created id from the recording system"
+    t.string "recording_transcriber", comment: "Contractor who created the closed caption transcription for the recording; i.e, 'Webex'"
+    t.bigint "transcription_id", comment: "ID of the associated transcription record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
     t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
@@ -2003,21 +2026,64 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["file_type"], name: "index_transcription_files_on_file_type"
     t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
+    t.index ["locked_by_id", "locked_at"], name: "index_transcription_files_locked_by_id_locked_at"
+    t.index ["transcription_id"], name: "index_transcription_files_on_transcription_id"
+  end
+
+  create_table "transcription_package_hearings", force: :cascade do |t|
+    t.bigint "hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_package_legacy_hearings", force: :cascade do |t|
+    t.bigint "legacy_hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_packages", force: :cascade do |t|
+    t.string "aws_link_work_order", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.string "aws_link_zip", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.bigint "contractor_id", comment: "FK to transcription_contractors table"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_upload_aws", comment: "Date of successful upload of master transcription zip file to AWS"
+    t.datetime "date_upload_box", comment: "Date of successful delivery to box.com contractor endpoint"
+    t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
+    t.datetime "returned_at", comment: "When the Contractor returns their completed Work Order excel file"
+    t.string "status", comment: "Status of the package, could be one of nil, 'Successful Upload (AWS), Successful Upload (BOX), Failed Upload (BOX), Successful Retrieval (BOX), Failed Retrieval (BOX)'"
+    t.string "task_number", comment: "Number associated with transcription, use as FK to transcriptions"
+    t.datetime "updated_at"
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["contractor_id"], name: "index_transcription_packages_on_contractor_id"
+    t.index ["task_number"], name: "index_transcription_packages_on_task_number"
   end
 
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
+    t.bigint "created_by_id"
+    t.datetime "deleted_at", comment: "acts_as_paranoid in the model"
+    t.bigint "created_by_id"
+    t.datetime "deleted_at", comment: "acts_as_paranoid in the model"
     t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
-    t.bigint "hearing_id", comment: "Hearing ID; use as FK to hearings"
+    t.bigint "hearing_id"
+    t.string "hearing_type"
     t.date "problem_notice_sent_date", comment: "Date when notice of problem with recording was sent to appellant"
     t.string "problem_type", comment: "Any problem with hearing recording; could be one of: 'No audio', 'Poor Audio Quality', 'Incomplete Hearing' or 'Other (see notes)'"
     t.string "requested_remedy", comment: "Any remedy requested by the apellant for the recording problem; could be one of: 'Proceed without transcript', 'Proceed with partial transcript' or 'New hearing'"
+    t.date "return_date", comment: "Date when the contractor returned their work product, box.com upload date"
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
+    t.bigint "task_id"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
+    t.bigint "transcription_contractor_id"
+    t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
+    t.bigint "updated_by_id"
+    t.bigint "updated_by_id"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
-    t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
+    t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
+    t.index ["hearing_type", "hearing_id"], name: "index_transcriptions_on_hearing_type_and_hearing_id"
+    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
@@ -2148,6 +2214,46 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
@@ -2435,7 +2541,15 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
-  add_foreign_key "transcriptions", "hearings"
+  add_foreign_key "transcription_files", "users", column: "locked_by_id"
+  add_foreign_key "transcription_package_hearings", "hearings"
+  add_foreign_key "transcription_package_hearings", "transcription_packages"
+  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
+  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
+  add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
+  add_foreign_key "transcriptions", "transcription_contractors"
+  add_foreign_key "transcriptions", "users", column: "created_by_id"
+  add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"

@@ -82,6 +82,7 @@ class DropdownFilter extends React.PureComponent {
 
 DropdownFilter.propTypes = {
   children: PropTypes.node,
+  name: PropTypes.string,
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func,
