@@ -17,6 +17,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import OrganizationPermissions from './OrganizationPermissions';
 import { flushSync } from 'react-dom';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
@@ -51,7 +52,9 @@ export default class OrganizationUsers extends React.PureComponent {
         membershipRequests: response.body.membership_requests,
         remainingUsers: [],
         isVhaOrg: response.body.isVhaOrg,
-        loading: false
+        loading: false,
+        organizationPermissions: response.body.organization_permissions,
+        organizationUserPermissions: response.body.organization_user_permissions
       });
     }, (error) => {
       this.setState({
@@ -171,6 +174,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -183,7 +187,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -276,6 +279,14 @@ getFilteredUsers = () => {
                 </div>
               </div>
             )}
+            {(this.state.organizationPermissions?.length > 0) && <div className={['team-member-permission-toggles-container']}>
+              <OrganizationPermissions
+                organization={this.props.organization}
+                permissions={this.state.organizationPermissions}
+                user={user}
+                orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+                organizationUserPermissions={this.state.organizationUserPermissions} />
+            </div>}
 
           </li>
         </React.Fragment>
