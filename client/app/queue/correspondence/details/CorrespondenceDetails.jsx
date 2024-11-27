@@ -228,17 +228,14 @@ const CorrespondenceDetails = (props) => {
     } else if (firstInRelated) {
       // Ensure that items in relatedCorrespondenceIds come first
       return -1;
-    } else if (secondInRelated) {
-      return 1;
-    }
-    if (!firstInRelated && secondInRelated) {
+    } else if (secondInRelated || (!firstInRelated && secondInRelated)) {
       return 1;
     }
 
     // If neither is in relatedCorrespondenceIds, maintain their original order
     const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
 
-    returnSort;
+    return returnSort;
   });
 
   const updatePageHandler = (idx) => {
