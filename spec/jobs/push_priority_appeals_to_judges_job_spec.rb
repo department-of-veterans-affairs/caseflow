@@ -3,9 +3,15 @@
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
   before do
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    FeatureToggle.enable!(:acd_exclude_from_affinity)
     allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
 
     Seeds::CaseDistributionLevers.new.seed!
+  end
+
+  after do
+    FeatureToggle.disable!(:acd_distribute_by_docket_date)
+    FeatureToggle.disable!(:acd_exclude_from_affinity)
   end
 
   def to_judge_hash(arr)
@@ -86,9 +92,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context ".distribute_non_genpop_priority_appeals" do
-    before { FeatureToggle.enable!(:acd_ppj_distribute_not_genpop) }
-    after { FeatureToggle.disable!(:acd_ppj_distribute_not_genpop) }
-
     # judges with non-genpop cases who should receive those cases
     let!(:judge_with_cases_1) { create(:user, :judge, :with_vacols_judge_record) }
     let(:judge_with_cases_1_staff) { judge_with_cases_1.vacols_staff }
@@ -164,6 +167,21 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:aoj_aod_tied) do
       create(:legacy_aoj_appeal, :aod, judge: judge_with_cases_2_staff)
     end
+    # VHA appeals are routed separately to the SCT org and we need to ensure that workflow is not affected
+    # by not_genpop distributions
+    let!(:priority_sct_appeal) do
+      create(:appeal, :direct_review_docket, :with_vha_issue, :type_cavc_remand, :cavc_ready_for_distribution,
+             judge: judge_with_cases_2)
+    end
+
+    before do
+      FeatureToggle.enable!(:acd_ppj_distribute_not_genpop)
+      FeatureToggle.enable!(:specialty_case_team_distribution)
+    end
+    after do
+      FeatureToggle.disable!(:acd_ppj_distribute_not_genpop)
+      FeatureToggle.disable!(:specialty_case_team_distribution)
+    end
 
     subject { PushPriorityAppealsToJudgesJob.new.send(:distribute_non_genpop_priority_appeals) }
 
@@ -192,7 +210,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       )
       expect(distributed_case_ids).to match_array(
         [direct_review_cavc_affinity.uuid, evidence_cavc_affinity.uuid, hearing_affinity.uuid,
-         (legacy_cavc_affinity.bfkey.to_i + 1).to_s, aoj_cavc_affinity.bfkey, legacy_aod_tied.bfkey, aoj_aod_tied.bfkey]
+         (legacy_cavc_affinity.bfkey.to_i + 1).to_s, aoj_cavc_affinity.bfkey, legacy_aod_tied.bfkey, aoj_aod_tied.bfkey,
+         priority_sct_appeal.uuid]
       )
     end
   end

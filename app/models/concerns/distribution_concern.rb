@@ -76,7 +76,7 @@ module DistributionConcern
                     []
                   end
 
-    if sct_appeals.any?
+    if sct_appeals.any? && limit.present?
       loop do
         inner_appeals = ready_priority_nonpriority_appeals(appeals_args)
           .limit(limit - appeals.count)
