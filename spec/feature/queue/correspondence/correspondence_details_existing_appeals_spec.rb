@@ -10,28 +10,28 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
 
-  context "user waives evidence submission window task on an appeal" do
-    before do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
-      FeatureToggle.enable!(:correspondence_queue)
-      @correspondence = create(
-        :correspondence,
-        :with_correspondence_intake_task,
-        assigned_to: MailTeam.singleton,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
-      allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
+  before do
+    InboundOpsTeam.singleton.add_user(current_super)
+    User.authenticate!(user: current_super)
+    FeatureToggle.enable!(:correspondence_queue)
+    @correspondence = create(
+      :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: MailTeam.singleton,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
+    allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
+    allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
 
-      2.times do
-        appeal = create(:appeal, :evidence_submission_docket, veteran: veteran)
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
+    2.times do
+      appeal = create(:appeal, :evidence_submission_docket, veteran: veteran)
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
+  end
 
+  context "user waives evidence submission window task on an appeal" do
     it "completes the evidence submission window task" do
       existing_apppeals_list(@correspondence)
       all(".plus-symbol")[1].click
@@ -90,37 +90,14 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       click_button "Save changes"
       using_wait_time(wait_time) do
         expect(page).to have_content("You have successfully saved changes to this page")
-        expect(page).not_to have_content("The linked appeal must be saved before tasks can be added.")
+        expect(page).to have_no_content("The linked appeal must be saved before tasks can be added.")
       end
     end
   end
 
   context "user can add new tasks to linked appeal" do
-    before do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
-      FeatureToggle.enable!(:correspondence_queue)
-      @correspondence = create(
-        :correspondence,
-        :with_correspondence_intake_task,
-        assigned_to: MailTeam.singleton,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
-      allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
-
-      2.times do
-        appeal = create(:appeal, :evidence_submission_docket, veteran: veteran)
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-    end
-
     before :each do
-      require Rails.root.join("db/seeds/base.rb").to_s
-      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-      Seeds::Correspondence.new.create_auto_text_data
+      seed_database
     end
 
     it "Adds a new task related to appeal on Correspondence Details page" do

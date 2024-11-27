@@ -12,6 +12,12 @@ module CorrespondenceHelpers
     )
   end
 
+  def seed_database
+    require Rails.root.join("db/seeds/base.rb").to_s
+    Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+    Seeds::Correspondence.new.create_auto_text_data
+  end
+
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
     InboundOpsTeam.singleton.add_user(current_user)

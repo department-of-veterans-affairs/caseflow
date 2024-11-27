@@ -276,23 +276,19 @@ const CorrespondenceDetails = (props) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
 
-    if (firstInRelated && secondInRelated) {
-      // Sort by vaDateOfReceipt in descending order if both are in relatedCorrespondenceIds
-      return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
-    } else if (firstInRelated) {
+    // Handle cases where both or one of the items are in relatedCorrespondenceIds
+    if (firstInRelated || secondInRelated) {
+      if (firstInRelated && secondInRelated) {
+        // Sort by vaDateOfReceipt in descending order
+        return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+      }
       // Ensure that items in relatedCorrespondenceIds come first
-      return -1;
-    } else if (secondInRelated) {
-      return 1;
-    }
-    if (!firstInRelated && secondInRelated) {
-      return 1;
+
+      return firstInRelated ? -1 : 1;
     }
 
     // If neither is in relatedCorrespondenceIds, maintain their original order
-    const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
-
-    return returnSort;
+    return priorMail.indexOf(first) - priorMail.indexOf(second);
   });
 
   const onCancel = () => {
