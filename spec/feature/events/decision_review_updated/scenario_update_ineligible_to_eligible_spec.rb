@@ -11,15 +11,9 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
   let!(:ineligible_to_eligible_request_issue) do
     create(:request_issue,
            decision_review: review, reference_id: "1234", closed_status: "ineligible", closed_at: DateTime.now,
-           ineligible_reason: "appeal_to_appeal", contention_removed_at: DateTime.now,
+           ineligible_reason: "untimely", contention_removed_at: DateTime.now, decision_date: Time.zone.yesterday,
            contested_issue_description: "original description", nonrating_issue_category: "original category",
            nonrating_issue_description: "original nonrating description", contention_reference_id: 100_500)
-  end
-
-  let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
-  let!(:request_issue_event_record) do
-    EventRecord.create!(event: event2,
-                        evented_record: ineligible_to_eligible_request_issue)
   end
 
   let!(:current_user) do
@@ -33,26 +27,6 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
       "css_id": "BVADWISE101",
       "detail_type": "HigherLevelReview",
       "station": "101",
-      "intake": {
-        "started_at": 1_702_067_143_435,
-        "completion_started_at": 1_702_067_145_000,
-        "completed_at": 1_702_067_145_000,
-        "completion_status": "success",
-        "type": "HigherLevelReviewIntake",
-        "detail_type": "HigherLevelReview"
-      },
-      "veteran": {
-        "participant_id": "1826209",
-        "bgs_last_synced_at": 1_708_533_584_000,
-        "name_suffix": nil,
-        "date_of_death": nil
-      },
-      "claimant": {
-        "payee_code": "00",
-        "type": "VeteranClaimant",
-        "participant_id": "1826209",
-        "name_suffix": nil
-      },
       "claim_review": {
         "benefit_type": "compensation",
         "filed_by_va_gov": false,
@@ -110,7 +84,7 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
   let!(:eligible_request_issue) do
     create(
       :request_issue,
-      decision_review: HigherLevelReview.last,
+      decision_review: review,
       nonrating_issue_category: "Military Retired Pay",
       nonrating_issue_description: "eligible nonrating description",
       ineligible_reason: nil,
@@ -127,16 +101,21 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
       headers = { "Authorization" => "Token token=#{api_key.key_string}" }
       consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
       Events::DecisionReviewUpdated.update!(consumer_and_claim_ids, headers, json_test_payload)
-      hlr = HigherLevelReview.last
-      hlr.create_claimant!(participant_id: 123, payee_code: "10", type: "DependentClaimant")
-      hlr.reload.create_issues!([eligible_request_issue, ineligible_to_eligible_request_issue])
-      hlr.establish!
+      review.create_claimant!(participant_id: 123, payee_code: "10", type: "DependentClaimant")
+      review.reload.create_issues!([eligible_request_issue, ineligible_to_eligible_request_issue])
+      review.establish!
     end
 
     it "able to render edit page without error after updating ineligible to eligible" do
+      visit "search"
+      fill_in "searchBarEmptyList", with: review.veteran_file_number
+      click_on "Search"
+      expect(page).to have_content("Ready for decision")
+      # Appellant Name
+      expect(page).to have_content("Tom Brady")
       visit "higher_level_reviews/#{epe.reference_id}/edit"
-
-      # Verify that there are no errors displayed
+      expect(page).to have_content("Tom Brady, Spouse (payee code 10)")
+      expect(page).to have_content("Higher-Level Review Non-Rating")
       expect(page).to have_no_content("Something went wrong")
     end
   end
