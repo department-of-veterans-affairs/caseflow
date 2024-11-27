@@ -5,9 +5,10 @@ require_relative "../../../lib/helpers/fix_file_number_wizard"
 class Remediations::VeteranRecordRemediationService
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
-  def initialize(before_fn, after_fn)
+  def initialize(before_fn, after_fn, event_record)
     @before_fn = before_fn
     @after_fn = after_fn
+    @event_record = event_record
   end
 
   def remediate!
@@ -51,9 +52,26 @@ class Remediations::VeteranRecordRemediationService
     # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
+        before_data = collection.attributes
         collection.update!(file_number)
+        add_remediation_audit(remediated_record: collection,
+                              before_data: before_data,
+                              after_data: collection.attributes)
       end
     end
+  end
+
+  def add_remediation_audit(remediated_record:, before_data:, after_data:)
+    EventRemediationAudit.create!(
+      event_record: @event_record,
+      remediated_record_type: remediated_record.class.name,
+      remediated_record_id: remediated_record.id,
+      info: {
+        remediation_type: "VeteranRecordRemediationService",
+        after_data: after_data,
+        before_data: before_data
+      }
+    )
   end
 
   def grab_collections(before_fn)

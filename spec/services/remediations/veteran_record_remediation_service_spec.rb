@@ -3,7 +3,11 @@
 RSpec.describe Remediations::VeteranRecordRemediationService do
   let(:before_fn) { "12345" }
   let(:after_fn) { "54321" }
-  let(:vet_record_service) { described_class.new(before_fn, after_fn) }
+  let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
+  let!(:event_record) { EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1) }
+  let(:vet_record_service) { described_class.new(before_fn, after_fn, event_record) }
+  let(:mock_veteran) { instance_double("Veteran", ssn: "123456789", id: 1, file_number: before_fn) }
+  let(:duplicate_veteran) { instance_double("Veteran", ssn: "123456789", id: 2, file_number: before_fn) }
 
   # Define a mapping of classes to their file number columns
   let(:column_mapping) do
@@ -23,37 +27,31 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     }
   end
 
+  let(:mock_classes) do
+    Remediations::VeteranRecordRemediationService::ASSOCIATED_OBJECTS.map do |klass|
+      mock_instance = klass.new(id: SecureRandom.random_number(1))
+      column = column_mapping[klass]
+      mock_instance.send("#{column}=", before_fn)
+      allow(FixFileNumberWizard::Collection).to receive(:new).with(klass, before_fn).and_return(mock_instance)
+      mock_instance
+    end
+  end
+
+  before do
+    # Stub Veteran.find_by_file_number to handle both before_fn and after_fn
+    allow(Veteran).to receive(:find_by_file_number).with(before_fn).and_return(mock_veteran)
+    allow(Veteran).to receive(:find_by_file_number).with(after_fn).and_return(mock_veteran)
+    # Stub Veteran.where to return mock_veteran and duplicate_veteran for the same SSN
+    allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran, duplicate_veteran])
+    # Stub destroy! on duplicate_veteran to prevent failure
+    allow(duplicate_veteran).to receive(:destroy!).and_return(nil)
+    # Allow grab_collections to return mock classes
+    allow(vet_record_service).to receive(:grab_collections).with(before_fn).and_return(mock_classes)
+  end
+
   describe "#remediate!" do
-    let(:mock_classes) do
-      Remediations::VeteranRecordRemediationService::ASSOCIATED_OBJECTS.map do |klass|
-        mock_instance = klass.new
-        column = column_mapping[klass]
-        mock_instance.send("#{column}=", before_fn)
-        allow(FixFileNumberWizard::Collection).to receive(:new).with(klass, before_fn).and_return(mock_instance)
-        mock_instance
-      end
-    end
-
-    let(:mock_veteran) { instance_double("Veteran", ssn: "123456789", id: 1, file_number: before_fn) }
-    let(:duplicate_veteran) { instance_double("Veteran", ssn: "123456789", id: 2, file_number: before_fn) }
-
-    before do
-      # Stub Veteran.find_by_file_number to handle both before_fn and after_fn
-      allow(Veteran).to receive(:find_by_file_number).with(before_fn).and_return(mock_veteran)
-      allow(Veteran).to receive(:find_by_file_number).with(after_fn).and_return(mock_veteran)
-
-      # Stub Veteran.where to return mock_veteran and duplicate_veteran for the same SSN
-      allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran, duplicate_veteran])
-
-      # Stub destroy! on duplicate_veteran to prevent failure
-      allow(duplicate_veteran).to receive(:destroy!).and_return(nil)
-
-      # Allow grab_collections to return mock classes
-      allow(vet_record_service).to receive(:grab_collections).with(before_fn).and_return(mock_classes)
-    end
-
     context "when there are duplicate veterans" do
-      it "runs dup_fix and updates the file_number for duplicates and destroys the duplicates" do
+      it "runs dup_fix and updates the file_number for duplicates and destroys the duplicate veterans" do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
 
