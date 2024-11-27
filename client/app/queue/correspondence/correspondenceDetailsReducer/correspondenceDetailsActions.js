@@ -308,10 +308,9 @@ export const returnTaskToInboundOps = (payload, frontendParams, correspondenceIn
     then((response) => {
       const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.returnToInboundOpsBanner;
       const updatedTasks = response.body;
-
       // Remove the current task that has now been cancelled
       const filteredTasks = correspondenceInfo.tasksUnrelatedToAppeal.filter(
-        (task) => parseInt(task.uniqueId, 10) === parseInt(taskId, 10)
+        (task) => parseInt(task.uniqueId, 10) !== parseInt(taskId, 10)
       );
 
       correspondenceInfo.tasksUnrelatedToAppeal = filteredTasks;
@@ -319,7 +318,6 @@ export const returnTaskToInboundOps = (payload, frontendParams, correspondenceIn
       // Add updated cancelled task and created return task
       correspondenceInfo.tasksUnrelatedToAppeal.push(updatedTasks.return_task);
       correspondenceInfo.closedTasksUnrelatedToAppeal.push(updatedTasks.closed_task);
-      console.log(correspondenceInfo);
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
