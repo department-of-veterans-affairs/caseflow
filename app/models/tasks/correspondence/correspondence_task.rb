@@ -98,7 +98,8 @@ class CorrespondenceTask < Task
       PowerOfAttorneyRelatedCorrespondenceTask.name,
       PrivacyActRequestCorrespondenceTask.name,
       PrivacyComplaintCorrespondenceTask.name,
-      StatusInquiryCorrespondenceTask.name
+      StatusInquiryCorrespondenceTask.name,
+      ReturnToInboundOpsTask.name
     ].freeze
   end
 
