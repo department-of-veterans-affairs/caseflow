@@ -11,7 +11,7 @@ import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
 import ApiUtil from '../../util/ApiUtil';
 import { storeMetrics } from '../../util/Metrics';
-import { pdfSelector } from '../selectors';
+import { annotationPlacement, pdfSelector } from '../selectors';
 import Layer from './Comments/Layer';
 import DocumentLoadError from './DocumentLoadError';
 import Page from './Page';
@@ -45,6 +45,32 @@ const PdfDocument = memo(({
     top: 0,
     left: 0,
   };
+
+  const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (isFileVisible && !isPlacingAnnotation && (event.altKey && event.code === 'ArrowDown')) {
+      // if (isFileVisible && !isPlacingAnnotation && event.code === 'PageDown') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage + listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+
+      if (isFileVisible && !isPlacingAnnotation && (event.altKey && event.code === 'ArrowUp')) {
+      // if (isFileVisible && !isPlacingAnnotation && event.code === 'PageUp') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage - listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentPage]);
 
   const dispatch = useDispatch();
   const pageIndexWithMatch = useSelector(getPageIndexWithMatch);
