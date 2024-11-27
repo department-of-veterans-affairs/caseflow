@@ -34,7 +34,9 @@ class Remediations::VeteranRecordRemediationService
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
       true
+      SlackService.new.send_notification("Job completed successfully", self.class.name)
     rescue StandardError => error
+      SlackService.new.send_notification("Job failed with error: #{error.message}", "Error in #{self.class.name}")
       Rails.logger.error "an error occured #{error}"
       false
       # sentry log / metabase dashboard
