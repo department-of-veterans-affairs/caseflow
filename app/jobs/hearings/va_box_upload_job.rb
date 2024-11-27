@@ -9,8 +9,6 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   shoryuken_options retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours]
   before_perform { ensure_current_user_is_set }
 
-  S3_BUCKET = "vaec-appeals-caseflow"
-
   class BoxUploadError < StandardError; end
 
   retry_on StandardError, wait: :exponentially_longer do |job, exception|
@@ -99,7 +97,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     @transcription_package.update!(
       date_upload_box: Time.current,
       status: "Successful Upload (BOX)",
-      updated_by_id: RequestStore[:current_user].id
+      updated_by_id:  RequestStore.store[:current_user].id
     )
   end
 
@@ -107,7 +105,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     @transcription_package.transcriptions.each do |transcription|
       transcription.update!(
         transcription_contractor: contractor,
-        updated_by_id: RequestStore[:current_user].id,
+        updated_by_id:  RequestStore.store[:current_user].id,
         transcription_status: "in_transcription",
         sent_to_transcriber_date: Time.zone.today
       )
@@ -118,7 +116,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     @transcription_package.transcriptions&.each do |transcription|
       transcription.transcription_files&.update_all(
         date_upload_box: Time.current,
-        updated_by_id: RequestStore[:current_user].id,
+        updated_by_id:  RequestStore.store[:current_user].id,
         file_status: "Successful Upload (BOX)"
       )
     end
