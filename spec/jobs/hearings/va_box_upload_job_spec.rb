@@ -4,8 +4,8 @@ RSpec.describe Hearings::VaBoxUploadJob do
   include ActiveJob::TestHelper
 
   let(:box_service) { Fakes::VaBoxService.new }
-  let!(:hearing) { create(:hearing) }
-  let!(:legacy_hearing) { create(:legacy_hearing) }
+  let(:hearing) { create(:hearing, :held, adding_user: User.system_user) }
+  let(:legacy_hearing) { create(:legacy_hearing) }
   let(:transcription_package) do
     create(
       :transcription_package,
@@ -17,7 +17,6 @@ RSpec.describe Hearings::VaBoxUploadJob do
   subject { described_class.perform_now(transcription_package) }
 
   before do
-    User.authenticate!(user: create(:user))
     allow(ExternalApi::VaBoxService).to receive(:new).and_return(box_service)
     allow(box_service).to receive(:get_child_folder_id).and_return("0000001")
     allow(Caseflow::S3Service).to receive(:fetch_file).and_return(master_zip_file_path)
@@ -29,12 +28,17 @@ RSpec.describe Hearings::VaBoxUploadJob do
       legacy_hearing_id: legacy_hearing.id,
       transcription_package_id: transcription_package.id
     )
-    [hearing, legacy_hearing].each do |hearing|
-      t = create(:transcription, hearing_id: hearing.id, task_number: transcription_package.task_number)
+    [hearing, legacy_hearing].each do |h|
+      t = create(
+        :transcription,
+        hearing_id: h.id,
+        hearing_type: h.class.name,
+        task_number: transcription_package.task_number
+      )
       %w[vtt mp3 zip rtf].each do |ext|
         create(
           :transcription_file,
-          hearing: hearing,
+          hearing: h,
           file_type: ext,
           file_name: "test.#{ext}",
           transcription: t
@@ -79,7 +83,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
           t.reload
           expect(t.transcription_contractor).to eq(transcription_package.contractor)
           expect(t.sent_to_transcriber_date).to eq(Time.zone.today)
-          expect(t.transcription_status == "in_transcription").to eq true
+          expect(t.transcription_status).to eq "in_transcription"
         end
       end
 
