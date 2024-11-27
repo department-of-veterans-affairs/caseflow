@@ -356,6 +356,7 @@ class AssignToView extends React.Component {
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
             optional={actionData.body_optional}
+            // eslint-disable-next-line max-len
             errorMessage={highlightFormItems && !validInstructions(this.state.instructions) ? 'Instructions field is required' : null}
             required={this.props.task.type === 'JudgeLegacyDecisionReviewTask'}
           />
