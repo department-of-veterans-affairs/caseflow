@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
@@ -15,9 +14,6 @@ import {
 
 /* eslint-disable camelcase */
 const CorrespondenceReturnToInboundOpsModal = (props) => {
-  // Object key values comes from TaskActionRepository.rb
-  const taskData = taskActionData(props);
-
   const returnReasonOptions = [
     { displayText: RETURN_TYPES.not_appropriate,
       value: RETURN_TYPES.not_appropriate },
@@ -75,7 +71,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       {...modalProps}
       title={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_TITLE}
       button="Return"
-      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
+      pathAfterSubmit={`/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
     >
@@ -88,7 +84,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       />
       { reasonSelected === RETURN_TYPES.other && (
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE}
+          name={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_OTHER_REASON_TITLE}
           id="otherReturnReason"
           onChange={handleSetOtherReasonChange}
           value={otherReason}
