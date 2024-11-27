@@ -18,6 +18,9 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
+    # Log here with the document series I am fetching for
+    Rails.logger.info("fetch document series for #{appeal}")
+
     ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
   end
 

@@ -179,6 +179,7 @@ class Document < CaseflowRecord
   # Indirectly called when LegacyAppeal references nod, soc, or form9 Documents
   # (which are created in memory and not saved to the DB)
   def merge_into(document)
+    Rails.logger.info("Document before merge_into: #{document}")
     document.assign_attributes(
       efolder_id: efolder_id,
       type: type,
@@ -190,6 +191,7 @@ class Document < CaseflowRecord
       series_id: series_id
     )
 
+    Rails.logger.info("Document after merge_into: #{document}")
     document
   end
 
@@ -206,14 +208,20 @@ class Document < CaseflowRecord
   # efficient version of merge_into that also saves to DB
   def self.bulk_merge_and_save(document_structs)
     # Bulk update
+    Rails.logger.info("document_structs: #{document_structs}")
+
     Document.import(document_structs,
                     on_duplicate_key_update: { conflict_target: [:vbms_document_id], columns: COLUMNS_TO_MERGE })
 
     # Use 1 SQL query to get the docs and set non-database attributes on the results
     doc_struct_hash = document_structs.index_by(&:vbms_document_id)
+    Rails.logger.info("doc_struct_hash #{doc_struct_hash}")
+
     Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |document|
+      Rails.logger.info("document before document.assign_nondatabase_attributes: #{document}")
       doc_struct = doc_struct_hash[document.vbms_document_id]
       document.assign_nondatabase_attributes(doc_struct)
+      Rails.logger.info("document after document.assign_nondatabase_attributes: #{document}")
     end
   end
 

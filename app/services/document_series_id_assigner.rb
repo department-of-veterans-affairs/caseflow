@@ -14,6 +14,9 @@ class DocumentSeriesIdAssigner
   def call
     return unless documents_with_no_series_id.load.any?
 
+    Rails.logger.info("Docs with no series id:
+       #{documents_with_no_series_id}.")
+
     # This uses the activerecord-import gem to update the series_id of multiple
     # documents using a single SQL statement. This requires Postgres 9.5+.
     Document.import(documents_to_update, on_duplicate_key_update: [:series_id])
@@ -25,11 +28,14 @@ class DocumentSeriesIdAssigner
 
   def documents_to_update
     documents_with_no_series_id.map do |document|
+      Rails.logger.info("Document before documents_to_update: #{document}. vbms_document_id: #{document.vbms_document_id}")
       vbms_document_id = document.vbms_document_id
       # We either map the vbms_document_id to a series_id, or we just copy the
       # vbms_document_id if we cannot find a mapping, since this means the
       # vbms_document_id is really a vva_id.
       document.series_id = document_id_to_series_hash[vbms_document_id] || vbms_document_id
+      Rails.logger.info("Document after documents_to_update: #{document}.
+        document.series_id: #{document.series_id}")
       document
     end
   end
@@ -42,7 +48,10 @@ class DocumentSeriesIdAssigner
   def document_id_to_series_hash
     @document_id_to_series_hash ||= begin
       result = {}
-      document_series.each { |doc| result[doc.document_id] = doc.series_id }
+      document_series.each do |doc|
+        result[doc.document_id] = doc.series_id
+        Rails.logger.info("result[doc.document_id]: #{result[doc.document_id]}.")
+      end
       result
     end
   end
