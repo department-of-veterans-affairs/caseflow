@@ -154,13 +154,14 @@ feature "Saved Searches", :postgres do
         delete_button.click
       end
       check_delete_modal(search_name)
+      expect(page).to have_content("You have successfully deleted #{search_name}")
       expect(page).to have_text("Save your search")
       expect(page).to have_text("Search Parameters")
     end
   end
 
   def check_delete_modal(search_name)
-    within page.find("#delete_search_modal") do
+    within page.find("#delete-search-modal") do
       expect(page).to have_content(COPY::DELETE_SEARCH_TITLE)
       expect(page).to have_text(COPY::DELETE_SEARCH_DESCRIPTION)
       expect(page).to have_text(search_name)

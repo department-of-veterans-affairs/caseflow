@@ -1,6 +1,6 @@
 import React from 'react';
 import SavedSearches from './SavedSearches';
-import savedSearchesData from '../../../test/data/nonComp/savedSearchesData';
+import savedSearchesData from 'test/data/nonComp/savedSearchesData';
 import ReduxDecorator from 'test/app/nonComp/nonCompReduxDecorator';
 
 export default {

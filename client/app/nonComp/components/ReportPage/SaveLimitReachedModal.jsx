@@ -4,37 +4,26 @@ import COPY from 'app/../COPY';
 import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
 import { selectSavedSearch } from 'app/nonComp/actions/savedSearchSlice';
+import { isEmpty } from 'lodash';
+import { useDispatch } from 'react-redux';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-
-export const SaveLimitReachedModal = ({ setShowLimitModal, setShowDeleteModal }) => {
+export const SaveLimitReachedModal = ({
+  userSearches,
+  handleCancel,
+  onClickDelete,
+  handleRedirect
+}) => {
   const dispatch = useDispatch();
 
-  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
-  const userSearches = useSelector((state) => state.savedSearch.fetchedSearches?.userSearches);
-  const [disableDelete, setDisableDelete] = useState(true);
-
-  const history = useHistory();
-
-  const handleCancel = () => {
-    setShowLimitModal(false);
-  };
-
-  const onClickDelete = () => {
-    setShowDeleteModal(true);
-  };
+  const [selectedRow, setSelectedRow] = useState([]);
 
   const onRadioSelect = (val) => {
-    setDisableDelete(false);
-    const selectedRow = userSearches.find((search) => search.id === val);
+    // eslint-disable-next-line radix
+    const selectedData = userSearches.find((search) => parseInt(search.id) === parseInt(val));
 
-    dispatch(selectSavedSearch(selectedRow));
-  };
+    setSelectedRow(selectedData);
 
-  const handleRedirect = () => {
-    history.push(`/${businessLineUrl}/searches`);
-    setShowLimitModal(false);
+    dispatch(selectSavedSearch(selectedData));
   };
 
   const userSearchesList = () => {
@@ -60,7 +49,7 @@ export const SaveLimitReachedModal = ({ setShowLimitModal, setShowDeleteModal })
         },
         { classNames: ['usa-button', 'cf_add_margin'],
           name: 'Delete',
-          disabled: disableDelete,
+          disabled: isEmpty(selectedRow),
           onClick: onClickDelete
         },
         { classNames: ['usa-button', 'usa-button-secondary'],
@@ -76,8 +65,10 @@ export const SaveLimitReachedModal = ({ setShowLimitModal, setShowDeleteModal })
 };
 
 SaveLimitReachedModal.propTypes = {
-  setShowLimitModal: PropTypes.func.isRequired,
-  setShowDeleteModal: PropTypes.func.isRequired,
+  userSearches: PropTypes.array,
+  handleCancel: PropTypes.func.isRequired,
+  onClickDelete: PropTypes.func.isRequired,
+  handleRedirect: PropTypes.func.isRequired,
 };
 
 export default SaveLimitReachedModal;

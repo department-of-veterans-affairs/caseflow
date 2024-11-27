@@ -5,18 +5,19 @@ import { MemoryRouter as Router } from 'react-router-dom';
 import SaveLimitReachModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import COPY from 'app/../COPY';
+import COPY from '../../../../COPY';
 import createNonCompStore from 'test/app/nonComp/nonCompStoreCreator';
-import savedSearchesData from '../../../data/nonComp/savedSearchesData';
+import savedSearchesData from 'test/data/nonComp/savedSearchesData';
 
 describe('SaveLimitReachModal', () => {
   const setup = (storeValues = {}) => {
     const store = createNonCompStore(storeValues);
+    const userSearches = savedSearchesData.savedSearches.fetchedSearches.userSearches;
 
     return render(
       <Provider store={store}>
         <Router>
-          <SaveLimitReachModal />
+          <SaveLimitReachModal userSearches={userSearches} />
         </Router>
       </Provider>
     );

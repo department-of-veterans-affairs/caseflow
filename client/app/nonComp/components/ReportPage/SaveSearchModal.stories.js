@@ -1,5 +1,5 @@
 import React from 'react';
-import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';;
+import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import userSearchParamWithCondition from 'test/data/nonComp/userSearchParamWithConditionData';
 import ReduxDecorator from 'test/app/nonComp/nonCompReduxDecorator';
 

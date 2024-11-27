@@ -44,6 +44,7 @@ const SavedSearches = () => {
 
   useEffect(() => {
     dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
+    dispatch(selectSavedSearch([]));
   }, []);
 
   const ALL_TABS = [
@@ -65,7 +66,7 @@ const SavedSearches = () => {
 
   const onTabSelected = (tabNumber) => {
     setSelectedTab(tabNumber);
-    dispatch(selectSavedSearch({}));
+    dispatch(selectSavedSearch([]));
   };
 
   return (

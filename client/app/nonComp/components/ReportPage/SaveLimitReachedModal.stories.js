@@ -7,16 +7,18 @@ export default {
   title: 'Queue/NonComp/SavedSearches/Save Limit Reach Modal',
   component: SaveLimitReachedModal,
   decorators: [ReduxDecorator],
-  parameters: {},
-  args: {},
+  parameters: { },
+  args: { },
   argTypes: {
 
   },
 };
 
+const userSearches = savedSearchesData.savedSearches.fetchedSearches.userSearches;
+
 const Template = (args) => {
   return (
-    <SaveLimitReachedModal
+    <SaveLimitReachedModal userSearches={userSearches}
       {...args}
     />
   );
