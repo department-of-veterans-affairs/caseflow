@@ -1,29 +1,57 @@
-/* eslint-disable max-lines, max-len */
-
 import React, { useState } from 'react';
 import LoadTestForm from './LoadTestForm';
+import AppFrame from '../../components/AppFrame';
+import Alert from '../../components/Alert';
+import COPY from '../../../COPY';
+import { BrowserRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 export default function LoadTest(props) {
+  const [showAlert, setShowAlert] = useState(false);
+  const currentFeatures = {};
+
+  props.form_values.feature_toggles_available.forEach((feature) => {
+    currentFeatures[feature.name] = feature.default_status;
+  });
+
   const [state, setUpdatedState] = useState(
     {
       scenarios: [],
       user: {
-        user: {
-          station_id: '',
-          regional_office: '',
-          roles: [],
-          functions: {},
-          organizations: [],
-          feature_toggles: {}
-        }
+        station_id: '',
+        regional_office: '',
+        roles: [],
+        functions: {},
+        organizations: [],
+        feature_toggles: currentFeatures
       }
     }
   );
 
-  return <div>
-    <LoadTestForm {...props} currentState={state} updateState={setUpdatedState} />
-  </div>;
+  return <BrowserRouter>
+    <div>
+      <AppFrame>
+        {showAlert &&
+      <div className="load-test-success-banner">
+        <Alert type="success" title={COPY.LOAD_TEST_SUCCESS_TITLE} message={COPY.LOAD_TEST_SUCCESS_MESSAGE} />
+      </div>}
+        <div>
+          <LoadTestForm
+            {...props}
+            currentState={state}
+            updateState={setUpdatedState}
+            showAlert={showAlert}
+            setShowAlert={setShowAlert}
+          />
+        </div>
+      </AppFrame>
+    </div>
+  </BrowserRouter>;
 }
+
+LoadTest.propTypes = {
+  form_values: PropTypes.object
+};
 
 /*
 This file acts as a container to the LoadTestForm. Consider this a note on what the overall behavior of this

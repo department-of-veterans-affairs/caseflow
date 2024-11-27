@@ -29,24 +29,27 @@ const renderFeatureToggleConfiguration = (props) => {
 describe('FeatureToggleConfiguration', () => {
   it('renders the FeatureToggleConfiguration component', async () => {
     const mockProps = {
-      featureToggle: 'Feature1',
+      featureToggle: {
+        name: 'listed_granted_substitution_before_dismissal',
+        default_status: true
+      },
       currentState: {
         scenarios: [],
         user: {
-          user: {
-            station_id: '',
-            regional_office: '',
-            roles: [],
-            functions: {},
-            organizations: [],
-            feature_toggles: {}
+          station_id: '',
+          regional_office: '',
+          roles: [],
+          functions: {},
+          organizations: [],
+          feature_toggles: {
+            listed_granted_substitution_before_dismissal: true
           }
         }
       },
       updateState: jest.fn()
     };
 
-    renderFeatureToggleConfiguration(mockProps);
-    expect(await screen.findByText(/Feature1/)).toBeInTheDocument();
+    expect(renderFeatureToggleConfiguration(mockProps)).toMatchSnapshot();
+    expect(await screen.findByText('listed_granted_substitution_before_dismissal')).toBeInTheDocument();
   });
 });

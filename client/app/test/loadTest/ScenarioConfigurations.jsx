@@ -1,5 +1,3 @@
-/* eslint-disable max-lines, max-len */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios';
@@ -19,6 +17,7 @@ export default function ScenarioConfigurations(props) {
           targetType={scenarioGroup.targetType}
           currentState={currentState}
           updateState={updateState}
+          errors={props.errors}
         />
       ))}
     </div>
@@ -27,5 +26,6 @@ export default function ScenarioConfigurations(props) {
 
 ScenarioConfigurations.propTypes = {
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  errors: PropTypes.object
 };

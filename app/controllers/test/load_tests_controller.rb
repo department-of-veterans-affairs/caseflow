@@ -11,7 +11,7 @@ class Test::LoadTestsController < ApplicationController
 
   def build_cookie
     save_session(load_test_user)
-    render json: { message: "logged in" }
+    render template: "test/index"
   end
 
   # Desciption: Method to generate request to Jenkins to run the load tests
