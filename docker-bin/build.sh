@@ -47,7 +47,7 @@ cp /etc/ssl/certs/ca-certificates.crt docker-bin/ca-certs/cacert.pem
 echo -e "\tCreating Caseflow App Docker Image"
 echo "Using token1: ${GIT_CREDENTIAL}"
 echo "Using token2: ${env.GIT_CREDENTIAL}"
-docker build -t --build-arg PRIVATE_ACCESS_TOKEN="${GIT_CREDENTIAL}" caseflow .
+docker build --build-arg PRIVATE_ACCESS_TOKEN="${GIT_CREDENTIAL}" -t caseflow .
 result=$?
 echo -e "\tCleaning Up..."
 rm -rf docker-bin/oracle_libs
