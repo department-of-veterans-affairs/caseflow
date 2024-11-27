@@ -930,7 +930,7 @@ class LegacyAppeal < CaseflowRecord
     # In case an attorney case review does not exist in caseflow or if this acting judge was neither the judge or
     # attorney listed in the review, check to see if a decision has already been written for the appeal. If so, assume
     # this appeal is assigned to the acting judge as a judge task as a best guess
-    vacols_case_review.valid_document_id?
+    vacols_case_review.valid_document_id? || vacols_case_review&.created_at.nil?
   end
 
   def claimant_participant_id
