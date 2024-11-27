@@ -33,3 +33,8 @@ export const modalInfoSelector = (state) => ({
 });
 
 export const showSideBarSelector = (state) => !state.pdfViewer.hidePdfSidebar;
+
+export const pdfSelector = (state) => ({
+  pdfDocs: state.pdf.pdfDocuments,
+  docLoadErrors: state.pdf.documentErrors
+});
