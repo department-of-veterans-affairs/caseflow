@@ -633,7 +633,7 @@ const CorrespondenceDetails = (props) => {
               '' :
               <Button
                 onClick={handleEditGeneralInformationModal}
-                classNames={['button-style']}
+                classNames={['cf-left-side']}
               >Edit</Button> }
           </div>
           <table className="corr-table-borderless-no-background gray-border">
