@@ -583,7 +583,7 @@
     "value:": "remove_waive_of_evidence_window"
   },
   "COR_RETURN_TO_INBOUND_OPS": {
-    "label": "Return to Inbound Ops Team",
+    "label": "Return to Inbound Ops",
     "value": "modal/return_to_inbound_ops",
     "func": "return_to_inbound_ops_team"
   }
