@@ -41,6 +41,7 @@ class WorkQueue::CorrespondenceSerializer
             uniqueId: task.id,
             reassignUsers: task&.reassign_users,
             assignedToOrg: task&.assigned_to.is_a?(Organization),
+            assignedBy: task.assigned_by.css_id,
             status: task.status,
             organizations: task.reassign_organizations.map { |org| { label: org.name, value: org.id } }
           }
