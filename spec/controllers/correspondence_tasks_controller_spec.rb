@@ -103,8 +103,8 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         expect(response).to have_http_status(:ok)
         return_task = ReturnToInboundOpsTask.find_by(appeal_id: correspondence.id, type: ReturnToInboundOpsTask.name)
         other_motion_task = OtherMotionCorrespondenceTask.find_by(
-                              appeal_id: correspondence.id, type: OtherMotionCorrespondenceTask.name
-                            )
+          appeal_id: correspondence.id, type: OtherMotionCorrespondenceTask.name
+        )
         parent = return_task.parent
         expect(return_task.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(return_task.parent_id).to eq(parent.id)
