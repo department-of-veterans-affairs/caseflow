@@ -23,7 +23,21 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def show
-    render "reader/appeal/index"
+    if FeatureToggle.enabled?(:pdf_page_render_time_in_ms) && FeatureToggle.enabled?(:metrics_monitoring)
+      start_time = Time.zone.now
+
+      render "reader/appeal/index"
+
+      duration = Time.zone.now - start_time
+      Metric.create(
+        metric_message: "pdf_page_render_time_in_ms",
+        start: start_time,
+        end: Time.zone.now,
+        duration: duration
+      )
+    else
+      render "reader/appeal/index"
+    end
   end
 
   private
