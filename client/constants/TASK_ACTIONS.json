@@ -188,6 +188,11 @@
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
   },
+  "LEGACY_RETURN_TO_ATTORNEY": {
+    "label": "Return to attorney",
+    "value": "modal/return_to_attorney",
+    "func": "legacy_return_to_attorney_data"
+  },
   "LIT_SUPPORT_PULAC_CERULLO": {
     "label": "Notify Litigation Support of Possible Conflict of Jurisdiction",
     "value": "modal/flag_conflict_of_jurisdiction",

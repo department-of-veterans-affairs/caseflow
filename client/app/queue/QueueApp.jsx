@@ -947,6 +947,11 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LEGACY_RETURN_TO_ATTORNEY.value
+                }`}
+              render={this.routedAssignToUser}
+            />
+            <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value
                 }`}
               render={this.routedAssignToUser}
