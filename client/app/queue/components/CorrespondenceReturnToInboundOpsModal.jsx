@@ -27,7 +27,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       value: RETURN_TYPES.other }
   ];
 
-  const [reasonSelected, setReasonSelected] = useState(null);
+  const [reasonSelected, setReasonSelected] = useState(RETURN_TYPES.not_appropriate);
 
   const [otherReason, setOtherReason] = useState('');
 
