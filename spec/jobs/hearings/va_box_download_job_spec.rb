@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
-  # open question:
-
-  # 3. Account for XLS, make sure it has a package
-
-  # 4. Held hearings
-
   def create_file_info(hearing, file_id, file_type)
     {
       name: "#{hearing.docket_number}_#{hearing.id}_#{hearing.class.name}.#{file_type}",
@@ -16,14 +10,16 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
     }
   end
 
-  let!(:hearing_1) { create(:hearing) }
+  let!(:hearing_1) { create(:hearing, disposition: "held") }
   let!(:transcription_1) { create(:transcription, hearing: hearing_1, hearing_type: "Hearing") }
 
-  let(:legacy_hearing_1) { create(:legacy_hearing) }
+  let!(:legacy_hearing_1) { create(:legacy_hearing, disposition: "H") }
+  let!(:legacy_hearing_2) { create(:legacy_hearing) }
+
   let!(:transcription_2) { create(:transcription, hearing: legacy_hearing_1, hearing_type: "LegacyHearing") }
 
-  let!(:hearing_2) { create(:hearing) }
-  let!(:hearing_3) { create(:hearing) }
+  let!(:hearing_2) { create(:hearing, disposition: "held") }
+  let!(:hearing_3) { create(:hearing, disposition: "held") }
   let!(:transcription_3) { create(:transcription, hearing: hearing_3, hearing_type: "Hearing") }
 
   let!(:transcription_package_1) { create(:transcription_package, task_number: "BVA2024001") }
@@ -56,6 +52,12 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
         created_at: "2024-09-05T061314-0700",
         modified_at: "2024-09-05T061314-0700"
       }
+    ]
+  end
+
+  let(:file_info_hearing_not_held) do
+    [
+      create_file_info(legacy_hearing_2, "164008615821", "pdf")
     ]
   end
 
@@ -196,6 +198,12 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
     it "handles errors from missing hearing" do
       expect { described_class.perform_now(file_info_no_hearing) }.to raise_error(
         Hearings::VaBoxDownloadJob::VaBoxDownloadHearingError
+      )
+    end
+
+    it "handles errors from hearing not being held" do
+      expect { described_class.perform_now(file_info_hearing_not_held) }.to raise_error(
+        Hearings::VaBoxDownloadJob::VaBoxDownloadHearingHeldError
       )
     end
 
