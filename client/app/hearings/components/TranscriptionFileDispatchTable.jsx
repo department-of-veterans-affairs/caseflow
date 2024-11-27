@@ -283,7 +283,7 @@ export const TranscriptionFileDispatchTable = ({
       }, 3000);
 
       return () => clearInterval(interval);
-    } else if (statusFilter[0] === 'Assigned') {
+    } else if (statusFilter[0] === 'Assigned' || statusFilter[0] === 'Completed') {
       getContractors();
     }
   }, []);
