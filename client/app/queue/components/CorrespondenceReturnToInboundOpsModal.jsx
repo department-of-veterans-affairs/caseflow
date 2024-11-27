@@ -45,14 +45,12 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
     return false;
   };
 
-  // Could possibly use updateCorrespondence method from client/app/queue/components/CorrespondenceAssignTeamModal.jsx
-
   const submit = () => {
     const updatedTask = props.correspondenceInfo.tasksUnrelatedToAppeal.find(
       (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     );
 
-    // We need to send over the task id, the reason selected, and other reason
+    // Payload needs to send over the task id, the reason selected, and other reason
     const payload = {
       data: { return_reason: reasonSelected === RETURN_TYPES.other ? otherReason : reasonSelected }
     };
@@ -84,10 +82,8 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       <RadioField
         id="returnReasonRadioField"
         name={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_SUBTITLE}
-        // required
         options={returnReasonOptions}
         value={reasonSelected}
-        // errorMessage={"Error"}
         onChange={handleSetReasonSelectedChange}
       />
       { reasonSelected === RETURN_TYPES.other && (
