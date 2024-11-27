@@ -73,8 +73,10 @@ class CorrespondenceTasksController < TasksController
         notes: params[:return_reason]
       )
       render json: {
-        return_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(return_task).serializable_hash,
-        closed_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(correspondence_task).serializable_hash
+        return_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(return_task)
+          .serializable_hash[:data][:attributes],
+        closed_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(correspondence_task)
+          .serializable_hash[:data][:attributes]
       }
     end
   rescue StandardError => error
