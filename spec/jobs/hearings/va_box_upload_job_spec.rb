@@ -76,6 +76,7 @@ RSpec.describe Hearings::VaBoxUploadJob do
         subject
 
         transcriptions.each do |t|
+          t.reload
           expect(t.transcription_contractor).to eq(transcription_package.contractor)
           expect(t.sent_to_transcriber_date).to eq(Time.zone.today)
           expect(t.transcription_status == "in_transcription").to eq true
