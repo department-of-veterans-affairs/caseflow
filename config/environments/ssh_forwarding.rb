@@ -43,9 +43,6 @@ Rails.application.configure do
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
-  # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
-
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
