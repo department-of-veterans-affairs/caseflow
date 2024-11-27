@@ -394,9 +394,11 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       # legacy appeal update
       cases = [case1, case2, case3, case4]
       ssns = [ssn1, ssn2, ssn3, ssn4]
+      veteran_deceased = [true, false, false, false]
 
       cases.each_with_index do |c, index|
-        VACOLS::Correspondent.find(c.bfcorkey).update!(ssn: ssns[index])
+        VACOLS::Correspondent.find(c.bfcorkey).update!(ssn: ssns[index],
+                                                       sfnod: veteran_deceased[index] ? Time.zone.now : nil)
 
         file_number = c.bfcorlid[0..c.bfcorlid.length - 2]
 
@@ -406,10 +408,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       # ama state and country update
-      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va")
-      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(country_of_residence: "usa")
-      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(state_of_residence: "va")
-      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(country_of_residence: "usa")
+      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va",
+                                                                                    country_of_residence: "usa",
+                                                                                    date_of_death: Time.zone.now,
+                                                                                    date_of_death_reported_at: Time.zone.now)
+      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(state_of_residence: "va",
+                                                                                     country_of_residence: "usa")
 
       # caching ama appeal
       ama_with_sched_task.request_issues = request_issues
@@ -491,7 +495,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :task_id, :schedulable, :assigned_to_id,
           :assigned_by_id, :days_on_hold, :days_waiting,
           :task_status, :state_of_residence, :country_of_residence,
-          :suggested_hearing_location, :mst_indicator, :pact_indicator
+          :suggested_hearing_location, :mst_indicator, :pact_indicator,
+          :veteran_deceased_indicator
         )
       ).to match_array [
         [
@@ -514,7 +519,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           "usa",
           "Oakland, CA (RO)",
           false,
-          false
+          false,
+          true
         ],
         [
           ama_with_sched_task2.id,
@@ -536,7 +542,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           "usa",
           "Oakland, CA (RO)",
           true,
-          true
+          true,
+          false
         ],
         [
           legacy_with_sched_task.id,
@@ -558,7 +565,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           "usa",
           "Oakland, CA (RO)",
           false,
-          false
+          false,
+          true
         ],
         [
           legacy_with_sched_task2.id,
@@ -580,7 +588,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           "usa",
           "Oakland, CA (RO)",
           true,
-          true
+          true,
+          false
         ]
       ]
 
