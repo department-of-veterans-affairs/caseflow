@@ -32,6 +32,7 @@ const getQueueTaskType = () => {
 };
 
 const initialState = {
+  showBandwidthBanner: false,
   queueRedirectUrl: getQueueRedirectUrl(),
   queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
@@ -132,7 +133,12 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
-
+  case Constants.ENABLE_BANDWIDTH_BANNER:
+    return update(state, {
+      showBandwidthBanner: {
+        $set: true
+      }
+    });
   case Constants.CLEAR_TAG_FILTER:
     return update(state, {
       docFilterCriteria: {

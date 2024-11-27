@@ -94,7 +94,7 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          {this.props.featureToggles.bandwidthBanner && this.state.warningIconShown && <BandwidthAlert /> }
+          {this.props.featureToggles.bandwidthBanner && this.props.showBandwidthBanner && <BandwidthAlert /> }
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -111,7 +111,7 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     documents: getFilteredDocuments(state),
-    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
+    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments', 'showBandwidthBanner'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
@@ -147,7 +147,9 @@ PdfListView.propTypes = {
   showPdf: PropTypes.func,
   queueRedirectUrl: PropTypes.string,
   queueTaskType: PropTypes.node,
-  readerPreferences: PropTypes.object
+  readerPreferences: PropTypes.object,
+  showBandwidthWarning: PropTypes.bool,
+  showBandwidthBanner: PropTypes.bool
 };
 
 export default connect(

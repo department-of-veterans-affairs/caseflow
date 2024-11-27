@@ -216,6 +216,13 @@ export const clearSearch = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const enableBandwidthBanner = () => (dispatch) => {
+  dispatch({
+    type: Constants.ENABLE_BANDWIDTH_BANNER,
+    payload: {}
+  });
+};
+
 export const clearAllFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_ALL_FILTERS,
