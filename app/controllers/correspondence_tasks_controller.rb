@@ -62,12 +62,8 @@ class CorrespondenceTasksController < TasksController
     ActiveRecord::Base.transaction do
       cancel
       root_task = correspondence_task.root
-      params = { assigned_to: InboundOpsTeam.singleton }
-      return_task = ReturnToInboundOpsTask.create_child_task(
-        root_task,
-        current_user,
-        params
-      )
+      task_params = { assigned_to: InboundOpsTeam.singleton }
+      return_task = ReturnToInboundOpsTask.create_child_task(root_task, current_user, task_params)
 
       return_task.correspondence.update!(
         notes: params[:return_reason]
@@ -80,10 +76,8 @@ class CorrespondenceTasksController < TasksController
       }
     end
   rescue StandardError => error
-    uuid = SecureRandom.uuid
-    Rails.logger.error(error.to_s + "Error ID: " + uuid)
-    Raven.capture_exception(error, extra: { error_uuid: uuid })
-    render json: { "error": error.message, "error_id": uuid }, status: :internal_server_error
+    Rails.logger.error(error.to_s)
+    render json: { "error": error.message }, status: :internal_server_error
   end
 
   def update
