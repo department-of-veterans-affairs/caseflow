@@ -1083,6 +1083,15 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Cases completed (Last 30 Days)")
       expect(page).to have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-3 of 3 total")
+
+      # Verify that the filter is preserved between tabs
+      click_on "Incomplete Tasks"
+      expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
+
+      click_on "Completed Tasks"
+      expect(page).to have_content("Cases completed (Last 30 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
     end
   end
 
