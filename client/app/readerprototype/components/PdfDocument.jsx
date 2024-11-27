@@ -142,7 +142,6 @@ const PdfDocument = memo(({
       catch((error) => {
         console.error(`ERROR with fetching doc from document API: ${error}`);
         dispatch(setDocumentLoadError(doc.content_url));
-        throw error;
       });
 
     pdfMetrics.current.getEndTime = new Date().getTime();
