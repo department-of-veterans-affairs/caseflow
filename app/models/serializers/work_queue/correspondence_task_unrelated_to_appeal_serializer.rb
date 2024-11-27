@@ -22,7 +22,7 @@ class WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer
     task.available_actions_unwrapper(RequestStore[:current_user])
   end
 
-  attribute :assigned_by do |task|
+  attribute :assigned_by, if: proc { |task| task.is_a?(ReturnToInboundOpsTask) } do |task|
     task.assigned_by.css_id
   end
 
