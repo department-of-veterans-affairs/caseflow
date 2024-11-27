@@ -113,8 +113,8 @@ CorrespondenceReturnToInboundOpsModal.propTypes = {
   correspondenceInfo: PropTypes.shape({
     tasksUnrelatedToAppeal: PropTypes.arrayOf(PropTypes.shape({
       organizations: PropTypes.arrayOf(PropTypes.shape({
-        label: PropTypes.string,
-        value: PropTypes.number
+        value: PropTypes.number,
+        label: PropTypes.string
       })),
       uniqueId: PropTypes.number
     }))
