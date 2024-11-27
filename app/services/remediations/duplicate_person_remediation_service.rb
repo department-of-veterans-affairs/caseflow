@@ -35,7 +35,9 @@ class Remediations::DuplicatePersonRemediationService
         end
       end
       true
+      SlackService.new.send_notification("Job completed successfully", self.class.name)
     rescue StandardError => error
+      SlackService.new.send_notification("Job failed with error: #{error.message}", "Error in #{self.class.name}")
       Rails.logger.error "an error occured #{error}"
       false
     end
