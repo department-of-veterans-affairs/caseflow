@@ -3,6 +3,7 @@ import Alert from '../components/Alert';
 import { css } from 'glamor';
 import { storeMetrics } from '../util/Metrics';
 import uuid from 'uuid';
+import PropTypes from 'prop-types';
 
 // variables being defined are in mbps
 const bandwidthThreshold = 1.5;
@@ -20,7 +21,7 @@ class BandwidthAlert extends React.Component {
   }
 
   componentDidMount() {
-    if ('connection' in navigator) {
+    if (this.props.isWarningIconAndBannerEnabled && 'connection' in navigator) {
       this.updateConnectionInfo();
     }
   }
@@ -42,6 +43,11 @@ class BandwidthAlert extends React.Component {
   };
 
   render() {
+    const { isWarningIconAndBannerEnabled } = this.props;
+
+    if (!isWarningIconAndBannerEnabled) {
+      return null;
+    }
 
     if (this.state.displayBandwidthAlert) {
       return (
@@ -58,5 +64,9 @@ class BandwidthAlert extends React.Component {
     return null;
   }
 }
+
+BandwidthAlert.propTypes = {
+  isWarningIconAndBannerEnabled: PropTypes.bool.isRequired
+};
 
 export default BandwidthAlert;

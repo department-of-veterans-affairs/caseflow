@@ -144,8 +144,16 @@ class Document < CaseflowRecord
     default_path
   end
 
+  def file_size
+    File.size(default_path) || 0
+  end
+
   def file_name
     vbms_document_id.to_s
+  end
+
+  def file_size
+    rand(10 * 1024..100 * 1024 * 1024)
   end
 
   def default_path

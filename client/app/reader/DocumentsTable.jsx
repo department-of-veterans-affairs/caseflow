@@ -11,6 +11,7 @@ import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
+import DocSizeIndicator from './DocSizeIndicator';
 import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
@@ -39,6 +40,7 @@ import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
 import ReactSelectDropdown from '../components/ReactSelectDropdown';
+import { megaBitsToBytes } from './utils/network';
 
 const NUMBER_OF_COLUMNS = 6;
 const receiptDateFilterStates = {
@@ -49,6 +51,20 @@ const receiptDateFilterStates = {
   ON: 3
 
 };
+
+// This needs to be called here and not from a util file. This is because the value of the
+// connection.downlink is not static and needs to be calculated at runtime.
+
+const connection = (navigator.connection || navigator.mozConnection || navigator.webkitConnection);
+let speed;
+
+if (typeof connection === 'object') {
+  speed = connection.downlink;
+} else {
+  speed = 1;
+}
+
+const mbpsToBps = megaBitsToBytes(speed);
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -695,10 +711,22 @@ class DocumentsTable extends React.Component {
         ),
         valueFunction: (doc) => <CommentIndicator docId={doc.id} />,
       },
+      {
+        cellClass: 'comments-column',
+        header: (
+          <div id="comments-header" className="document-list-header-comments table-header-label">
+            File Size
+          </div>
+        ),
+        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size}
+          browserSpeedInBytes={mbpsToBps}
+          warningThreshold={this.props.readerPreferences} />,
+      },
     ];
   };
 
   render() {
+
     const rowObjects = getRowObjects(
       this.props.documents,
       this.props.annotationsPerDocument
@@ -748,7 +776,8 @@ DocumentsTable.propTypes = {
   clearDocFilters: PropTypes.func,
   secretDebug: PropTypes.func,
   setClearAllFiltersCallbacks: PropTypes.func.isRequired,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  readerPreferences: PropTypes.object,
 };
 
 const mapDispatchToProps = (dispatch) =>
