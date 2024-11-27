@@ -41,6 +41,7 @@ FactoryBot.define do
         work_product { nil }
         document_id { nil }
         as_judge_assign_task { nil }
+        decass { true }
       end
 
       after(:create) do |vacols_case, evaluator|
@@ -70,17 +71,19 @@ FactoryBot.define do
                       evaluator.as_judge_assign_task ? nil : Time.zone.today
                     end
 
-        create_list(
-          :decass,
-          evaluator.decass_count,
-          deprod: deprod,
-          defolder: vacols_case.bfkey,
-          deadusr: slogid || "TEST",
-          demdusr: assigner_slogid || "ASSIGNER",
-          dereceive: dereceive,
-          dedocid: evaluator.document_id || nil,
-          deatty: sattyid || "100"
-        )
+        if evaluator.decass
+          create_list(
+            :decass,
+            evaluator.decass_count,
+            deprod: deprod,
+            defolder: vacols_case.bfkey,
+            deadusr: slogid || "TEST",
+            demdusr: assigner_slogid || "ASSIGNER",
+            dereceive: dereceive,
+            dedocid: evaluator.document_id || nil,
+            deatty: sattyid || "100"
+          )
+        end
       end
     end
 
