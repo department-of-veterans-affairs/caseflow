@@ -228,7 +228,7 @@ const CorrespondenceDetails = (props) => {
     } else if (firstInRelated) {
       // Ensure that items in relatedCorrespondenceIds come first
       return -1;
-    } else if (secondInRelated || (!firstInRelated && secondInRelated)) {
+    } else if (secondInRelated) {
       return 1;
     }
 
