@@ -3,6 +3,12 @@
 class PersonAndVeteranEventRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  class PersonAndVeteranRemediationJobError < StandardError; end
+
+  retry_on(PersonAndVeteranRemediationJobError, attempts: 3, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
   def setup_job
     RequestStore.store[:current_user] = User.system_user
   end
