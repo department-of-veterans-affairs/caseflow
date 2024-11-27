@@ -187,12 +187,12 @@ class TasksController < ApplicationController
   end
 
   def upload_transcription_to_vbms
-    file_paths = ReviewTranscriptTask.find_by(id: task.id).appeal.hearings.first.transcription_files.
-      where(file_type: "pdf").map(&:fetch_file_from_s3!)
+    file_paths = ReviewTranscriptTask.find_by(id: task.id).appeal.hearings.first.transcription_files
+      .where(file_type: "pdf").map(&:fetch_file_from_s3!)
 
     appeal = ReviewTranscriptTask.find_by(id: task.id).appeal
     file_paths.each do |current_file_path|
-      file_name = current_file_path.split('/').last
+      file_name = current_file_path.split("/").last
       document_params = create_document_params(appeal, file_name, current_file_path)
       response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
       if response.success?
@@ -200,7 +200,6 @@ class TasksController < ApplicationController
         complete_transcript_review
       end
     end
-
   end
 
   def error_found_upload_transcription_to_vbms; end
@@ -208,7 +207,7 @@ class TasksController < ApplicationController
   private
 
   def create_document_params(appeal, file_name, current_file_path)
-    return {
+    {
       veteran_file_number: appeal.veteran_file_number,
       document_type: "Hearing Transcript",
       document_subject: "notifications",
