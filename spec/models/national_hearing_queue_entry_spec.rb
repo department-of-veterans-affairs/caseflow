@@ -408,12 +408,14 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       # ama state and country update
-      Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va",
-                                                                                    country_of_residence: "usa",
-                                                                                    date_of_death: Time.zone.now,
-                                                                                    date_of_death_reported_at: Time.zone.now)
-      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(state_of_residence: "va",
-                                                                                     country_of_residence: "usa")
+      Veteran.find_by(file_number:
+        ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va",
+                                                         country_of_residence: "usa",
+                                                         date_of_death: Time.zone.now,
+                                                         date_of_death_reported_at: Time.zone.now)
+      Veteran.find_by(file_number:
+        ama_with_sched_task2.veteran_file_number).update!(state_of_residence: "va",
+                                                          country_of_residence: "usa")
 
       # caching ama appeal
       ama_with_sched_task.request_issues = request_issues
