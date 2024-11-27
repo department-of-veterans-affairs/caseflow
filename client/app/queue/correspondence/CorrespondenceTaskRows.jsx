@@ -147,7 +147,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         )}
         <Button
           linkStyling
-          id={task.uniqueId}
+          id={task.uniqueId.toString()}
           name={
             taskInstructionsVisible ?
               COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
