@@ -27,17 +27,6 @@ describe('DatePicker', () => {
     />);
   };
 
-  const openFilter = async (container) => {
-    const svg = container.querySelectorAll('svg');
-
-    const filter = svg[svg.length - 1];
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
-  };
-
   it('renders default state correctly', async () => {
     const { container } = setup();
 
