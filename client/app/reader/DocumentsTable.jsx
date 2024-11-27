@@ -779,7 +779,6 @@ DocumentsTable.propTypes = {
   setClearAllFiltersCallbacks: PropTypes.func.isRequired,
   featureToggles: PropTypes.object,
   readerPreferences: PropTypes.object,
-  showBandwidthWarning: PropTypes.func.isRequired,
   enableBandwidthBanner: PropTypes.func.isRequired
 };
 

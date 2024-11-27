@@ -31,7 +31,6 @@ DocSizeIndicator.propTypes = {
   docSize: PropTypes.number.isRequired,
   browserSpeedInBytes: PropTypes.number.isRequired,
   warningThreshold: PropTypes.number.isRequired,
-  showBandwidthWarning: PropTypes.func.isRequired,
   enableBandwidthBanner: PropTypes.func.isRequired
 };
 

@@ -148,7 +148,6 @@ PdfListView.propTypes = {
   queueRedirectUrl: PropTypes.string,
   queueTaskType: PropTypes.node,
   readerPreferences: PropTypes.object,
-  showBandwidthWarning: PropTypes.bool,
   showBandwidthBanner: PropTypes.bool
 };
 
