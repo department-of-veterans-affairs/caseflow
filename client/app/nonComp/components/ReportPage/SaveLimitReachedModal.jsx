@@ -18,8 +18,7 @@ export const SaveLimitReachedModal = ({
   const [selectedRow, setSelectedRow] = useState([]);
 
   const onRadioSelect = (val) => {
-    // eslint-disable-next-line radix
-    const selectedData = userSearches.find((search) => parseInt(search.id) === parseInt(val));
+    const selectedData = userSearches.find((search) => parseInt(search.id, 10) === parseInt(val, 10));
 
     setSelectedRow(selectedData);
 
