@@ -35,11 +35,12 @@ class EventRemediationAudit < CaseflowRecord
       errors.add(:remediated_record_type, "is not a valid remediated record")
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def valid_remediation_type
-    valid_types = [
-      "VeteranRecordRemediationService",
-      "DuplicatePersonRemediationService"
+    valid_types = %w[
+      VeteranRecordRemediationService
+      DuplicatePersonRemediationService
     ]
 
     unless valid_types.include?(info["remediation_type"])
