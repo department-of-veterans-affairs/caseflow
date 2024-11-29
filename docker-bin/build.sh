@@ -49,7 +49,8 @@ echo -e "\tCreating Caseflow App Docker Image"
 if [[ -n $1 ]]; then
   GIT_CREDENTIAL=$1
 fi
-docker build --secret id=PRIVATE_ACCESS_TOKEN,env=GIT_CREDENTIAL -t caseflow .
+export PRIVATE_ACCESS_TOKEN=GIT_CREDENTIAL
+docker build --secret id=PRIVATE_ACCESS_TOKEN -t caseflow .
 result=$?
 echo -e "\tCleaning Up..."
 rm -rf docker-bin/oracle_libs
