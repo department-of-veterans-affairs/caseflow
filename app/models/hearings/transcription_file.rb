@@ -59,6 +59,8 @@ class TranscriptionFile < CaseflowRecord
 
   scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
 
+  scope :filter_by_contractor, ->(contractor_name) {joins(transcription: { transcription_package: :contractor }).where(transcription_contractors: { name: contractor_name }) }
+
   scope :filter_by_types, lambda { |values|
     filter_parts = []
     stream_types = []
