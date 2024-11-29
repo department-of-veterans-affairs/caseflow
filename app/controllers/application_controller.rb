@@ -34,6 +34,26 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
+  rescue_from BGS::SensitivityLevelCheckFailure do |e|
+    current_user = RequestStore[:current_user]
+    user_sensitivity_level = if current_user.present?
+                               SensitivityChecker.new(current_user).sensitivity_level_for_user(current_user)
+                             else
+                               "User is not set in the RequestStore"
+                             end
+
+    error_details = {
+      user_css_id: current_user&.css_id || "User is not set in the RequestStore",
+      user_sensitivity_level: user_sensitivity_level,
+      error_uuid: SecureRandom.uuid
+    }
+    ErrorHandlers::ClaimEvidenceApiErrorHandler.new.handle_error(error: e, error_details: error_details)
+
+    render json: {
+      status: e.message
+    }, status: :forbidden
+  end
+
   private
 
   def deny_non_bva_admins
