@@ -572,7 +572,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def syncing_disabled_for_benefit_type?
-    FeatureToggle.enabled?(:benefit_type_syncing_disabled, user: current_user) &&
+    FeatureToggle.enabled?(:benefit_type_syncing_disabled, user: RequestStore.store[:current_user]) &&
       SYNCING_DISABLED_BENEFIT_TYPES.include?(benefit_type)
   end
 
