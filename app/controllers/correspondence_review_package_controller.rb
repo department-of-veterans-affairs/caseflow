@@ -43,8 +43,17 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
-    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[pdf_params[:pdf_id].to_i]
+    doc_content = nil
+
+    pdf_id = pdf_params["pdf"]["pdf_id"]
+
+    if FeatureToggle.enabled?(:vefs_integration)
+      cmp_document = CmpDocument.find(pdf_id)
+      doc_content = cmp_document_fetcher.get_cmp_document_content(cmp_document.cmp_document_uuid)
+    else
+      document = Document.find(pdf_id)
+      doc_content = document.serve
+    end
 
     document_disposition = "inline"
     if pdf_params[:download]
@@ -54,13 +63,17 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     # The line below enables document caching for a month.
     expires_in 30.days, public: true
     send_file(
-      document.serve,
+      doc_content,
       type: "application/pdf",
       disposition: document_disposition
     )
   end
 
   private
+
+  def cmp_document_fetcher
+    @cmp_document_fetcher ||= CmpDocumentFetcher.new
+  end
 
   def set_instance_variables
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
