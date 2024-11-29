@@ -18,7 +18,11 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
 WORKDIR /opt/oracle/instantclient_12_2/
 COPY docker-bin/oracle_libs/* ./
 RUN ln -s libclntsh.so.12.1 libclntsh.so
-
+#dwayne
+RUN --mount=type=secret,id=GIT_CREDENTIAL \
+    export MY_SECRET=$(cat /run/secrets/GIT_CREDENTIAL) && \
+    echo "secret is $MY_SECRET"
+#endwayne  
 WORKDIR /caseflow
 
 # Copy all the files
