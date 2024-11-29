@@ -84,8 +84,10 @@ class CorrespondenceAutoAssigner
     ReviewPackageTask
       .where(status: Constants.TASK_STATUSES.unassigned)
       .preload(:appeal, :assigned_by, :assigned_to, :parent)
-      .includes(correspondence: :veteran)
-      .order(va_date_of_receipt: :asc)
+      .joins("LEFT JOIN correspondences ON correspondences.id = tasks.appeal_id
+        AND tasks.appeal_type = 'Correspondence'")
+      .joins("LEFT JOIN veterans ON veterans.id = correspondences.veteran_id")
+      .order("correspondences.va_date_of_receipt ASC")
   end
 
   def validate_run!(current_user_id, batch_auto_assignment_attempt_id)
