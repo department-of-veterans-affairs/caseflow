@@ -64,7 +64,7 @@ RUN apt install -y ${CASEFLOW} &&  \
 
 RUN --mount=type=secret,id=PRIVATE_ACCESS_TOKEN \
     PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/PRIVATE_ACCESS_TOKEN) \
-    echo $PRIVATE_ACCESS_TOKEN \
+    echo "Running token is >$PRIVATE_ACCESS_TOKEN<" \
     git config --global url."https://$PRIVATE_ACCESS_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 # install jemalloc
