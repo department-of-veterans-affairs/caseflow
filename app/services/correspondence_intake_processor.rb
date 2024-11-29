@@ -105,6 +105,7 @@ class CorrespondenceIntakeProcessor
     return fail "Correspondence not found" if correspondence.blank?
   end
 
+  # :reek:BooleanParameter
   def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
@@ -114,6 +115,7 @@ class CorrespondenceIntakeProcessor
     end
   end
 
+  # :reek:ControlParameter
   def related_correspondence_id(uuid, direct_id)
     return uuid if direct_id
 

@@ -304,9 +304,7 @@ RSpec.feature("The Correspondence Details page") do
 
     context "Adding a new task not related to appeal" do
       before :each do
-        require Rails.root.join("db/seeds/base.rb").to_s
-        Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-        Seeds::Correspondence.new.create_auto_text_data
+        seed_database
       end
 
       it "Adds a new task not related to appeal on Correspondence Details page" do

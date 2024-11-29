@@ -156,7 +156,12 @@ class CorrespondenceDetailsController < CorrespondenceController
 
     # Create a new EvidenceSubmissionWindowTask and associate it with the correspondence appeal
     ActiveRecord::Base.transaction do
-      create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
+      create_new_evidence_submission_task(
+        task: task,
+        appeal: appeal,
+        correspondence_appeal: correspondence_appeal,
+        instructions: instructions
+      )
       # prepare correspondence_appeal tasks for frontend
       tasks = appeals_tasks_for_frontend(correspondence_appeal)
 
@@ -247,7 +252,12 @@ class CorrespondenceDetailsController < CorrespondenceController
     appeals
   end
 
-  def create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
+  def create_new_evidence_submission_task(args)
+    task = args[:task]
+    appeal = args[:appeal]
+    correspondence_appeal = args[:correspondence_appeal]
+    instructions = args[:instructions]
+
     eswt = EvidenceSubmissionWindowTask.create!(
       appeal: appeal,
       parent: appeal.tasks.find_by(type: DistributionTask.name),
@@ -271,9 +281,11 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def json_appeal_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
+    tasks ||= []
+
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: current_user, role: "generic" },
-      tasks: tasks || [],
+      tasks: tasks,
       ama_serializer: ama_serializer
     ).call
   end

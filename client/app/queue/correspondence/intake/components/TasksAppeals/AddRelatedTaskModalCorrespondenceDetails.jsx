@@ -87,17 +87,17 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
   };
 
   // Handles toggling of auto-text checkboxes
-  const handleToggleCheckbox = (checkboxText) => {
+  const handleToggleCheckboxTask = (checkboxText) => {
     setAutoTextSelections((prevSelections) => {
-      // Adds/removes selected text from autoTextSelections array
-      const newSelections = prevSelections.includes(checkboxText) ?
+      // Adds or removes selected text from autoTextSelections array
+      const newSelectionsToCheck = prevSelections.includes(checkboxText) ?
         prevSelections.filter((item) => item !== checkboxText) :
         [...prevSelections, checkboxText];
 
       // Updates additional content to comma-separated string
-      setAdditionalContent(newSelections.join(', \n'));
+      setAdditionalContent(newSelectionsToCheck.join(', \n'));
 
-      return newSelections;
+      return newSelectionsToCheck;
     });
   };
 
@@ -182,7 +182,7 @@ const AddRelatedTaskModalCorrespondenceDetails = ({
               <Checkbox
                 key={checkboxText}
                 name={checkboxText}
-                onChange={() => handleToggleCheckbox(checkboxText)}
+                onChange={() => handleToggleCheckboxTask(checkboxText)}
                 value={autoTextSelections.includes(checkboxText)}
               />
             ))}
