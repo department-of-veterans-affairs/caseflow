@@ -587,20 +587,20 @@ Object {
                 </span>
               </div>
               <div
-                data-css-u1bxy6=""
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
               >
                 <div
-                  data-css-n9fe5c=""
+                  style="flex: 1;"
                 >
                   <ul
-                    data-css-1pjs74n=""
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                   >
                     <h2
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       Vet Reporting
                       <div
-                        data-css-mjitkd=""
+                        style="position: relative; left: 10px; top: -2px;"
                       >
                         <span>
                           <button
@@ -610,7 +610,9 @@ Object {
                             <span>
                               Edit Information
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -661,18 +663,18 @@ Object {
                       Sam Smith
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       888-888-8888
                     </li>
                     <li
-                      data-css-1kgvw49=""
+                      style="padding-left: 4.5rem;"
                     >
                       vetreporting@test.com
                     </li>
                     <span>
                       <li
-                        data-css-1t9uipm=""
+                        style="display: flex; flex-wrap: wrap;"
                       >
                         <strong>
                           Hearings sent to Vet Reporting this week: 
@@ -681,7 +683,7 @@ Object {
                         5 of 
                         100
                         <div
-                          data-css-1d9p13s=""
+                          style="position: relative; left: 10px; top: -4px;"
                         >
                           <span>
                             <button
@@ -691,7 +693,9 @@ Object {
                               <span>
                                 Edit Total
                               </span>
-                              <span>
+                              <span
+                                style="position: absolute;"
+                              >
                                 <svg
                                   class=""
                                   height="25"
@@ -733,7 +737,7 @@ Object {
                   </ul>
                 </div>
                 <span
-                  data-css-yl25k8=""
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
                 >
                   <h3>
                     Temporarily stop
@@ -1343,20 +1347,20 @@ Object {
               </span>
             </div>
             <div
-              data-css-u1bxy6=""
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
             >
               <div
-                data-css-n9fe5c=""
+                style="flex: 1;"
               >
                 <ul
-                  data-css-1pjs74n=""
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
                 >
                   <h2
-                    data-css-1t9uipm=""
+                    style="display: flex; flex-wrap: wrap;"
                   >
                     Vet Reporting
                     <div
-                      data-css-mjitkd=""
+                      style="position: relative; left: 10px; top: -2px;"
                     >
                       <span>
                         <button
@@ -1366,7 +1370,9 @@ Object {
                           <span>
                             Edit Information
                           </span>
-                          <span>
+                          <span
+                            style="position: absolute;"
+                          >
                             <svg
                               class=""
                               height="25"
@@ -1417,18 +1423,18 @@ Object {
                     Sam Smith
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     888-888-8888
                   </li>
                   <li
-                    data-css-1kgvw49=""
+                    style="padding-left: 4.5rem;"
                   >
                     vetreporting@test.com
                   </li>
                   <span>
                     <li
-                      data-css-1t9uipm=""
+                      style="display: flex; flex-wrap: wrap;"
                     >
                       <strong>
                         Hearings sent to Vet Reporting this week: 
@@ -1437,7 +1443,7 @@ Object {
                       5 of 
                       100
                       <div
-                        data-css-1d9p13s=""
+                        style="position: relative; left: 10px; top: -4px;"
                       >
                         <span>
                           <button
@@ -1447,7 +1453,9 @@ Object {
                             <span>
                               Edit Total
                             </span>
-                            <span>
+                            <span
+                              style="position: absolute;"
+                            >
                               <svg
                                 class=""
                                 height="25"
@@ -1489,7 +1497,7 @@ Object {
                 </ul>
               </div>
               <span
-                data-css-yl25k8=""
+                style="padding: 1.5rem 6rem 2rem 2rem;"
               >
                 <h3>
                   Temporarily stop
