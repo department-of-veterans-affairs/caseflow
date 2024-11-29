@@ -18,11 +18,7 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
 WORKDIR /opt/oracle/instantclient_12_2/
 COPY docker-bin/oracle_libs/* ./
 RUN ln -s libclntsh.so.12.1 libclntsh.so
-#dwayne
-RUN --mount=type=secret,id=GIT_CREDENTIAL \
-    export MY_SECRET=$(cat /run/secrets/GIT_CREDENTIAL) && \
-    echo "secret is $MY_SECRET"
-#endwayne  
+ 
 WORKDIR /caseflow
 
 # Copy all the files
@@ -67,8 +63,7 @@ RUN apt install -y ${CASEFLOW} &&  \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
 RUN --mount=type=secret,id=GIT_CREDENTIAL \
-    PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/GIT_CREDENTIAL) \
-    echo "Running token is >$PRIVATE_ACCESS_TOKEN<" \
+    export PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/GIT_CREDENTIAL) && \
     git config --global url."https://$PRIVATE_ACCESS_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 # install jemalloc
