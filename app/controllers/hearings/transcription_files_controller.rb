@@ -130,23 +130,25 @@ class Hearings::TranscriptionFilesController < ApplicationController
     if params[:filter].present?
       params[:filter].each do |filter|
         filter_hash = Rack::Utils.parse_query(filter)
-        if filter_hash["col"] == "hearingTypeColumn"
-          @transcription_files = @transcription_files.filter_by_hearing_type(filter_hash["val"].split("|"))
-        end
-        if filter_hash["col"] == "typesColumn"
-          @transcription_files = @transcription_files.filter_by_types(filter_hash["val"].split("|"))
-        end
-        if filter_hash["col"] == "hearingDateColumn"
-          @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
-        end
-        if filter_hash["col"] == "statusColumn"
-          @transcription_files = @transcription_files.filter_by_status(filter_hash["val"].split("|"))
-        end
-        if filter_hash["col"] == "contractorColumn"
-          @transcription_files =
-            @transcription_files.filter_by_contractor(filter_hash["val"].split("|"))
-        end
+        apply_filter(filter_hash)
       end
+    end
+  end
+
+  def apply_filter(filter_hash)
+    column = filter_hash["col"]
+    value = filter_hash["val"].split("|")
+
+    filters = {
+      "hearingTypeColumn" => :filter_by_hearing_type,
+      "typesColumn" => :filter_by_types,
+      "hearingDateColumn" => :filter_by_hearing_dates,
+      "statusColumn" => :filter_by_status,
+      "contractorColumn" => :filter_by_contractor
+    }
+
+    if filters[column]
+      @transcription_files = @transcription_files.send(filters[column], value)
     end
   end
 
