@@ -13,6 +13,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   class VaBoxDownloadTranscriptionError < StandardError; end
   class VaBoxDownloadTranscriptionPackageError < StandardError; end
   class VaBoxDownloadHearingHeldError < StandardError; end
+  class VaBoxDownloadS3UploadError < StandardError; end
 
   def perform(files_info)
     @files = []
@@ -26,7 +27,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
 
   private
 
-  def raise_error(message, error = VaBoxDownloadJobError)
+  def raise_error(message, error, send_email, fail_on_error)
     cleanup_tmp_files
     Rails.logger.error message
 
@@ -34,8 +35,8 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     @files.each do |file|
       job_summary += file[:name] + "\n"
     end
-    send_transcription_issues_email(job_summary)
-    fail error
+    send_transcription_issues_email(job_summary) if send_email
+    fail error if fail_on_error
   end
 
   def download_files_from_box(files)
@@ -54,7 +55,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
           }
         end
       rescue StandardError
-        raise_error("Failed to download file #{file[:name]} from box", VaBoxDownloadBoxError)
+        raise_error("Failed to download file #{file[:name]} from box", VaBoxDownloadBoxError, false, true)
       end
     end
   end
@@ -85,7 +86,9 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     if package
       file[:package_id] = package.id
     else
-      raise_error("Missing transcription package for #{file[:name]}", VaBoxDownloadTranscriptionPackageError)
+      raise_error(
+        "Missing transcription package for #{file[:name]}", VaBoxDownloadTranscriptionPackageError, true, true
+      )
     end
   end
 
@@ -102,15 +105,16 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         if transcription
           file[:transcription_id] = transcription.id
         else
-          raise_error("Missing transcription for #{file[:name]}", VaBoxDownloadTranscriptionError)
+          raise_error("Missing transcription for #{file[:name]}", VaBoxDownloadTranscriptionError, true, true)
         end
       else
         raise_error(
-          "Hearing (docket ##{file[:docket_number]}) not held for #{file[:name]}", VaBoxDownloadHearingHeldError
+          "Hearing (docket ##{file[:docket_number]}) not held for
+          #{file[:name]}", VaBoxDownloadHearingHeldError, true, true
         )
       end
     else
-      raise_error("Missing hearing for #{file[:name]}", VaBoxDownloadHearingError)
+      raise_error("Missing hearing for #{file[:name]}", VaBoxDownloadHearingError, true, true)
     end
   end
 
@@ -122,6 +126,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         file[:status] = "Successful upload (AWS)"
       rescue StandardError
         file[:status] = "Failed upload (AWS)"
+        raise_error("Failed to uplaod file #{file[:name]} to S3", VaBoxDownloadS3UploadError, false, false)
       end
     end
   end
@@ -216,7 +221,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
 
       files
     rescue StandardError => error
-      raise_error("Error unzipping file #{file[:name]}: #{error.message}", VaBoxDownloadUnzipError)
+      raise_error("Error unzipping file #{file[:name]}: #{error.message}", VaBoxDownloadUnzipError, true, true)
     end
   end
 
