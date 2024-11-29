@@ -62,8 +62,8 @@ RUN apt install -y ${CASEFLOW} &&  \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
-RUN --mount=type=secret,id=PRIVATE_ACCESS_TOKEN \
-    PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/PRIVATE_ACCESS_TOKEN) \
+RUN --mount=type=secret,id=GIT_CREDENTIAL \
+    PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/GIT_CREDENTIAL) \
     echo "Running token is >$PRIVATE_ACCESS_TOKEN<" \
     git config --global url."https://$PRIVATE_ACCESS_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
