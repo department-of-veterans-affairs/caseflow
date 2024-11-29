@@ -1,6 +1,7 @@
 FROM ruby:2.7.3-slim
 MAINTAINER Development and Operations team @ Department of Veterans Affairs
-
+# Dwayne change
+ARG PRIVATE_ACCESS_TOKEN
 # Build variables
 ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
 ENV CASEFLOW git yarn
@@ -63,7 +64,7 @@ RUN apt install -y ${CASEFLOW} &&  \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
 ARG PRIVATE_ACCESS_TOKEN
-RUN git config --global url."https://${PRIVATE_ACCESS_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+RUN git config --global url."https://$PRIVATE_ACCESS_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 # install jemalloc
 RUN apt install -y --no-install-recommends libjemalloc-dev
