@@ -66,7 +66,7 @@ class CorrespondenceTasksController < TasksController
       return_task = ReturnToInboundOpsTask.create_child_task(root_task, current_user, task_params)
 
       return_task.correspondence.update!(
-        notes: params[:return_reason]
+        notes: correspondence_tasks_params[:return_reason]
       )
       render json: {
         return_task: WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer.new(return_task)
