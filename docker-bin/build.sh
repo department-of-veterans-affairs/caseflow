@@ -49,7 +49,7 @@ echo -e "\tCreating Caseflow App Docker Image"
 if [[ -n $1 ]]; then
   GIT_CREDENTIAL=$1
 fi
-DOCKER_BUILDKIT=1 docker build --secret "id=$GIT_CREDENTIAL" -t caseflow .
+DOCKER_BUILDKIT=1 docker build --secret "id=GIT_CREDENTIAL" -t caseflow .
 result=$?
 echo -e "\tCleaning Up..."
 rm -rf docker-bin/oracle_libs
