@@ -115,6 +115,7 @@ RSpec.feature "DecisionReviewUpdated", type: :feature do
       expect(page).to have_content("Tom Brady")
       visit "higher_level_reviews/#{epe.reference_id}/edit"
       expect(page).to have_content("Tom Brady, Spouse (payee code 10)")
+      expect(page).to have_content("DIC: Service connection denied (UPDATED)")
       expect(page).to have_content("Higher-Level Review Non-Rating")
       expect(page).to have_no_content("Something went wrong")
     end
