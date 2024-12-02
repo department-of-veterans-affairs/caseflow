@@ -345,6 +345,9 @@ docs: erd doc-schema	# Build all documentation
 check-fks: # Check for missing foreign keys
 	bundle exec rake immigrant:check_keys
 
+yard-server: # Opens a YARD documentation server with hotreloading enabled on port 8088 by default
+	yard server -r
+
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help
 	@grep -E '^[\ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; { split($$1, C, " "); printf "\033[36m%-30s\033[0m %s\n", C[1], $$2}'
