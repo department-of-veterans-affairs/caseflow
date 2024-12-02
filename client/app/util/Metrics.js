@@ -19,12 +19,8 @@ const checkUuid = (uniqueId, data, message, type) => {
 
   if (!uniqueId) {
     id = uuid.v4();
-    if (isError) {
-      console.error(metricMessage(uniqueId, data, message));
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(metricMessage(uniqueId, data, message));
-    }
+    const logFn = isError ? console.error : console.log;
+    logFn(metricMessage(id, data, message));
   }
 
   return id;
@@ -45,10 +41,10 @@ export const storeMetrics = (uniqueId, data, {
   message,
   type = 'log',
   product,
-  start,
-  end,
-  duration,
-  additionalInfo
+  start: start || new Date().toISOString(),
+  end: end || new Date().toISOString(),
+  duration: duration || 0,
+  additional_info: additionalInfo || {}
 }, eventId = null) => {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
@@ -97,12 +93,15 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
   console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
   if (saveMetrics) {
+    console.info(`SAVING METRICS: ${id}`);
     const metricData = {
       ...data,
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
+    storeMetrics(id, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
+  } else {
+    console.warn(`METRICS NOT SAVED: ${id}`);
   }
 
   return result;
@@ -125,7 +124,10 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
   // eslint-disable-next-line no-console
   console.info(`STARTED: ${id} ${name}`);
   const prom = () => promise;
-  const result = await prom();
+  const result = await prom().catch((error) => {
+    console.error(`ERROR: ${id} ${name}`, error);
+    throw error;
+  });
   const t1 = performance.now();
   const end = new Date(performance.timeOrigin + t1);
 
@@ -191,10 +193,10 @@ export const collectHistogram = (data) => {
     duration: data.value,
   };
 
-  if (data.value > 0) {
+  if (data.value > 0 || data.attrs.pageCount <2) {
     storeMetrics(id, metricsData, readerData);
-  } else if (data.attrs.pageCount < 2) {
-    storeMetrics(id, metricsData, readerData);
+  } else {
+    console.warn(`HISTOGRAM NOT COLLECTED: ${id}`);
   }
 };
 
