@@ -2,16 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { rowThirds } from './style';
 import DateSelector from '../../../components/DateSelector';
-import { css } from 'glamor';
 
-const detailStyles = css({
-  '& label': {
-    fontWeight: 'bold',
-  },
-  '& p': {
-    marginTop: '2rem'
-  }
-});
+const labelStyles = {
+  fontWeight: 'bold'
+};
+
+const pStyles = {
+  marginTop: '2rem'
+};
 
 /**
  * Formats a YYYY-MM-DD to be MM/DD/YYYY instead
@@ -45,16 +43,16 @@ const validateReturnDate = (returnDate, expectedReturnDate) => {
 
 const TranscriptionDetailsWebex = ({ transcription, title, readOnly }) => {
   return (
-    <div {...detailStyles} data-testid="transcription-details-webex">
+    <div data-testid="transcription-details-webex">
       <h2>{title}</h2>
       <div {...rowThirds}>
         <div>
-          <label>Task #</label>
-          <p>{transcription?.taskNumber || 'N/A'}</p>
+          <label style={labelStyles}>Task #</label>
+          <p style={pStyles}>{transcription?.taskNumber || 'N/A'}</p>
         </div>
         <div>
-          <label>Contractor</label>
-          <p>{transcription?.transcriber || 'N/A'}</p>
+          <label style={labelStyles}>Contractor</label>
+          <p style={pStyles}>{transcription?.transcriber || 'N/A'}</p>
         </div>
         <DateSelector
           name="uploadedToVbmsDate"
@@ -67,12 +65,12 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly }) => {
       </div>
       <div {...rowThirds}>
         <div>
-          <label>Sent to Contractor</label>
-          <p>{formatDate(transcription.sentToTranscriberDate) || 'N/A'}</p>
+          <label style={labelStyles}>Sent to Contractor</label>
+          <p style={pStyles}>{formatDate(transcription.sentToTranscriberDate) || 'N/A'}</p>
         </div>
         <div>
-          <label>Expected Return Date</label>
-          <p>{(formatDate(transcription.expectedReturnDate)) || 'N/A'}</p>
+          <label style={labelStyles}>Expected Return Date</label>
+          <p style={pStyles}>{(formatDate(transcription.expectedReturnDate)) || 'N/A'}</p>
         </div>
         <DateSelector
           name="returnDate"
