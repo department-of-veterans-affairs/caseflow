@@ -38,9 +38,9 @@ RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instant
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linuxx64.zip
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linuxx64.zip
 RUN true && \
-  unzip instantclient-basic-linuxx64.zip -d /opt/oracle \
-  && unzip instantclient-sqlplus-linuxx64.zip -d /opt/oracle \
-  && unzip instantclient-sdk-linuxx64.zip -d /opt/oracle
+  unzip -o instantclient-basic-linuxx64.zip -d /opt/oracle \
+  && unzip -o instantclient-sqlplus-linuxx64.zip -d /opt/oracle \
+  && unzip -o instantclient-sdk-linuxx64.zip -d /opt/oracle
 RUN rm instantclient-basic-linuxx64.zip instantclient-sqlplus-linuxx64.zip instantclient-sdk-linuxx64.zip
 
 RUN rm -f /opt/oracle/instantclient_23_5/libclntsh.so
