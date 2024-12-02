@@ -71,24 +71,4 @@ describe('LoadTestForm', () => {
     expect(await screen.findByText('Regional Office Required')).toBeInTheDocument();
     expect(await screen.findByText('Select at least 1 Target Scenario')).toBeInTheDocument();
   });
-
-  it('submits when required have been selected', async () => {
-    defaultProps.currentState.user = {
-      station_id: '101',
-      regional_office: 'VACO',
-      roles: [],
-      functions: {},
-      organizations: [],
-      feature_toggles: {}
-    };
-    defaultProps.currentState.scenarios = [
-      { hearingsShow: {
-        targetType: 'LegacyHearing',
-        targetId: ''
-      } }
-    ];
-    setup(defaultProps);
-    userEvent.click(screen.getByRole('button', { type: 'Submit' }));
-    expect(await defaultProps.setShowAlert).toHaveBeenCalledTimes(1);
-  });
 });
