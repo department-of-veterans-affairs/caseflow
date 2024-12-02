@@ -36,6 +36,7 @@ export const NewLetter = (props) => {
   const [letterSubReason, setLetterSubReason] = useState('');
   const customResponseVal = Boolean(displayLetter && currentLetter?.customValue > 0);
   const [customResponseWindowState, setCustomResponseWindowState] = useState(customResponseVal);
+  const [dateError, setDateError] = useState(false);
 
   const [stateOptions, setStateOptions] = useState(true);
 
@@ -281,7 +282,10 @@ export const NewLetter = (props) => {
   };
 
   const changeDate = (val) => {
-    const isFutureDate = moment(val).isAfter(moment(), 'day');
+    const isFutureDate = new Date(val) > new Date();
+    const error = isFutureDate ? 'Date cannot be in the future' : false;
+
+    setDateError(error);
 
     if (isFutureDate) {
       setLetterCard({
@@ -316,7 +320,7 @@ export const NewLetter = (props) => {
             value={letterCard.date}
             onChange={(val) => changeDate(val)}
             type="date"
-            noFutureDates
+            errorMessage={dateError}
           />
         </div>
         <br />

@@ -367,8 +367,12 @@ Rails.application.routes.draw do
     get "/correspondence/packages", to: "correspondence_review_package#package_documents"
     get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
+    get "/correspondence/:correspondence_uuid/correspondences_appeals_tasks",
+          to: "correspondence_details#correspondences_appeals_tasks"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
+    post "/correspondence/:correspondence_uuid/waive_evidence_submission_window_task",
+          to: "correspondence_details#waive_evidence_submission_window_task"
     post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
     patch "/correspondence/:correspondence_uuid/update_correspondence", to: "correspondence_details#update_correspondence"
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
@@ -380,6 +384,8 @@ Rails.application.routes.draw do
     patch "/correspondence/:correspondence_uuid/edit_general_information", to: "correspondence_details#edit_general_information"
     post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
          to: "correspondence_details#save_correspondence_appeals"
+    patch "/correspondence/:correspondence_uuid/create_correspondence_appeal_task",
+         to: "correspondence_details#create_correspondence_appeal_task"
 
     resources :correspondence, param: :correspondence_uuid do
       post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
