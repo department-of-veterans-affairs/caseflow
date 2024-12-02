@@ -259,7 +259,7 @@ describe('ScheduleVeteranForm', () => {
       }
     );
 
-    expect(screen.getByRole('combobox', { name: 'Regional Office' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Regional Office')).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 

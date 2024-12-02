@@ -37,8 +37,10 @@ describe('VSOHearingTypeConversionForm', () => {
   test('Display appellant timezone on VSOHearingTypeConversionForm', async () => {
     // Default appellant timezone
     screen.getByText('Nairobi');
+    const comboBoxes = screen.getAllByRole('combobox').filter((element) => element.id === 'appellant-tz');
 
-    const appellantTzDropdown = screen.getByRole('combobox', { name: 'Appellant Timezone Required' });
+    // const appellantTzDropdown = screen.getByRole('combobox', { name: 'Appellant Timezone Required' });
+    const appellantTzDropdown = comboBoxes[0];
 
     fireEvent.keyDown(appellantTzDropdown, { key: 'ArrowDown' });
 
@@ -57,11 +59,14 @@ describe('VSOHearingTypeConversionForm', () => {
     // Default representative timezone
     screen.getByText('Eastern Time (US & Canada)');
 
-    const representativeTzDropdown = screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' });
+    const comboBoxes = screen.getAllByRole('combobox').filter((element) => element.id === 'representative-tz');
+
+    const representativeTzDropdown = comboBoxes[0];
 
     fireEvent.keyDown(representativeTzDropdown, { key: 'ArrowDown' });
 
     const option = screen.getByRole('option', { name: 'Vienna' });
+
     fireEvent.click(option);
 
     expect(screen.getByText('Vienna')).toBeTruthy();

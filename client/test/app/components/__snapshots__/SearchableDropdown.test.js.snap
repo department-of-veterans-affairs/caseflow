@@ -45,7 +45,6 @@ exports[`SearchableDropdown renders correctly 1`] = `
                     aria-autocomplete="list"
                     aria-expanded="false"
                     aria-haspopup="true"
-                    aria-labelledby="menu-test-label"
                     aria-owns="menu-test-listbox"
                     autocapitalize="none"
                     autocomplete="off"

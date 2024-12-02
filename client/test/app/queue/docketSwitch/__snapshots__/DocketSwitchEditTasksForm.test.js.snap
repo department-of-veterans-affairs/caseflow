@@ -194,7 +194,7 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="new-tasks-0-type-label"
+                            aria-label="AOJ"
                             aria-owns="new-tasks-0-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"

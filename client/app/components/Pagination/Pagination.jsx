@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Table from 'app/components/Table';
 
 import PaginationButton from './PaginationButton';
 
@@ -36,7 +37,7 @@ class Pagination extends React.PureComponent {
   };
 
   generateBlankButton = (key) => {
-    return <button disabled key={`blank-button-${key}`} aria-label={`More Pages`}>...</button>;
+    return <button disabled key={`blank-button-${key}`} aria-label="More Pages">...</button>;
   };
 
   render() {
@@ -45,16 +46,33 @@ class Pagination extends React.PureComponent {
       currentPage,
       pageSize,
       totalCases,
-      currentCases
+      currentCases,
+      searchValue
     } = this.props;
 
     // If there are no pages, there is no data, so the range should be 0-0.
     // Otherwise, the beginning of the range is the previous amount of cases + 1
-    const beginningCaseNumber = totalCases === 0 ? 0 : ((currentPage * pageSize) - pageSize + 1);
+    let beginningCaseNumber;
+
+    if (searchValue) {
+      beginningCaseNumber = totalCases === 0 ? 0 : 1;
+    } else if (totalCases === 0) {
+      beginningCaseNumber = 0;
+    } else {
+      beginningCaseNumber = (currentPage * pageSize) - pageSize + 1;
+    }
     // If there are no pages, there is no data, so the range should be 0-0.
     // Otherwise, the end of the range is the previous amount of cases +
     // the amount of data in the current page.
-    const endingCaseNumber = totalCases === 0 ? 0 : (beginningCaseNumber + currentCases - 1);
+    let endingCaseNumber;
+
+    if (searchValue) {
+      endingCaseNumber = totalCases;
+    } else if (totalCases === 0) {
+      endingCaseNumber = 0;
+    } else {
+      endingCaseNumber = beginningCaseNumber + currentCases - 1;
+    }
     // Create the range
     let currentCaseRange = `${beginningCaseNumber}-${endingCaseNumber}`;
     // Create the entire summary
@@ -121,10 +139,15 @@ class Pagination extends React.PureComponent {
     }
 
     return (
+
       <div className="cf-pagination">
+        { this.props.enableTopPagination && (<div className="cf-pagination-pages">
+          {paginationButtons}
+        </div>) }
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
+        {this.props.table}
         <div className="cf-pagination-pages">
           {paginationButtons}
         </div>
@@ -139,7 +162,10 @@ Pagination.propTypes = {
   currentCases: PropTypes.number.isRequired,
   totalPages: PropTypes.number,
   totalCases: PropTypes.number,
-  updatePage: PropTypes.func.isRequired
+  updatePage: PropTypes.func.isRequired,
+  table: PropTypes.oneOfType([PropTypes.instanceOf(Table), PropTypes.object]),
+  enableTopPagination: PropTypes.bool,
+  searchValue: PropTypes.string
 };
 
 export default Pagination;

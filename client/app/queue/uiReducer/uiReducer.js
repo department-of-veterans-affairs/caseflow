@@ -20,6 +20,9 @@ export const initialState = {
   userCssId: '',
   userInfo: null,
   organizations: [],
+  isInboundOpsTeamUser: false,
+  isInboundOpsSupervisor: false,
+  isInboundOpsSuperuser: false,
   activeOrganization: {
     id: null,
     name: null,
@@ -256,6 +259,24 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       },
       selectedAssignee: {
         $set: null
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_TEAM_USER:
+    return update(state, {
+      isInboundOpsTeamUser: {
+        $set: action.payload.isInboundOpsTeamUser
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_SUPERVISOR:
+    return update(state, {
+      isInboundOpsSupervisor: {
+        $set: action.payload.isInboundOpsSupervisor
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_SUPERUSER:
+    return update(state, {
+      isInboundOpsSuperuser: {
+        $set: action.payload.isInboundOpsSuperuser
       }
     });
   case ACTIONS.SET_ORGANIZATIONS:

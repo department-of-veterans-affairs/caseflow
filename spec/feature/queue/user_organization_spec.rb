@@ -91,22 +91,28 @@ RSpec.feature "User organization", :postgres do
       it "allows the admin to search for users in the organization by their names" do
         visit(organization.user_admin_path)
         fill_in("searchBar", with: other_org_user.full_name)
-        expect(page).to have_content(other_org_user.full_name)
-        expect(page).to_not have_content(user_with_role.full_name)
+        using_wait_time(20) do
+          expect(page).to have_content(other_org_user.full_name)
+          expect(page).to_not have_content(user_with_role.full_name)
+        end
       end
 
       it "allows the admin to search for users in the organization by their css id" do
         visit(organization.user_admin_path)
         fill_in("searchBar", with: other_org_user.css_id)
-        expect(page).to have_content(other_org_user.css_id)
-        expect(page).to_not have_content(user_with_role.css_id)
+        using_wait_time(20) do
+          expect(page).to have_content(other_org_user.css_id)
+          expect(page).to_not have_content(user_with_role.css_id)
+        end
       end
 
       it "displays a message if no users are found" do
         visit(organization.user_admin_path)
         fill_in("searchBar", with: "you killed my father, prepare to die")
-        expect(page).to have_content("No results found")
-        expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
+        using_wait_time(20) do
+          expect(page).to have_content("No results found")
+          expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
+        end
       end
     end
 

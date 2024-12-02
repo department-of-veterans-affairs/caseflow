@@ -377,46 +377,94 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     <div
                       className="cf-form-radio-options"
                     >
-                      <div
-                        className="cf-form-radio-option"
-                        key="attorney-options-1-0"
+                      <MaybeAddTooltip
+                        key="1"
+                        option={
+                          Object {
+                            "displayText": "Yes",
+                            "value": "1",
+                          }
+                        }
                       >
-                        <input
-                          checked={true}
-                          disabled={false}
-                          id="attorney-options_1"
-                          name="attorney-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="1"
-                        />
-                        <label
-                          className=""
-                          htmlFor="attorney-options_1"
+                        <div
+                          className="cf-form-radio-option"
+                          key="attorney-options-1-0"
                         >
-                          Yes
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="attorney-options-2-1"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="attorney-options"
+                            name="attorney-options"
+                            option={
+                              Object {
+                                "displayText": "Yes",
+                                "value": "1",
+                              }
+                            }
+                            value="1"
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="attorney-options_1"
+                              name="attorney-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="1"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="attorney-options_1"
+                          >
+                            Yes
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
+                      <MaybeAddTooltip
+                        key="2"
+                        option={
+                          Object {
+                            "displayText": "No",
+                            "value": "2",
+                          }
+                        }
                       >
-                        <input
-                          checked={false}
-                          disabled={false}
-                          id="attorney-options_2"
-                          name="attorney-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="2"
-                        />
-                        <label
-                          className=""
-                          htmlFor="attorney-options_2"
+                        <div
+                          className="cf-form-radio-option"
+                          key="attorney-options-2-1"
                         >
-                          No
-                        </label>
-                      </div>
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="attorney-options"
+                            name="attorney-options"
+                            option={
+                              Object {
+                                "displayText": "No",
+                                "value": "2",
+                              }
+                            }
+                            value="1"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="attorney-options_2"
+                              name="attorney-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="2"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="attorney-options_2"
+                          >
+                            No
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
                     </div>
                   </fieldset>
                 </RadioField>
@@ -2280,7 +2328,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   aria-autocomplete="list"
                                                   aria-expanded={false}
                                                   aria-haspopup={true}
-                                                  aria-labelledby="judge-dropdown-label"
                                                   aria-owns="judge-dropdown-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
@@ -2496,7 +2543,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         aria-autocomplete="list"
                                                         aria-expanded={false}
                                                         aria-haspopup={true}
-                                                        aria-labelledby="judge-dropdown-label"
                                                         aria-owns="judge-dropdown-listbox"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
@@ -2540,7 +2586,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                             aria-autocomplete="list"
                                                             aria-expanded={false}
                                                             aria-haspopup={true}
-                                                            aria-labelledby="judge-dropdown-label"
                                                             aria-owns="judge-dropdown-listbox"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
@@ -3633,86 +3678,182 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     <div
                       className="cf-form-radio-options"
                     >
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-remand-0"
+                      <MaybeAddTooltip
+                        key="remand"
+                        option={
+                          Object {
+                            "displayText": "Remand",
+                            "value": "remand",
+                          }
+                        }
                       >
-                        <input
-                          checked={true}
-                          disabled={false}
-                          id="type-options_remand"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="remand"
-                        />
-                        <label
-                          className=""
-                          htmlFor="type-options_remand"
+                        <div
+                          className="cf-form-radio-option"
+                          key="type-options-remand-0"
                         >
-                          Remand
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-other_dismissal-1"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
+                            name="type-options"
+                            option={
+                              Object {
+                                "displayText": "Remand",
+                                "value": "remand",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="type-options_remand"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="remand"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="type-options_remand"
+                          >
+                            Remand
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
+                      <MaybeAddTooltip
+                        key="other_dismissal"
+                        option={
+                          Object {
+                            "displayText": "Dismissal, other than Death",
+                            "value": "other_dismissal",
+                          }
+                        }
                       >
-                        <input
-                          checked={false}
-                          disabled={false}
-                          id="type-options_other_dismissal"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="other_dismissal"
-                        />
-                        <label
-                          className=""
-                          htmlFor="type-options_other_dismissal"
+                        <div
+                          className="cf-form-radio-option"
+                          key="type-options-other_dismissal-1"
                         >
-                          Dismissal, other than Death
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-affirmed-2"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
+                            name="type-options"
+                            option={
+                              Object {
+                                "displayText": "Dismissal, other than Death",
+                                "value": "other_dismissal",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_other_dismissal"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="other_dismissal"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="type-options_other_dismissal"
+                          >
+                            Dismissal, other than Death
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
+                      <MaybeAddTooltip
+                        key="affirmed"
+                        option={
+                          Object {
+                            "displayText": "Affirmed",
+                            "value": "affirmed",
+                          }
+                        }
                       >
-                        <input
-                          checked={false}
-                          disabled={false}
-                          id="type-options_affirmed"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="affirmed"
-                        />
-                        <label
-                          className=""
-                          htmlFor="type-options_affirmed"
+                        <div
+                          className="cf-form-radio-option"
+                          key="type-options-affirmed-2"
                         >
-                          Affirmed
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-settlement-3"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
+                            name="type-options"
+                            option={
+                              Object {
+                                "displayText": "Affirmed",
+                                "value": "affirmed",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_affirmed"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="affirmed"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="type-options_affirmed"
+                          >
+                            Affirmed
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
+                      <MaybeAddTooltip
+                        key="settlement"
+                        option={
+                          Object {
+                            "displayText": "Settlement",
+                            "value": "settlement",
+                          }
+                        }
                       >
-                        <input
-                          checked={false}
-                          disabled={false}
-                          id="type-options_settlement"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="settlement"
-                        />
-                        <label
-                          className=""
-                          htmlFor="type-options_settlement"
+                        <div
+                          className="cf-form-radio-option"
+                          key="type-options-settlement-3"
                         >
-                          Settlement
-                        </label>
-                      </div>
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
+                            name="type-options"
+                            option={
+                              Object {
+                                "displayText": "Settlement",
+                                "value": "settlement",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_settlement"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="settlement"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="type-options_settlement"
+                          >
+                            Settlement
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
                     </div>
                   </fieldset>
                 </RadioField>
@@ -3760,26 +3901,50 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     <div
                       className="cf-form-radio-options"
                     >
-                      <div
-                        className="cf-form-radio-option"
-                        key="sub-type-options-jmr_jmpr-0"
+                      <MaybeAddTooltip
+                        key="jmr_jmpr"
+                        option={
+                          Object {
+                            "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
+                            "value": "jmr_jmpr",
+                          }
+                        }
                       >
-                        <input
-                          checked={true}
-                          disabled={false}
-                          id="sub-type-options_jmr_jmpr"
-                          name="sub-type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="jmr_jmpr"
-                        />
-                        <label
-                          className=""
-                          htmlFor="sub-type-options_jmr_jmpr"
+                        <div
+                          className="cf-form-radio-option"
+                          key="sub-type-options-jmr_jmpr-0"
                         >
-                          Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
-                        </label>
-                      </div>
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="sub-type-options"
+                            name="sub-type-options"
+                            option={
+                              Object {
+                                "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
+                                "value": "jmr_jmpr",
+                              }
+                            }
+                            value="jmr_jmpr"
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="sub-type-options_jmr_jmpr"
+                              name="sub-type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="jmr_jmpr"
+                            />
+                          </RadioInput>
+                          <label
+                            className=""
+                            htmlFor="sub-type-options_jmr_jmpr"
+                          >
+                            Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
+                          </label>
+                        </div>
+                      </MaybeAddTooltip>
                     </div>
                   </fieldset>
                 </RadioField>

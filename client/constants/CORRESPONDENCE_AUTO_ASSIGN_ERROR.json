@@ -1,0 +1,5 @@
+{
+  "NOD_ERROR": "NOD permission is currently disabled for this user.",
+  "SENSITIVITY_ERROR": "User does not meet the sensitivity level required.",
+  "CAPACITY_ERROR": "Queue volume has reached maximum capacity for this user."
+}

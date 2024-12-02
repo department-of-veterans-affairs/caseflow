@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:RepeatedConditional
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BGSServiceConcern
   include ConferenceableConcern
@@ -13,6 +14,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
+  has_many :organization_user_permissions, through: :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :membership_requests, foreign_key: :requestor_id
   has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
@@ -24,6 +26,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+  scope :inbound_ops_team_users, -> { joins(:organizations).where(organizations: { type: InboundOpsTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -96,6 +99,63 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def hearings_user?
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
+  def inbound_ops_team_superuser?
+    return false unless correspondence_queue_enabled?
+
+    member_of_organization?(InboundOpsTeam.singleton) &&
+      OrganizationUserPermissionChecker.new.can?(
+        permission_name: Constants.ORGANIZATION_PERMISSIONS.superuser,
+        organization: InboundOpsTeam.singleton,
+        user: self
+      )
+  end
+
+  # check for user that is not an admin of the inbound ops team
+  def inbound_ops_team_user?
+    return false unless correspondence_queue_enabled?
+
+    organizations.include?(InboundOpsTeam.singleton) &&
+      !inbound_ops_team_supervisor?
+  end
+
+  def inbound_ops_team_supervisor?
+    return false unless correspondence_queue_enabled?
+
+    administered_teams.include?(InboundOpsTeam.singleton)
+  end
+
+  # :reek:UtilityFunction
+  def organization_permissions(org)
+    # get organization user from the org relationship
+    org_user = OrganizationsUser.find_by(organization_id: org.id)
+    # get user permission using the org_user
+
+    # use org_user > org_user_permission > org_permission to get
+    # organization permissions assigned to the user.
+    OrganizationUserPermission.where(organizations_user: org_user)
+      .includes(:organization_permission, :organizations_user)
+      .where(organizations_user_id: org_user.id, permitted: true)
+      .pluck(:permission, :description).map do |permission, description|
+        {
+          permission: permission,
+          desciption: description
+        }
+      end
+  end
+
+  def organization_admin_permissions(org)
+    return [] unless org.user_is_admin?(self)
+
+    # if admin, directly grab admin permissions from the org_permission table
+    OrganizationPermission.where(organization: org, default_for_admin: true)
+      .pluck(:permission, :description).map do |permission, description|
+      {
+        permission: permission,
+        desciption: description
+      }
+    end
   end
 
   def can_assign_hearing_schedule?
@@ -402,6 +462,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
+    # handle correspondence queue tables
+    handle_correspondence_queues(orgs) if member_of_organization?(InboundOpsTeam.singleton)
+
     orgs
   end
   # rubocop:enable Metrics/MethodLength
@@ -447,6 +510,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_assigned_tasks_tab,
+      correspondence_in_progress_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def self.default_active_tab
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
@@ -461,6 +532,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def completed_tasks_tab
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::CorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_in_progress_tasks_tab
+    ::CorrespondenceInProgressTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::CorrespondenceCompletedTasksTab.new(assignee: self)
   end
 
   def can_edit_unrecognized_poa?
@@ -506,10 +589,35 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     false
   end
 
+  def system_user?
+    self == User.system_user
+  end
+
   private
+
+  def correspondence_queue_enabled?
+    FeatureToggle.enabled?(:correspondence_queue)
+  end
 
   def inactive_judge_team
     JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
+  end
+
+  def handle_correspondence_queues(orgs)
+    if inbound_ops_team_superuser? || inbound_ops_team_user?
+      orgs << {
+        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL,
+        url: "/queue/correspondence"
+      }
+    end
+
+    if inbound_ops_team_superuser? || inbound_ops_team_supervisor?
+      orgs << {
+        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES,
+        url: "/queue/correspondence/team"
+      }
+    end
+    orgs
   end
 
   def user_reactivation
