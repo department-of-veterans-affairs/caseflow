@@ -84,6 +84,7 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         expect(duplicate_person1).to have_received(:destroy!)
         expect(duplicate_person2).to have_received(:destroy!)
       end
+    end
 
       it "does not update unrelated records" do
         service.remediate!
