@@ -94,8 +94,16 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
 
   describe "POST #create_return_to_inbound_ops_task" do
     context "Create correspondece return to inbound ops task" do
+      let(:other_motion_task) do
+        LitigationSupport.singleton.add_user(assigned_to)
+        OtherMotionCorrespondenceTask.create_child_task(
+          correspondence.root_task, current_user, { assigned_to: assigned_to }
+        )
+      end
+
       before do
         task_creation_params[:id] = correspondence.id
+        task_creation_params[:task_id] = other_motion_task.id
         post :create_return_to_inbound_ops_task, params: task_creation_params
       end
 
