@@ -18,56 +18,66 @@ import {
   returnDateColumn,
   uploadDateColumn
 } from './TranscriptionFileDispatchTableColumns';
-import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
 import ApiUtil from '../../util/ApiUtil';
 import WorkOrderUnassignModal from './transcriptionProcessing/WorkOrderUnassignModal';
+import styled from 'styled-components';
 
-const styles = css({
-  '& div *': {
-    outline: 'none',
-  },
-  '& table': {
-    marginTop: '0',
-    position: 'relative',
-    top: '-1em',
-  },
-  '& thead': {
-    margin: '-2em 0 0 0',
-  },
-  '& .cf-form-textinput': {
-    position: 'relative',
-    top: '0.1em',
-    marginLeft: '-0.01em',
-    border: 'none',
-    width: '44px',
-  },
-  '& thead > :first-child': {
-    position: 'relative',
-    top: '1em',
-  },
-  '& svg': {
-    marginTop: '0.3em',
-  },
-  '& .cf-pagination-summary': {
-    position: 'relative',
-    top: '0.4em',
-    margin: '0',
-  },
-  '& .cf-pagination-pages': {
-    margin: '0',
-  },
-  '& th:last-child .cf-dropdown-filter': {
-    left: '-231px',
-  },
-  '& .unassigned-tab td:nth-child(3)': {
-    fontWeight: 'bold',
-  },
-  '& .cf-table-wrapper': {
-    minHeight: '620px',
-    overflow: 'unset',
-  },
-});
+const TableWrapper = styled.div`
+  & div * {
+    outline: none;
+  }
+
+  & table {
+    margin-top: 0;
+    position: relative;
+    top: -1em;
+  }
+
+  & thead {
+    margin: -2em 0 0 0;
+  }
+
+  & .cf-form-textinput {
+    position: relative;
+    top: 0.1em;
+    margin-left: -0.01em;
+    border: none;
+    width: 44px;
+  }
+
+  & thead > :first-child {
+    position: relative;
+    top: 1em;
+  }
+
+  & svg {
+    margin-top: 0.3em;
+  }
+
+  & .cf-pagination-summary {
+    position: relative;
+    top: 0.4em;
+    margin: 0;
+  }
+
+  & .cf-pagination-pages {
+    margin: 0;
+  }
+
+  & th:last-child .cf-dropdown-filter {
+    left: -231px;
+  }
+
+  & .unassigned-tab td:nth-child(3) {
+    font-weight: bold;
+  }
+
+  & .cf-table-wrapper {
+    min-height: 620px;
+    overflow: unset;
+  }
+`;
 
 export const TranscriptionFileDispatchTable = ({
   columns,
@@ -289,21 +299,23 @@ export const TranscriptionFileDispatchTable = ({
   }, []);
 
   return (
-    <div {...styles}>
-      <QueueTable
-        columns={columnsFromConfig(columns)}
-        rowObjects={[]}
-        enablePagination
-        casesPerPage={15}
-        className={className}
-        useTaskPagesApi
-        taskPagesApiEndpoint={apiEndpoint()}
-        anyFiltersAreSet
-        tabPaginationOptions={getUrlParams(window.location.search)}
-        getKeyForRow={(_, row) => row.id}
-        onTableDataUpdated={tableDataUpdated}
-        skipCache
-      />
+    <div>
+      <TableWrapper>
+        <QueueTable
+          columns={columnsFromConfig(columns)}
+          rowObjects={[]}
+          enablePagination
+          casesPerPage={15}
+          className={className}
+          useTaskPagesApi
+          taskPagesApiEndpoint={apiEndpoint()}
+          anyFiltersAreSet
+          tabPaginationOptions={getUrlParams(window.location.search)}
+          getKeyForRow={(_, row) => row.id}
+          onTableDataUpdated={tableDataUpdated}
+          skipCache
+        />
+      </TableWrapper>
       {isModalOpen && (
         <WorkOrderUnassignModal
           onClose={closeModal}
