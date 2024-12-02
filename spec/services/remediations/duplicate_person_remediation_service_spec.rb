@@ -78,8 +78,12 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       end
 
       it "logs the error and does not destroy duplicate persons" do
+        # Run the method that should raise an error
+        service.remediate!
+
         # Ensure the error was logged
         expect(Rails.logger).to have_received(:error).with("An error occurred during remediation: Something went wrong")
+          .once
 
         # Ensure Slack notification was sent
         expect(SlackService).to have_received(:new)
