@@ -584,7 +584,6 @@
   },
   "COR_RETURN_TO_INBOUND_OPS": {
     "label": "Return to Inbound Ops",
-    "value": "modal/return_to_inbound_ops",
-    "func": "return_to_inbound_ops_team"
+    "value": "modal/return_to_inbound_ops"
   }
 }
