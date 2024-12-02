@@ -230,24 +230,33 @@ describe('ApiUtil', () => {
     });
   });
 
-  describe('testing the removal of the 5-minute timeout', () => {
-    test('verify the standard response timeout is still intact (60 s timeout)', () => {
+  describe('testing the removal of the 5-minute timeout for progress bar scenarios', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+    test('verify the default timeout settings remain the same when no progress bar', () => {
       const options = {};
       const req = ApiUtil.get('/foo', options);
 
-      // should only be called with response now and no presence of deadline
-      expect(req.timeout).toHaveBeenCalledWith({ response: 60000 });
+      expect(req.timeout).toHaveBeenCalledWith(expect.objectContaining({
+        response: 60000,
+        deadline: 300000
+      }));
     });
 
-    test('5-min timeout has been removed', () => {
-      const options = {};
+    test('verify 5-min timeout is removed when there is a progress bar', () => {
+      const options = { isProgressBar: true };
       const req = ApiUtil.get('/foo', options);
 
+      expect(req.timeout).toHaveBeenCalledWith(expect.objectContaining({
+        response: 60000
+      }));
       expect(req.timeout).not.toHaveBeenCalledWith(expect.objectContaining({ deadline: expect.any(Number) }));
     });
 
-    test('now allows downloads longer than 5 mins', () => {
+    test('now allows downloads longer than 5 mins when there is a progress bar', () => {
       const options = {
+        isProgressBar: true,
         responseType: 'arraybuffer',
         onProgress: jest.fn()
       };

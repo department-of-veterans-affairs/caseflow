@@ -139,6 +139,7 @@ const PdfDocument = ({
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        isProgressBar: true,
         onProgress: ({ loaded }) => {
           const percentage = ProgressBarUtil.calculateProgress({ loaded, fileSize });
           const elapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);

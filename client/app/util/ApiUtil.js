@@ -13,10 +13,10 @@ export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 // eslint-disable-next-line no-process-env
 const onDemo = process.env.DEPLOY_ENV === 'demo';
 
-const defaultTimeoutSettings = {
-  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS
-  // removed 5 min timeout:
-  // deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
+const defaultTimeoutSettings = (isProgressBar) => {
+  const responseTimeout = onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS;
+
+  return isProgressBar ? { response: responseTimeout } : { response: responseTimeout, deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS };
 };
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
@@ -156,7 +156,8 @@ const httpMethods = {
   },
 
   get(url, options = {}) {
-    const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+    const { isProgressBar = false } = options;
+    const timeoutSettings = Object.assign({}, defaultTimeoutSettings(isProgressBar), _.get(options, 'timeout', {}));
 
     options.t0 = performance.now();
     options.start = moment().format();
