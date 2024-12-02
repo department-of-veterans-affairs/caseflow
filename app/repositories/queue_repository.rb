@@ -125,6 +125,14 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
+        LegacyAppealAssignmentTrackingTask.create!(
+          appeal: appeal,
+          assigned_to: assigned_to,
+          assigned_by_id: current_user.id,
+          instructions: instructions,
+          status: Constants.TASK_STATUSES.completed
+        )
+
         attrs = assign_to_attorney_attrs(vacols_id, attorney, assigned_by)
 
         incomplete_record = incomplete_decass_record(vacols_id)
