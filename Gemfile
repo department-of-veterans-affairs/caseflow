@@ -12,15 +12,16 @@ gem "acts_as_tree"
 gem "amoeba"
 gem "aws-sdk"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs-internal.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "dbd86859856d161d84b0bba4d67a8b62e4684996"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons-internal.git", ref: "7bda96cebfc01765389f585594466de0336e79ae"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
-gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms-internal.git", ref: "1834cf61310001c82e2e96d665518407c3bce947"
+# gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer-internal.git", ref: "4394c068ac4eefde11a65ea41d99982cf4863c3b"
 gem "countries"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
@@ -85,7 +86,7 @@ gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
 gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/clone_ruby_claim_evidence_api.git", ref: "c56381d2bea2ffabe79bebbac6598f00450691ff"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -143,7 +144,7 @@ group :test, :development, :demo, :make_docs do
   gem "simplecov", require: false
   gem "simplecov-lcov", require: false
   gem "single_cov"
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara-internal.git"
   gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
