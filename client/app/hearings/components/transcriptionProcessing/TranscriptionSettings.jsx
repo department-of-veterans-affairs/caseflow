@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
 import React from 'react';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from 'app/components/Button';
@@ -17,79 +16,74 @@ import { RemoveContractorModal } from './RemoveContractorModal';
 import { AddEditContractorModal } from './AddEditContractorModal';
 import { EditTotalHearingsModal } from './EditTotalHearingsModal';
 
-const buttonStyle = css({
+const buttonStyle = {
   float: 'left',
   paddingLeft: '2rem'
-});
+};
 
-const headerContainerStyle = css({
+const headerContainerStyle = {
   padding: '4rem 0 2.5rem',
-  '& h2': {
-    display: 'inline-block',
-    verticalAlign: 'middle',
-    paddingTop: '0.5rem',
-  }
-});
+};
 
-const instructionListStyle = css({
+const headerStyle = {
+  display: 'inline-block',
+  verticalAlign: 'middle',
+  paddingTop: '0.5rem',
+};
+
+const instructionListStyle = {
   listStyle: 'none',
   margin: '0',
   padding: '1.5rem 0 2rem 0',
   fontSize: '19px',
-});
+};
 
-const contactAlign = css({
+const contactAlign = {
   paddingLeft: '4.5rem'
-});
+};
 
-const returnLinkStyle = css({
+const returnLinkStyle = {
   paddingTop: '3rem',
-});
+};
 
-const toggleStyle = css({
+const toggleStyle = {
   padding: '1.5rem 6rem 2rem 2rem',
-});
+};
 
-const userListItemStyle = css({
+const userListItemStyle = {
   display: 'flex',
   flexWrap: 'wrap',
   borderTop: '.1rem solid #d6d7d9',
   padding: '4rem 0 2rem',
   clear: 'both'
-});
+};
 
-const editlinkStyle = css({
+const editlinkStyle = {
   display: 'flex',
   flexWrap: 'wrap'
-});
+};
 
-const contractorDetailStyle = css({
+const contractorDetailStyle = {
   flex: '1'
-});
+};
 
-const alertStyle = css({
+const alertStyle = {
   '& .usa-alert': {
     paddingBottom: '2rem'
   }
-});
+};
 
-const editTotalStyle = css({
+const editTotalStyle = {
   position: 'relative',
   left: '10px',
   top: '-4px',
-  '& button span:last-child': {
-    position: 'absolute',
-  }
-});
+};
 
-const editContractorStyle = css({
+const editContractorStyle = {
   position: 'relative',
   left: '10px',
   top: '-2px',
-  '& button span:last-child': {
-    position: 'absolute'
-  }
-});
+};
 
 export default class TranscriptionSettings extends React.PureComponent {
   constructor(props) {
@@ -167,7 +161,7 @@ export default class TranscriptionSettings extends React.PureComponent {
   };
 
   addContractorButton = () => (
-    <div {...buttonStyle}>
+    <div style={buttonStyle}>
       <Button
         name={COPY.TRANSCRIPTION_SETTINGS_ADD}
         id="Add-contractor"
@@ -178,7 +172,7 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   removeContractorButton = () => (
-    <div {...buttonStyle}>
+    <div style={buttonStyle}>
       <Button
         name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
         id="Remove-contractor"
@@ -189,12 +183,12 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   editContractorLink = (id) => (
-    <div {...editContractorStyle}>
+    <div style={editContractorStyle}>
       <Button linkStyling onClick={() => this.editContractor(id)}>
         <span>
           Edit Information
         </span>
-        <span>
+        <span style={{ position: 'absolute' }}>
           <PencilIcon size={25} />
         </span>
       </Button>
@@ -202,12 +196,12 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   editTotalHearingsLink = (id) => (
-    <div {...editTotalStyle}>
+    <div style={editTotalStyle}>
       <Button linkStyling onClick={() => this.editTotalHearings(id)}>
         <span>
           Edit Total
         </span>
-        <span>
+        <span style={{ position: 'absolute' }}>
           <PencilIcon size={25} />
         </span>
       </Button>
@@ -292,19 +286,19 @@ export default class TranscriptionSettings extends React.PureComponent {
     const listOfContractors = this.sortedContractors().map((contractor) => {
       return (
         <React.Fragment key={contractor.id}>
-          <div {...userListItemStyle}>
-            <div {...contractorDetailStyle}>
-              <ul {...instructionListStyle}>
-                <h2 {...editlinkStyle}>
+          <div style={userListItemStyle}>
+            <div style={contractorDetailStyle}>
+              <ul style={instructionListStyle}>
+                <h2 style={editlinkStyle}>
                   {contractor.name}
                   {this.editContractorLink(contractor.id)}
                 </h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
-                <li {...contactAlign}>{contractor.phone}</li>
-                <li {...contactAlign}>{contractor.email}</li>
+                <li style={contactAlign}>{contractor.phone}</li>
+                <li style={contactAlign}>{contractor.email}</li>
                 <span>
-                  <li {...editlinkStyle}>
+                  <li style={editlinkStyle}>
                     <strong>
                       { sprintf(COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT, contractor.name)}
                     </strong>
@@ -316,7 +310,7 @@ export default class TranscriptionSettings extends React.PureComponent {
                 </span>
               </ul>
             </div>
-            <span {...toggleStyle}>
+            <span style={toggleStyle}>
               <h3>Temporarily stop<br /> work assignment</h3>
               <ToggleSwitch
                 selected={!contractor.is_available_for_work}
@@ -333,8 +327,8 @@ export default class TranscriptionSettings extends React.PureComponent {
           <h1 className="cf-margin-bottom-0">
             {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
-          <div {...headerContainerStyle}>
-            <h2>
+          <div style={headerContainerStyle}>
+            <h2 style={headerStyle}>
               {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
             <span className="cf-push-right">
@@ -377,14 +371,14 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   render = () => (
     <>
-      <div {...returnLinkStyle}>
+      <div style={returnLinkStyle}>
         <span>
           <Link linkStyling to="/transcription_files">&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
           &nbsp;
         </span>
       </div>
       {this.state.alert.title && (
-        <div {...alertStyle}>
+        <div style={alertStyle}>
           <Alert
             title={this.state.alert.title}
             message={this.state.alert.message}

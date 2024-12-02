@@ -6,7 +6,7 @@ import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
 import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable';
-import { css } from 'glamor';
+import styled from 'styled-components';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import { sprintf } from 'sprintf-js';
 
@@ -39,22 +39,25 @@ const styles = {
   fileSelect: {
     margin: '2.65em 0 2em 0'
   },
-  searchBar: css({
-    marginBottom: '4em',
-    '& input': {
-      width: '100% !important',
-      maxWidth: '100%',
-      marginTop: '0.5em'
-    },
-    '& .usa-search-big': {
-      maxWidth: '100%',
-      width: '550px'
-    }
-  }),
   tableWrapper: {
     clear: 'both',
   }
 };
+
+const SearchBarWrapper = styled.div`
+  margin-bottom: 4em;
+
+  & input {
+    width: 100% !important;
+    max-width: 100%;
+    margin-top: 0.5em;
+  }
+
+  & .usa-search-big {
+    max-width: 100%;
+    width: 550px;
+  }
+`;
 
 /**
  * Configuring a table for the unassigned tab
@@ -151,7 +154,7 @@ export const tabConfig = (
         </div>
         <div style={styles.tabColumn}>
           <TranscriptionSettingsLink />
-          <div {...styles.searchBar} >
+          <SearchBarWrapper>
             <SearchBar
               placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
               size="big"
@@ -163,7 +166,7 @@ export const tabConfig = (
               submitUsingEnterKey
               defaultValue={search.value}
             />
-          </div>
+          </SearchBarWrapper>
         </div>
       </div>
       <div style={styles.tableWrapper} key={search.value}>
@@ -185,7 +188,7 @@ export const tabConfig = (
           <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_DESCRIPTION}</div>
         </div>
         <div style={styles.tabColumn}>
-          <div {...styles.searchBar} >
+          <SearchBarWrapper>
             <SearchBar
               placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
               size="big"
@@ -197,7 +200,7 @@ export const tabConfig = (
               submitUsingEnterKey
               defaultValue={search.value}
             />
-          </div>
+          </SearchBarWrapper>
         </div>
       </div>
       <div style={styles.tableWrapper} key={search.value}>
@@ -219,7 +222,7 @@ export const tabConfig = (
           <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_DESCRIPTION}</div>
         </div>
         <div style={styles.tabColumn}>
-          <div {...styles.searchBar} >
+          <SearchBarWrapper>
             <SearchBar
               placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
               size="big"
@@ -231,7 +234,7 @@ export const tabConfig = (
               submitUsingEnterKey
               defaultValue={search.value}
             />
-          </div>
+          </SearchBarWrapper>
         </div>
       </div>
       <div style={styles.tableWrapper} key={search.value}>
@@ -252,7 +255,7 @@ export const tabConfig = (
           <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_DESCRIPTION}</div>
         </div>
         <div style={styles.tabColumn}>
-          <div {...styles.searchBar} >
+          <SearchBarWrapper>
             <SearchBar
               placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
               size="big"
@@ -264,7 +267,7 @@ export const tabConfig = (
               submitUsingEnterKey
               defaultValue={search.value}
             />
-          </div>
+          </SearchBarWrapper>
         </div>
       </div>
       <div style={styles.tableWrapper} key={search.value}>

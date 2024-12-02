@@ -1,39 +1,37 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { rowThirds } from './style';
-import { css } from 'glamor';
 import StringUtil from 'app/util/StringUtil';
 
-const detailStyles = css({
-  '& label': {
-    fontWeight: 'bold',
-  },
-  '& p': {
-    marginTop: '2rem',
-  },
-});
+const labelStyles = {
+  fontWeight: 'bold'
+};
+
+const pStyles = {
+  marginTop: '2rem'
+};
 
 const TranscriberDetails = ({ hearing }) => {
   const getSafeValue = (value) => value || 'N/A';
 
   return (
-    <div {...detailStyles}>
+    <div>
       <div {...rowThirds}>
         <div>
-          <label>Recorder</label>
-          <p>
+          <label style={labelStyles}>Recorder</label>
+          <p style={pStyles}>
             {StringUtil.capitalizeFirst(getSafeValue(hearing?.determineServiceName))}
           </p>
         </div>
         <div>
-          <label>Recording date</label>
-          <p>
+          <label style={labelStyles}>Recording date</label>
+          <p style={pStyles}>
             {getSafeValue(hearing?.scheduledTime)}
           </p>
         </div>
         <div>
-          <label>Retrieval date</label>
-          <p>
+          <label style={labelStyles}>Retrieval date</label>
+          <p style={pStyles}>
             {getSafeValue(hearing?.dateReceiptRecording)}
           </p>
         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
+import styled from 'styled-components';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -16,25 +16,29 @@ const columns = [
 ];
 
 // CSS styles
-const styles = css({
-  '& .information': {
-    display: 'flex'
-  },
-  '& div *': {
-    outline: 'none',
-  },
-  '& table': {
-    marginTop: 0,
-    position: 'relative',
-  },
-  '& td': {
-    paddingTop: '10px',
-    paddingBottom: '10px'
-  },
-  '& .bold-first-cell td:first-child': {
-    fontWeight: 'bold',
-  },
-});
+const TableWrapper = styled.div`
+  .information {
+    display: flex;
+  }
+
+  div * {
+    outline: none;
+  }
+
+  table {
+    margin-top: 0;
+    position: relative;
+  }
+
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .bold-first-cell td:first-child {
+    font-weight: bold;
+  }
+`;
 
 export const WorkOrderDetails = ({ taskNumber }) => {
   const [data, setData] = useState(null);
@@ -127,7 +131,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
         <hr style={{ margin: '35px 0' }} />
         <div>
           <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-          <div {...styles}>
+          <TableWrapper>
             <QueueTable
               columns={columns}
               rowObjects={woFileInfo}
@@ -135,7 +139,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
               slowReRendersAreOk
               className="bold-first-cell"
             />
-          </div>
+          </TableWrapper>
         </div>
       </div>
     </div>

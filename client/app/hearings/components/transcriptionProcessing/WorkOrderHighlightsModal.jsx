@@ -4,7 +4,6 @@ import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import Modal from '../../../components/Modal';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { css } from 'glamor';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
@@ -12,29 +11,21 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
 
   const styles = {
     headerStyle: {
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      border: 'none',
+      borderBottom: '1px solid',
+      borderColor: COLORS.GREY_LIGHT
     },
     tableBody: {
       margin: 'auto',
       width: '100%',
+    },
+    columnStyles: {
+      border: 'none',
+      borderBottom: '1px solid',
+      borderColor: COLORS.GREY_LIGHT
     }
   };
-
-  const tableStyles = css({
-    '& th': {
-      border: 'none',
-      borderBottom: '1px solid',
-      borderColor: COLORS.GREY_LIGHT
-    },
-    '& td': {
-      border: 'none',
-      borderBottom: '1px solid',
-      borderColor: COLORS.GREY_LIGHT
-    },
-    '& td:nth-child(3)': {
-      fontWeight: 'bold',
-    },
-  });
 
   /**
    * Renders the table to display order contents
@@ -43,9 +34,13 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
   const renderItems = () => {
     return items.map((item, index) =>
       <tr key={index}>
-        <td>{index + 1}.</td>
-        <td><DocketTypeBadge name={item.hearingType} number={index} />{item.docketNumber}</td>
-        <td><a href={`/queue/appeals/${item.appealId}`}>{item.caseDetails}</a></td>
+        <td style={styles.columnStyles}>{index + 1}.</td>
+        <td style={styles.columnStyles}>
+          <DocketTypeBadge name={item.hearingType} number={index} />{item.docketNumber}
+        </td>
+        <td style={{ ...styles.columnStyles, fontWeight: 'bold' }}>
+          <a href={`/queue/appeals/${item.appealId}`}>{item.caseDetails}</a>
+        </td>
       </tr>
     );
   };
@@ -56,9 +51,9 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
    */
   const renderList = () => {
     return (
-      <table {...tableStyles} style={styles.tableBody}>
+      <table style={styles.tableBody}>
         <tr>
-          <th></th>
+          <th style={styles.headerStyle}></th>
           <th style={styles.headerStyle}>{COPY.TABLE_DOCKET_NUMBER}</th>
           <th style={styles.headerStyle}>{COPY.TRANSCRIPTION_FILE_DISPATCH_CASE_DETAILS_COLUMN_NAME}</th>
         </tr>

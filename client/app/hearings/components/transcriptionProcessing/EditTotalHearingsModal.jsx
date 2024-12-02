@@ -8,9 +8,8 @@ import COPY from '../../../../COPY';
 import { sprintf } from 'sprintf-js';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
-import { css } from 'glamor';
 
-const modalContentStyles = css({
+const modalContentStyles = {
   '& h2': {
     margin: 0,
   },
@@ -39,7 +38,7 @@ const modalContentStyles = css({
   '& .usa-alert': {
     marginBottom: '1.5em'
   }
-});
+};
 
 export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor }) => {
   const [formData, setFormData] = useState(transcriptionContractor);
@@ -109,7 +108,7 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
       closeHandler={onCancel}
       id="custom-total-hearings-modal"
     >
-      <div {...modalContentStyles}>
+      <div style={modalContentStyles}>
         {serverError &&
           <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
             message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }

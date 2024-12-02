@@ -3,7 +3,6 @@
 exports[`TranscriptionDetailsWebex matches snapshot 1`] = `
 <div>
   <div
-    data-css-1tr8n64=""
     data-testid="transcription-details-webex"
   >
     <h2>
@@ -13,18 +12,26 @@ exports[`TranscriptionDetailsWebex matches snapshot 1`] = `
       data-css-1fmltfu=""
     >
       <div>
-        <label>
+        <label
+          style="font-weight: bold;"
+        >
           Task #
         </label>
-        <p>
+        <p
+          style="margin-top: 2rem;"
+        >
           1001
         </p>
       </div>
       <div>
-        <label>
+        <label
+          style="font-weight: bold;"
+        >
           Contractor
         </label>
-        <p>
+        <p
+          style="margin-top: 2rem;"
+        >
           Real Contractor
         </p>
       </div>
@@ -62,18 +69,26 @@ exports[`TranscriptionDetailsWebex matches snapshot 1`] = `
       data-css-1fmltfu=""
     >
       <div>
-        <label>
+        <label
+          style="font-weight: bold;"
+        >
           Sent to Contractor
         </label>
-        <p>
+        <p
+          style="margin-top: 2rem;"
+        >
           09/14/2024
         </p>
       </div>
       <div>
-        <label>
+        <label
+          style="font-weight: bold;"
+        >
           Expected Return Date
         </label>
-        <p>
+        <p
+          style="margin-top: 2rem;"
+        >
           09/17/2024
         </p>
       </div>
