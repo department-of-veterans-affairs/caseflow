@@ -14,8 +14,7 @@ import {
 import {
   initialAssignTasksToUser,
   reassignTasksToUser,
-  initialSpecialtyCaseTeamAssignTasksToUser,
-  legacyReassignToAttorney
+  initialSpecialtyCaseTeamAssignTasksToUser
 } from './QueueActions';
 
 class AssignToAttorneyModalView extends React.PureComponent {
@@ -29,10 +28,6 @@ class AssignToAttorneyModalView extends React.PureComponent {
       previousAssigneeId,
       instructions
     };
-
-    if (tasks[0].type === 'LegacyAppealsAssignmentTrackingTask') {
-      return this.props.legacyReassignToAttorney({ ...commonProps });
-    }
 
     if (tasks[0].type === 'SpecialtyCaseTeamAssignTask') {
       return this.props.initialSpecialtyCaseTeamAssignTasksToUser({ ...commonProps });
@@ -85,8 +80,7 @@ AssignToAttorneyModalView.propTypes = {
   match: PropTypes.object,
   initialAssignTasksToUser: PropTypes.func,
   reassignTasksToUser: PropTypes.func,
-  initialSpecialtyCaseTeamAssignTasksToUser: PropTypes.func,
-  legacyReassignToAttorney: PropTypes.func
+  initialSpecialtyCaseTeamAssignTasksToUser: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -98,8 +92,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
   reassignTasksToUser,
-  initialSpecialtyCaseTeamAssignTasksToUser,
-  legacyReassignToAttorney
+  initialSpecialtyCaseTeamAssignTasksToUser
 }, dispatch);
 
 export default (connect(
