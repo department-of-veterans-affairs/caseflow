@@ -643,6 +643,34 @@ export const reassignTasksToUser = ({
     });
 }));
 
+export const legacyReassignToAttorney = ({
+  tasks,
+  assigneeId,
+  instructions
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        appeal_id: oldTask.appealId,
+        instructions: [instructions]
+      }
+    }
+  };
+
+  return ApiUtil.post('/legacy_tasks/vlj_assign_to_attorney', params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
+
+      dispatch(onReceiveTasks(pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
+    });
+}));
+
 export const legacyReassignToJudge = ({
   tasks, assigneeId, instructions
 }, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {

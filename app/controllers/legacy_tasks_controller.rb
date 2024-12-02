@@ -95,15 +95,13 @@ class LegacyTasksController < ApplicationController
     return unless FeatureToggle.enabled?(:legacy_case_movement_vlj_to_avlj_for_decisiondraft)
 
     ApplicationRecord.multi_transaction do
-      tracking_task = LegacyAppealAssignmentTrackingTask.create!(
+      LegacyAppealAssignmentTrackingTask.create!(
         appeal: appeal,
         assigned_to: assigned_to,
         assigned_by_id: current_user.id,
         instructions: params[:tasks][:instructions],
         status: Constants.TASK_STATUSES.completed
       )
-
-      return invalid_role_error if tracking_task.blank?
 
       QueueRepository.update_location_to_attorney(appeal.vacols_id, assigned_to)
     end
