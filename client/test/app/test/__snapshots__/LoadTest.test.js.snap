@@ -821,52 +821,24 @@ Object {
                     class="load-test-container-checkbox test-class-sizing"
                   >
                     <div
-                      class="checkbox-wrapper-claimantsPoa cf-form-checkboxes"
+                      class="checkbox-wrapper-claimantsPowerOfAttorney cf-form-checkboxes"
                     >
                       <div
                         class="cf-form-checkbox"
                       >
                         <input
-                          aria-label="claimantsPoa"
-                          id="claimantsPoa"
-                          name="claimantsPoa"
+                          aria-label="claimantsPowerOfAttorney"
+                          id="claimantsPowerOfAttorney"
+                          name="claimantsPowerOfAttorney"
                           type="checkbox"
                         />
                         <label
-                          for="claimantsPoa"
+                          for="claimantsPowerOfAttorney"
                         >
                           <span
                             class=""
                           >
-                            claimantsPoa
-                          </span>
-                           
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="load-test-container-checkbox test-class-sizing"
-                  >
-                    <div
-                      class="checkbox-wrapper-higherLevelReviewUpdate cf-form-checkboxes"
-                    >
-                      <div
-                        class="cf-form-checkbox"
-                      >
-                        <input
-                          aria-label="higherLevelReviewUpdate"
-                          id="higherLevelReviewUpdate"
-                          name="higherLevelReviewUpdate"
-                          type="checkbox"
-                        />
-                        <label
-                          for="higherLevelReviewUpdate"
-                        >
-                          <span
-                            class=""
-                          >
-                            higherLevelReviewUpdate
+                            claimantsPowerOfAttorney
                           </span>
                            
                         </label>
@@ -2775,52 +2747,24 @@ Object {
                   class="load-test-container-checkbox test-class-sizing"
                 >
                   <div
-                    class="checkbox-wrapper-claimantsPoa cf-form-checkboxes"
+                    class="checkbox-wrapper-claimantsPowerOfAttorney cf-form-checkboxes"
                   >
                     <div
                       class="cf-form-checkbox"
                     >
                       <input
-                        aria-label="claimantsPoa"
-                        id="claimantsPoa"
-                        name="claimantsPoa"
+                        aria-label="claimantsPowerOfAttorney"
+                        id="claimantsPowerOfAttorney"
+                        name="claimantsPowerOfAttorney"
                         type="checkbox"
                       />
                       <label
-                        for="claimantsPoa"
+                        for="claimantsPowerOfAttorney"
                       >
                         <span
                           class=""
                         >
-                          claimantsPoa
-                        </span>
-                         
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="load-test-container-checkbox test-class-sizing"
-                >
-                  <div
-                    class="checkbox-wrapper-higherLevelReviewUpdate cf-form-checkboxes"
-                  >
-                    <div
-                      class="cf-form-checkbox"
-                    >
-                      <input
-                        aria-label="higherLevelReviewUpdate"
-                        id="higherLevelReviewUpdate"
-                        name="higherLevelReviewUpdate"
-                        type="checkbox"
-                      />
-                      <label
-                        for="higherLevelReviewUpdate"
-                      >
-                        <span
-                          class=""
-                        >
-                          higherLevelReviewUpdate
+                          claimantsPowerOfAttorney
                         </span>
                          
                       </label>
