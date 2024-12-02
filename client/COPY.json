@@ -1635,5 +1635,6 @@
   "UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA": "Please provide context and instructions for this action",
   "UPLOAD_TRANSCRIPTION_VBMS_TITLE": "Upload transcript to VBMS",
   "UPLOAD_TRANSCRIPTION_VBMS_BUTTON": "Upload to VBMS",
-  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand"
+  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand",
+  "DATE_PICKER_BETWEEN_DATES_ERROR_MESSAGE": "\"To\" date cannot occur before the \"From\" date"
 }

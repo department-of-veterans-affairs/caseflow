@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_18_075353) do
+ActiveRecord::Schema.define(version: 2024_11_21_143932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -899,6 +899,17 @@ ActiveRecord::Schema.define(version: 2024_11_18_075353) do
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
     t.index ["info"], name: "index_event_records_on_info", using: :gin
+  end
+
+  create_table "event_remediation_audits", comment: "Stores records that are updated by the PersonAndVeteranEventRemediationJob", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_record_id", null: false, comment: "ID of the EventRecord that created or updated this record."
+    t.jsonb "info", default: {}, comment: "Additional information about the remediation event"
+    t.bigint "remediated_record_id", null: false
+    t.string "remediated_record_type", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_event_remediation_audits_on_info", using: :gin
+    t.index ["remediated_record_type", "remediated_record_id"], name: "index_event_remediation_audit_on_remediated_record"
   end
 
   create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|

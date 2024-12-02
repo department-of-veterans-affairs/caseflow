@@ -1,6 +1,7 @@
 import React from 'react';
 import COPY from '../../../COPY';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import COPY from '../../../COPY';
 
 import {
   selectFromDropdown,
