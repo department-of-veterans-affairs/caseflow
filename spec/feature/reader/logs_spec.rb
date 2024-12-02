@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "selenium-webdriver"
+
 RSpec.feature "Reader", :all_dbs do
   before do
     FeatureToggle.enable!(:pdf_page_render_time_in_ms)
@@ -7,7 +9,7 @@ RSpec.feature "Reader", :all_dbs do
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
-    Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+    Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
 
     User.authenticate!(roles: ["Reader"])
   end
