@@ -209,6 +209,7 @@ export const PAGE_TITLES = {
   REMOVE_HEARING_TO_CORRECT_ERROR: 'Remove hearing to correct a scheduling error',
   POSTPONE_HEARING: 'Postpone Hearing',
   CHANGE_TASK_TYPE: 'Change Task Type',
+  UPLOAD_TRANSCRIPTION_VBMS: 'Upload transcription VBMS',
   CONVERT_HEARING_TO_VIRTUAL: 'Change Hearing Request Type to Virtual',
   CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
   CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',

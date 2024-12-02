@@ -42,7 +42,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     let(:expected_central_office_time) do
       time_str = "#{updated_hearing_time} #{hearing.hearing_day.scheduled_for} America/New_York"
       tz_abbr = Time.zone.parse(time_str).dst? ? "ET" : "EST"
-
       Time
         .parse(updated_hearing_time)
         .strftime("%F %T")

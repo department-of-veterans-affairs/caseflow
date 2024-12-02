@@ -104,6 +104,15 @@ const NonCompTabsUnconnected = (props) => {
   const completedTabPaginationOptions = cloneDeep(tabPaginationOptions);
 
   if (isVhaBusinessLine) {
+    const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
+      some((item) => item.includes('col=completedDateColumn'));
+
+    if (!containsCompletedDateFilter) {
+      const sevenDaysAgoString = moment().subtract(7, 'days').
+        format('YYYY-MM-DD');
+
+      completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
+    }
     if (savedCompletedDateFilter) {
       if (savedCompletedDateFilter === 'cleared') {
         // Filter was cleared so don't set a filter now
@@ -123,7 +132,6 @@ const NonCompTabsUnconnected = (props) => {
         completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
       }
     }
-
   }
 
   const ALL_TABS = {

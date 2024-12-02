@@ -392,7 +392,6 @@ class DatePicker extends React.PureComponent {
                   type="date"
                 />
               </div>
-
             }
 
             {this.state.mode === 'between' &&
