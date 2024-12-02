@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class Reader::DocumentsController < Reader::ApplicationController
   def index
     respond_to do |format|
@@ -18,7 +17,6 @@ class Reader::DocumentsController < Reader::ApplicationController
     end
   rescue StandardError => error
     raise error unless error.class.method_defined? :serialize_response
-
     render error.serialize_response
   end
 
@@ -28,30 +26,34 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   private
 
+
+
+
+
+
+
+          Expand Down
+
+
+
   def appeal
     @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
   end
   helper_method :appeal
-
   def annotations
     Annotation.where(document_id: document_ids).map(&:to_hash)
   end
-
   def document_ids
     @document_ids ||= appeal.document_fetcher.find_or_create_documents!.pluck(:id)
   end
-
   delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
-
   def documents
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
       .each_with_object({}) do |document_view, object|
       object[document_view.document_id] = true
     end
-
     tags_by_doc_id = load_tags_by_doc_id
-
     @documents = appeal.document_fetcher.find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
@@ -59,14 +61,12 @@ class Reader::DocumentsController < Reader::ApplicationController
       end
     end
   end
-
   def load_tags_by_doc_id
     # rubocop:disable Style/HashTransformValues
     # Disabling this cop instead of modifying because map isn't transforming values, it is creating a new hash
     # where the document_ids are the keys and an empty Set[] is the value
     tags_by_doc_id = Hash[document_ids.map { |key, _| [key, Set[]] }]
     # rubocop:enable Style/HashTransformValues
-
     Tag.includes(:documents_tags).where(documents_tags: { document_id: document_ids }).each do |tag|
       # tag.documents_tags returns extraneous documents outside document_ids, so
       # only capture tags associated with docs associated with document_ids
@@ -76,7 +76,6 @@ class Reader::DocumentsController < Reader::ApplicationController
     end
     tags_by_doc_id
   end
-
   def appeal_id
     params[:appeal_id]
   end

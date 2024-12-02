@@ -25,6 +25,7 @@ import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 import networkUtil from '../util/NetworkUtil';
+import { pdfPageRenderTimeInMsDisabled } from '../../test/helpers/PdfPageTests';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -229,23 +230,17 @@ export class PdfFile extends React.PureComponent {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
-    const calculatedPageIndex = (rowIndex * this.columnCount) + columnIndex;
-
-    this.metricsAttributes.pageIndex = calculatedPageIndex;
-    this.metricsAttributes.numPagesInDoc = this.props.pdfDocument.numPages;
-
     return <div key={pageIndex} style={style}>
       <PdfPage
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
-        pageIndex={calculatedPageIndex}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        metricsIdentifier={this.metricsIdentifier}
-        metricsAttributes={this.metricsAttributes}
+        measureTimeStartMs={pdfPageRenderTimeInMsStart}
       />
     </div>;
   }
@@ -409,20 +404,14 @@ export class PdfFile extends React.PureComponent {
 
     if (this.grid && this.props.isVisible) {
       if (!prevProps.isVisible) {
-        // eslint-disable-next-line react/no-find-dom-node
-        const domNode = ReactDOM.findDOMNode(this.grid);
-
-        // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
-        // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
-        // might be deprecated at some point in the future, but until then this seems like the best we can do.
-        domNode.focus();
+        this.grid.recomputeGridSize();
+        this.scrollWhenFinishedZooming();
+        this.jumpToPage();
+        this.jumpToComment();
       }
+    };
 
-      this.grid.recomputeGridSize();
 
-      this.scrollWhenFinishedZooming();
-      this.jumpToPage();
-      this.jumpToComment();
 
       if (this.props.searchText && this.props.matchesPerPage.length) {
         this.scrollToSearchTerm(prevProps);
