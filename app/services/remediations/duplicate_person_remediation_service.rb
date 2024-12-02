@@ -9,9 +9,12 @@ class Remediations::DuplicatePersonRemediationService
     Notification
   ].freeze
 
-  def initialize(updated_person_id:, duplicate_person_ids:)
+  def initialize(updated_person_id:, duplicate_person_ids:, event_record:)
     @updated_person_id = updated_person_id
     @duplicate_person_ids = duplicate_person_ids
+    @event_record = event_record
+    @dup_persons = Person.where(id: duplicate_person_ids)
+    @og_person = Person.find_by(id: updated_person_id)
   end
 
   def remediate!
@@ -35,14 +38,17 @@ class Remediations::DuplicatePersonRemediationService
 
   def find_and_update_records
     begin
-      @dup_persons = Person.where(id: @duplicate_person_ids)
-      og_person = Person.find_by(id: @updated_person_id)
-
       ActiveRecord::Base.transaction do
         ASSOCIATIONS.each do |klass|
           column = klass.column_names.find { |name| name.end_with?("participant_id") }
           records = klass.where("#{column}": @dup_persons.map(&:participant_id))
-          records.update_all("#{column}": og_person.participant_id)
+          records.map do |record|
+            before_data = record.attributes
+            record.update!("#{column}": @og_person.participant_id)
+            add_remediation_audit(remediated_record: record,
+                                  before_data: before_data,
+                                  after_data: record.attributes)
+          end
         end
       end
       true # Successfully completed, return true
@@ -53,5 +59,18 @@ class Remediations::DuplicatePersonRemediationService
                                          "Error in #{self.class.name}")
       false # Indicate failure
     end
+  end
+
+  def add_remediation_audit(remediated_record:, before_data:, after_data:)
+    EventRemediationAudit.create!(
+      event_record: @event_record,
+      remediated_record_type: remediated_record.class.name,
+      remediated_record_id: remediated_record.id,
+      info: {
+        remediation_type: "DuplicatePersonRemediationService",
+        after_data: after_data,
+        before_data: before_data
+      }
+    )
   end
 end
