@@ -15,25 +15,7 @@ RUN true \
   && apt-get install ca-certificates \
   && update-ca-certificates --fresh
 
-# Install InstantClient
-WORKDIR /opt/oracle
-
-RUN chown $(whoami) /opt/oracle \
-  && export PATH="/opt/oracle/instantclient_23_5:$PATH"
-RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip
-RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linuxx64.zip
-RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linuxx64.zip
-RUN jar xvf instantclient-basic-linuxx64.zip
-RUN jar xvf instantclient-sqlplus-linuxx64.zip
-RUN jar xvf instantclient-sdk-linuxx64.zip
-RUN rm instantclient-basic-linuxx64.zip instantclient-sqlplus-linuxx64.zip instantclient-sdk-linuxx64.zip
-
-RUN rm -f /opt/oracle/instantclient_23_5/libclntsh.so
-WORKDIR /opt/oracle/instantclient_23_5
-RUN ln -s libclntsh.so.23.1 libclntsh.so
-
-# Install other dependencies
-RUN true \
+  RUN true \
   && apt-get install -y libaio1 \
   libaio-dev \
   unzip \
@@ -44,7 +26,29 @@ RUN true \
   postgresql-server-dev-14 \
   build-essential \
   locales \
-  locales-all
+  locales-all \
+  curl
+
+# Install InstantClient
+WORKDIR /opt/oracle
+
+RUN chown $(whoami) /opt/oracle \
+  && export PATH="/opt/oracle/instantclient_23_5:$PATH"
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linuxx64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linuxx64.zip
+RUN true && \
+  unzip instantclient-basic-linuxx64.zip -d /opt/oracle \
+  && unzip instantclient-sqlplus-linuxx64.zip -d /opt/oracle \
+  && unzip instantclient-sdk-linuxx64.zip -d /opt/oracle
+RUN rm instantclient-basic-linuxx64.zip instantclient-sqlplus-linuxx64.zip instantclient-sdk-linuxx64.zip
+
+RUN rm -f /opt/oracle/instantclient_23_5/libclntsh.so
+WORKDIR /opt/oracle/instantclient_23_5
+RUN ln -s libclntsh.so.23.1 libclntsh.so
+
+# Install other dependencies
+
 
 # Install oracle_fdw
 RUN true \
