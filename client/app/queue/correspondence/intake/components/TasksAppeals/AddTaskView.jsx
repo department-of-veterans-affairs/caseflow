@@ -4,63 +4,7 @@ import CheckboxModal from '../CheckboxModal';
 import Button from '../../../../../components/Button';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-
-const customSelectStyless = {
-  dropdownIndicator: () => ({
-    width: '80%'
-  }),
-
-  control: (styles) => {
-    return {
-      ...styles,
-      alignContent: 'center',
-      borderRadius: 0,
-      border: '1px solid black'
-    };
-  },
-
-  menu: () => ({
-    boxShadow: '0 0 0 1px hsla(0,0%,0%,0.1), 0 4px 11px hsla(0,0%,0%,0.1)',
-    marginTop: '8px'
-  }),
-
-  valueContainer: (styles) => ({
-
-    ...styles,
-    lineHeight: 'normal',
-    // this is a hack to fix a problem with changing the height of the dropdown component.
-    // Changing the height causes problems with text shifting.
-    marginTop: '-10%',
-    marginBottom: '-10%',
-    paddingTop: '-10%',
-    minHeight: '140px',
-    borderRadius: 50
-
-  }),
-  singleValue: (styles) => {
-    return {
-      ...styles,
-      alignContent: 'center',
-    };
-  },
-
-  placeholder: (styles) => ({
-    ...styles,
-    color: 'black',
-  }),
-
-  option: (styles, { isFocused }) => ({
-    color: 'black',
-    fontSize: '17px',
-    padding: '8px 12px',
-    backgroundColor: isFocused ? 'white' : 'null',
-    ':hover': {
-      ...styles[':hover'],
-      backgroundColor: '#5b616b',
-      color: 'white',
-    }
-  })
-};
+import COPY from '../../../../../../COPY';
 
 const AddTaskView = (props) => {
   const task = props.task;
@@ -118,18 +62,17 @@ const AddTaskView = (props) => {
         />
         }
 
-        <div className="gray-border add-task-container">
+        <div>
           <div className=" task-selection-box-for-new-tasks">
             <div className="task-selection-dropdown-box">
-              <div id="reactSelectContainer"
-                className="select-container-styles">
+              <div className="task-selection-dropdown-box">
                 <label className="task-selection-title">Task</label>
                 <Select
                   placeholder="Select..."
                   options={props.availableTaskTypeOptions}
                   defaultValue={objectForSelectedTaskType()}
                   onChange={(selectedOption) => updateTaskType(selectedOption)}
-                  styles={customSelectStyless}
+                  classNamePrefix="react-select"
                   className="add-task-dropdown-style"
                   aria-label="dropdown"
                 />
@@ -137,7 +80,7 @@ const AddTaskView = (props) => {
               <div className="provide-context-text-styling" />
               <TextareaField
                 name="content"
-                label="Provide context and instructions on this task"
+                label={COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
                 value={task.content}
                 onChange={updateTaskContent}
               />

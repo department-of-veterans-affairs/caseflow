@@ -16,6 +16,7 @@ $color-red: #cd2026;
 $color-bright-red: #ff0000;
 $color-gray-darker: #5b616b;
 $color-gray: #5b616b;
+$color-gray-intake: #d7d6d9;
 $color-bg-hsl: hsl(0, 0%, 100%);
 $color-bg-hsl-a: hsl(0, 0%, 80%);
 
@@ -2005,3 +2006,16 @@ notes-column {
 .add-related-task-modal .cf-modal-body {
   width: 550px;
 }
+
+.intake-form-divider {
+  margin-top: 30px;
+  border: 0.1px solid $color-gray-intake;
+}
+
+// .nod-styling-review-form {
+//   margin-top: 20px;
+
+//   .cf-form-textinput {
+//     max-width: 72rem;
+//   }
+// }
