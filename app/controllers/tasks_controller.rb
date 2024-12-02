@@ -222,7 +222,15 @@ class TasksController < ApplicationController
     transcription_file.upload_content_to_s3!(current_file_path)
 
     appeal = transcription_file.hearing.appeal
-    document_params = create_document_params(appeal, file_name, current_file_path)
+    document_params =
+      {
+        veteran_file_number: appeal.veteran_file_number,
+        document_type: "Hearing Transcript",
+        document_subject: "notifications",
+        document_name: file_name,
+        application: "notification-report",
+        file: current_file_path
+      }
 
     response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
     if response.success?
@@ -234,17 +242,6 @@ class TasksController < ApplicationController
   end
 
   private
-
-  def create_document_params(appeal, file_name, current_file_path)
-    {
-      veteran_file_number: appeal.veteran_file_number,
-      document_type: "Hearing Transcript",
-      document_subject: "notifications",
-      document_name: file_name,
-      application: "notification-report",
-      file: current_file_path
-    }
-  end
 
   def split_filename(file_name)
     hearing_id = file_name.split("_")[1]
