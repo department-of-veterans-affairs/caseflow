@@ -410,7 +410,8 @@ class DatePicker extends React.PureComponent {
             }
             <div className="button-wrapper">
               <button disabled={this.buttonDisabled()}
-                onClick={() => this.apply()}>{COPY.DATE_PICKER_APPLY}</button>
+                onClick={() => this.apply()}>{COPY.DATE_PICKER_APPLY}
+              </button>
             </div>
           </div>
       }

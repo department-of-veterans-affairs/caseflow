@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -14,16 +14,7 @@ import moment from 'moment';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
-
-  // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
-  const onHistoryUpdate = (urlString) => {
-    const url = new URL(urlString);
-    const params = new URLSearchParams(url.search);
-    const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-
-    setFilter(filterParams);
-  };
-
+  const [savedCompletedDateFilter, setSavedCompletedDateFilter] = useState('');
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
   const queryParams = new URLSearchParams(window.location.search);
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
@@ -45,6 +36,26 @@ const NonCompTabsUnconnected = (props) => {
   // to be able to locate them by their index
   const findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
   const getTabByIndex = findTab === -1 ? 0 : findTab;
+
+  // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
+  const onHistoryUpdate = (urlString) => {
+    const url = new URL(urlString);
+    const params = new URLSearchParams(url.search);
+    const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+    // Completed date filter preservation is different since the column is not shared between tabs
+    const completedDateFilter = filterParams.find((value) => value.includes('col=completedDateColumn'));
+    const tabFromParams = params.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM);
+
+    if (completedDateFilter) {
+      setSavedCompletedDateFilter(completedDateFilter);
+    } else if (!completedDateFilter && tabFromParams === 'completed') {
+      // Since it is still in the completed tab without a filter, assume it was cleared
+      setSavedCompletedDateFilter('cleared');
+    }
+
+    setFilter(filterParams);
+  };
 
   // Derive the different tab task counts from the task filters.
   const taskCounts = useMemo(() => (
@@ -101,6 +112,25 @@ const NonCompTabsUnconnected = (props) => {
         format('YYYY-MM-DD');
 
       completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
+    }
+    if (savedCompletedDateFilter) {
+      if (savedCompletedDateFilter === 'cleared') {
+        // Filter was cleared so don't set a filter now
+      } else {
+        // It's an existing filter so add it to the filters like normally
+        completedTabPaginationOptions['filter[]'].push(savedCompletedDateFilter);
+      }
+    } else {
+      // Sets the last 7 days filter on first swap to the completed tasks tab if the temp date filter is not set
+      const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
+        some((item) => item.includes('col=completedDateColumn'));
+
+      if (!containsCompletedDateFilter) {
+        const sevenDaysAgoString = moment().subtract(7, 'days').
+          format('YYYY-MM-DD');
+
+        completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
+      }
     }
   }
 

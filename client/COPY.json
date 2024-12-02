@@ -1606,6 +1606,7 @@
   "TRANSCRIPTION_FILE_DISPATCH_TYPE": "Type to search...",
   "TRANSCRIPTION_FILE_DISPATCH_LINK": "Transcription settings",
   "TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED": "%s file%s selected",
+  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand",
   "DATE_PICKER_APPLY": "Apply Filter",
   "DATE_PICKER_TO": "To",
   "DATE_PICKER_FROM": "From",
@@ -1635,5 +1636,6 @@
   "UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA": "Please provide context and instructions for this action",
   "UPLOAD_TRANSCRIPTION_VBMS_TITLE": "Upload transcript to VBMS",
   "UPLOAD_TRANSCRIPTION_VBMS_BUTTON": "Upload to VBMS",
-  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand"
+  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand",
+  "DATE_PICKER_BETWEEN_DATES_ERROR_MESSAGE": "\"To\" date cannot occur before the \"From\" date"
 }

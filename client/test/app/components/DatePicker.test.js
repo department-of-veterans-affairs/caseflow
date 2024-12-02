@@ -37,7 +37,6 @@ describe('DatePicker', () => {
       expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
     });
   };
-
   it('renders default state correctly', async () => {
     const { container } = setup();
 
