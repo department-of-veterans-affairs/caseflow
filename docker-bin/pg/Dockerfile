@@ -1,15 +1,11 @@
-FROM postgres:14.9
+FROM postgres:14.15
 
-ENV ORACLE_HOME=/opt/oracle/instantclient_12_2 \
-    LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2 \
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_23_5" \
+    ORACLE_HOME="/opt/oracle/instantclient_23_5" \
+    OCI_DIR="/opt/oracle/instantclient_23_5" \
     LANG="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     LC_CTYPE="en_US.UTF-8"
-
-COPY instantclient-basic-linux.x64-12.2.0.1.0.zip \
-  instantclient-sdk-linux.x64-12.2.0.1.0.zip \
-  instantclient-sqlplus-linux.x64-12.2.0.1.0.zip \
-  oracle_libs/
 
 # Install ZScaler root certificate
 COPY ZscalerRootCertificate-2048-SHA256.crt /etc/ssl/certs/
@@ -19,7 +15,24 @@ RUN true \
   && apt-get install ca-certificates \
   && update-ca-certificates --fresh
 
-# Install dependencies
+# Install InstantClient
+WORKDIR /opt/oracle
+
+RUN chown $(whoami) /opt/oracle \
+  && export PATH="/opt/oracle/instantclient_23_5:$PATH"
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linuxx64.zip
+RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linuxx64.zip
+RUN jar xvf instantclient-basic-linuxx64.zip
+RUN jar xvf instantclient-sqlplus-linuxx64.zip
+RUN jar xvf instantclient-sdk-linuxx64.zip
+RUN rm instantclient-basic-linuxx64.zip instantclient-sqlplus-linuxx64.zip instantclient-sdk-linuxx64.zip
+
+RUN rm -f /opt/oracle/instantclient_23_5/libclntsh.so
+WORKDIR /opt/oracle/instantclient_23_5
+RUN ln -s libclntsh.so.23.1 libclntsh.so
+
+# Install other dependencies
 RUN true \
   && apt-get install -y libaio1 \
   libaio-dev \
@@ -31,14 +44,7 @@ RUN true \
   postgresql-server-dev-14 \
   build-essential \
   locales \
-  locales-all \
-  && mkdir /opt/oracle \
-  && chown $(whoami) /opt/oracle \
-  && unzip oracle_libs/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /opt/oracle \
-  && unzip oracle_libs/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /opt/oracle \
-  && unzip oracle_libs/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /opt/oracle \
-  && ln -s /opt/oracle/instantclient_12_2/libclntsh.so.12.1 /opt/oracle/instantclient_12_2/libclntsh.so \
-  && export PATH="/opt/oracle/instantclient_12_2:$PATH"
+  locales-all
 
 # Install oracle_fdw
 RUN true \
