@@ -79,6 +79,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       convert_to_rtf_and_upload_to_s3! if should_convert_and_upload?
     end
     @transcription_file.clean_up_tmp_location
+
+    # Check disposition and send error email if not "held"
+    unless hearing.held?
+      send_error_email
+    end
   end
 
   # Checks if file is a vtt and was not already converted
@@ -129,6 +134,18 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   private
 
+  def send_error_email
+    error_details = {
+      error: { type: "disposition", explanation: "Hearing disposition is not set to 'held'" },
+      provider: "webex",
+      docket_number: docket_number,
+      appeal_id: hearing.appeal.external_id,
+      subject: "Hearing #{docket_number} not set to \"Held\" and audio files " \
+            "have been returned for this Hearing from Webex"
+    }
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
+  end
+
   # Purpose: Downloads file from temporary download link provided by
   #          FetchRecordingDetailsJob. Update file status of transcription file depending on download success/failure.
   #
@@ -136,6 +153,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #         file_name - string, to be parsed for hearing identifiers
   #
   # Returns: Updated @transcription_file
+
   def download_file_to_tmp!(link)
     transcription_file = @transcription_file
     return if File.exist?(transcription_file.tmp_location)

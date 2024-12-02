@@ -8,6 +8,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     let(:hearing) { create(:hearing) }
     let(:docket_number) { hearing.docket_number }
     let(:appeal_id) { hearing.appeal.uuid }
+    let(:file_type) { "mp3" }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
     let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
     let(:transcription_file) { TranscriptionFile.find_by(file_name: file_name) }
@@ -28,6 +29,20 @@ describe Hearings::DownloadTranscriptionFileJob do
     subject { described_class.new.perform(download_link: link, file_name: file_name) }
 
     after { File.delete(tmp_location) if File.exist?(tmp_location) }
+
+    context "when hearing is not held" do
+      before do
+        allow(hearing).to receive(:held?).and_return(false)
+      end
+
+      it "calls send_error_email" do
+        job = described_class.new
+        allow(job).to receive(:send_error_email)
+        allow(job).to receive(:hearing).and_return(hearing) # Mock the hearing method to return the hearing object
+        job.perform(download_link: link, file_name: file_name)
+        expect(job).to have_received(:send_error_email)
+      end
+    end
 
     shared_examples "all file types" do
       it "saves downloaded file to correct tmp sub-directory" do
