@@ -116,7 +116,7 @@ class QueueRepository
     end
     # :nocov:
 
-    def assign_case_to_attorney!(assigned_by:, judge:, attorney:, vacols_id:)
+    def assign_case_to_attorney!(assigned_by:, judge:, attorney:, vacols_id:, instructions:)
       transaction do
         unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
           fail(Caseflow::Error::LegacyCaseAlreadyAssignedError,
@@ -126,9 +126,9 @@ class QueueRepository
         update_location_to_attorney(vacols_id, attorney)
 
         LegacyAppealAssignmentTrackingTask.create!(
-          appeal: appeal,
-          assigned_to: assigned_to,
-          assigned_by_id: current_user.id,
+          appeal: LegacyAppeal.find_by(vacols_id: vacols_id),
+          assigned_to: attorney,
+          assigned_by: assigned_by,
           instructions: instructions,
           status: Constants.TASK_STATUSES.completed
         )
