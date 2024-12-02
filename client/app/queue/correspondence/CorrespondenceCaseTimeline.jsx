@@ -25,7 +25,8 @@ const CorrespondenceCaseTimeline = (props) => {
       { (Object.keys(taskNotRelatedToAppealBanner).length > 0) && (
         <div className="correspondence-details-alert-banner">
           <Alert
-            type={taskNotRelatedToAppealBanner.type}>
+            type={taskNotRelatedToAppealBanner.type}
+            styling= "correspondence-details-alert-banner-inner">
             {taskNotRelatedToAppealBanner.message}
           </Alert>
         </div>

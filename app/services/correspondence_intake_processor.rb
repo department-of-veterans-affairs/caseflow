@@ -4,13 +4,13 @@
 # :reek:FeatureEnvy
 class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
-    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
+    correspondence = find_correspondence(intake_params[:correspondence_uuid])
 
     verify_correspondence(correspondence)
 
     parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id)
 
-    return false if !correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
+    return false unless correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
       correspondence,
       current_user,
       parent_task
@@ -21,18 +21,20 @@ class CorrespondenceIntakeProcessor
 
   def update_correspondence(intake_params)
     # Fetch the correspondence using the UUID from the intake params
-    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
+    correspondence = find_correspondence(intake_params[:correspondence_uuid])
 
     # Fail if correspondence is not found
     verify_correspondence(correspondence)
 
     ActiveRecord::Base.transaction do
+      create_correspondence_relations(intake_params, correspondence.id, true)
+      link_appeals_to_correspondence(intake_params, correspondence.id)
+      unlink_appeals_to_correspondence(intake_params, correspondence)
       # Ensure relations removal logic is in place
       remove_correspondence_relations(intake_params, correspondence)
-
-      # Additional logic to update correspondence fields if necessary (optional)
+      # Method to add a task unrelated to appeals
+      add_task_not_related_to_appeals(intake_params, correspondence)
     end
-
     # Return success after successful update
     true
   rescue StandardError => error
@@ -41,15 +43,43 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_letter(params, _current_user)
-    correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    correspondence = find_correspondence(params[:correspondence_uuid])
 
     # Fail if correspondence is not found
     verify_correspondence(correspondence)
-
     create_response_letter(params, correspondence.id)
   end
 
+  def create_appeal_related_tasks(data, current_user, correspondence_id)
+    appeal = Appeal.find_by_id(data[:appeal_id])
+    # find the CorrespondenceAppeal created in link_appeals_to_correspondence
+    cor_appeal = CorrespondenceAppeal.find_by(
+      correspondence_id: correspondence_id,
+      appeal_id: appeal.id
+    )
+    task = task_class_for_task_related(data).create_from_params(
+      {
+        appeal: appeal,
+        parent_id: appeal.root_task&.id,
+        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+        instructions: data[:content]
+      }, current_user
+    )
+    # create join table to CorrespondenceAppealTask for tracking
+    CorrespondencesAppealsTask.find_or_create_by(
+      correspondence_appeal: cor_appeal,
+      task: task
+    )
+  end
+
   private
+
+  def find_correspondence(uuid)
+    correspondence = Correspondence.find_by(uuid: uuid)
+    fail "Correspondence not found" if correspondence.blank?
+
+    correspondence
+  end
 
   # :reek:LongParameterList
   def do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
@@ -75,13 +105,21 @@ class CorrespondenceIntakeProcessor
     return fail "Correspondence not found" if correspondence.blank?
   end
 
-  def create_correspondence_relations(intake_params, correspondence_id)
+  # :reek:BooleanParameter
+  def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
-        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+        related_correspondence_id: related_correspondence_id(uuid, direct_id)
       )
     end
+  end
+
+  # :reek:ControlParameter
+  def related_correspondence_id(uuid, direct_id)
+    return uuid if direct_id
+
+    Correspondence.find_by(uuid: uuid)&.id
   end
 
   def remove_correspondence_relations(intake_params, correspondence)
@@ -123,32 +161,19 @@ class CorrespondenceIntakeProcessor
     end
   end
 
+  def unlink_appeals_to_correspondence(intake_params, correspondence)
+    return unless intake_params[:unselected_appeal_ids]
+
+    correspondence_appeals_to_delete = correspondence.correspondence_appeals
+      .where(appeal_id: intake_params[:unselected_appeal_ids])
+    CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
+    correspondence_appeals_to_delete.delete_all
+  end
+
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
       CorrespondenceAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
     end
-  end
-
-  def create_appeal_related_tasks(data, current_user, correspondence_id)
-    appeal = Appeal.find(data[:appeal_id])
-    # find the CorrespondenceAppeal created in link_appeals_to_correspondence
-    cor_appeal = CorrespondenceAppeal.find_by(
-      correspondence_id: correspondence_id,
-      appeal_id: appeal.id
-    )
-    task = task_class_for_task_related(data).create_from_params(
-      {
-        appeal: appeal,
-        parent_id: appeal.root_task&.id,
-        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-        instructions: data[:content]
-      }, current_user
-    )
-    # create join table to CorrespondenceAppealTask for tracking
-    CorrespondencesAppealsTask.find_or_create_by(
-      correspondence_appeal: cor_appeal,
-      task: task
-    )
   end
 
   def add_tasks_to_related_appeals(intake_params, current_user, correspondence_id)
@@ -179,6 +204,26 @@ class CorrespondenceIntakeProcessor
           assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
           instructions: data[:content]
         }, current_user
+      )
+    end
+  end
+
+  # Add a task not related to appeals
+  def add_task_not_related_to_appeals(intake_params, correspondence)
+    unrelated_task_data = intake_params[:tasks_not_related_to_appeal]
+
+    # Ensure the task data is present
+    return if unrelated_task_data.blank? || unrelated_task_data.empty?
+
+    unrelated_task_data.each do |data|
+      # Create the task using provided parameters
+      task_class_for_task_unrelated(data).create_from_params(
+        {
+          parent_id: correspondence.root_task.id,
+          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+          instructions: data[:content]
+        },
+        RequestStore.store[:current_user] || User.system_user
       )
     end
   end

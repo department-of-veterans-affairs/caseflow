@@ -130,9 +130,9 @@ class CorrespondenceTasksController < TasksController
       :type,
       :correspondence_uuid,
       :assigned_to,
-      :instructions,
       :type,
-      :return_reason
+      :return_reason,
+      instructions: []
     )
   end
 

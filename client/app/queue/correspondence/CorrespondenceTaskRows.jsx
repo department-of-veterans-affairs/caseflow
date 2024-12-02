@@ -197,7 +197,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
       index,
       timeline,
       correspondence
-
     } = templateConfig;
 
     const timelineTitle = isCancelled(task) ? `${task.type} cancelled` : task.timelineTitle;
@@ -217,8 +216,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
         <td className={tdClassNamesforCorrespondence(timeline, task)}>
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
 
-          {((index < sortedTimelineEvents?.length && timeline) ||
-            (index < this.state.activeTasks?.length - 1 && !timeline)) && (
+          {/* Render grey line between tasks */}
+          {index < sortedTimelineEvents.length - 1 && (
             <div className={['grayLineStyling', cancelGrayTimeLineStyle(timeline)].join(' ')} />
           )}
         </td>
@@ -230,9 +229,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
             {this.showTimelineDescriptionItems(task)}
           </CaseDetailsDescriptionList>
         </td>
-        {!timeline && <td className="taskContainerStyling taskActionsContainerStyling">
-          {this.showActionsListItem(task, correspondence)}
-        </td>}
+        {!timeline && (
+          <td className="taskContainerStyling taskActionsContainerStyling">
+            {this.showActionsListItem(task, correspondence)}
+          </td>
+        )}
       </tr>
     );
   };
