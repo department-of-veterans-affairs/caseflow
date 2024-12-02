@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 feature "Saved Searches", :postgres do
+  include DownloadHelpers
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
   let(:vha_saved_searches_url) { "/decision_reviews/vha/searches" }
@@ -167,5 +168,80 @@ feature "Saved Searches", :postgres do
       expect(page).to have_text(search_name)
       find("button", text: "Delete").click
     end
+  end
+
+  describe "checking saved search tables" do
+    let!(:user_search) { create(:saved_search, user: user) }
+
+    before do
+      User.stub = user
+      non_comp_org.add_user(user)
+      OrganizationsUser.make_user_admin(user, non_comp_org)
+      user_search
+      visit vha_saved_searches_url
+    end
+
+    context "admin user should select saved search and apply" do
+      it "should navigate to reports page with loaded data" do
+
+        page.find("button", text: "My saved searches").click
+        table = page.find("tbody")
+
+        expect(page).to have_text("Viewing 1-1 of 1 total")
+        table_wrapper = page.find(".cf-table-wrapper")
+
+        radio_choices = page.all(".cf-form-radio-option")
+        radio_choices[0].click
+        expect(table_wrapper).to have_content("#{user_search.name}")
+
+        click_button "Apply"
+
+        expect(current_url).to include("/decision_reviews/vha/report")
+        expect(page).to have_content("Event / Action")
+
+        expect(page).to have_content("Timing specifications")
+        expect(page).to have_content("Days Waiting")
+        expect(page).to have_content("Less than")
+
+        expect(page).to have_content("Decision Review Type")
+        expect(page).to have_content("Higher-Level Reviews")
+        expect(page).to have_content("Supplemental Claims")
+
+        expect(page).to have_content("Issue Disposition")
+        expect(page).to have_content("Dismissed")
+        expect(page).to have_content("Denied")
+
+        expect(page).to have_content("Personnel")
+        expect(page).to have_content("Alex CAMOAdmin Camo")
+
+        expect(page).to have_content("Issue Type")
+        expect(page).to have_content("Caregiver | Eligibility")
+
+        expect(page).to have_content("Camp Lejune Family Member")
+        expect(page).to have_content("Caregiver | Revocation/Discharge")
+        expect(page).to have_content("CHAMPVA")
+
+
+        click_button "Generate task report"
+        # Check the csv to make sure it returns the filter row, the column header row, and the 6 event rows
+        csv_file = download_csv
+        expect(csv_file).to_not eq(nil)
+
+        click_button "Clear filters"
+
+        expect(page).to have_button("Generate task report", disabled: true)
+        expect(page).to have_button("Clear filters", disabled: true)
+        expect(page).to have_button("Save search", disabled: true)
+      end
+    end
+  end
+
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
+
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
   end
 end
