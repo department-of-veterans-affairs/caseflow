@@ -11,6 +11,7 @@ import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import { trim, escapeRegExp } from 'lodash';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 export default function TestUsers(props) {
 
@@ -23,6 +24,7 @@ export default function TestUsers(props) {
   const [optionalSeedingError, setOptionalSeedingError] = useState(null);
   const [isOptionalSeeding, setIsOptionalSeeding] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [hideSensitivityBanner, setHideSensitivityBanner] = useState(true);
 
   const handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
     catch((err) => {
@@ -167,6 +169,28 @@ export default function TestUsers(props) {
             </li>;
           })}
         </ul>
+      </div>
+      }
+      {app.name === 'Miscellaneous' && <div>
+        <button
+          onClick={() => setHideSensitivityBanner(!hideSensitivityBanner)}
+        >{hideSensitivityBanner ? 'Show' : 'Hide'} Sensitivity Mismatch Banner</button>
+        <div hidden={hideSensitivityBanner}>
+          <Alert
+            type="warning"
+            title="Additional access needed to search for this veteran ID"
+          >
+            <p>
+              Please try searching for another veteran or&nbsp;
+              <a
+                href="https://leaf.va.gov/VBA/335/sensitive_level_access_request/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >request access&nbsp;<ExternalLinkIcon className="cf-icon-external-link" /></a>
+              &nbsp;to search for this veteran ID.
+            </p>
+          </Alert>
+        </div>
       </div>
       }
     </div>;
