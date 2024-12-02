@@ -54,7 +54,7 @@ RUN true \
   && make install
 
 # Place init script
-COPY setup_oracle_fdw.sql docker-entrypoint-initdb.d/
+COPY setup_extensions.sql docker-entrypoint-initdb.d/
 
 USER postgres
 
