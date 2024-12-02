@@ -319,23 +319,9 @@ export const returnTaskToInboundOps = (payload, frontendParams, correspondenceIn
       correspondenceInfo.tasksUnrelatedToAppeal.push(updatedTasks.return_task);
       correspondenceInfo.closedTasksUnrelatedToAppeal.push(updatedTasks.closed_task);
 
-      dispatch({
-        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-        payload: {
-          bannerAlert: {
-            title,
-            message,
-            type
-          }
-        }
-      });
+      dispatch(setTaskNotRelatedToAppealBanner({ title, message, type }));
 
-      dispatch({
-        type: ACTIONS.CORRESPONDENCE_INFO,
-        payload: {
-          correspondenceInfo
-        }
-      });
+      dispatch(updateCorrespondenceInfo(correspondenceInfo));
     }).
     catch((error) => {
       const errorMessage = error?.response?.body?.message ?
@@ -344,16 +330,7 @@ export const returnTaskToInboundOps = (payload, frontendParams, correspondenceIn
 
       const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner;
 
-      dispatch({
-        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-        payload: {
-          bannerAlert: {
-            title,
-            message: sprintf(message, errorMessage),
-            type
-          }
-        }
-      });
+      dispatch(setTaskNotRelatedToAppealBanner({ title, message: sprintf(message, errorMessage), type }));
 
       console.error(error);
     });
