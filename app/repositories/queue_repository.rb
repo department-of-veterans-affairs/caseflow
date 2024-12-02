@@ -125,13 +125,15 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
-        LegacyAppealAssignmentTrackingTask.create!(
-          appeal: LegacyAppeal.find_by(vacols_id: vacols_id),
-          assigned_to: attorney,
-          assigned_by: assigned_by,
-          instructions: instructions,
-          status: Constants.TASK_STATUSES.completed
-        )
+        if FeatureToggle enabled?(legacy_case_movement_vlj_to_avlj_for_decisiondraft)
+          LegacyAppealAssignmentTrackingTask.create!(
+            appeal: LegacyAppeal.find_by(vacols_id: vacols_id),
+            assigned_to: attorney,
+            assigned_by: assigned_by,
+            instructions: instructions,
+            status: Constants.TASK_STATUSES.completed
+          )
+        end
 
         attrs = assign_to_attorney_attrs(vacols_id, attorney, assigned_by)
 
