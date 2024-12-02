@@ -70,11 +70,26 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         # Force `find_and_update_records` to raise an exception to simulate an error
         allow(service).to receive(:find_and_update_records).and_raise(StandardError.new("Something went wrong"))
 
+        allow(mock_records.first).to receive(:update!).and_raise(StandardError, "Test error")
+
         # Mock SlackService notification
         allow(SlackService).to receive_message_chain(:new, :send_notification)
 
         # Spy on Rails.logger to check for error logging
         allow(Rails.logger).to receive(:error)
+      end
+
+      it "does not update any records and skips destroying duplicate persons" do
+        result = service.remediate!
+
+        mock_records.each do |mock_record|
+          expect(mock_record).not_to have_received(:update!)
+        end
+
+        expect(duplicate_person1).not_to have_received(:destroy!)
+        expect(duplicate_person2).not_to have_received(:destroy!)
+
+        expect(result).to be_falsey
       end
 
       it "logs the error and does not destroy duplicate persons" do
