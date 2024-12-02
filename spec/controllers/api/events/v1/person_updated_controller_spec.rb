@@ -45,12 +45,12 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
   end
 
   describe "POST person updated" do
-    let(:payload) { JSON.parse Events::PersonUpdated::PersonUpdatedEvent.example_response }
+    let(:payload) { JSON.parse Events::PersonUpdated::PersonUpdatedAttributes.example_response }
     let(:params) { payload.without("attributes") }
     let(:attributes) { payload["attributes"] }
     let(:person_updated) { double(Events::PersonUpdated) }
     let(:is_veteran) { true }
-    let(:header_attributes) { Events::PersonUpdated::PersonUpdatedEvent.header_attribute_map }
+    let(:header_attributes) { Events::PersonUpdated::PersonUpdatedAttributes.header_attribute_map }
 
     before do
       header_attributes.each do |header, attribute|

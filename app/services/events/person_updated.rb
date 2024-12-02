@@ -17,7 +17,7 @@ class Events::PersonUpdated
 
     RedisMutex.with_lock(redis_key, block: 60, expire: 100) do
       ActiveRecord::Base.transaction do
-        create_event
+        event.save!
         update_person
         update_veteran if is_veteran
       end
@@ -31,13 +31,7 @@ class Events::PersonUpdated
 
   private
 
-  attr_reader :event, :consumer_event_id, :participant_id, :person_attributes, :is_veteran
-
-  def create_event
-    @event = ::PersonUpdatedEvent.create(
-      reference_id: consumer_event_id
-    )
-  end
+  attr_reader :consumer_event_id, :participant_id, :person_attributes, :is_veteran
 
   def update_person
     before_attributes = person.attributes
@@ -124,6 +118,10 @@ class Events::PersonUpdated
 
   def redis
     Redis.new(url: Rails.application.secrets.redis_url_cache)
+  end
+
+  def event
+    @event ||= PersonUpdatedEvent.new(reference_id: consumer_event_id)
   end
 
   def veteran

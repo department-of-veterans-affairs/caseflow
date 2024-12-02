@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Events::PersonUpdated::PersonUpdatedEvent
+class Events::PersonUpdated::PersonUpdatedAttributes
   class << self
     def header_attribute_map
       {
