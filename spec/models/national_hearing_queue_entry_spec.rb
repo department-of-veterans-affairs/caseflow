@@ -307,6 +307,14 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       )
     end
 
+    let!(:ama_with_sched_task2) do
+      create(
+        :appeal,
+        :with_schedule_hearing_tasks,
+        original_hearing_request_type: "central"
+      )
+    end
+
     let!(:ama_with_completed_status) do
       create(:appeal, :with_schedule_hearing_tasks).tap do |appeal|
         ScheduleHearingTask.find_by(appeal: appeal).completed!
@@ -316,12 +324,29 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let!(:case1) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
     let!(:case2) { create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
     let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
+    let!(:case4) { create(:case, bfhr: "4", bfd19: 1.day.ago, bfac: "1") }
+
+    let!(:legacy_request_issues) do
+      [
+        create(:case_issue, isskey: case4.bfkey, issmst: "Y", isspact: "N"),
+        create(:case_issue, isskey: case4.bfkey, issmst: "N", isspact: "Y")
+      ]
+    end
 
     let!(:legacy_with_sched_task) do
       create(:legacy_appeal,
              :with_schedule_hearing_tasks,
              :with_veteran,
              vacols_case: case1)
+    end
+
+    let!(:legacy_with_sched_task2) do
+      case4.case_issues = legacy_request_issues
+      case4.save!
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case4)
     end
 
     let!(:legacy_appeal_completed) do
@@ -345,20 +370,30 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     let(:ssn1) { Veteran.find_by(file_number: case1.bfcorlid[0..case1.bfcorlid.length - 2]).ssn }
     let(:ssn2) { Veteran.find_by(file_number: case2.bfcorlid[0..case2.bfcorlid.length - 2]).ssn }
     let(:ssn3) { Veteran.find_by(file_number: case3.bfcorlid[0..case3.bfcorlid.length - 2]).ssn }
+    let(:ssn4) { Veteran.find_by(file_number: case4.bfcorlid[0..case4.bfcorlid.length - 2]).ssn }
 
     let(:request_issues) do
       [
-        create(:request_issue, nonrating_issue_category: "Category C"),
-        create(:request_issue, nonrating_issue_category: "Category B"),
-        create(:request_issue, nonrating_issue_category: "Category C"),
-        create(:request_issue, nonrating_issue_category: "Category D")
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
+      ]
+    end
+
+    let(:request_issues_mst_pact) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: true, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: true),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
       ]
     end
 
     before do
       # legacy appeal update
-      cases = [case1, case2, case3]
-      ssns = [ssn1, ssn2, ssn3]
+      cases = [case1, case2, case3, case4]
+      ssns = [ssn1, ssn2, ssn3, ssn4]
 
       cases.each_with_index do |c, index|
         VACOLS::Correspondent.find(c.bfcorkey).update!(ssn: ssns[index])
@@ -373,32 +408,51 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       # ama state and country update
       Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(state_of_residence: "va")
       Veteran.find_by(file_number: ama_with_sched_task.veteran_file_number).update!(country_of_residence: "usa")
+      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(state_of_residence: "va")
+      Veteran.find_by(file_number: ama_with_sched_task2.veteran_file_number).update!(country_of_residence: "usa")
 
       # caching ama appeal
       ama_with_sched_task.request_issues = request_issues
       ama_with_sched_task.save
+      ama_with_sched_task2.request_issues = request_issues_mst_pact
+      ama_with_sched_task2.save
       CachedAppealService.new.cache_ama_appeals([ama_with_sched_task])
+      CachedAppealService.new.cache_ama_appeals([ama_with_sched_task2])
       ActiveRecord::Base.connection.execute(
         "UPDATE cached_appeal_attributes
          SET suggested_hearing_location = 'Oakland, CA (RO)'
          WHERE appeal_id = #{ama_with_sched_task.id} AND appeal_type = 'Appeal'"
       )
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
+         WHERE appeal_id = #{ama_with_sched_task2.id} AND appeal_type = 'Appeal'"
+      )
 
       # caching legacy appeal
       CachedAppealService.new.cache_legacy_appeal_postgres_data([legacy_with_sched_task])
+      CachedAppealService.new.cache_legacy_appeal_postgres_data([legacy_with_sched_task2])
       CachedAppealService.new.cache_legacy_appeal_vacols_data([case1.bfkey])
       CachedAppealService.new.cache_legacy_appeal_vacols_data([case2.bfkey])
       CachedAppealService.new.cache_legacy_appeal_vacols_data([case3.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case4.bfkey])
 
       ActiveRecord::Base.connection.execute(
         "UPDATE cached_appeal_attributes
          SET suggested_hearing_location = 'Oakland, CA (RO)'
          WHERE appeal_id = #{legacy_with_sched_task.id} AND appeal_type = 'LegacyAppeal'"
       )
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
+         WHERE appeal_id = #{legacy_with_sched_task2.id} AND appeal_type = 'LegacyAppeal'"
+      )
     end
 
-    let(:ama_hearing_task) { ama_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
-    let(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let!(:ama_hearing_task) { ama_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let!(:ama_hearing_task2) { ama_with_sched_task2.tasks.find_by(type: "ScheduleHearingTask") }
+    let!(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let!(:legacy_hearing_task2) { legacy_with_sched_task2.tasks.find_by(type: "ScheduleHearingTask") }
 
     it "refreshes the view and returns the proper appeals", bypass_cleaner: true do
       expect(NationalHearingQueueEntry.count).to eq 0
@@ -409,7 +463,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         NationalHearingQueueEntry.pluck(:appeal_id, :appeal_type)
       ).to match_array [
         [ama_with_sched_task.id, "Appeal"],
-        [legacy_with_sched_task.id, "LegacyAppeal"]
+        [ama_with_sched_task2.id, "Appeal"],
+        [legacy_with_sched_task.id, "LegacyAppeal"],
+        [legacy_with_sched_task2.id, "LegacyAppeal"]
       ]
 
       clean_up_after_threads
@@ -421,6 +477,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       # rubocop:disable Rails/TimeZone
       ama_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
       legacy_hearing_task.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
+      ama_hearing_task2.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
+      legacy_hearing_task2.update!(placed_on_hold_at: 7.days.ago, closed_at: Time.now, status: "on_hold")
       # rubocop:enable Rails/TimeZone
 
       NationalHearingQueueEntry.refresh
@@ -433,7 +491,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :task_id, :schedulable, :assigned_to_id,
           :assigned_by_id, :days_on_hold, :days_waiting,
           :task_status, :state_of_residence, :country_of_residence,
-          :suggested_hearing_location
+          :suggested_hearing_location, :mst_indicator, :pact_indicator
         )
       ).to match_array [
         [
@@ -454,7 +512,31 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           ama_hearing_task.status,
           "va",
           "usa",
-          "Oakland, CA (RO)"
+          "Oakland, CA (RO)",
+          false,
+          false
+        ],
+        [
+          ama_with_sched_task2.id,
+          "Appeal",
+          ama_with_sched_task2.original_hearing_request_type,
+          1.day.ago.strftime("%Y%m%d"),
+          ama_with_sched_task2.uuid,
+          ama_with_sched_task2.stream_type,
+          ama_with_sched_task2.stream_docket_number,
+          false,
+          ama_with_sched_task2.tasks.find_by_type("ScheduleHearingTask").id,
+          false,
+          ama_hearing_task2.assigned_to_id,
+          ama_hearing_task2.assigned_by_id,
+          ((Time.zone.now - ama_hearing_task2.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((ama_hearing_task2.closed_at - ama_hearing_task2.created_at) / 60 / 60 / 24).floor,
+          ama_hearing_task2.status,
+          "va",
+          "usa",
+          "Oakland, CA (RO)",
+          true,
+          true
         ],
         [
           legacy_with_sched_task.id,
@@ -474,7 +556,31 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           legacy_hearing_task.status,
           "va",
           "usa",
-          "Oakland, CA (RO)"
+          "Oakland, CA (RO)",
+          false,
+          false
+        ],
+        [
+          legacy_with_sched_task2.id,
+          "LegacyAppeal",
+          case4.bfhr,
+          1.day.ago.strftime("%Y%m%d"),
+          case4.bfkey,
+          "Original",
+          VACOLS::Folder.find_by_ticknum(case4.bfkey).tinum,
+          false,
+          legacy_with_sched_task2.tasks.find_by_type("ScheduleHearingTask").id,
+          true,
+          legacy_hearing_task2.assigned_to_id,
+          legacy_hearing_task2.assigned_by_id,
+          ((Time.zone.now - legacy_hearing_task2.placed_on_hold_at) / 60 / 60 / 24).floor,
+          ((legacy_hearing_task2.closed_at - legacy_hearing_task2.created_at) / 60 / 60 / 24).floor,
+          legacy_hearing_task2.status,
+          "va",
+          "usa",
+          "Oakland, CA (RO)",
+          true,
+          true
         ]
       ]
 
@@ -485,9 +591,9 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
   context "schedulable" do
     after(:each) { clean_up_after_threads }
 
-    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
-    let(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:vacols_case) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
     let!(:legacy_appeal) do
       create(:legacy_appeal,
              :with_schedule_hearing_tasks,
