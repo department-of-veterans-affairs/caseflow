@@ -7,12 +7,10 @@ import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import { trim, escapeRegExp } from 'lodash';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 export default function TestUsers(props) {
@@ -202,14 +200,6 @@ export default function TestUsers(props) {
 
   return <BrowserRouter>
     <div>
-      <NavigationBar
-        userDisplayName={props.userDisplayName}
-        dropdownUrls={props.dropdownUrls}
-        appName="Test Users"
-        logoProps={{
-          accentColor: COLORS.GREY_DARK,
-          overlapColor: COLORS.GREY_DARK
-        }} />
       <AppFrame>
         <AppSegment filledBackground>
           <h1>Welcome to the Caseflow admin page.</h1>
