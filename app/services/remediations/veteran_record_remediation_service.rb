@@ -30,15 +30,12 @@ class Remediations::VeteranRecordRemediationService
 
   def dup_fix(file_number)
     begin
-      # should we run the base transaction nested like this or is that bad practice?
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      true
       SlackService.new.send_notification("Job completed successfully", self.class.name)
     rescue StandardError => error
       SlackService.new.send_notification("Job failed with error: #{error.message}", "Error in #{self.class.name}")
       Rails.logger.error "an error occured #{error}"
-      false
       # sentry log / metabase dashboard
     end
   end
