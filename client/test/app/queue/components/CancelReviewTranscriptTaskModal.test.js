@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
 
+import rootReducer from 'app/queue/reducers';
 import CancelReviewTranscriptTaskModal from 'app/queue/components/CancelReviewTranscriptTaskModal';
 
 describe('CancelReviewTranscriptTaskModal', () => {
@@ -12,16 +16,25 @@ describe('CancelReviewTranscriptTaskModal', () => {
     closeModal
   };
 
+  const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
+
+  const getCancelReviewTranscriptTaskModal = (store) => render(
+    <Provider store={store}>
+      <CancelReviewTranscriptTaskModal {...defaultProps} />
+    </Provider>
+  );
+
   it('renders correctly', () => {
-    const { container } = render(<CancelReviewTranscriptTaskModal {...defaultProps} />);
+    const store = getStore();
+    const { container } = getCancelReviewTranscriptTaskModal(store);
 
     expect(container).toMatchSnapshot();
   });
 
   it('displays the default page elements with default props', () => {
-    render(
-      <CancelReviewTranscriptTaskModal {...defaultProps} />
-    );
+    const store = getStore();
+
+    getCancelReviewTranscriptTaskModal(store);
 
     const textarea = screen.getByRole('textbox');
 
@@ -34,9 +47,9 @@ describe('CancelReviewTranscriptTaskModal', () => {
   });
 
   it('the submit button is enabled when fields filled out', async () => {
-    render(
-      <CancelReviewTranscriptTaskModal {...defaultProps} />
-    );
+    const store = getStore();
+
+    getCancelReviewTranscriptTaskModal(store);
 
     expect(screen.getByRole('button', { name: 'Cancel task' })).
       toBeDisabled();
