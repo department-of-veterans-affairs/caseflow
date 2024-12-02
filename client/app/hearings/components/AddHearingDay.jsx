@@ -77,6 +77,14 @@ export const AddHearingDay = ({
   // Determine the Eastern Time Zone offset
   const zoneOffset = moment(selectedHearingDay).isDST() ? '04:00' : '05:00';
 
+  const convertAndFormatTimezone = (hearingDay, hearingTime) => {
+    const easternTime = moment.tz(`${hearingDay} ${hearingTime}`, selectedRegionalOffice?.timezone).
+      tz('America/New_York').
+      format('hh:mm');
+
+    return `${selectedHearingDay}T${easternTime}:00-${zoneOffset}`;
+  };
+
   useEffect(() => {
     // Initialize the Time slot variables based on the selected request type and valid form fields
     if (showTimeSlots) {
@@ -335,7 +343,7 @@ export const AddHearingDay = ({
                 vertical
                 label="Start Time of Slots"
                 enableZone
-                localZone="America/New_York"
+                localZone={selectedRegionalOffice?.timezone}
                 onChange={handleStartTimeChange}
                 value={hearingStartTime}
                 hearingDayDate={selectedHearingDay}
@@ -345,7 +353,7 @@ export const AddHearingDay = ({
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={`${selectedHearingDay}T${hearingStartTime}:00-${zoneOffset}`}
+                  slotStartTime={convertAndFormatTimezone(selectedHearingDay, hearingStartTime)}
                   slotLength={slotLength}
                   slotCount={slotCount}
                   hearingDate={selectedHearingDay}
