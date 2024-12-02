@@ -234,7 +234,7 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
-  context "correspondence details Prior Mail tab" do
+  context "Correspondence details with related correspondences" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:correspondences) do
       (0..1).map do |i|
@@ -248,6 +248,17 @@ RSpec.feature("The Correspondence Details page") do
           notes: i == 0 ? "Note Test" : "Related Correspondence Test"
         )
       end
+    end
+    let(:completed_correspondence) do
+      create(
+        :correspondence,
+        :related_correspondence,
+        :completed,
+        veteran: veteran,
+        va_date_of_receipt: "Tue, 20 Jul 2024 00:00:00 EDT -04:00",
+        nod: false,
+        notes: "Note Test"
+      )
     end
     let(:correspondence) { correspondences[0] }
     let(:related_correspondence) { correspondences[1] }
@@ -265,28 +276,67 @@ RSpec.feature("The Correspondence Details page") do
       )
     end
 
-    it "properly removes prior mail relationship from corespondence" do
-      visit "/queue/correspondence/#{correspondence.uuid}"
-      click_on "Associated Prior Mail"
-      page.execute_script('
-      document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
-        if (index < 6) {
-          checkbox.click();
-        }
-      });
-      ')
-      click_button("Save changes")
-      visit current_path
-      click_on "Associated Prior Mail"
-
-      # Confirm that all checkboxes are unchecked after the page refresh
-      page.execute_script('
-        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox) => {
-          if (checkbox.checked) {
-            throw new Error("Checkbox should be unchecked, but it is checked.");
+    context "correspondence details Prior Mail tab" do
+      it "properly removes prior mail relationship from corespondence" do
+        visit "/queue/correspondence/#{correspondence.uuid}"
+        click_on "Associated Prior Mail"
+        page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 6) {
+            checkbox.click();
           }
         });
-      ')
+        ')
+        click_button("Save changes")
+        visit current_path
+        click_on "Associated Prior Mail"
+
+        # Confirm that all checkboxes are unchecked after the page refresh
+        page.execute_script('
+          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox) => {
+            if (checkbox.checked) {
+              throw new Error("Checkbox should be unchecked, but it is checked.");
+            }
+          });
+        ')
+      end
+    end
+
+    context "Adding a new task not related to appeal" do
+      before :each do
+        seed_database
+      end
+
+      it "Adds a new task not related to appeal on Correspondence Details page" do
+        visit "/queue/correspondence/#{completed_correspondence.uuid}"
+        expect(page).to have_content("Record status: Completed")
+        all(".plus-symbol")[1].click
+        click_button("+ Add task")
+        expect(page).to have_selector("h1", text: "Add task to correspondence")
+        expect(page).to have_selector(".add-task-modal-container")
+        expect(page).to have_field("content")
+        fill_in "content", with: "Test"
+        expect(page).to have_button("Next", disabled: true)
+        find(".add-task-dropdown-style").click
+        find(".react-select__option", text: "Congressional Interest").click
+        expect(page).to have_button("Next", disabled: false)
+        click_button "Next"
+
+        # Test textarea autotext based on radio selection
+        find("label", text: "Address updated in VACOLS").click
+        find("label", text: "C&P exam report").click
+        expect(page).to have_content("Address updated in VACOLS, \nC&P exam report")
+
+        click_button "Add task"
+        using_wait_time(10) do
+          expect(page).to have_content("Congressional Interest")
+        end
+
+        # Test status change from completed to pending
+        expect(page).to have_content("Record status: Pending")
+        click_button "View task instructions"
+        expect(page).to have_content("Address updated in VACOLS")
+      end
     end
   end
 end

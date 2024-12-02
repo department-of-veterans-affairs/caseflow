@@ -59,10 +59,16 @@ class EvidenceSubmissionWindowTask < Task
 
   # only inbound ops superusers/supervisors can waive the Evidence Window task.
   def waivable?
-    return false unless RequestStore[:current_user].inbound_ops_team_superuser? ||
-                        RequestStore[:current_user].inbound_ops_team_supervisor?
+    return false if RequestStore[:current_user].blank?
 
-    assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed
+    current_user = RequestStore[:current_user]
+
+    return false unless current_user.inbound_ops_team_superuser? ||
+                        current_user.inbound_ops_team_supervisor?
+
+    # if the timer is still within the 90 day window but was completed early, allow
+    # to be re-opened
+    (Time.zone.now < timer_ends_at) && status == Constants.TASK_STATUSES.completed
   end
 
   def actions_available?(_user)

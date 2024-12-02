@@ -1475,6 +1475,7 @@
   "DISPOSITION_DECISION_HEADER_NONADMIN": "Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within this claim, please request a modification via the button above.",
   "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date.",
   "PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL": "Provide instructions and context for this action",
+  "PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL": "Please provide context and instructions for this action",
   "VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE": "You have successfully updated an issue's decision date",
   "NO_DATE_ENTERED": "No date entered",
   "REFRESH_POA": "Refresh POA",
@@ -1644,5 +1645,7 @@
     }
   },
   "ALL_CORRESPONDENCES": "All Correspondence",
+  "CONFIRM_WAIVE_REMOVAL": "Confirm waive removal",
+  "WAIVE_REMOVAL_NOTE": "Once confirmed, the waive evidence window will be removed.",
   "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }
