@@ -126,7 +126,7 @@ export const AddTasksAppealsView = (props) => {
           />
         </div>
 
-        <hr />
+        <hr className="intake-form-divider" />
 
         <div id="task-not-related-to-an-appeal">
           <h2 className="tasks-not-related-to-an-appeal-title">Tasks not related to an Appeal</h2>

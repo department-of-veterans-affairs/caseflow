@@ -1,7 +1,8 @@
 import React from 'react';
 import TextareaField from '../../../../../components/TextareaField';
-import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
+import Select from 'react-select';
 import Checkbox from '../../../../../components/Checkbox';
+import COPY from '../../../../../../COPY';
 import PropTypes from 'prop-types';
 
 const AddEvidenceSubmissionTaskView = (props) => {
@@ -29,17 +30,19 @@ const AddEvidenceSubmissionTaskView = (props) => {
       <div className="gray-border evidence-window-submission-box ">
         <div className="evidence-window-submission-task-dropdown">
           <div id="reactSelectContainer">
-            <ReactSelectDropdown
+            <label className="task-selection-title">Task</label>
+            <Select
               options={dropdownOptions}
-              label="Task"
               defaultValue={dropdownOptions[0]}
-              disabled
+              classNamePrefix="react-select"
+              className="add-task-dropdown-style"
+              isDisabled= "true"
             />
           </div>
           <div className="area-below-evidence-window-submission-task-dropdown" />
           <TextareaField
             name="content"
-            label="Provide context and instructions on this task"
+            label={COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
             disabled
             textAreaStyling={{ style: { cursor: 'not-allowed' } }}
           />
@@ -53,7 +56,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
           {task.isWaived && (
             <TextareaField
               name="waiveReason"
-              label="Provide a reason for waiving the evidence window"
+              label={COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
               onChange={handleReasonChange}
               value={task.waiveReason}
             />
