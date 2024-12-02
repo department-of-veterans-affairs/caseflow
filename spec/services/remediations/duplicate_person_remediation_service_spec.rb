@@ -64,6 +64,7 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         expect(duplicate_person1).to have_received(:destroy!)
         expect(duplicate_person2).to have_received(:destroy!)
       end
+    end
 
     context "when an error occurs during remediation" do
       before do
