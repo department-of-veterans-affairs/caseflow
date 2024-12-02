@@ -641,7 +641,6 @@ export class PdfFile extends React.PureComponent {
 
     return null;
   }
-}
 
 PdfFile.propTypes = {
   _transport: PropTypes.object,

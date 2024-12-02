@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
@@ -16,13 +17,14 @@ import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+
 const markStyle = css({
   '& mark': {
     background: COLORS.GOLD_LIGHTER,
     '.highlighted': {
-      background: COLORS.GREEN_LIGHTER
-    }
-  }
+      background: COLORS.GREEN_LIGHTER,
+    },
+  },
 });
 
 export class PdfPage extends React.PureComponent {
@@ -50,7 +52,7 @@ export class PdfPage extends React.PureComponent {
           }
           this.marks = this.textLayer.getElementsByTagName('mark');
           this.highlightMarkAtIndex(scrollToMark);
-        }
+        },
       })
     );
   };
@@ -60,12 +62,14 @@ export class PdfPage extends React.PureComponent {
       return;
     }
     const selectedMark = this.marks[this.props.relativeIndex];
+
     if (selectedMark) {
       selectedMark.classList.add('highlighted');
       if (scrollToMark) {
-        // Mark parent elements are absolutely-positioned divs. Account for search bar and margin height.
         this.props.setDocScrollPosition(
-          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10) - PAGE_MARGIN
+          parseInt(selectedMark.parentElement.style.top, 10) -
+            (SEARCH_BAR_HEIGHT + 10) -
+            PAGE_MARGIN
         );
       }
     } else {
@@ -77,7 +81,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
-    // get sum of matches from pages below pageIndex
     return sum(map(filter(this.props.matchesPerPage, (page) => page.pageIndex < pageIndex), (page) => page.matches));
   };
 
@@ -94,24 +97,24 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = true;
     const currentScale = this.props.scale;
     const viewport = page.getViewport({ scale: this.props.scale });
-    // We need to set the width and heights of everything based on
-    // the width and height of the viewport.
+
     this.canvas.height = viewport.height;
     this.canvas.width = viewport.width;
     const options = {
       canvasContext: this.canvas.getContext('2d', { alpha: false }),
-      viewport
+      viewport,
     };
+
     this.renderTask = page.render(options);
-    return this.renderTask.promise
-      .then(() => {
+
+    return this.renderTask.promise.
+      then(() => {
         this.isDrawing = false;
-        // If the scale has changed, draw the page again at the latest scale.
         if (currentScale !== this.props.scale && page) {
           return this.drawPage(page);
         }
-      })
-      .catch((error) => {
+      }).
+      catch((error) => {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
@@ -149,9 +152,11 @@ export class PdfPage extends React.PureComponent {
       } else {
         const searchTextChanged = this.props.searchText !== prevProps.searchText;
         const currentMatchIdxChanged =
+          // eslint-disable-next-line react/prop-types
           !isNaN(this.props.relativeIndex) && this.props.relativeIndex !== prevProps.relativeIndex;
         const pageIndexChanged =
           !isNaN(this.props.pageIndexWithMatch) && this.props.pageIndexWithMatch !== prevProps.pageIndexWithMatch;
+
         if (this.props.matchesPerPage.length || searchTextChanged) {
           this.markText(currentMatchIdxChanged || searchTextChanged || pageIndexChanged);
         }
@@ -164,12 +169,13 @@ export class PdfPage extends React.PureComponent {
       return;
     }
     const viewport = page.getViewport({ scale: PAGE_DIMENSION_SCALE });
+
     this.textLayer.innerHTML = '';
     PDFJS.renderTextLayer({
       textContent: text,
       container: this.textLayer,
       viewport,
-      textDivs: []
+      textDivs: [],
     }).promise.then(() => {
       this.markInstance = new Mark(this.textLayer);
       if (this.props.searchText && !this.props.searchBarHidden) {
@@ -191,13 +197,15 @@ export class PdfPage extends React.PureComponent {
           documentId: this.props.documentId,
           pageIndex: this.props.pageIndex,
           numPagesInDoc: this.props.pdfDocument.numPages,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
         },
       };
+
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
       const document = this.props.pdfDocument;
       const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
       const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
+
       pageResult.then((page) => {
         this.page = page;
         const textMetricData = {
@@ -209,9 +217,10 @@ export class PdfPage extends React.PureComponent {
             documentId: this.props.documentId,
             pageIndex: this.props.pageIndex,
             numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
           },
         };
+
         const readerRenderText = {
           uuid: uuidv4(),
           message: 'PDFJS rendering text layer',
@@ -223,14 +232,20 @@ export class PdfPage extends React.PureComponent {
             file: this.props.file,
             pageIndex: this.props.pageIndex,
             numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
           },
         };
+
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+
         textResult.then((text) => {
-          recordMetrics(this.drawText(page, text), readerRenderText,
-            this.props.featureToggles.metricsReaderRenderText);
+          recordMetrics(
+            this.drawText(page, text),
+            readerRenderText,
+            this.props.featureToggles.metricsReaderRenderText
+          );
         });
+
         this.drawPage(page).then(() => {
           const data = {
             overscan: this.props.windowingOverscan,
@@ -239,8 +254,69 @@ export class PdfPage extends React.PureComponent {
             pageIndex: this.props.pageIndex,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled,
             start: this.measureTimeStartMs,
-            end: performance.now()
+            end: performance.now(),
           };
 
-          // Waits for all the pages before storing metric
-          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex ===
+          if (
+            this.props.featureToggles.pdfPageRenderTimeInMs &&
+            this.props.pageIndex === this.props.pdfDocument.numPages - 1
+          ) {
+            const duration = performance.now() - this.measureTimeStartMs;
+
+            storeMetrics(this.props.documentId, data, {
+              message: 'pdf_page_render_time_in_ms',
+              type: 'performance',
+              product: 'reader',
+              duration,
+              start: this.measureTimeStartMs,
+              end: performance.now(),
+            });
+          }
+        });
+      });
+    }
+  };
+
+  render = () => (
+    <div
+      id={`pdf-page-${this.props.pageIndex}`}
+      ref={this.getPageContainerRef}
+      className={classNames('pdf-page', markStyle.toString())}
+      onClick={this.onClick}
+    >
+      <canvas ref={this.getCanvasRef} />
+      <div className="textLayer" ref={this.getTextLayerRef} />
+      <CommentLayer />
+    </div>
+  );
+}
+
+PdfPage.propTypes = {
+  scale: PropTypes.number.isRequired,
+  pdfDocument: PropTypes.object.isRequired,
+  documentId: PropTypes.string.isRequired,
+  file: PropTypes.string.isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  matchesPerPage: PropTypes.array.isRequired,
+  setSearchIndexToHighlight: PropTypes.func.isRequired,
+  searchText: PropTypes.string.isRequired,
+  searchBarHidden: PropTypes.bool.isRequired,
+  isPageVisible: PropTypes.bool.isRequired,
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  searchText: getSearchTerm(state),
+  matchesPerPage: getMatchesPerPageInFile(state, ownProps.documentId),
+  currentMatchIndex: getCurrentMatchIndex(state),
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setSearchIndexToHighlight,
+      setDocScrollPosition,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);

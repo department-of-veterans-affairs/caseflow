@@ -29,13 +29,9 @@ const checkUuid = (uniqueId, data, message, type) => {
 /**
  * uniqueId should be V4 UUID
  * If a uniqueId is not presented one will be generated for it
- *
  * Data is an object containing information that will be stored in metric_attributes
- *
  * If a message is not provided one will be created based on the data passed in
- *
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
- *
  */
 export const storeMetrics = (uniqueId, data, {
   message,

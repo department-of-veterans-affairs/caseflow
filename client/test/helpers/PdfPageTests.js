@@ -7,17 +7,14 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 
-// Mocking the Metrics functions at the top of the file
 jest.mock('../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockReturnThis(),
   recordMetrics: jest.fn().mockReturnThis(),
   recordAsyncMetrics: jest.fn().mockImplementation(() => Promise.resolve())
 }));
 
-// Store setup for tests
 const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
-// Mock data
 export const pageMetricData = [
   'test',
   {
@@ -82,7 +79,6 @@ export const recordMetricsArgs = [
   true
 ];
 
-// Test helpers that render the component with feature toggles
 export const pdfPageRenderTimeInMsEnabled = (props) => {
   const store = getStore();
 
