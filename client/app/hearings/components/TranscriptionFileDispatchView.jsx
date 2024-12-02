@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QueueOrganizationDropdown from '../../queue/components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import { css } from 'glamor';
+import styled from 'styled-components';
 import TabWindow from '../../components/TabWindow';
 import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
@@ -17,15 +17,16 @@ const defaultAlert = {
   type: '',
 };
 
-const styles = css({
-  '& .cf-dropdown': {
-    marginRight: 0
-  },
-  '& h1': {
-    display: 'inline-block',
-    marginBottom: 0
+const TitleWrapper = styled.div`
+  .cf-dropdown {
+    margin-right: 0;
   }
-});
+
+  h1 {
+    display: inline-block;
+    margin-bottom: 0;
+  }
+`;
 
 export const TranscriptionFileDispatchView = ({ organizations }) => {
   const [alert, setAlert] = useState(defaultAlert);
@@ -168,10 +169,10 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
       )}
 
       <AppSegment filledBackground>
-        <div {...styles}>
+        <TitleWrapper>
           <h1>Transcription file dispatch</h1>
           <QueueOrganizationDropdown organizations={organizations} />
-        </div>
+        </TitleWrapper>
         <TabWindow
           name="transcription-tabwindow"
           defaultPage={currentTab}
