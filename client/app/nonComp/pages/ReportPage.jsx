@@ -469,10 +469,7 @@ const ReportPage = ({ history }) => {
 
     return filters;
   };
-  console.log("isDirty", !isDirty);
-  console.log("savedSearch?.reportType", !savedSearch?.reportType);
-  console.log("disabled", !isDirty && !savedSearch?.reportType);
-  let isDisabledGroup = !isDirty && !savedSearch?.reportType;
+  const isDisabledGroup = !isDirty && !savedSearch?.reportType;
 
   const handleViewSavedSearch = () => {
     dispatch(selectSavedSearch({}));
@@ -486,16 +483,14 @@ const ReportPage = ({ history }) => {
   };
 
   const handleSave = (data) => {
-    // console.log("defaultFormValues",defaultFormValues);
     dispatch(saveUserSearch(data));
     setShowSaveSearchModal(true);
   };
 
   const handleClearFilters = () => {
-    reset(resetFormValues, { keepDirty: false });
+    dispatch(selectSavedSearch({}));
+    reset(resetFormValues);
   };
-
-  console.log("isDisabledGroup", isDisabledGroup);
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
