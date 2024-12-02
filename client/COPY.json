@@ -1606,6 +1606,7 @@
   "TRANSCRIPTION_FILE_DISPATCH_TYPE": "Type to search...",
   "TRANSCRIPTION_FILE_DISPATCH_LINK": "Transcription settings",
   "TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED": "%s file%s selected",
+  "DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE": "Decision Review Request: Remand",
   "DATE_PICKER_APPLY": "Apply Filter",
   "DATE_PICKER_TO": "To",
   "DATE_PICKER_FROM": "From",
