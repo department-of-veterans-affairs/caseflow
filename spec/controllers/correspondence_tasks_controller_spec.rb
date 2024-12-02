@@ -92,6 +92,36 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
     end
   end
 
+  describe "POST #create_return_to_inbound_ops_task" do
+    context "Create correspondece return to inbound ops task" do
+      let(:other_motion_task) do
+        LitigationSupport.singleton.add_user(assigned_to)
+        OtherMotionCorrespondenceTask.create_child_task(
+          correspondence.root_task, current_user, { assigned_to: assigned_to }
+        )
+      end
+
+      before do
+        task_creation_params[:id] = correspondence.id
+        task_creation_params[:task_id] = other_motion_task.id
+        post :create_return_to_inbound_ops_task, params: task_creation_params
+      end
+
+      it "cancels other motion task and creates return to inbound ops task successfully" do
+        expect(response).to have_http_status(:ok)
+        return_task = ReturnToInboundOpsTask.find_by(appeal_id: correspondence.id, type: ReturnToInboundOpsTask.name)
+        other_motion_task = OtherMotionCorrespondenceTask.find_by(
+          appeal_id: correspondence.id, type: OtherMotionCorrespondenceTask.name
+        )
+        parent = return_task.parent
+        expect(return_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(return_task.parent_id).to eq(parent.id)
+        expect(other_motion_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(other_motion_task.parent_id).to eq(parent.id)
+      end
+    end
+  end
+
   describe "PATCH #update assign_to_person" do
     context "Update correspondence task" do
       before do

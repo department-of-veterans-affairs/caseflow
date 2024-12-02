@@ -84,7 +84,8 @@ class CorrespondenceTask < Task
       ReassignPackageTask.name,
       RemovePackageTask.name,
       SplitPackageTask.name,
-      MergePackageTask.name
+      MergePackageTask.name,
+      ReturnToInboundOpsTask.name
     ].freeze
   end
 
@@ -98,7 +99,8 @@ class CorrespondenceTask < Task
       PowerOfAttorneyRelatedCorrespondenceTask.name,
       PrivacyActRequestCorrespondenceTask.name,
       PrivacyComplaintCorrespondenceTask.name,
-      StatusInquiryCorrespondenceTask.name
+      StatusInquiryCorrespondenceTask.name,
+      ReturnToInboundOpsTask.name
     ].freeze
   end
 

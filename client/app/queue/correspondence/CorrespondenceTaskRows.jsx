@@ -81,6 +81,17 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
 
+  assignedByListItem = (task) => {
+    if (task.assignedBy !== null) {
+      return (
+        <div className="cf-row-wrapper">
+          <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
+          <dd>{task.assignedBy}</dd>
+        </div>
+      );
+    }
+  };
+
   taskLabelListItem = (task) => {
     if (task.closedAt) {
       return null;
@@ -136,7 +147,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         )}
         <Button
           linkStyling
-          id={task.uniqueId}
+          id={task.uniqueId.toString()}
           name={
             taskInstructionsVisible ?
               COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
@@ -172,6 +183,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     return (
       <React.Fragment>
         {task.type !== 'IssuesUpdateTask' && this.assignedToListItem(task)}
+        {this.assignedByListItem(task)}
         {this.taskLabelListItem(task)}
         {this.taskInstructionsListItem(task)}
       </React.Fragment>

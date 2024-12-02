@@ -300,3 +300,38 @@ export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch
       console.error(errorMessage);
     });
 };
+
+export const returnTaskToInboundOps = (payload, frontendParams, correspondenceInfo) => (dispatch) => {
+  const { taskId } = frontendParams;
+
+  return ApiUtil.post(`/queue/correspondence/tasks/${taskId}/return_to_inbound_ops`, payload).
+    then((response) => {
+      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.returnToInboundOpsBanner;
+      const updatedTasks = response.body;
+      // Remove the current task that has now been cancelled
+      const filteredTasks = correspondenceInfo.tasksUnrelatedToAppeal.filter(
+        (task) => parseInt(task.uniqueId, 10) !== parseInt(taskId, 10)
+      );
+
+      correspondenceInfo.tasksUnrelatedToAppeal = filteredTasks;
+
+      // Add updated cancelled task and created return task
+      correspondenceInfo.tasksUnrelatedToAppeal.push(updatedTasks.return_task);
+      correspondenceInfo.closedTasksUnrelatedToAppeal.push(updatedTasks.closed_task);
+
+      dispatch(setTaskNotRelatedToAppealBanner({ title, message, type }));
+
+      dispatch(updateCorrespondenceInfo(correspondenceInfo));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      const { title, message, type } = CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner;
+
+      dispatch(setTaskNotRelatedToAppealBanner({ title, message: sprintf(message, errorMessage), type }));
+
+      console.error(error);
+    });
+};
