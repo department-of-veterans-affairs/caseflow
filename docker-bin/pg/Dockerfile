@@ -1,8 +1,8 @@
 FROM postgres:14.15
 
-ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_23_5" \
-    ORACLE_HOME="/opt/oracle/instantclient_23_5" \
-    OCI_DIR="/opt/oracle/instantclient_23_5" \
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_23_6" \
+    ORACLE_HOME="/opt/oracle/instantclient_23_6" \
+    OCI_DIR="/opt/oracle/instantclient_23_6" \
     LANG="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     LC_CTYPE="en_US.UTF-8"
@@ -33,7 +33,7 @@ RUN true \
 WORKDIR /opt/oracle
 
 RUN chown $(whoami) /opt/oracle \
-  && export PATH="/opt/oracle/instantclient_23_5:$PATH"
+  && export PATH="/opt/oracle/instantclient_23_6:$PATH"
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linuxx64.zip
 RUN curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-sdk-linuxx64.zip
