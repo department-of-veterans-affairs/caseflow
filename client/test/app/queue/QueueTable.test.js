@@ -517,7 +517,9 @@ describe("QueueTable", () => {
     };
 
     function extractPropsAndState(fiberNode) {
-      if (!fiberNode) return null;
+      if (!fiberNode) {
+        return null;
+      }
 
       // Traverse up the tree to find the relevant component node
       while (fiberNode.return) {
@@ -530,6 +532,7 @@ describe("QueueTable", () => {
           };
         }
       }
+
       return null;
     }
 
@@ -548,6 +551,7 @@ describe("QueueTable", () => {
       const fiberNode = getFiberNode(queueTable);
       const extractedData = extractPropsAndState(fiberNode);
       const memoizedState = extractedData.memoizedState;
+
       // Assertions
       Object.entries(initState).forEach(([key, value]) => {
         expect(memoizedState).toHaveProperty(key, value);
@@ -664,8 +668,10 @@ describe("QueueTable", () => {
       expect(pagination).toHaveLength(2);
 
       const rows = [];
+
       for (let rowId = 0; rowId <= 14; rowId++) {
         const rowElement = container.querySelector(`#table-row-${rowId}`);
+
         rows.push(rowElement);
         expect(rowElement).toBeInTheDocument();
       }
@@ -677,8 +683,10 @@ describe("QueueTable", () => {
       fireEvent.click(nextButton[0]);
 
       const rows2 = [];
+
       for (let rowId = 0; rowId <= 4; rowId++) {
         const rowElement = container.querySelector(`#table-row-${rowId}`);
+
         rows2.push(rowElement);
         expect(rowElement).toBeInTheDocument();
       }
