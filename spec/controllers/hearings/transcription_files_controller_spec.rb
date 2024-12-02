@@ -41,9 +41,9 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
     let(:hearing_day_3) { create(:hearing_day, scheduled_for: "2007-06-30") }
     let(:hearing_day_4) { create(:hearing_day, scheduled_for: "2024-01-17") }
 
-    let!(:appeal_1) { create(:appeal, stream_type: "original", aod_based_on_age: true) }
+    let!(:appeal_1) { create(:appeal, stream_type: "original") }
     let!(:appeal_2) { create(:appeal, stream_type: "original") }
-    let!(:appeal_3) { create(:appeal, stream_type: "original") }
+    let!(:appeal_3) { create(:appeal, stream_type: "original", aod_based_on_age: true) }
 
     let!(:hearing_1) { create(:hearing, appeal: appeal_1, hearing_day: hearing_day_1) }
     let!(:hearing_2) { create(:hearing, appeal: appeal_2, hearing_day: hearing_day_2) }
@@ -85,7 +85,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         externalAppealId: appeal_1.uuid,
         docketNumber: transcription_file_1.docket_number,
         caseDetails: "#{appeal_1.appellant_or_veteran_name} (#{appeal_1.veteran_file_number})",
-        isAdvancedOnDocket: true,
+        isAdvancedOnDocket: false,
         caseType: "Original",
         hearingDate: hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_1.hearing_type,
@@ -129,7 +129,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         docketNumber: transcription_file_4.docket_number,
         caseDetails: "#{transcription_file_4.hearing.appeal.appellant_or_veteran_name} " \
           "(#{transcription_file_4.hearing.appeal.veteran_file_number})",
-        isAdvancedOnDocket: false,
+        isAdvancedOnDocket: true,
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
@@ -144,7 +144,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         docketNumber: transcription_file_4.docket_number,
         caseDetails: "#{transcription_file_4.hearing.appeal.appellant_or_veteran_name} " \
           "(#{transcription_file_4.hearing.appeal.veteran_file_number})",
-        isAdvancedOnDocket: false,
+        isAdvancedOnDocket: true,
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
@@ -163,7 +163,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         docketNumber: transcription_file_4.docket_number,
         caseDetails: "#{transcription_file_4.hearing.appeal.appellant_or_veteran_name} " \
           "(#{transcription_file_4.hearing.appeal.veteran_file_number})",
-        isAdvancedOnDocket: false,
+        isAdvancedOnDocket: true,
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
@@ -263,7 +263,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_2, transcription_response_1]
+          data: [transcription_response_4, transcription_response_2]
         },
         tasks_per_page: 15,
         total_task_count: 2
@@ -440,7 +440,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_1, transcription_response_2, transcription_response_3, transcription_response_4]
+          data: [transcription_response_2, transcription_response_4, transcription_response_1, transcription_response_3]
         },
         tasks_per_page: 15,
         total_task_count: 4
@@ -458,7 +458,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_1, transcription_response_2]
+          data: [transcription_response_2, transcription_response_4]
         },
         tasks_per_page: 15,
         total_task_count: 2
