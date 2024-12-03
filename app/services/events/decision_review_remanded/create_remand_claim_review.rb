@@ -8,7 +8,7 @@ class Events::DecisionReviewRemanded::CreateRemandClaimReview
         create_supplemental_claim(parser)
       end
     rescue StandardError => error
-      raise Caseflow::Error::DecisionReviewCreatedCreateClaimReviewError, error.message
+      raise Caseflow::Error::DecisionReviewRemandedCreateRemandClaimReviewError, error.message
     end
 
     private
