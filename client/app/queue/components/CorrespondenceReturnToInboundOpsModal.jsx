@@ -46,7 +46,6 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     );
 
-    // Payload needs to send over the task id, the reason selected, and other reason
     const payload = {
       data: { return_reason: reasonSelected === RETURN_TYPES.other ? otherReason : reasonSelected }
     };
@@ -57,7 +56,6 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
       assignedName: updatedTask.assignedTo
     };
 
-    // We need to hit the path /correspondence/tasks/:task_id/return_to_inbound_ops
     return props.returnTaskToInboundOps(payload, frontendParams, props.correspondenceInfo);
   };
 

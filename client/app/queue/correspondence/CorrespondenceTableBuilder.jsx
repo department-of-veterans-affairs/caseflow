@@ -286,31 +286,29 @@ const CorrespondenceTableBuilder = (props) => {
             </div>
           </div>
 
-          <div className="correspondence-builder-table">
-            <QueueTable
-              key={tabConfig.name}
-              columns={columnsFromConfig(config, tabConfig, tasks)}
-              rowObjects={tasks}
-              getKeyForRow={(_rowNumber, task) => task.uniqueId}
-              casesPerPage={config.tasks_per_page}
-              numberOfPages={tabConfig.task_page_count}
-              totalTaskCount={totalTaskCount}
-              taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
-              tabPaginationOptions={
-                savedPaginationOptions.tab === tabConfig.name ? savedPaginationOptions : {}
-              }
-              // Limit filter preservation/retention to only VHA orgs for now.
-              {...(isVhaOrg ? { preserveFilter: true } : {})}
-              defaultSort={defaultSort}
-              useTaskPagesApi={
-                config.use_task_pages_api && !tabConfig.contains_legacy_tasks
-              }
-              enablePagination
-              isCorrespondenceTable
-              searchValue={searchValue}
-              taskMatchesSearch={taskMatchesSearch}
-            />
-          </div>
+          <QueueTable
+            key={tabConfig.name}
+            columns={columnsFromConfig(config, tabConfig, tasks)}
+            rowObjects={tasks}
+            getKeyForRow={(_rowNumber, task) => task.uniqueId}
+            casesPerPage={config.tasks_per_page}
+            numberOfPages={tabConfig.task_page_count}
+            totalTaskCount={totalTaskCount}
+            taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
+            tabPaginationOptions={
+              savedPaginationOptions.tab === tabConfig.name ? savedPaginationOptions : {}
+            }
+            // Limit filter preservation/retention to only VHA orgs for now.
+            {...(isVhaOrg ? { preserveFilter: true } : {})}
+            defaultSort={defaultSort}
+            useTaskPagesApi={
+              config.use_task_pages_api && !tabConfig.contains_legacy_tasks
+            }
+            enablePagination
+            isCorrespondenceTable
+            searchValue={searchValue}
+            taskMatchesSearch={taskMatchesSearch}
+          />
         </>
       ),
     };

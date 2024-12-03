@@ -56,7 +56,6 @@ class CorrespondenceTasksController < TasksController
     end
   end
 
-  # Currently used only for OtherMotionMailTask unrelated to Appeal
   def create_return_to_inbound_ops_task
     # Requires current correspondence mail task to be cancelled
     ActiveRecord::Base.transaction do
@@ -131,9 +130,9 @@ class CorrespondenceTasksController < TasksController
       :type,
       :correspondence_uuid,
       :assigned_to,
-      :instructions,
       :type,
-      :return_reason
+      :return_reason,
+      instructions: []
     )
   end
 
