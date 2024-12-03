@@ -55,8 +55,6 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::IssueModificationRequest
-    # TODO: Remove the below seed from this file prior to production release
-    call_and_log_seed_step Seeds::AppealsForPushPriorityJobDistribution
   end
 end
 
