@@ -264,6 +264,15 @@ export default function TestUsers(props) {
                   loadingText="Running optional seed" />
                 <br /> <br />
                 <h3>API Keys</h3>
+                <p>
+                API Keys are used for testing API endpoints in demo using a utility such as curl or Bruno.
+                After generating the key, the key string is not accessible. Save the key string after generating it,
+                or you will need to generate a new one the next time you perform API testing.
+                </p>
+                <p>
+                To use the API key, add it as a header in an HTTP request in the format 'Authorization: Bearer
+                key_string', or add it as a Bearer token in Bruno.
+                </p>
                 <Button
                   onClick={generateApiKey}
                   name="Generate API Key"
