@@ -20,16 +20,40 @@ class Api::V1::CmpController < Api::ApplicationController
     end
   end
 
+  def packet
+    new_packet = CmpMailPacket.new(packet_params)
+
+    if new_packet.save
+      render json: { message: "CMP packet successfully created" }, status: :ok
+    else
+      render json: {
+        message: "CMP document could not be created"}, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def cmp_document_params
     {
-      cmp_document_id: params[:documentId],
-      cmp_document_uuid: params[:documentUuid],
-      date_of_receipt: params[:dateOfReceipt],
-      doctype_name: params[:nonVbmsDocTypeName],
-      packet_uuid: params[:packetUuid],
-      vbms_doctype_id: params[:vbmsDocTypeId]
+      cmp_document_id: params.require(:documentId),
+      cmp_document_uuid: params.require(:documentUUID),
+      date_of_receipt: params.require(:dateOfReceipt),
+      doctype_name: params.require(:nonVbmsDocTypeName),
+      packet_uuid: params.require(:packetUUID),
+      vbms_doctype_id: params.require(:vbmsDocTypeId)
+    }
+  end
+
+  def packet_params
+    {
+      packet_uuid: params[:packetUUID],
+      cmp_packet_number: params[:packetNumber],
+      packet_source: params[:packetSource],
+      va_dor: params[:vaDor],
+      veteran_id: params[:vetereanId],
+      veteran_first_name: params[:veteranFirstName],
+      veteran_middle_initial: params[:veteranMiddleName],
+      veteran_last_name: params[:veteranLastName]
     }
   end
 
