@@ -1,7 +1,7 @@
 CREATE EXTENSION oracle_fdw;
 
 CREATE SERVER vacols_sv FOREIGN DATA WRAPPER oracle_fdw OPTIONS (
-    dbserver 'vacols_db:1521/BVAP'
+    dbserver '//host.docker.internal:1521/BVAP'
 );
 
 -- Grant permissions to the postgres user for the foreign tables
