@@ -20,10 +20,6 @@ class Remediations::VeteranRecordRemediationService
         # If there are duplicates, run dup_fix on @after_fn
         if dup_fix(@after_fn)
           @dups.each(&:destroy!)
-        else
-          Rails.logger.error "dup_fix failed"
-          SlackService.new.send_notification("Job failed during record update", "Error in #{self.class.name}")
-          false
         end
       else
         # Otherwise, fix veteran records normally
@@ -43,7 +39,6 @@ class Remediations::VeteranRecordRemediationService
     begin
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      # SlackService.new.send_notification("Job completed successfully", self.class.name)
       true
     rescue StandardError => error
       Rails.logger.error "an error occured #{error}"
