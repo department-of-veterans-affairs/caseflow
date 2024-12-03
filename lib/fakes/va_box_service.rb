@@ -59,6 +59,18 @@ class Fakes::VaBoxService
     File.open(tmp_folder.to_s, "w") { |f| f.write "test" }
   end
 
+  def upload_file(path, id)
+    true
+  end
+
+  def fetch_access_token
+    true
+  end
+
+  def get_child_folder_id(parent_folder_id, child_folder_name)
+    ""
+  end
+
   private
 
   def recent_date
