@@ -144,10 +144,6 @@ class Document < CaseflowRecord
     default_path
   end
 
-  def file_size
-    File.size(default_path) || 0
-  end
-
   def file_name
     vbms_document_id.to_s
   end
