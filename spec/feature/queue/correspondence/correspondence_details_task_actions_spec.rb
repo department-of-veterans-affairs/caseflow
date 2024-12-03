@@ -114,6 +114,20 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           click_button("View task instructions")
           expect(all(".task-instructions")[1].text).to include("Change task type instructions")
         end
+
+        it "Verify #{task_action[:name]} task with Return to inbound ops action dropdown" do
+          visit "/queue/correspondence/#{@correspondence.uuid}"
+          dropdowns = page.all(".toggleButton-plus-or-minus")
+          dropdowns.last.click
+          click_dropdown(prompt: "Select an action", text: "Return to Inbound Ops")
+          expect(page).to have_content("Return to Inbound Ops")
+          expect(page).to have_content("This correspondence will be returned " \
+          "to the Inbound Operations Team. Please select a reason for return.")
+          click_button("Return")
+          dropdowns = page.all(".toggleButton-plus-or-minus")
+          dropdowns.last.click
+          expect(page).to have_content("You have successfully returned the correspondence to Inbound Operations team.")
+        end
       end
     end
   end
