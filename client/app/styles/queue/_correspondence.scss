@@ -1328,12 +1328,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .myletters {
   width: 100%;
   display: inline-block;
+  padding-top: 20px;
 }
 
 .letter {
   width: 50%;
   float: left;
-  height: 840px;
 }
 
 .add-letter-container {
