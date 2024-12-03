@@ -34,6 +34,7 @@ export const ConditionDropdown = ({ control, filteredOptions, name, field }) => 
 
 ConditionDropdown.propTypes = {
   control: PropTypes.object,
+  field: PropTypes.object,
   filteredOptions: PropTypes.array,
   name: PropTypes.string,
   errors: PropTypes.object
