@@ -93,7 +93,7 @@ end
 
 Capybara.javascript_driver = :logging_selenium_chrome
 
-Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
+Capybara.default_driver = ENV["HEADLESS"] ? :sniffybara_headless : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 # Capybara uses puma by default, but for some reason, some of our tests don't

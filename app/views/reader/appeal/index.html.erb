@@ -12,6 +12,7 @@
     featureToggles: {
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
       bandwidthBanner: FeatureToggle.enabled?(:bandwidth_banner, user: current_user),
+      warningIconAndBanner: FeatureToggle.enabled?(:warning_icon_and_banner, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
       readerGetDocumentLogging: FeatureToggle.enabled?(:reader_get_document_logging, user: current_user),
