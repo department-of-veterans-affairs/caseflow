@@ -249,11 +249,16 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 	bundle exec rake db:drop:etl db:create:etl db:schema:load:etl
 	bundle exec rake db:drop:primary db:create:primary
 	make create_custom_pg_types
+	make create_foreign_tables
 	bundle exec rake db:schema:load:primary
 	make consolidated_db_scripts
 
 create_custom_pg_types: ##
 	psql -h localhost -U postgres -d caseflow_certification_development -a -f local/sql/create_custom_types.sql
+
+create_foreign_tables: ##
+	psql -h localhost -U postgres -d caseflow_certification_development -a -f local/sql/create_foreign_tables_for_vacols.sql
+
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
