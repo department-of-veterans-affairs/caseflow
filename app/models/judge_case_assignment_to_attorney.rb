@@ -18,7 +18,7 @@ class JudgeCaseAssignmentToAttorney
         judge: judge || assigned_by,
         attorney: assigned_to,
         vacols_id: vacols_id,
-        instructions: instructions
+        instructions: Array.wrap(instructions)
       )
     end
   end
