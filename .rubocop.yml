@@ -123,6 +123,7 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Exclude:
     - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+    - app/controllers/hearings/transcription_files_controller.rb
     - lib/helpers/duplicate_veteran_checker.rb
 
 Metrics/PerceivedComplexity:
