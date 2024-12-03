@@ -16,6 +16,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   private
 
   def run_person_remediation
+    # not sure how exactly to refactor here
     find_events("Person").select do |event_record|
       original_id = event_record.evented_record_id
       dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
@@ -27,10 +28,12 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   end
 
   def run_veteran_remediation
+    # i believe this one is fixed
     find_events("Veteran").select do |event_record|
-      before_fn = event_record.info["before_data"]["file_number"]
-      after_fn = event_record.info["record_data"]["file_number"]
+      info = event_record.info
       original_id = event_record.evented_record_id
+      before_fn = info["before_data"]["file_number"]
+      after_fn = info["record_data"]["file_number"]
       dup_ids = Veteran.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
       if before_fn != after_fn || dup_ids.size >= 1
         Remediations::VeteranRecordRemediationService.new(before_fn, after_fn, event_record).remediate!
