@@ -190,7 +190,7 @@ feature "Saved Searches", :postgres do
 
         radio_choices = page.all(".cf-form-radio-option")
         radio_choices[0].click
-        expect(table_wrapper).to have_content("#{user_search.name}")
+        expect(table_wrapper).to have_content(user_search.name.to_s)
 
         click_button "Apply"
 
@@ -219,9 +219,7 @@ feature "Saved Searches", :postgres do
         expect(page).to have_content("Caregiver | Revocation/Discharge")
         expect(page).to have_content("CHAMPVA")
 
-
         click_button "Generate task report"
-        # Check the csv to make sure it returns the filter row, the column header row, and the 6 event rows
         csv_file = download_csv
         expect(csv_file).to_not eq(nil)
 

@@ -103,8 +103,7 @@ FactoryBot.define do
               { label: "Supplemental Claims", value: "SupplementalClaim" }
             ]
           }
-        }]
-      }
+        }] }
     end
   end
 
@@ -120,8 +119,7 @@ FactoryBot.define do
               { value: "Beneficiary Travel", label: "Beneficiary Travel" }
             ]
           }
-        }]
-      }
+        }] }
     end
   end
 
@@ -135,8 +133,7 @@ FactoryBot.define do
           options: {
             issueDispositions: [{ label: "Denied", value: "denied" }]
           }
-        }]
-      }
+        }] }
     end
   end
 end
