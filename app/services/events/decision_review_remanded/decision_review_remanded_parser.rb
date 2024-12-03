@@ -56,10 +56,6 @@ class Events::DecisionReviewRemanded::DecisionReviewRemandedParser
     @payload.dig(:event_id).presence
   end
 
-  # def claim_id
-  #   @payload.dig(:claim_id).presence
-  # end
-
   # Veteran attributes
   def veteran
     @payload.dig(:veteran)
