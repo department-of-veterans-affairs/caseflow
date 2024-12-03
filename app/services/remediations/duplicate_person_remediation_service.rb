@@ -29,7 +29,8 @@ class Remediations::DuplicatePersonRemediationService
     rescue StandardError => error
       # This will catch any errors that happen during the execution of find_and_update_records or subsequent operations
       Rails.logger.error "An error occurred during remediation: #{error.message}"
-      SlackService.new.send_notification("Job failed during remediation: #{error.message}", "Error in #{self.class.name}")
+      SlackService.new.send_notification("Job failed during remediation: #{error.message}",
+                                         "Error in #{self.class.name}")
       false # Indicate failure
     end
   end
