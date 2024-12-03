@@ -726,7 +726,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
         create(:decision_issue, :nonrating, decision_review: appeal, description: "Test decision issue")
       end
 
-      it "returns description field" do;
+      it "returns description field" do
         get "/api/v2/appeals", headers: headers
         response_body = JSON.parse(response.body)
         issue = response_body["data"].first["attributes"]["issues"].first
