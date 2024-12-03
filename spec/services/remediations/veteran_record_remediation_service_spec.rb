@@ -134,8 +134,8 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         expect(result).to be_falsey
 
         # Verify SlackService sends the failure notification
-        expect(SlackService.new).to have_received(:send_notification).
-          with("Job failed during record update", "Error in Remediations::VeteranRecordRemediationService")
+        expect(SlackService.new).to have_received(:send_notification)
+          .with("Job failed during record update", "Error in Remediations::VeteranRecordRemediationService")
       end
 
       it "does not destroy the duplicate veterans" do
