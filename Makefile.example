@@ -247,8 +247,13 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	bundle exec rake db:drop:etl db:create:etl db:schema:load:etl
-	bundle exec rake db:drop:primary db:create:primary db:schema:load:primary
+	bundle exec rake db:drop:primary db:create:primary
+	make create_custom_pg_types
+	bundle exec rake db:schema:load:primary
 	make consolidated_db_scripts
+
+create_custom_pg_types: ##
+	psql -h localhost -U postgres -d caseflow_certification_development -a -f local/sql/create_custom_types.sql
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
