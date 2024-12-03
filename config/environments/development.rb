@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-require_relative "../../config/initializers/deprecation_warnings"
+require_relative "../../lib/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -14,8 +14,8 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  # Eager load code on boot.
-  config.eager_load = true
+  # Do not eager load code on boot.
+  config.eager_load = false
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -138,7 +138,7 @@ Rails.application.configure do
   ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
 
   # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Used by VirtualHearings::PexipLinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"
