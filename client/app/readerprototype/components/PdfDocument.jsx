@@ -6,7 +6,7 @@ import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
-import { clearPdfDocument, setDocumentLoadError, setPdfDocument } from '../../reader/Pdf/PdfActions';
+import { clearDocumentLoadError, clearPdfDocument, setDocumentLoadError, setPdfDocument } from '../../reader/Pdf/PdfActions';
 import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
 import ApiUtil from '../../util/ApiUtil';
@@ -27,7 +27,8 @@ const PdfDocument = memo(({
 }) => {
 
   const isFileVisible = doc.content_url === file;
-  let visibility = isFileVisible ? 'visible' : 'hidden';
+  const visibility = isFileVisible ? 'visible' : 'hidden';
+
   const containerStyle = {
     width: '100%',
     height: '100%',
@@ -50,16 +51,14 @@ const PdfDocument = memo(({
 
   useEffect(() => {
     const keyHandler = (event) => {
-      if (isFileVisible && !isPlacingAnnotation && (event.altKey && event.code === 'ArrowDown')) {
-      // if (isFileVisible && !isPlacingAnnotation && event.code === 'PageDown') {
+      if (isFileVisible && !isPlacingAnnotation && event.code === 'PageDown') {
         const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
 
         document.getElementById(`canvasWrapper-${currentPage + listItems.length}`)?.scrollIntoView();
         event.preventDefault();
       }
 
-      if (isFileVisible && !isPlacingAnnotation && (event.altKey && event.code === 'ArrowUp')) {
-      // if (isFileVisible && !isPlacingAnnotation && event.code === 'PageUp') {
+      if (isFileVisible && !isPlacingAnnotation && event.code === 'PageUp') {
         const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
 
         document.getElementById(`canvasWrapper-${currentPage - listItems.length}`)?.scrollIntoView();
@@ -214,6 +213,9 @@ const PdfDocument = memo(({
       });
   };
 
+  // if the doc has already been saved to the redux store (in pdfDocs)
+  // then do not call getPdfDocument()
+  // call getPdfPages() to render pages only if file is visible
   useMemo(() => {
     if (pdfDocs?.[file]) {
       pdfDocumentRef.current = pdfDocs?.[file];
@@ -225,7 +227,7 @@ const PdfDocument = memo(({
     }
   }, [file]);
 
-  // next/previous
+  // render pages when user clicking next/previous
   useMemo(() => {
     if (pdfDocs?.[doc.content_url] && isFileVisible) {
       getPdfPages(pdfDocs?.[doc.content_url]);
@@ -240,6 +242,8 @@ const PdfDocument = memo(({
   }, [pdfDocumentRef.current]);
 
   useEffect(() => {
+    clearDocumentLoadError(file);
+
     return () => {
       if (pdfLoadingTaskRef.current?.id === pdfDocumentRef.current?.loadingTask?.docId) {
         pdfLoadingTaskRef.current?.destroy();
