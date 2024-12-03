@@ -1050,10 +1050,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .mail-tasks-option-left-styling {
   display: inline-block;
   margin-right: 14rem;
+
+  span {
+    vertical-align: sub;
+  }
 }
 
 .mail-tasks-option-right-styling {
   display: inline-block;
+
+  span {
+    vertical-align: sub;
+  }
 }
 
 .tasks-related-to-an-appeal-title {
