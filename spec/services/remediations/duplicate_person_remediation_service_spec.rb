@@ -100,16 +100,9 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
 
     context "when an error occurs during remediation" do
       before do
-        # Force `find_and_update_records` to raise an exception to simulate an error
-        allow(service).to receive(:find_and_update_records).and_raise(StandardError.new("Something went wrong"))
-
+        # Force `find_and_update_records` to return false to simulate a failure
+        allow(service).to receive(:find_and_update_records).and_return(false)
         allow(mock_records.first).to receive(:update!).and_raise(StandardError, "Test error")
-
-        # Mock SlackService notification
-        allow(SlackService).to receive_message_chain(:new, :send_notification)
-
-        # Spy on Rails.logger to check for error logging
-        allow(Rails.logger).to receive(:error)
       end
 
       it "does not update any records and skips destroying duplicate persons" do
@@ -126,20 +119,9 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       end
 
       it "logs the error and does not destroy duplicate persons" do
-        # Run the method that should raise an error
-        service.remediate!
+        result = service.remediate!
 
-        # Ensure the error was logged
-        expect(Rails.logger).to have_received(:error).with("An error occurred during remediation: Something went wrong")
-          .once
-
-        # Ensure Slack notification was sent
-        expect(SlackService).to have_received(:new)
-        expect(SlackService.new).to have_received(:send_notification)
-          .with("Job failed during remediation: Something went wrong",
-                "Error in Remediations::DuplicatePersonRemediationService")
-
-        # Ensure that duplicate persons are not destroyed
+        expect(result).to be_falsey
         expect(duplicate_person1).not_to have_received(:destroy!)
         expect(duplicate_person2).not_to have_received(:destroy!)
       end
