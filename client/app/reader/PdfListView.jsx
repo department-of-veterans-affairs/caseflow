@@ -97,7 +97,10 @@ export class PdfListView extends React.Component {
         {featureToggles?.isWarningIconAndBannerEnabled && (
           <SizeWarningIcon size={32} className="size-warning-icon" />
         )}
-        <LastRetrievalAlert {...this.props} />
+        <LastRetrievalAlert
+          userHasEfolderRole={this.props.userHasEfolderRole}
+          efolderExpressUrl={this.props.efolderExpressUrl}
+          appeal={this.props.appeal} />
         <AppSegment filledBackground>
           <div className="section--document-list">
             <ClaimsFolderDetails {...this.props} />
