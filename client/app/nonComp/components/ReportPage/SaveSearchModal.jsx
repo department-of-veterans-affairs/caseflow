@@ -21,7 +21,7 @@ import {
   CONDITION_DROPDOWN_LIST
 } from 'constants/REPORT_TYPE_CONSTANTS';
 
-export const SaveSearchModal = ({ setShowModal }) => {
+export const SaveSearchModal = ({ setShowSaveSearchModal }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const saveSearchParams = useSelector((state) => state.savedSearch.saveUserSearch);
@@ -38,11 +38,11 @@ export const SaveSearchModal = ({ setShowModal }) => {
     };
 
     dispatch(createSearch({ organizationUrl: businessLineUrl, postData: data }));
-    setShowModal(false);
+    setShowSaveSearchModal(false);
   };
 
   const handleCancel = () => {
-    setShowModal(false);
+    setShowSaveSearchModal(false);
   };
 
   const reportTypeEventValue = RADIO_EVENT_TYPE_OPTIONS.
@@ -227,7 +227,7 @@ export const SaveSearchModal = ({ setShowModal }) => {
   return (
     <Modal
       title={COPY.SAVE_YOUR_SEARCH_TITLE}
-      closeHandler={() => setShowModal(false)}
+      closeHandler={() => setShowSaveSearchModal(false)}
       confirmButton={<Button id="save-search" onClick={handleSave} disabled={!name}>Save search</Button>}
       cancelButton={
         <Button
@@ -263,7 +263,7 @@ export const SaveSearchModal = ({ setShowModal }) => {
 };
 
 SaveSearchModal.propTypes = {
-  setShowModal: PropTypes.func.isRequired
+  setShowSaveSearchModal: PropTypes.func.isRequired
 };
 
 export default SaveSearchModal;

@@ -64,7 +64,6 @@ feature "Saved Searches", :postgres do
         select_row_radio.click
 
         delete_buttom = find("button", text: "Delete")
-
         expect(delete_buttom[:disabled]).to eq "false"
       end
 
@@ -74,12 +73,7 @@ feature "Saved Searches", :postgres do
 
         find("button", text: "Delete").click
 
-        within ".cf-modal-body" do
-          expect(page).to have_content(COPY::DELETE_SEARCH_TITLE)
-          expect(page).to have_text(COPY::DELETE_SEARCH_DESCRIPTION)
-          expect(page).to have_text(user_saved_search.name)
-          find("button", text: "Delete").click
-        end
+        check_delete_modal(user_saved_search.name)
 
         expect(page).to have_content("You have successfully deleted #{user_saved_search.name}")
         expect(page).to have_text("Viewing 0-0 of 0 total")
@@ -135,18 +129,43 @@ feature "Saved Searches", :postgres do
       OrganizationsUser.make_user_admin(user, non_comp_org)
       user_searches
       visit vha_decision_review_url
+      click_dropdown(text: "Status")
     end
     let(:user_searches) { create_list(:saved_search, 10, user: user) }
 
-    it "should navigate to Limit Reached Modal" do
-      click_dropdown(text: "Status")
-
+    it "should be able to delete the selected saved search from limit reached modal" do
       expect(page).to have_button("Save search")
 
       click_button "Save search"
 
       expect(page).to have_content(COPY::SAVE_LIMIT_REACH_TITLE)
       expect(page).to have_content(COPY::SAVE_LIMIT_REACH_MESSAGE)
+      expect(page).to have_button("View saved searches")
+
+      search_name = ""
+
+      within ".cf-modal-body" do
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices.count).to eq 10
+        radio_choices[0].click
+        search_name = radio_choices[0].text
+        delete_button = find("button", text: "Delete")
+        expect(delete_button[:disabled]).to eq "false"
+        delete_button.click
+      end
+      check_delete_modal(search_name)
+      expect(page).to have_content("You have successfully deleted #{search_name}")
+      expect(page).to have_text("Save your search")
+      expect(page).to have_text("Search Parameters")
+    end
+  end
+
+  def check_delete_modal(search_name)
+    within page.find("#delete-search-modal") do
+      expect(page).to have_content(COPY::DELETE_SEARCH_TITLE)
+      expect(page).to have_text(COPY::DELETE_SEARCH_DESCRIPTION)
+      expect(page).to have_text(search_name)
+      find("button", text: "Delete").click
     end
   end
 end

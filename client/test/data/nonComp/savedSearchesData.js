@@ -16,7 +16,7 @@ export default {
     fetchedSearches: {
       status: 'idle',
       error: null,
-      searches: [
+      allSearches: [
         {
           id: 1,
           name: 'Search Name',

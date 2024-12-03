@@ -12,6 +12,7 @@ import SearchTable from 'app/queue/components/SearchTable';
 import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 import { isEmpty } from 'lodash';
+import COPY from 'app/../COPY';
 
 const SavedSearches = () => {
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
@@ -43,6 +44,7 @@ const SavedSearches = () => {
 
   useEffect(() => {
     dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
+    dispatch(selectSavedSearch([]));
   }, []);
 
   const ALL_TABS = [
@@ -64,7 +66,7 @@ const SavedSearches = () => {
 
   const onTabSelected = (tabNumber) => {
     setSelectedTab(tabNumber);
-    dispatch(selectSavedSearch({}));
+    dispatch(selectSavedSearch([]));
   };
 
   return (
@@ -86,7 +88,7 @@ const SavedSearches = () => {
       <NonCompLayout>
         <h1>Saved Searches</h1>
         <div>
-          Select a search you previously saved or look for ones others have saved by switching between the tabs.
+          {COPY.SAVED_SEARCH_TAB_DESCRIPTION}
         </div>
         <TabWindow name="saved-search-queue" tabs={ALL_TABS} onChange={onTabSelected} />
       </NonCompLayout>
@@ -103,7 +105,7 @@ const SavedSearches = () => {
         <Button
           label="apply"
           name="apply"
-          onClick={handleApply()}
+          onClick={handleApply}
           disabled={isDisabled}
         >
            Apply

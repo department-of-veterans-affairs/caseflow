@@ -34,9 +34,17 @@ class SavedSearchesController < ApplicationController
   def create
     @search = current_user.saved_searches.new(save_search_create_params)
 
-    return render json: { message: "#{@search.name} has been saved." }, status: :created if @search.save
+    saved = @search.save
+    if saved
+      @search_json = SavedSearchSerializer.new(@search).serializable_hash[:data]
+      return render json: {
+        message: "#{@search.name} has been saved.",
+        search: @search_json
+      },
+                    status: :created
+    end
 
-    render json:  { message: "Error creating save search" }, status: :unprocessable_entity
+    render json: { message: "Error creating save search" }, status: :unprocessable_entity
   end
 
   def destroy

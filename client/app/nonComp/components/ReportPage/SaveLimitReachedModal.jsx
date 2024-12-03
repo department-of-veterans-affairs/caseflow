@@ -1,20 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'app/components/Modal';
 import COPY from 'app/../COPY';
 import PropTypes from 'prop-types';
+import RadioField from 'app/components/RadioField';
+import { selectSavedSearch } from 'app/nonComp/actions/savedSearchSlice';
+import { isEmpty } from 'lodash';
+import { useDispatch } from 'react-redux';
 
-export const SaveLimitReachedModal = ({ setShowLimitModal }) => {
+export const SaveLimitReachedModal = ({
+  userSearches,
+  handleCancel,
+  onClickDelete,
+  handleRedirect
+}) => {
+  const dispatch = useDispatch();
 
-  const handleCancel = () => {
-    setShowLimitModal(false);
+  const [selectedRow, setSelectedRow] = useState([]);
+
+  const onRadioSelect = (val) => {
+    const selectedData = userSearches.find((search) => parseInt(search.id, 10) === parseInt(val, 10));
+
+    setSelectedRow(selectedData);
+
+    dispatch(selectSavedSearch(selectedData));
   };
 
-  const submitForm = () => {
-    // console.log('this will be updated in next ticket');
-  };
-
-  const handleRedirect = () => {
-    // this will be handle in another ticket;
+  const userSearchesList = () => {
+    return (
+      userSearches.map((search) =>
+        <RadioField
+          name="radioFieldSearchGroup"
+          options={[{ displayText: search.name, value: search.id }]}
+          hideLabel
+          onChange={(val) => onRadioSelect(val)}
+          vertical
+          optionsStyling={{ marginLeft: 5 }} />
+      )
+    );
   };
 
   return (
@@ -26,7 +48,8 @@ export const SaveLimitReachedModal = ({ setShowLimitModal }) => {
         },
         { classNames: ['usa-button', 'cf_add_margin'],
           name: 'Delete',
-          onClick: submitForm
+          disabled: isEmpty(selectedRow),
+          onClick: onClickDelete
         },
         { classNames: ['usa-button', 'usa-button-secondary'],
           name: 'View saved searches',
@@ -35,12 +58,16 @@ export const SaveLimitReachedModal = ({ setShowLimitModal }) => {
       ]}
       closeHandler={handleCancel}
     >
-      <p>{COPY.SAVE_LIMIT_REACH_MESSAGE}</p>
+      {COPY.SAVE_LIMIT_REACH_MESSAGE}
+      {userSearchesList()}
     </Modal>);
 };
 
 SaveLimitReachedModal.propTypes = {
-  setShowLimitModal: PropTypes.func.isRequired
+  userSearches: PropTypes.array,
+  handleCancel: PropTypes.func.isRequired,
+  onClickDelete: PropTypes.func.isRequired,
+  handleRedirect: PropTypes.func.isRequired,
 };
 
 export default SaveLimitReachedModal;

@@ -1,19 +1,7 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { MemoryRouter as Router } from 'react-router-dom';
-
 import SavedSearches from './SavedSearches';
-import createNonCompStore from 'test/app/nonComp/nonCompStoreCreator';
-
-const ReduxDecorator = (Story, { args: { data: { props } } }) => {
-  const store = createNonCompStore(props);
-
-  return <Provider store={store} >
-    <Router>
-      <Story />
-    </Router>
-  </Provider>;
-};
+import savedSearchesData from 'test/data/nonComp/savedSearchesData';
+import ReduxDecorator from 'test/app/nonComp/nonCompReduxDecorator';
 
 export default {
   title: 'Queue/NonComp/SavedSearches',
@@ -41,7 +29,6 @@ SavedSearchesTemplate.story = {
 };
 
 SavedSearchesTemplate.args = {
-  data: {
-  }
+  data: { nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches }
 };
 

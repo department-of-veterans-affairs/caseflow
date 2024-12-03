@@ -28,6 +28,7 @@ const DeleteModal = ({ setShowDeleteModal }) => {
 
   return (
     <Modal
+      id="delete-search-modal"
       title={COPY.DELETE_SEARCH_TITLE}
       icon="warning"
       closeHandler={() => setShowDeleteModal(false)}

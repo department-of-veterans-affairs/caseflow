@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import ApiUtil from '../../util/ApiUtil';
 
 const initialState = {
-  selectedSearch: {},
+  selectedSearch: [],
   fetchedSearches: {
     error: null,
     status: 'idle',
-    searches: [],
+    allSearches: [],
     userSearches: []
   },
   saveUserSearch: {}
@@ -58,15 +58,17 @@ export const deleteSearch = createAsyncThunk(
       const url = `/decision_reviews/${organizationUrl}/searches/${data.id}`;
       const response = await ApiUtil.delete(url);
 
-      thunkApi.dispatch(fetchedSearches({ organizationUrl }));
-
-      return thunkApi.fulfillWithValue(response.body);
+      return thunkApi.fulfillWithValue({ ...response.body, ...data });
     } catch (error) {
       console.error(error);
 
       return thunkApi.rejectWithValue(`Delete Search failed: ${error.message}`, { analytics: true });
     }
   });
+
+const filterSearches = (searches, searchId) => {
+  return searches.filter((search) => search.id !== searchId);
+};
 
 const savedSearchSlice = createSlice({
   name: 'savedSearch',
@@ -98,6 +100,10 @@ const savedSearchSlice = createSlice({
       addCase(createSearch.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.message = action.payload.message;
+        const flattenSearchData = action.payload.search.attributes;
+
+        state.fetchedSearches.userSearches.unshift(flattenSearchData);
+        state.fetchedSearches.allSearches.unshift(flattenSearchData);
       }).
       addCase(createSearch.rejected, (state, action) => {
         state.status = 'failed';
@@ -109,6 +115,8 @@ const savedSearchSlice = createSlice({
       addCase(deleteSearch.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.message = action.payload.message;
+        state.fetchedSearches.userSearches = filterSearches(state.fetchedSearches.userSearches, action.payload.id);
+        state.fetchedSearches.allSearches = filterSearches(state.fetchedSearches.allSearches, action.payload.id);
       }).
       addCase(deleteSearch.rejected, (state, action) => {
         state.status = 'failed';

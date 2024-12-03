@@ -19,6 +19,7 @@ import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
+import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 import Checkbox from 'app/components/Checkbox';
@@ -344,7 +345,8 @@ const ReportPage = ({ history }) => {
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
 
-  const [showModal, setShowModal] = useState(false);
+  const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const saveLimitCount = userSearches.length;
 
@@ -419,14 +421,11 @@ const ReportPage = ({ history }) => {
 
   const handleSave = (data) => {
     dispatch(saveUserSearch(data));
-    setShowModal(true);
+    setShowSaveSearchModal(true);
   };
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
   }, []);
 
@@ -516,12 +515,21 @@ const ReportPage = ({ history }) => {
             <TimingSpecification /> :
             null
           }
-          { showModal && saveLimitCount < 10 ?
-            <SaveSearchModal setShowModal={setShowModal} /> : null
+          { showSaveSearchModal && saveLimitCount < 10 ?
+            <SaveSearchModal setShowSaveSearchModal={setShowSaveSearchModal} /> : null
           }
-          { showModal && (saveLimitCount >= 10) ?
-            <SaveLimitReachedModal setShowLimitModal={setShowModal} /> : null
+          { showSaveSearchModal && (saveLimitCount >= 10) ?
+            <SaveLimitReachedModal
+              userSearches={userSearches}
+              handleCancel={() => setShowSaveSearchModal(false)}
+              onClickDelete={() => setShowDeleteModal(true)}
+              handleRedirect={() => {
+                history.push(`/${businessLineUrl}/searches`);
+                setShowSaveSearchModal(false);
+              }}
+            /> : null
           }
+          {showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null}
           {formState.isDirty ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
