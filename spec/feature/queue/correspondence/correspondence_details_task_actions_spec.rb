@@ -115,7 +115,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           expect(all(".task-instructions")[1].text).to include("Change task type instructions")
         end
 
-        it "Verfify #{task_action[:name]} task with Return to inbound ops action dropdown" do
+        it "Verify #{task_action[:name]} task with Return to inbound ops action dropdown" do
           visit "/queue/correspondence/#{@correspondence.uuid}"
           dropdowns = page.all(".toggleButton-plus-or-minus")
           dropdowns.last.click
