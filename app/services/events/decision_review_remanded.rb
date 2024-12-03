@@ -27,7 +27,7 @@ class Events::DecisionReviewRemanded
 
       RedisMutex.with_lock("EndProductEstablishment:#{claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do
-          # Note: some methods will be reused from DecisionReviewCreated
+          # Note: some methods will be reused from DecisionReviewCreated; there is NO Intake for Remands
           # Initialize the Parser object that will be passed around as an argument
           # TODO: Use new parser specifically for Remand Events
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
