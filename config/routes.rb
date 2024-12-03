@@ -455,6 +455,7 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
+    get "/generate_api_key", to: "users#generate_api_key", as: "generate_api_key"
 
     resources :hearings, only: [:index]
 
