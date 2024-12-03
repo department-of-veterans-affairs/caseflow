@@ -278,7 +278,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
   post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
   get 'hearings/transcription_files/fetch_file', to: 'hearings/transcription_files#fetch_file'
-
+  
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
