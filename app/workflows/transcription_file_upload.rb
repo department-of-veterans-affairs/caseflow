@@ -13,7 +13,8 @@ class TranscriptionFileUpload
     xls: "transcript_text",
     csv: "transcript_text",
     zip: "transcript_text",
-    json: "transcript_text"
+    json: "transcript_text",
+    pdf: "transcript_pdf"
   }.freeze
 
   class FileUploadError < StandardError; end
