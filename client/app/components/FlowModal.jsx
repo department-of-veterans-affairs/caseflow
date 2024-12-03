@@ -53,7 +53,7 @@ export default class FlowModal extends React.PureComponent {
   };
 
   render = () => {
-    const { title, button, children, error, success, submitDisabled, submitButtonClassNames, icon } = this.props;
+    const { title, button, children, error, success, submitDisabled, submitButtonClassNames, icon, closeButton } = this.props;
 
     return (
       <Modal
@@ -61,7 +61,7 @@ export default class FlowModal extends React.PureComponent {
         buttons={[
           {
             classNames: ['usa-button', 'cf-btn-link'],
-            name: COPY.MODAL_CANCEL_BUTTON,
+            name: closeButton ? COPY.MODAL_CLOSE_BUTTON : COPY.MODAL_CANCEL_BUTTON,
             onClick: this.cancelHandler
           },
           {
@@ -97,6 +97,7 @@ FlowModal.propTypes = {
   history: PropTypes.object,
   title: PropTypes.string,
   button: PropTypes.string,
+  closeButton: PropTypes.bool,
   icon: PropTypes.string,
   onCancel: PropTypes.func,
   pathAfterSubmit: PropTypes.string,

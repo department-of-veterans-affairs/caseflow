@@ -180,6 +180,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
       title: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
       pathAfterSubmit: (actionData && actionData.redirect_after) || `/queue/appeals/${appeal.externalId}`,
       button: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+      closeButton: true,
       submit: this.submit,
       validateForm: this.validateModal
     };
