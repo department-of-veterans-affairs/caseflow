@@ -21,7 +21,7 @@ class Events::DecisionReviewRemanded::DecisionReviewRemandedIssueParser
   end
 
   def ri_contention_reference_id
-    @issue.dig(:contention_reference_id)
+    @issue.dig(:contention_reference_id).presence
   end
 
   def ri_contested_rating_decision_reference_id
@@ -37,7 +37,7 @@ class Events::DecisionReviewRemanded::DecisionReviewRemandedIssueParser
   end
 
   def ri_contested_decision_issue_id
-    @issue.dig(:contested_decision_issue_id)
+    @issue.dig(:contested_decision_issue_id).presence
   end
 
   def ri_decision_date
