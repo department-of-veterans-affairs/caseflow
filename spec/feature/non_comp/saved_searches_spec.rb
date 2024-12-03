@@ -182,10 +182,8 @@ feature "Saved Searches", :postgres do
     end
 
     context "admin user should select saved search and apply" do
-      it "should navigate to reports page with loaded data" do
-
+      it "should navigate to reports page with loaded form data, generate report and clear" do
         page.find("button", text: "My saved searches").click
-        table = page.find("tbody")
 
         expect(page).to have_text("Viewing 1-1 of 1 total")
         table_wrapper = page.find(".cf-table-wrapper")
