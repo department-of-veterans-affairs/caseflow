@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_29_181511) do
+ActiveRecord::Schema.define(version: 2024_12_03_154036) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2468,6 +2468,44 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+          declare
+            string_claim_id varchar(25);
+            epe_id integer;
+          begin
+            if (NEW."EP_CODE" LIKE '04%'
+                OR NEW."EP_CODE" LIKE '03%'
+                OR NEW."EP_CODE" LIKE '93%'
+                OR NEW."EP_CODE" LIKE '68%')
+                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
+
+              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
+
+              select id into epe_id
+              from end_product_establishments
+              where (reference_id = string_claim_id
+              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
+
+              if epe_id > 0
+              then
+                if not exists (
+                  select 1
+                  from priority_end_product_sync_queue
+                  where end_product_establishment_id = epe_id
+                ) then
+                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
+                  values (now(), epe_id, now());
+                end if;
+              end if;
+            end if;
+            return null;
+          end;
+        $function$
+  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2577,13 +2615,13 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_corres WHERE 1 = 0';
       END $function$
   SQL
-  create_function :folders_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.folders_awaiting_hearing_scheduling()
+  create_function :folder_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.folder_awaiting_hearing_scheduling()
        RETURNS SETOF folder_record
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids TEXT;
+      	legacy_case_ids text;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2607,7 +2645,7 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids TEXT;
+      	legacy_case_ids text;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2625,13 +2663,13 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
       END $function$
   SQL
-  create_function :reps_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.reps_awaiting_hearing_scheduling()
+  create_function :rep_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.rep_awaiting_hearing_scheduling()
        RETURNS SETOF rep_record
        LANGUAGE plpgsql
       AS $function$
       DECLARE
-      	legacy_case_ids TEXT;
+      	legacy_case_ids text;
       BEGIN
         SELECT *
         INTO legacy_case_ids
@@ -2647,6 +2685,54 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
 
         -- Force a null row return
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :hearsched_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.hearsched_awaiting_hearing_scheduling()
+       RETURNS SETOF hearsched_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids text;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
+      END $function$
+  SQL
+  create_function :folders_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.folders_awaiting_hearing_scheduling()
+       RETURNS SETOF folder_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_folder WHERE ticknum IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_folder WHERE 1 = 0';
       END $function$
   SQL
   create_function :hearsched_related_to_cases_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
@@ -2673,6 +2759,53 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
       END $function$
   SQL
+  create_function :reps_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reps_awaiting_hearing_scheduling()
+       RETURNS SETOF rep_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
+
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_rep WHERE repkey IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
+
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
+      END $function$
+  SQL
+
+
+  create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
+  SQL
+  create_trigger :priority_end_product_sync_queue_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER priority_end_product_sync_queue_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.priority_end_product_sync_queue FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_priority_end_product_sync_queue_audit()
+  SQL
+  create_trigger :vbms_communication_packages_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_communication_packages_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_communication_packages FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_communication_packages_audit()
+  SQL
+  create_trigger :vbms_distribution_destinations_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distribution_destinations_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distribution_destinations FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distribution_destinations_audit()
+  SQL
+  create_trigger :vbms_distributions_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distributions_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distributions FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distributions_audit()
+  SQL
+  create_trigger :vbms_uploaded_documents_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_uploaded_documents_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_uploaded_documents FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_uploaded_documents_audit()
+  SQL
+  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
+  SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
@@ -2680,124 +2813,263 @@ ActiveRecord::Schema.define(version: 2024_11_29_181511) do
              FROM schedulable_cutoff_dates
             ORDER BY schedulable_cutoff_dates.created_at DESC
            LIMIT 1
+          ), ama_appeals_info AS (
+           SELECT appeals.id AS appeal_id,
+              'Appeal'::text AS appeal_type,
+              COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
+              replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
+              (appeals.uuid)::text AS external_id,
+              (appeals.stream_type)::text AS appeal_stream,
+              (appeals.stream_docket_number)::text AS docket_number,
+                  CASE
+                      WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
+                      ELSE false
+                  END AS aod_indicator,
+              tasks.id AS task_id,
+              tasks.assigned_to_id,
+              tasks.assigned_to_type,
+              tasks.assigned_at,
+              tasks.assigned_by_id,
+                  CASE
+                      WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+                      ELSE NULL::integer
+                  END AS days_on_hold,
+              (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
+              tasks.status AS task_status,
+                  CASE
+                      WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
+                      CASE
+                          WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
+                          ELSE false
+                      END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
+                         FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
+                      ELSE false
+                  END AS schedulable,
+              veterans.state_of_residence,
+              veterans.country_of_residence,
+              cached_appeal_attributes.suggested_hearing_location,
+              (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
+              (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator,
+              (veterans.date_of_death IS NOT NULL) AS veteran_deceased_indicator,
+              ((appeals.stream_type)::text = 'court_remand'::text) AS cavc_indicator
+             FROM (((((((appeals
+               JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
+               LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
+               JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
+               LEFT JOIN people veteran_person ON (((veteran_person.participant_id)::text = (veterans.participant_id)::text)))
+               LEFT JOIN LATERAL ( SELECT count(*) AS quantity
+                     FROM (claimants
+                       JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
+                    WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
+               LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'Appeal'::text))))
+               LEFT JOIN ( SELECT request_issues.decision_review_id,
+                      bool_or(request_issues.mst_status) AS aggregate_mst_status,
+                      bool_or(request_issues.pact_status) AS aggregate_pact_status
+                     FROM request_issues
+                    WHERE (((request_issues.decision_review_type)::text = 'Appeal'::text) AND ((request_issues.mst_status IS TRUE) OR (request_issues.pact_status IS TRUE)))
+                    GROUP BY request_issues.decision_review_id) request_issues_status ON ((appeals.id = request_issues_status.decision_review_id)))
+            WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
+          ), legacy_appeals_info AS (
+           SELECT legacy_appeals.id AS appeal_id,
+              'LegacyAppeal'::text AS appeal_type,
+              brieff.bfhr AS hearing_request_type,
+              replace((brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
+              brieff.bfkey AS external_id,
+                  CASE
+                      WHEN ((brieff.bfac)::text = '1'::text) THEN 'Original'::text
+                      WHEN ((brieff.bfac)::text = '2'::text) THEN 'Supplemental'::text
+                      WHEN ((brieff.bfac)::text = '3'::text) THEN 'Post Remand'::text
+                      WHEN ((brieff.bfac)::text = '4'::text) THEN 'Reconsideration'::text
+                      WHEN ((brieff.bfac)::text = '5'::text) THEN 'Vacate'::text
+                      WHEN ((brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
+                      WHEN ((brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
+                      WHEN ((brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
+                      WHEN ((brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakable Error'::text
+                      ELSE NULL::text
+                  END AS appeal_stream,
+              folder.tinum AS docket_number,
+                  CASE
+                      WHEN (((correspondent.sspare2 IS NULL) AND (correspondent.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
+                      WHEN ((assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
+                      ELSE false
+                  END AS aod_indicator,
+              tasks.id AS task_id,
+              tasks.assigned_to_id,
+              tasks.assigned_to_type,
+              tasks.assigned_at,
+              tasks.assigned_by_id,
+                  CASE
+                      WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
+                      ELSE NULL::integer
+                  END AS days_on_hold,
+              (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
+              tasks.status AS task_status,
+              true AS schedulable,
+              veterans.state_of_residence,
+              veterans.country_of_residence,
+              cached_appeal_attributes.suggested_hearing_location,
+                  CASE
+                      WHEN (fvi.mst = 'Y'::text) THEN true
+                      ELSE false
+                  END AS mst_indicator,
+                  CASE
+                      WHEN (fvi.pact = 'Y'::text) THEN true
+                      ELSE false
+                  END AS pact_indicator,
+              (correspondent.sfnod IS NOT NULL) AS veteran_deceased_indicator,
+              ((brieff.bfac)::text = '7'::text) AS cavc_indicator
+             FROM (((((((((legacy_appeals
+               JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
+               JOIN brieffs_awaiting_hearing_scheduling() brieff(bfkey, bfddec, bfcorkey, bfcorlid, bfdcn, bfdocind, bfpdnum, bfdpdcn, bforgtic, bfdorg, bfdthurb, bfdnod, bfdsoc, bfd19, bf41stat, bfmstat, bfmpro, bfdmcon, bfregoff, bfissnr, bfrdmref, bfcasev, bfcaseva, bfcasevb, bfcasevc, bfboard, bfbsasgn, bfattid, bfdasgn, bfcclkid, bfdqrsnt, bfdlocin, bfdloout, bfstasgn, bfcurloc, bfnrcopy, bfmemid, bfdmem, bfnrci, bfcallup, bfcallyymm, bfhines, bfdcfld1, bfdcfld2, bfdcfld3, bfac, bfdc, bfha, bfic, bfio, bfms, bfoc, bfsh, bfso, bfhr, bfst, bfdrodec, bfssoc1, bfssoc2, bfssoc3, bfssoc4, bfssoc5, bfdtb, bftbind, bfdcue, bfddvin, bfddvout, bfddvwrk, bfddvdsp, bfddvret, bfddro, bfdroid, bfdrortr, bfro1, bflot, bfbox, bfdtbready, bfarc, bfdarcin, bfdarcout, bfarcdisp, bfsub, bfrocdoc, bfdrocket, bfdcertool) ON (((legacy_appeals.vacols_id)::text = (brieff.bfkey)::text)))
+               JOIN folders_awaiting_hearing_scheduling() folder(ticknum, ticorkey, tistkey, tinum, tifiloc, tiaddrto, titrnum, ticukey, tidsnt, tidrecv, tiddue, tidcls, tiwpptr, tiwpptrt, tiaduser, tiadtime, timduser, timdtime, ticlstme, tiresp1, tikeywrd, tiactive, tispare1, tispare2, tispare3, tiread1, tiread2, timt, tisubj1, tisubj, tisubj2, tisys, tiagor, tiasbt, tigwui, tihepc, tiaids, timgas, tiptsd, tiradb, tiradn, tisarc, tisexh, titoba, tinosc, ti38us, tinnme, tinwgr, tipres, titrtm, tinoot, tioctime, tiocuser, tidktime, tidkuser, tipulac, ticerullo, tiplnod, tiplwaiver, tiplexpress, tisnl, tivbms, ticlcw) ON (((brieff.bfkey)::text = (folder.ticknum)::text)))
+               LEFT JOIN assign_awaiting_hearing_scheduling() assign(tasknum, tsktknm, tskstfas, tskactcd, tskclass, tskrqact, tskrspn, tskdassn, tskdtc, tskddue, tskdcls, tskstown, tskstat, tskownts, tskclstm, tskadusr, tskadtm, tskmdusr, tskmdtm, tsactive, tsspare1, tsspare2, tsspare3, tsread1, tsread, tskorder, tssys) ON (((assign.tsktknm)::text = (brieff.bfkey)::text)))
+               LEFT JOIN corres_awaiting_hearing_scheduling() correspondent(stafkey, susrpw, susrsec, susrtyp, ssalut, snamef, snamemi, snamel, slogid, stitle, sorg, sdept, saddrnum, saddrst1, saddrst2, saddrcty, saddrstt, saddrcnty, saddrzip, stelw, stelwex, stelfax, stelh, staduser, stadtime, stmduser, stmdtime, stc1, stc2, stc3, stc4, snotes, sorc1, sorc2, sorc3, sorc4, sactive, ssys, sspare1, sspare2, sspare3, sspare4, ssn, sfnod, sdob, sgender, shomeless, stermill, sfinhard, sadvage, smoh, svsi, spow, sals, spgwv, sincar) ON (((brieff.bfcorkey)::text = (correspondent.stafkey)::text)))
+               LEFT JOIN people ON (((correspondent.ssn)::text = (people.ssn)::text)))
+               JOIN veterans ON (((veterans.ssn)::text = (correspondent.ssn)::text)))
+               LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
+               LEFT JOIN ( SELECT issues_awaiting_hearing_scheduling.isskey,
+                      max((issues_awaiting_hearing_scheduling.issmst)::text) AS mst,
+                      max((issues_awaiting_hearing_scheduling.isspact)::text) AS pact
+                     FROM issues_awaiting_hearing_scheduling() issues_awaiting_hearing_scheduling(isskey, issseq, issprog, isscode, isslev1, isslev2, isslev3, issdc, issdcls, issadtime, issaduser, issmdtime, issmduser, issdesc, isssel, issgr, issdev, issmst, isspact)
+                    GROUP BY issues_awaiting_hearing_scheduling.isskey) fvi ON (((fvi.isskey)::text = (brieff.bfkey)::text)))
+            WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
+          ), all_appeals_info AS (
+           SELECT ama_appeals_info.appeal_id,
+              ama_appeals_info.appeal_type,
+              ama_appeals_info.hearing_request_type,
+              ama_appeals_info.receipt_date,
+              ama_appeals_info.external_id,
+              ama_appeals_info.appeal_stream,
+              ama_appeals_info.docket_number,
+              ama_appeals_info.aod_indicator,
+              ama_appeals_info.task_id,
+              ama_appeals_info.assigned_to_id,
+              ama_appeals_info.assigned_to_type,
+              ama_appeals_info.assigned_at,
+              ama_appeals_info.assigned_by_id,
+              ama_appeals_info.days_on_hold,
+              ama_appeals_info.days_waiting,
+              ama_appeals_info.task_status,
+              ama_appeals_info.schedulable,
+              ama_appeals_info.state_of_residence,
+              ama_appeals_info.country_of_residence,
+              ama_appeals_info.suggested_hearing_location,
+              ama_appeals_info.mst_indicator,
+              ama_appeals_info.pact_indicator,
+              ama_appeals_info.veteran_deceased_indicator,
+              ama_appeals_info.cavc_indicator
+             FROM ama_appeals_info
+          UNION
+           SELECT legacy_appeals_info.appeal_id,
+              legacy_appeals_info.appeal_type,
+              legacy_appeals_info.hearing_request_type,
+              legacy_appeals_info.receipt_date,
+              legacy_appeals_info.external_id,
+              legacy_appeals_info.appeal_stream,
+              legacy_appeals_info.docket_number,
+              legacy_appeals_info.aod_indicator,
+              legacy_appeals_info.task_id,
+              legacy_appeals_info.assigned_to_id,
+              legacy_appeals_info.assigned_to_type,
+              legacy_appeals_info.assigned_at,
+              legacy_appeals_info.assigned_by_id,
+              legacy_appeals_info.days_on_hold,
+              legacy_appeals_info.days_waiting,
+              legacy_appeals_info.task_status,
+              legacy_appeals_info.schedulable,
+              legacy_appeals_info.state_of_residence,
+              legacy_appeals_info.country_of_residence,
+              legacy_appeals_info.suggested_hearing_location,
+              legacy_appeals_info.mst_indicator,
+              legacy_appeals_info.pact_indicator,
+              legacy_appeals_info.veteran_deceased_indicator,
+              legacy_appeals_info.cavc_indicator
+             FROM legacy_appeals_info
+          ), prioritized_appeals AS (
+           SELECT all_appeals_info.appeal_id,
+              all_appeals_info.appeal_type,
+              all_appeals_info.hearing_request_type,
+              all_appeals_info.receipt_date,
+              all_appeals_info.external_id,
+              all_appeals_info.appeal_stream,
+              all_appeals_info.docket_number,
+              all_appeals_info.aod_indicator,
+              all_appeals_info.task_id,
+              all_appeals_info.assigned_to_id,
+              all_appeals_info.assigned_to_type,
+              all_appeals_info.assigned_at,
+              all_appeals_info.assigned_by_id,
+              all_appeals_info.days_on_hold,
+              all_appeals_info.days_waiting,
+              all_appeals_info.task_status,
+              all_appeals_info.schedulable,
+              all_appeals_info.state_of_residence,
+              all_appeals_info.country_of_residence,
+              all_appeals_info.suggested_hearing_location,
+              all_appeals_info.mst_indicator,
+              all_appeals_info.pact_indicator,
+              all_appeals_info.veteran_deceased_indicator,
+              all_appeals_info.cavc_indicator,
+                  CASE
+                      WHEN (all_appeals_info.aod_indicator AND all_appeals_info.cavc_indicator) THEN 3
+                      WHEN all_appeals_info.cavc_indicator THEN 2
+                      WHEN all_appeals_info.aod_indicator THEN 1
+                      ELSE 0
+                  END AS cavc_aod_weight,
+                  CASE
+                      WHEN (all_appeals_info.appeal_type = 'LegacyAppeal'::text) THEN 1
+                      ELSE 0
+                  END AS appeal_type_weight,
+                  CASE
+                      WHEN (all_appeals_info.appeal_type = 'LegacyAppeal'::text) THEN (all_appeals_info.external_id)::bigint
+                      ELSE all_appeals_info.appeal_id
+                  END AS ordinal_key
+             FROM all_appeals_info
+            ORDER BY
+                  CASE
+                      WHEN (all_appeals_info.aod_indicator AND all_appeals_info.cavc_indicator) THEN 3
+                      WHEN all_appeals_info.cavc_indicator THEN 2
+                      WHEN all_appeals_info.aod_indicator THEN 1
+                      ELSE 0
+                  END DESC, all_appeals_info.receipt_date,
+                  CASE
+                      WHEN (all_appeals_info.appeal_type = 'LegacyAppeal'::text) THEN 1
+                      ELSE 0
+                  END DESC,
+                  CASE
+                      WHEN (all_appeals_info.appeal_type = 'LegacyAppeal'::text) THEN (all_appeals_info.external_id)::bigint
+                      ELSE all_appeals_info.appeal_id
+                  END
           )
-   SELECT appeals.id AS appeal_id,
-      'Appeal'::text AS appeal_type,
-      COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-      replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
-      (appeals.uuid)::text AS external_id,
-      (appeals.stream_type)::text AS appeal_stream,
-      (appeals.stream_docket_number)::text AS docket_number,
-          CASE
-              WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
-              ELSE false
-          END AS aod_indicator,
-      tasks.id AS task_id,
-      tasks.assigned_to_id,
-      tasks.assigned_to_type,
-      tasks.assigned_at,
-      tasks.assigned_by_id,
-          CASE
-              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
-              ELSE NULL::integer
-          END AS days_on_hold,
-      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
-      tasks.status AS task_status,
-          CASE
-              WHEN (((appeals.stream_type)::text = 'court_remand'::text) OR (
-              CASE
-                  WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
-                  ELSE false
-              END IS TRUE) OR (appeals.receipt_date <= COALESCE(( SELECT latest_cutoff_date.cutoff_date
-                 FROM latest_cutoff_date), '2019-12-31'::date))) THEN true
-              ELSE false
-          END AS schedulable,
-      veterans.state_of_residence,
-      veterans.country_of_residence,
-      cached_appeal_attributes.suggested_hearing_location,
-      (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
-      (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator,
-      (veterans.date_of_death IS NOT NULL) AS veteran_deceased_indicator
-     FROM (((((((appeals
-       JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
-       LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
-       JOIN veterans ON (((appeals.veteran_file_number)::text = (veterans.file_number)::text)))
-       LEFT JOIN people veteran_person ON (((veteran_person.participant_id)::text = (veterans.participant_id)::text)))
-       LEFT JOIN LATERAL ( SELECT count(*) AS quantity
-             FROM (claimants
-               JOIN people ON (((claimants.participant_id)::text = (people.participant_id)::text)))
-            WHERE ((claimants.decision_review_id = appeals.id) AND ((claimants.decision_review_type)::text = 'Appeal'::text) AND (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)))) aod_based_on_age_recognized_claimants ON (true))
-       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'Appeal'::text))))
-       LEFT JOIN ( SELECT request_issues.decision_review_id,
-              bool_or(request_issues.mst_status) AS aggregate_mst_status,
-              bool_or(request_issues.pact_status) AS aggregate_pact_status
-             FROM request_issues
-            WHERE (((request_issues.decision_review_type)::text = 'Appeal'::text) AND ((request_issues.mst_status IS TRUE) OR (request_issues.pact_status IS TRUE)))
-            GROUP BY request_issues.decision_review_id) request_issues_status ON ((appeals.id = request_issues_status.decision_review_id)))
-    WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])))
-  UNION
-   SELECT legacy_appeals.id AS appeal_id,
-      'LegacyAppeal'::text AS appeal_type,
-      brieff.bfhr AS hearing_request_type,
-      replace((brieff.bfd19)::text, '-'::text, ''::text) AS receipt_date,
-      brieff.bfkey AS external_id,
-          CASE
-              WHEN ((brieff.bfac)::text = '1'::text) THEN 'Original'::text
-              WHEN ((brieff.bfac)::text = '2'::text) THEN 'Supplemental'::text
-              WHEN ((brieff.bfac)::text = '3'::text) THEN 'Post Remand'::text
-              WHEN ((brieff.bfac)::text = '4'::text) THEN 'Reconsideration'::text
-              WHEN ((brieff.bfac)::text = '5'::text) THEN 'Vacate'::text
-              WHEN ((brieff.bfac)::text = '6'::text) THEN 'De Novo'::text
-              WHEN ((brieff.bfac)::text = '7'::text) THEN 'Court Remand'::text
-              WHEN ((brieff.bfac)::text = '8'::text) THEN 'Designation of Record'::text
-              WHEN ((brieff.bfac)::text = '9'::text) THEN 'Clear and Unmistakable Error'::text
-              ELSE NULL::text
-          END AS appeal_stream,
-      folder.tinum AS docket_number,
-          CASE
-              WHEN (((correspondent.sspare2 IS NULL) AND (correspondent.sdob <= (CURRENT_DATE - 'P75Y'::interval))) OR (people.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval))) THEN true
-              WHEN ((assign.tskactcd)::text = ANY ((ARRAY['B'::character varying, 'B1'::character varying, 'B2'::character varying])::text[])) THEN true
-              ELSE false
-          END AS aod_indicator,
-      tasks.id AS task_id,
-      tasks.assigned_to_id,
-      tasks.assigned_to_type,
-      tasks.assigned_at,
-      tasks.assigned_by_id,
-          CASE
-              WHEN ((tasks.status)::text = 'on_hold'::text) THEN (CURRENT_DATE - (tasks.placed_on_hold_at)::date)
-              ELSE NULL::integer
-          END AS days_on_hold,
-      (COALESCE((tasks.closed_at)::date, CURRENT_DATE) - (tasks.assigned_at)::date) AS days_waiting,
-      tasks.status AS task_status,
-      true AS schedulable,
-      veterans.state_of_residence,
-      veterans.country_of_residence,
-      cached_appeal_attributes.suggested_hearing_location,
-          CASE
-              WHEN (fvi.mst = 'Y'::text) THEN true
-              ELSE false
-          END AS mst_indicator,
-          CASE
-              WHEN (fvi.pact = 'Y'::text) THEN true
-              ELSE false
-          END AS pact_indicator,
-      (correspondent.sfnod IS NOT NULL) AS veteran_deceased_indicator
-     FROM (((((((((legacy_appeals
-       JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
-       JOIN brieffs_awaiting_hearing_scheduling() brieff(bfkey, bfddec, bfcorkey, bfcorlid, bfdcn, bfdocind, bfpdnum, bfdpdcn, bforgtic, bfdorg, bfdthurb, bfdnod, bfdsoc, bfd19, bf41stat, bfmstat, bfmpro, bfdmcon, bfregoff, bfissnr, bfrdmref, bfcasev, bfcaseva, bfcasevb, bfcasevc, bfboard, bfbsasgn, bfattid, bfdasgn, bfcclkid, bfdqrsnt, bfdlocin, bfdloout, bfstasgn, bfcurloc, bfnrcopy, bfmemid, bfdmem, bfnrci, bfcallup, bfcallyymm, bfhines, bfdcfld1, bfdcfld2, bfdcfld3, bfac, bfdc, bfha, bfic, bfio, bfms, bfoc, bfsh, bfso, bfhr, bfst, bfdrodec, bfssoc1, bfssoc2, bfssoc3, bfssoc4, bfssoc5, bfdtb, bftbind, bfdcue, bfddvin, bfddvout, bfddvwrk, bfddvdsp, bfddvret, bfddro, bfdroid, bfdrortr, bfro1, bflot, bfbox, bfdtbready, bfarc, bfdarcin, bfdarcout, bfarcdisp, bfsub, bfrocdoc, bfdrocket, bfdcertool) ON (((legacy_appeals.vacols_id)::text = (brieff.bfkey)::text)))
-       JOIN folders_awaiting_hearing_scheduling() folder(ticknum, ticorkey, tistkey, tinum, tifiloc, tiaddrto, titrnum, ticukey, tidsnt, tidrecv, tiddue, tidcls, tiwpptr, tiwpptrt, tiaduser, tiadtime, timduser, timdtime, ticlstme, tiresp1, tikeywrd, tiactive, tispare1, tispare2, tispare3, tiread1, tiread2, timt, tisubj1, tisubj, tisubj2, tisys, tiagor, tiasbt, tigwui, tihepc, tiaids, timgas, tiptsd, tiradb, tiradn, tisarc, tisexh, titoba, tinosc, ti38us, tinnme, tinwgr, tipres, titrtm, tinoot, tioctime, tiocuser, tidktime, tidkuser, tipulac, ticerullo, tiplnod, tiplwaiver, tiplexpress, tisnl, tivbms, ticlcw) ON (((brieff.bfkey)::text = (folder.ticknum)::text)))
-       LEFT JOIN assign_awaiting_hearing_scheduling() assign(tasknum, tsktknm, tskstfas, tskactcd, tskclass, tskrqact, tskrspn, tskdassn, tskdtc, tskddue, tskdcls, tskstown, tskstat, tskownts, tskclstm, tskadusr, tskadtm, tskmdusr, tskmdtm, tsactive, tsspare1, tsspare2, tsspare3, tsread1, tsread, tskorder, tssys) ON (((assign.tsktknm)::text = (brieff.bfkey)::text)))
-       LEFT JOIN corres_awaiting_hearing_scheduling() correspondent(stafkey, susrpw, susrsec, susrtyp, ssalut, snamef, snamemi, snamel, slogid, stitle, sorg, sdept, saddrnum, saddrst1, saddrst2, saddrcty, saddrstt, saddrcnty, saddrzip, stelw, stelwex, stelfax, stelh, staduser, stadtime, stmduser, stmdtime, stc1, stc2, stc3, stc4, snotes, sorc1, sorc2, sorc3, sorc4, sactive, ssys, sspare1, sspare2, sspare3, sspare4, ssn, sfnod, sdob, sgender, shomeless, stermill, sfinhard, sadvage, smoh, svsi, spow, sals, spgwv, sincar) ON (((brieff.bfcorkey)::text = (correspondent.stafkey)::text)))
-       LEFT JOIN people ON (((correspondent.ssn)::text = (people.ssn)::text)))
-       JOIN veterans ON (((veterans.ssn)::text = (correspondent.ssn)::text)))
-       LEFT JOIN cached_appeal_attributes ON (((cached_appeal_attributes.appeal_id = legacy_appeals.id) AND ((cached_appeal_attributes.appeal_type)::text = 'LegacyAppeal'::text))))
-       LEFT JOIN ( SELECT issues_awaiting_hearing_scheduling.isskey,
-              max((issues_awaiting_hearing_scheduling.issmst)::text) AS mst,
-              max((issues_awaiting_hearing_scheduling.isspact)::text) AS pact
-             FROM issues_awaiting_hearing_scheduling() issues_awaiting_hearing_scheduling(isskey, issseq, issprog, isscode, isslev1, isslev2, isslev3, issdc, issdcls, issadtime, issaduser, issmdtime, issmduser, issdesc, isssel, issgr, issdev, issmst, isspact)
-            GROUP BY issues_awaiting_hearing_scheduling.isskey) fvi ON (((fvi.isskey)::text = (brieff.bfkey)::text)))
-    WHERE (((tasks.type)::text = 'ScheduleHearingTask'::text) AND ((tasks.status)::text = ANY ((ARRAY['assigned'::character varying, 'in_progress'::character varying, 'on_hold'::character varying])::text[])));
+   SELECT row_number() OVER () AS priority_queue_number,
+      prioritized_appeals.appeal_id,
+      prioritized_appeals.appeal_type,
+      prioritized_appeals.hearing_request_type,
+      prioritized_appeals.receipt_date,
+      prioritized_appeals.external_id,
+      prioritized_appeals.appeal_stream,
+      prioritized_appeals.docket_number,
+      prioritized_appeals.aod_indicator,
+      prioritized_appeals.task_id,
+      prioritized_appeals.assigned_to_id,
+      prioritized_appeals.assigned_to_type,
+      prioritized_appeals.assigned_at,
+      prioritized_appeals.assigned_by_id,
+      prioritized_appeals.days_on_hold,
+      prioritized_appeals.days_waiting,
+      prioritized_appeals.task_status,
+      prioritized_appeals.schedulable,
+      prioritized_appeals.state_of_residence,
+      prioritized_appeals.country_of_residence,
+      prioritized_appeals.suggested_hearing_location,
+      prioritized_appeals.mst_indicator,
+      prioritized_appeals.pact_indicator,
+      prioritized_appeals.veteran_deceased_indicator,
+      prioritized_appeals.cavc_indicator,
+      prioritized_appeals.cavc_aod_weight,
+      prioritized_appeals.appeal_type_weight,
+      prioritized_appeals.ordinal_key
+     FROM prioritized_appeals;
   SQL
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
 
