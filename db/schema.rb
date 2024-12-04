@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_20_101517) do
+ActiveRecord::Schema.define(version: 2024_11_27_181409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2716,7 +2716,8 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
       veterans.country_of_residence,
       cached_appeal_attributes.suggested_hearing_location,
       (COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE) AS mst_indicator,
-      (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator
+      (COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE) AS pact_indicator,
+      (veterans.date_of_death IS NOT NULL) AS veteran_deceased_indicator
      FROM (((((((appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'Appeal'::text) AND (tasks.appeal_id = appeals.id))))
        LEFT JOIN advance_on_docket_motions ON ((advance_on_docket_motions.appeal_id = appeals.id)))
@@ -2780,7 +2781,8 @@ ActiveRecord::Schema.define(version: 2024_11_20_101517) do
           CASE
               WHEN (fvi.pact = 'Y'::text) THEN true
               ELSE false
-          END AS pact_indicator
+          END AS pact_indicator,
+      (f_vacols_corres.sfnod IS NOT NULL) AS veteran_deceased_indicator
      FROM (((((((((legacy_appeals
        JOIN tasks ON ((((tasks.appeal_type)::text = 'LegacyAppeal'::text) AND (tasks.appeal_id = legacy_appeals.id))))
        JOIN f_vacols_brieff ON (((legacy_appeals.vacols_id)::text = (f_vacols_brieff.bfkey)::text)))
