@@ -32,6 +32,10 @@ export const defaultStore = (override = {}) => (
           tagOptions: [],
           openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
         },
+        pdf: {
+          pdfDocuments: {},
+          documentErrors: {}
+        },
       },
       ...override
     },

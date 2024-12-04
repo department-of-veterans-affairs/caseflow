@@ -19,15 +19,16 @@ const ReaderFooter = ({
   setCurrentPage,
   showPdf,
 }) => {
-  const { pdfDocs, docLoadErrors } = useSelector(pdfSelector);
-  const pdfDocument = pdfDocs?.[doc.content_url];
-  const numPages = pdfDocument ? pdfDocument.numPages : null;
-
   /* eslint-disable camelcase */
+  const { pdfDocs, docLoadErrors } = useSelector(pdfSelector);
+  const pdfDocument = pdfDocs?.[doc?.content_url];
+  const numPages = pdfDocument ? pdfDocument.numPages : null;
   const isLoadError = docLoadErrors[doc?.content_url];
+
   const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
   const filteredDocIds = useSelector(getFilteredDocIds);
-  const currentDocIndex = filteredDocIds.indexOf(doc.id);
+  const currentDocIndex = filteredDocIds.indexOf(doc?.id);
   const isDocListFiltered = useSelector(docListIsFiltered);
 
   const isValidInputPageNumber = (pageNumber) => {
