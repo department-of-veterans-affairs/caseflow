@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe Hearings::TranscriptionFilesController do
-  describe "GET download_transcription_file" do
-    let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
-
+describe Hearings::TranscriptionFilesController, :all_dbs, type: :controller do
+  let(:hearings_user) { create(:hearings_coordinator) }
+  before { User.authenticate!(user: hearings_user) }
+  describe "routes" do
     let!(:hearing) { create(:hearing, :with_transcription_files) }
     let(:transcription_file) { hearing.transcription_files.first }
     let(:options) { { format: :vtt, file_id: transcription_file.id } }
+    subject { get :download_transcription_file, params: options }
 
-    it "opens file" do
-      allow(File).to receive(:open).and_return("test data")
-      get :download_transcription_file, params: options
-      expect(response.status).to eq(204)
+    it "downloading file" do
+      subject
+      expect(response.status).to eq(302)
     end
 
     context "when not a hearings user" do
@@ -22,8 +20,14 @@ RSpec.describe Hearings::TranscriptionFilesController do
         User.unauthenticate!
         User.authenticate!(user: vso_user)
       end
+
       it "redirects to unauthorized" do
         get :download_transcription_file, params: options
+        expect(response).to redirect_to("/unauthorized")
+      end
+
+      it "downloading a file" do
+        subject
         expect(response).to redirect_to("/unauthorized")
       end
     end

@@ -1,11 +1,7 @@
-import enzyme from 'enzyme';
-import EnzymeAdapterReact16 from 'enzyme-adapter-react-16';
 import 'jest-axe/extend-expect';
 import '@testing-library/jest-dom';
 
 import faker from 'faker';
-
-enzyme.configure({ adapter: new EnzymeAdapterReact16() });
 
 global.window.performance.now = jest.fn().mockReturnValue('RUNNING_IN_NODE');
 global.window.analyticsEvent = jest.fn();
@@ -13,7 +9,7 @@ global.scrollTo = jest.fn();
 
 // Spy to ignore console warnings
 jest.spyOn(console, 'warn').mockReturnValue();
-jest.spyOn(console, 'log').mockReturnValue();
+// jest.spyOn(console, 'log').mockReturnValue();
 jest.spyOn(console, 'error').mockReturnValue();
 jest.spyOn(console, 'info').mockReturnValue();
 

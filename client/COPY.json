@@ -1010,6 +1010,7 @@
   "INTAKE_EDIT_ISSUE_DECISION_DATE": "Decision date: ",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "INTAKE_REMOVE_COMP_AND_PEN": "Higher Level Reviews and Supplemental Claims with Compensation and Pension & Survivor's Benefits are now handled through VBMS and are no longer established through Caseflow",
+  "INTAKE_EDIT_DISABLED_COMP_AND_PEN":"Higher Level Reviews and Supplemental Claims for Compensation and Pension Claims are now managed in VBMS. They can no longer be edited in Caseflow",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
   "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
   "VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS": "VHA10D1B3R2Appeals@va.gov",
@@ -1560,6 +1561,7 @@
       "DATE": "Requested date for withdrawal"
     }
   },
+
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
   "REVIEW_TRANSCRIPT_TASK_LABEL": "Review Transcript task",
@@ -1622,5 +1624,6 @@
   "UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE": "No errors found: Upload to VBMS",
   "UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE": "Errors found: Upload to VBMS",
   "UPLOAD_TRANSCRIPTION_VBMS_CANCEL_ACTION_TYPE": "Cancel task",
-  "REVIEW_TRANSCRIPTION_VBMS_MESSAGE": "You have successfully uploaded %s's final transcript to VBMS"
+  "REVIEW_TRANSCRIPTION_VBMS_MESSAGE": "You have successfully uploaded %s's final transcript to VBMS",
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }

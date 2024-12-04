@@ -1651,7 +1651,7 @@ GEM
     ice_cube (0.16.3)
     immigrant (0.3.6)
       activerecord (>= 3.0)
-    jaro_winkler (1.6.0)
+    jaro_winkler (1.5.6)
     jmespath (1.6.2)
     jquery-rails (4.6.0)
       rails-dom-testing (>= 1, < 3)

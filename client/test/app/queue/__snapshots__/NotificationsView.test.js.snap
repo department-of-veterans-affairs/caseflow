@@ -30,7 +30,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
             data-event-off="mouseleave keydown"
             data-for="tooltip-200000161"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
@@ -51,6 +50,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
           </button>
           <span
             data-css-8fhvpp=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -250,6 +250,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
       >
         <div
           class="cf-table-wrapper"
+          data-testid="queue-table-data-testid"
         >
           <div
             class="cf-pagination"
@@ -368,6 +369,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                             fill-rule="nonzero"
                           >
                             <g
+                              data-testid="topColorGroup"
                               fill="#d6d7d9"
                               transform="translate(2.000000, 1.000000)"
                             >
@@ -380,6 +382,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                               </g>
                             </g>
                             <g
+                              data-testid="bottomColorGroup"
                               fill="#0071bc"
                               transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                             >

@@ -44,7 +44,8 @@ export const virtualHearing = {
     jobCompleted: true,
     conferenceProvider: 'pexip',
     scheduledInTimezone: 'America/Chicago',
-    scheduledTimeString: '03:30'
+    scheduledTimeString: '03:30',
+    conferenceProvider: 'pexip'
   },
 };
 

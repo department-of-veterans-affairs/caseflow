@@ -213,7 +213,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
                           <div
                             class="input-container"
                           >
@@ -267,7 +266,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
                           <div
                             class="input-container"
                           >
@@ -323,7 +321,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
                           <div
                             class="input-container"
                           >
@@ -385,7 +382,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                     >
                       <strong>
                         AMA Hearing Case Affinity Days
-                        
                       </strong>
                       <p
                         class="affinity-lever-text"
@@ -431,7 +427,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                     days
                                   </span>
                                 </label>
-                                
                                 <div
                                   class="input-container"
                                 >
@@ -505,7 +500,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                     >
                       <strong>
                         AMA Hearing Case AOD Affinity Days
-                        
                       </strong>
                       <p
                         class="affinity-lever-text"
@@ -540,7 +534,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             <div
                               class="cf-form-textinput   "
                             >
-                              
                               <div
                                 class="input-container"
                               >
@@ -704,7 +697,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               days
                             </span>
                           </label>
-                          
                           <div
                             class="input-container"
                           >
@@ -758,7 +750,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                 days
                               </span>
                             </label>
-                            
                             <div
                               class="input-container"
                             >
@@ -809,7 +800,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               days
                             </span>
                           </label>
-                          
                           <div
                             class="input-container"
                           >
@@ -863,7 +853,6 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                 days
                               </span>
                             </label>
-                            
                             <div
                               class="input-container"
                             >

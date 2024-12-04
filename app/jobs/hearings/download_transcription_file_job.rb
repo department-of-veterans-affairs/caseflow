@@ -18,6 +18,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class FileNameError < StandardError; end
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
+  class NoDownloadLinkError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     details_hash = {
@@ -58,19 +59,39 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.send_transcription_issues_email(error_details)
   end
 
+  discard_on(NoDownloadLinkError) do |job, exception|
+    job.log_error(exception)
+  end
+
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
   #          uploads the file to corresponding S3 location. If file is vtt, kicks off conversion of vtt to rtf
   #          and uploads rtf file to S3.
   def perform(download_link:, file_name:)
+    fail NoDownloadLinkError if !download_link
+
     ensure_current_user_is_set
     @file_name = file_name
     @transcription_file ||= find_or_create_transcription_file
     ensure_hearing_held
-
-    download_file_to_tmp!(download_link)
-    @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
-    convert_to_rtf_and_upload_to_s3! if @transcription_file.file_type == "vtt"
+    if should_download?
+      download_file_to_tmp!(download_link)
+      @transcription_file.upload_to_s3!
+      convert_to_rtf_and_upload_to_s3! if should_convert_and_upload?
+    end
     @transcription_file.clean_up_tmp_location
+  end
+
+  # Checks if file is a vtt and was not already converted
+  def should_convert_and_upload?
+    @transcription_file.file_type == "vtt" && @transcription_file.date_converted.nil?
+  end
+
+  # Checks if the file either never started or failed to finish processing
+  def should_download?
+    file = @transcription_file
+
+    (file.file_type == "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success) ||
+      (file.file_type != "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.upload.success)
   end
 
   # Purpose: Builds hash of values to be listed in mail template

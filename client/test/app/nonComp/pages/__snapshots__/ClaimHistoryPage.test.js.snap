@@ -6,7 +6,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
     class="individual-claim-history"
   >
     <div
-      class="sc-bdfBwQ bDdaSe"
+      class="sc-aXZVg jmTClw"
     >
        
       <a
@@ -29,6 +29,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
           </h1>
           <div
             class="cf-table-wrapper"
+            data-testid="queue-table-data-testid"
           >
             <div
               class="cf-pagination"
@@ -95,6 +96,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#0071bc"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -107,6 +109,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -162,6 +165,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -174,6 +178,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -267,6 +272,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -279,6 +285,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -388,32 +395,34 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      Other
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      issue added after removing unidentified issues
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      09/12/2023
-                      <br />
-                      <b>
-                        Removed issue date: 
-                      </b>
-                      02/23/2024
-                    </p>
+                    <div>
+                      <p>
+                        <b>
+                          Benefit type: 
+                        </b>
+                        Veterans Health Administration
+                        <br />
+                        <b>
+                          Issue type: 
+                        </b>
+                        Other
+                        <br />
+                        <b>
+                          Issue description: 
+                        </b>
+                        issue added after removing unidentified issues
+                        <br />
+                        <b>
+                          Decision date: 
+                        </b>
+                        09/12/2023
+                        <br />
+                        <b>
+                          Removed issue date: 
+                        </b>
+                        02/23/2024
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -451,28 +460,30 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      Beneficiary Travel
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      go fly
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      02/23/2024
-                      <br />
-                    </p>
+                    <div>
+                      <p>
+                        <b>
+                          Benefit type: 
+                        </b>
+                        Veterans Health Administration
+                        <br />
+                        <b>
+                          Issue type: 
+                        </b>
+                        Beneficiary Travel
+                        <br />
+                        <b>
+                          Issue description: 
+                        </b>
+                        go fly
+                        <br />
+                        <b>
+                          Decision date: 
+                        </b>
+                        02/23/2024
+                        <br />
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -510,31 +521,33 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      unidentified issue description
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      No decision date
-                      <br />
-                      <b>
-                        Removed issue date: 
-                      </b>
-                      12/12/2023
-                    </p>
+                    <div>
+                      <p>
+                        <b>
+                          Benefit type: 
+                        </b>
+                        Veterans Health Administration
+                        <br />
+                        <b>
+                          Issue type: 
+                        </b>
+                        <br />
+                        <b>
+                          Issue description: 
+                        </b>
+                        unidentified issue description
+                        <br />
+                        <b>
+                          Decision date: 
+                        </b>
+                        No decision date
+                        <br />
+                        <b>
+                          Removed issue date: 
+                        </b>
+                        12/12/2023
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -572,28 +585,30 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      Other
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      issue added after removing unidentified issues
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      09/12/2023
-                      <br />
-                    </p>
+                    <div>
+                      <p>
+                        <b>
+                          Benefit type: 
+                        </b>
+                        Veterans Health Administration
+                        <br />
+                        <b>
+                          Issue type: 
+                        </b>
+                        Other
+                        <br />
+                        <b>
+                          Issue description: 
+                        </b>
+                        issue added after removing unidentified issues
+                        <br />
+                        <b>
+                          Decision date: 
+                        </b>
+                        09/12/2023
+                        <br />
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -631,9 +646,11 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      Claim can be processed.
-                    </p>
+                    <div>
+                      <p>
+                        Claim can be processed.
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -671,27 +688,29 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      unidentified issue description
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      No decision date
-                      <br />
-                    </p>
+                    <div>
+                      <p>
+                        <b>
+                          Benefit type: 
+                        </b>
+                        Veterans Health Administration
+                        <br />
+                        <b>
+                          Issue type: 
+                        </b>
+                        <br />
+                        <b>
+                          Issue description: 
+                        </b>
+                        unidentified issue description
+                        <br />
+                        <b>
+                          Decision date: 
+                        </b>
+                        No decision date
+                        <br />
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -729,9 +748,11 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      Claim cannot be processed until decision date is entered.
-                    </p>
+                    <div>
+                      <p>
+                        Claim cannot be processed until decision date is entered.
+                      </p>
+                    </div>
                   </td>
                 </tr>
                 <tr
@@ -769,9 +790,11 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    <p>
-                      Claim created.
-                    </p>
+                    <div>
+                      <p>
+                        Claim created.
+                      </p>
+                    </div>
                   </td>
                 </tr>
               </tbody>
