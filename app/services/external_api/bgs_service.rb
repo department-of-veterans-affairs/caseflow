@@ -68,11 +68,7 @@ class ExternalApi::BGSService
         # guard clause for no response
         return 0 if response.blank?
 
-<<<<<<< HEAD
         response&.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
-=======
-        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
->>>>>>> uat/FY25Q1.5.0
       rescue BGS::ShareError
         0
       end
