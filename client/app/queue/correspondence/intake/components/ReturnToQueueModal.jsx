@@ -28,7 +28,7 @@ const ReturnToQueueModal = (props) => {
 
   return (
     <Modal
-      title="Return To Queue"
+      title="Return to queue"
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
