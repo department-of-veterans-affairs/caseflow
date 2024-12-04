@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_03_154036) do
+ActiveRecord::Schema.define(version: 2024_12_04_205006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2938,6 +2938,7 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
       prioritized_appeals.ordinal_key
      FROM prioritized_appeals;
   SQL
+  add_index "national_hearing_queue_entries", ["priority_queue_number"], name: "index_national_hearing_queue_entries_on_priority_queue_number"
   add_index "national_hearing_queue_entries", ["task_id"], name: "index_national_hearing_queue_entries_on_task_id", unique: true
 
 end
