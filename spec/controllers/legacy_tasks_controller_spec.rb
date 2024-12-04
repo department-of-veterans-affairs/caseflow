@@ -115,6 +115,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let(:instructions) { "Complete the review and draft a decision." }
+
     before do
       User.stub = user
       @staff_user = create(:staff, role, user: user)
@@ -133,6 +135,29 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       it "fails because user is not a judge" do
         post :create, params: { tasks: params }
         expect(response.status).to eq(400)
+      end
+    end
+
+    context "with instructions" do
+      let(:role) { :attorney_role }
+      let(:params) do
+        {
+          appeal_id: appeal.id,
+          assigned_to_id: attorney.id,
+          instructions: "Complete the review and draft a decision." # Send as string
+        }
+      end
+
+      it "creates a task with provided instructions" do
+        expect(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          hash_including(instructions: ["Complete the review and draft a decision."]) # Array expected here after Array.wrap
+        )
+        post :create, params: { tasks: params }
+      end
+
+      it "creates a task with provided instructions" do
+        post :create, params: { tasks: params }
+        puts "Params sent: #{params.inspect}"
       end
     end
 
