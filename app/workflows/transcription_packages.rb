@@ -14,22 +14,42 @@ class TranscriptionPackages
   end
 
   def call
+    puts ""
+    puts 'call'
+    puts work_order_params
+    puts ""
     Hearings::WorkOrderFileJob.perform_now(work_order_params) ? create_zip_file : return
   end
 
   def create_zip_file
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params.hearings) ? create_bom_file : return
+    puts ""
+    puts 'create_zip_file'
+    puts work_order_params
+    puts ""
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params[:hearings]) ? create_bom_file : return
   end
 
   def create_bom_file
-    Hearings::CreateBomFileJob.perform_now(work_order_params) ? create_transcription_package : return
+    puts ""
+    puts 'create_bom_file'
+    puts work_order_params
+    puts ""
+    Hearings::CreateBillOfMaterialsJob.perform_now(work_order_params) ? create_transcription_package : return
   end
 
   def create_transcription_package
-    Hearings::CreateTranscriptionPackageJob.perform_now(work_order_params) ? upload_transcription_package : return
+    puts ""
+    puts 'create_transcription_package'
+    puts work_order_params
+    puts ""
+    Hearings::ZipAndUploadTranscriptionPackageJob.perform_now(work_order_params) ? upload_transcription_package : return
   end
 
   def upload_transcription_package
-    Hearings::VaBoxUploadJob.perform_now(work_order_params)
+    puts ""
+    puts 'upload_transcription_package'
+    puts work_order_params
+    puts ""
+    Hearings::VaBoxUploadJob.perform_now(work_order_params, ENV["BOX_PARENT_FOLDER_ID"])
   end
 end

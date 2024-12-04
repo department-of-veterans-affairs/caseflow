@@ -6,10 +6,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import COPY from '../../COPY';
 import moment from 'moment-timezone';
-<<<<<<< HEAD
-=======
 import DateSelector from './DateSelector';
->>>>>>> origin/feature/APPEALS-49620
 
 const datePickerStyle = css({
   paddingLeft: '0.95rem',
@@ -71,8 +68,6 @@ const menuStyle = css({
   }
 });
 
-<<<<<<< HEAD
-=======
 const defaultOptions = [
   { value: 'between', label: COPY.DATE_PICKER_DROPDOWN_BETWEEN },
   { value: 'before', label: COPY.DATE_PICKER_DROPDOWN_BEFORE },
@@ -87,7 +82,6 @@ const additionalOptions = [
   { value: 'all', label: COPY.DATE_PICKER_DROPDOWN_ALL }
 ];
 
->>>>>>> origin/feature/APPEALS-49620
 /* Custom filter method to pass in a QueueTable column object */
 /* This is called for every row of data in the table */
 /* rowValue is a date string such as '5/15/2024' */
@@ -121,8 +115,6 @@ export const datePickerFilterValue = (rowValue, filterValues) => {
         const endDate = moment(`${filterOptions[1]} 23:59:59`).valueOf();
 
         pick = rowDate >= startDate && rowDate <= endDate;
-<<<<<<< HEAD
-=======
       } else if (mode === 'last7') {
         const startDate = moment().subtract(7, 'days').
           valueOf();
@@ -141,7 +133,6 @@ export const datePickerFilterValue = (rowValue, filterValues) => {
         const endDate = moment().valueOf();
 
         pick = rowDate >= startDate && rowDate <= endDate;
->>>>>>> origin/feature/APPEALS-49620
       }
     }
   }
@@ -156,10 +147,7 @@ class DatePicker extends React.PureComponent {
     const position = (props.settings && props.settings.position) || 'left';
     const buttons = (props.settings && props.settings.buttons) || false;
     const selected = (props.selected && props.selected) || false;
-<<<<<<< HEAD
-=======
     const noFutureDates = (props.settings && props.settings.noFutureDates) || false;
->>>>>>> origin/feature/APPEALS-49620
 
     this.state = {
       open: false,
@@ -168,20 +156,14 @@ class DatePicker extends React.PureComponent {
       endDate: '',
       position,
       buttons,
-<<<<<<< HEAD
-      selected
-=======
       selected,
       noFutureDates
->>>>>>> origin/feature/APPEALS-49620
     };
   }
 
   apply() {
     const { onChange } = this.props;
 
-<<<<<<< HEAD
-=======
     if (this.state.mode === 'all') {
       this.clearFilter();
       this.hideDropdown();
@@ -189,7 +171,6 @@ class DatePicker extends React.PureComponent {
       return true;
     }
 
->>>>>>> origin/feature/APPEALS-49620
     if (onChange) {
       onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
     }
@@ -240,8 +221,6 @@ class DatePicker extends React.PureComponent {
     return this.state.open || this.state.selected;
   }
 
-<<<<<<< HEAD
-=======
   isDateInFuture = (date) => {
     if (!date) {
       return false;
@@ -250,14 +229,10 @@ class DatePicker extends React.PureComponent {
     return Boolean(Date.parse(date) > Date.now());
   }
 
->>>>>>> origin/feature/APPEALS-49620
   buttonDisabled = () => {
     let disabled = true;
 
     if (this.state.mode === 'between') {
-<<<<<<< HEAD
-      disabled = this.state.startDate === '' || this.state.endDate === '';
-=======
       if (this.state.startDate === '' || this.state.endDate === '') {
         disabled = true;
       } else if (this.state.noFutureDates &&
@@ -274,7 +249,6 @@ class DatePicker extends React.PureComponent {
       disabled = true;
     } else if (this.state.mode === 'all') {
       disabled = false;
->>>>>>> origin/feature/APPEALS-49620
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
     }
@@ -295,17 +269,12 @@ class DatePicker extends React.PureComponent {
   }
 
   updateMode = (mode) => {
-<<<<<<< HEAD
-=======
     const format = 'YYYY-MM-DD';
 
->>>>>>> origin/feature/APPEALS-49620
     this.setState({ mode });
     if (mode !== 'between') {
       this.setState({ endDate: '' });
     }
-<<<<<<< HEAD
-=======
 
     if (mode === 'last7') {
       this.setState({ startDate: moment().subtract(7, 'days').
@@ -317,7 +286,6 @@ class DatePicker extends React.PureComponent {
       this.setState({ startDate: moment().subtract(365, 'days').
         format(format) });
     }
->>>>>>> origin/feature/APPEALS-49620
   }
 
   quickButtons = (option) => {
@@ -341,9 +309,6 @@ class DatePicker extends React.PureComponent {
     this.hideDropdown();
   }
 
-<<<<<<< HEAD
-  render() {
-=======
   getOptions = () => {
     if (this.props.settings?.additionalOptions) {
       const options = defaultOptions.concat(additionalOptions);
@@ -381,7 +346,6 @@ class DatePicker extends React.PureComponent {
 
   render() {
 
->>>>>>> origin/feature/APPEALS-49620
     return <span {...datePickerStyle} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
@@ -407,35 +371,13 @@ class DatePicker extends React.PureComponent {
             <div className="input-wrapper">
               <SearchableDropdown
                 name={COPY.DATE_PICKER_DROPDOWN_LABEL}
-<<<<<<< HEAD
-                options={[
-                  { value: 'between', label: COPY.DATE_PICKER_DROPDOWN_BETWEEN },
-                  { value: 'before', label: COPY.DATE_PICKER_DROPDOWN_BEFORE },
-                  { value: 'after', label: COPY.DATE_PICKER_DROPDOWN_AFTER },
-                  { value: 'on', label: COPY.DATE_PICKER_DROPDOWN_ON }
-                ]}
-=======
                 options={this.getOptions()}
->>>>>>> origin/feature/APPEALS-49620
                 searchable
                 onChange={(option) => this.updateMode(option.value)}
                 filterOption={() => true}
                 value={this.state.mode} />
             </div>
 
-<<<<<<< HEAD
-            {this.state.mode !== '' &&
-              <div className="input-wrapper">
-                <label aria-label="start-date"
-                  htmlFor="start-date">
-                  {this.state.mode === 'between' ? COPY.DATE_PICKER_FROM : COPY.DATE_PICKER_DATE}</label>
-                <input
-                  id="start-date"
-                  name="start-date"
-                  defaultValue={this.state.startDate}
-                  type="date"
-                  onChange={(event) => this.setState({ startDate: event.target.value })}
-=======
             {additionalOptions.some((option) => option.value === this.state.mode) ?
               null :
               <div className="input-wrapper">
@@ -448,22 +390,12 @@ class DatePicker extends React.PureComponent {
                   errorMessage={this.startDateErrorMessage()}
                   onChange={(value) => this.setState({ startDate: value })}
                   type="date"
->>>>>>> origin/feature/APPEALS-49620
                 />
               </div>
             }
 
             {this.state.mode === 'between' &&
               <div className="input-wrapper">
-<<<<<<< HEAD
-                <label aria-label="end-date" htmlFor="end-date">{COPY.DATE_PICKER_TO}</label>
-                <input
-                  id="end-date"
-                  name="end-date"
-                  defaultValue={this.state.endDate}
-                  type="date"
-                  onChange={(event) => this.setState({ endDate: event.target.value })}
-=======
                 <DateSelector
                   label={COPY.DATE_PICKER_TO}
                   name="end-date"
@@ -473,7 +405,6 @@ class DatePicker extends React.PureComponent {
                   errorMessage={this.endDateErrorMessage()}
                   onChange={(value) => this.setState({ endDate: value })}
                   type="date"
->>>>>>> origin/feature/APPEALS-49620
                 />
               </div>
             }

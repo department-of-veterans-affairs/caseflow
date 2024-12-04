@@ -1,30 +1,26 @@
 # frozen_string_literal: true
 
 class Hearings::VaBoxUploadJob < CaseflowJob
-  include Shoryuken::Worker
   queue_as :low_priority
-  include Hearings::SendTranscriptionIssuesEmail
-
   S3_BUCKET = "vaec-appeals-caseflow"
-
-  shoryuken_options retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours]
+  include Hearings::SendTranscriptionIssuesEmail
 
   class BoxUploadError < StandardError; end
 
-  retry_on StandardError, wait: :exponentially_longer do |job, exception|
-    job.cleanup_tmp_files
-    error_details = { error: { type: "upload", message: exception.message }, provider: "Box" }
-    job.send_transcription_issues_email(error_details) unless job.email_sent?(:upload)
-    job.mark_email_sent(:upload)
-    fail BoxUploadError
-  end
+  # retry_on StandardError, wait: :exponentially_longer do |job, exception|
+  #   job.cleanup_tmp_files
+  #   error_details = { error: { type: "upload", message: exception.message }, provider: "Box" }
+  #   job.send_transcription_issues_email(error_details) unless job.email_sent?(:upload)
+  #   job.mark_email_sent(:upload)
+  #   fail BoxUploadError
+  # end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def perform(file_info, box_folder_id)
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
 
-    box_service = ExternalApi::VaBoxService.new
+    box_service = VaBoxService.new
 
     file_info[:hearings].each_with_index do |hearing, index|
       begin
@@ -91,7 +87,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   def download_file_from_s3(s3_path)
     local_path = Rails.root.join("tmp", "transcription_files", File.basename(s3_path))
-    Caseflow::S3Service.fetch_file(s3_path, local_path)
+    S3Service.fetch_file(s3_path, local_path)
     @all_paths << local_path
     Rails.logger.info("File successfully downloaded from S3: #{local_path}")
     local_path
