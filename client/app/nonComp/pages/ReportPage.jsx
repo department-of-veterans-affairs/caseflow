@@ -1,12 +1,10 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable max-lines */
 import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+
 import { formatDateStrUtc } from '../../util/DateUtil';
 
 import Alert from 'app/components/Alert';
@@ -14,8 +12,6 @@ import Button from 'app/components/Button';
 import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
-
-import { selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
@@ -29,9 +25,9 @@ import { timingSchema, TimingSpecification } from 'app/nonComp/components/Report
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 // eslint-disable-next-line no-duplicate-imports
-import { saveUserSearch, fetchedSearches } from '../../nonComp/actions/savedSearchSlice';
+import { saveUserSearch, fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 // eslint-disable-next-line no-duplicate-imports
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
 
 import {
