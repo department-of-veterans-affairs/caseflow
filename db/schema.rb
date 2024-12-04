@@ -2468,44 +2468,6 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
-  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
-       RETURNS trigger
-       LANGUAGE plpgsql
-      AS $function$
-          declare
-            string_claim_id varchar(25);
-            epe_id integer;
-          begin
-            if (NEW."EP_CODE" LIKE '04%'
-                OR NEW."EP_CODE" LIKE '03%'
-                OR NEW."EP_CODE" LIKE '93%'
-                OR NEW."EP_CODE" LIKE '68%')
-                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
-
-              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
-
-              select id into epe_id
-              from end_product_establishments
-              where (reference_id = string_claim_id
-              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
-
-              if epe_id > 0
-              then
-                if not exists (
-                  select 1
-                  from priority_end_product_sync_queue
-                  where end_product_establishment_id = epe_id
-                ) then
-                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
-                  values (now(), epe_id, now());
-                end if;
-              end if;
-            end if;
-            return null;
-          end;
-        $function$
-  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2615,102 +2577,6 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_corres WHERE 1 = 0';
       END $function$
   SQL
-  create_function :folder_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.folder_awaiting_hearing_scheduling()
-       RETURNS SETOF folder_record
-       LANGUAGE plpgsql
-      AS $function$
-      DECLARE
-      	legacy_case_ids text;
-      BEGIN
-        SELECT *
-        INTO legacy_case_ids
-        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
-
-        if legacy_case_ids IS NOT NULL THEN
-          RETURN QUERY
-            EXECUTE format(
-              'SELECT * FROM f_vacols_folder WHERE ticknum IN (%s)',
-              legacy_case_ids
-            );
-        END IF;
-
-        -- Force a null row return
-        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_folder WHERE 1 = 0';
-      END $function$
-  SQL
-  create_function :issues_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.issues_awaiting_hearing_scheduling()
-       RETURNS SETOF issues_record
-       LANGUAGE plpgsql
-      AS $function$
-      DECLARE
-      	legacy_case_ids text;
-      BEGIN
-        SELECT *
-        INTO legacy_case_ids
-        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
-
-        if legacy_case_ids IS NOT NULL THEN
-          RETURN QUERY
-            EXECUTE format(
-              'SELECT * FROM f_vacols_issues WHERE isskey IN (%s)',
-              legacy_case_ids
-            );
-        END IF;
-
-        -- Force a null row return
-        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
-      END $function$
-  SQL
-  create_function :rep_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.rep_awaiting_hearing_scheduling()
-       RETURNS SETOF rep_record
-       LANGUAGE plpgsql
-      AS $function$
-      DECLARE
-      	legacy_case_ids text;
-      BEGIN
-        SELECT *
-        INTO legacy_case_ids
-        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
-
-        if legacy_case_ids IS NOT NULL THEN
-          RETURN QUERY
-            EXECUTE format(
-              'SELECT * FROM f_vacols_rep WHERE repkey IN (%s)',
-              legacy_case_ids
-            );
-        END IF;
-
-        -- Force a null row return
-        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
-      END $function$
-  SQL
-  create_function :hearsched_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.hearsched_awaiting_hearing_scheduling()
-       RETURNS SETOF hearsched_record
-       LANGUAGE plpgsql
-      AS $function$
-      DECLARE
-      	legacy_case_ids text;
-      BEGIN
-        SELECT *
-        INTO legacy_case_ids
-        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
-
-        if legacy_case_ids IS NOT NULL THEN
-          RETURN QUERY
-            EXECUTE format(
-              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
-              legacy_case_ids
-            );
-        END IF;
-
-        -- Force a null row return
-        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
-      END $function$
-  SQL
   create_function :folders_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.folders_awaiting_hearing_scheduling()
        RETURNS SETOF folder_record
@@ -2735,9 +2601,9 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_folder WHERE 1 = 0';
       END $function$
   SQL
-  create_function :hearsched_related_to_cases_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.hearsched_related_to_cases_awaiting_hearing_scheduling()
-       RETURNS SETOF hearsched_record
+  create_function :issues_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.issues_awaiting_hearing_scheduling()
+       RETURNS SETOF issues_record
        LANGUAGE plpgsql
       AS $function$
       DECLARE
@@ -2750,13 +2616,13 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
         if legacy_case_ids IS NOT NULL THEN
           RETURN QUERY
             EXECUTE format(
-              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
+              'SELECT * FROM f_vacols_issues WHERE isskey IN (%s)',
               legacy_case_ids
             );
         END IF;
 
         -- Force a null row return
-        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_issues WHERE 1 = 0';
       END $function$
   SQL
   create_function :reps_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
@@ -2783,28 +2649,29 @@ ActiveRecord::Schema.define(version: 2024_12_03_154036) do
         RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_rep WHERE 1 = 0';
       END $function$
   SQL
+  create_function :hearsched_related_to_cases_awaiting_hearing_scheduling, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.hearsched_related_to_cases_awaiting_hearing_scheduling()
+       RETURNS SETOF hearsched_record
+       LANGUAGE plpgsql
+      AS $function$
+      DECLARE
+      	legacy_case_ids TEXT;
+      BEGIN
+        SELECT *
+        INTO legacy_case_ids
+        FROM gather_vacols_ids_of_hearing_schedulable_legacy_appeals();
 
+        if legacy_case_ids IS NOT NULL THEN
+          RETURN QUERY
+            EXECUTE format(
+              'SELECT * FROM f_vacols_hearsched WHERE folder_nr IN (%s)',
+              legacy_case_ids
+            );
+        END IF;
 
-  create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
-  SQL
-  create_trigger :priority_end_product_sync_queue_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER priority_end_product_sync_queue_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.priority_end_product_sync_queue FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_priority_end_product_sync_queue_audit()
-  SQL
-  create_trigger :vbms_communication_packages_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_communication_packages_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_communication_packages FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_communication_packages_audit()
-  SQL
-  create_trigger :vbms_distribution_destinations_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_distribution_destinations_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distribution_destinations FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distribution_destinations_audit()
-  SQL
-  create_trigger :vbms_distributions_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_distributions_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distributions FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distributions_audit()
-  SQL
-  create_trigger :vbms_uploaded_documents_audit_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER vbms_uploaded_documents_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_uploaded_documents FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_uploaded_documents_audit()
-  SQL
-  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
+        -- Force a null row return
+        RETURN QUERY EXECUTE 'SELECT * FROM f_vacols_hearsched WHERE 1 = 0';
+      END $function$
   SQL
 
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
