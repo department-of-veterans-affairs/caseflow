@@ -100,6 +100,7 @@ export const correspondenceDetailsData = {
   cmp_packet_number: 5555555555,
   cmp_queue_id: 1,
   correspondence_type_id: 8,
+  correspondenceType: 'Abeyance',
   created_at: '2023-11-16 01:44:47.094786',
   notes: 'Some CMP notes here',
   mailTasks: ['Task 1', 'Task 2'],
@@ -158,15 +159,15 @@ export const correspondenceDetailsData = {
 
 export const correspondenceInfoData = {
   correspondenceInfo: {
-    tasksUnrelatedToAppeal : [
+    tasksUnrelatedToAppeal: [
       {
-          label: 'Other motion',
-          assignedOn: '11/13/2024',
-          assignedTo: 'Litigation Support',
+        label: 'Other motion',
+        assignedOn: '11/13/2024',
+        assignedTo: 'Litigation Support',
       }
-  ]
+    ]
   }
-}
+};
 
 export const appeals = {
   appellantFullName: 'John Doe',
