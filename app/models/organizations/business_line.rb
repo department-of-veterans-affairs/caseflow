@@ -181,23 +181,24 @@ class BusinessLine < Organization
 
     # rubocop:disable Metrics/MethodLength
     def task_type_count
-      appeals_query = task_type_query_helper(ama_appeal: :request_issues)
-        .select("'Appeal' AS decision_review_type")
-      hlr_query = task_type_query_helper(higher_level_review: :request_issues)
-        .select("'HigherLevelReview' AS decision_review_type")
-      sc_query = task_type_query_helper(supplemental_claim: :request_issues)
-        .select("supplemental_claims.type AS decision_review_type")
-      board_grant_query = task_type_board_grant_helper
+      # Build an array of queries to union
+      queries = [
+        task_type_query_helper(higher_level_review: :request_issues)
+          .select("'HigherLevelReview' AS decision_review_type").to_sql,
+        task_type_query_helper(supplemental_claim: :request_issues)
+          .select("supplemental_claims.type AS decision_review_type").to_sql,
+        task_type_query_helper(ama_appeal: :request_issues)
+          .select("'Appeal' AS decision_review_type").to_sql
+      ]
+
+      # Conditionally add board_grant_query if the feature toggle is enabled
+      if FeatureToggle.enabled?(:board_grant_effectuation_task, user: RequestStore[:current_user])
+        queries << task_type_board_grant_helper.to_sql
+      end
 
       task_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
-            #{hlr_query.to_sql}
-          UNION
-            #{sc_query.to_sql}
-          UNION
-            #{appeals_query.to_sql}
-          UNION
-            #{board_grant_query.to_sql}
+          #{queries.join(' UNION ')}
         )
         SELECT task_type, decision_review_type, COUNT(1)
         FROM task_review_issues
