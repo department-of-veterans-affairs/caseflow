@@ -78,6 +78,7 @@ describe Events::DecisionReviewRemanded::DecisionReviewRemandedParser do
       expect(parser.claim_review_informal_conference).to eq response_hash.claim_review["informal_conference"]
       expect(parser.claim_review_same_office).to eq response_hash.claim_review["same_office"]
     end
+
     it "has End Product Establishment attributes" do
       expect(parser.epe_benefit_type_code).to eq response_hash.end_product_establishment["benefit_type_code"]
       expect(parser.epe_claim_date).to eq parser.logical_date_converter(
@@ -103,12 +104,13 @@ describe Events::DecisionReviewRemanded::DecisionReviewRemandedParser do
         response_hash.end_product_establishment["development_item_reference_id"]
       )
     end
+
     it "has Request Issue attributes" do
       total_issues = parser.request_issues
       expect(total_issues.count).to eq(1)
       issue = total_issues.first
-      parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
-      expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
+      parser_issues = Events::DecisionReviewRemanded::DecisionReviewRemandedIssueParser.new(issue)
+      expect(parser_issues.ri_reference_id).to eq response_hash.request_issues.first["decision_review_issue_id"]
       expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
       expect(parser_issues.ri_contested_issue_description).to eq response_hash.request_issues.first["contested_issue_description"]
       expect(parser_issues.ri_contention_reference_id).to eq response_hash.request_issues.first["contention_reference_id"]
