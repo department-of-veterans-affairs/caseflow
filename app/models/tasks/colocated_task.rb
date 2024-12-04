@@ -210,11 +210,11 @@ class ColocatedTask < Task
       instructions: instructions
     ).find_each do |duplicate_task|
       if duplicate_task.open?
-        errors[:base] << format(
-          COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
-          self.class.label&.upcase,
-          instructions.join(", ")
-        )
+        errors.add(:base, format(
+                            COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
+                            self.class.label&.upcase,
+                            instructions.join(", ")
+                          ))
         break
       end
     end
