@@ -18,7 +18,6 @@ import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
-import { SizeWarningIcon } from '../components/icons/SizeWarningIcon';
 
 export class PdfListView extends React.Component {
 
@@ -30,46 +29,44 @@ export class PdfListView extends React.Component {
     this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
   };
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       clearAllFiltersCallbacks: [],
       warningIconShown: false
     };
   }
 
-  setClearAllFiltersCallbacks = (callbacks) => {
-    this.setState((prevState) => ({
-      clearAllFiltersCallbacks: [...prevState.clearAllFiltersCallbacks, ...callbacks],
-    }));
-  };
-
   componentDidMount() {
-    const { appeal, match, caseSelectedAppeal, fetchAppealDetails, onReceiveAppealDetails } = this.props;
-
-    if (shouldFetchAppeal(appeal, match.params.vacolsId)) {
-      if (caseSelectedAppeal && caseSelectedAppeal.vacols_id === match.params.vacolsId) {
-        onReceiveAppealDetails(caseSelectedAppeal);
+    if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
+      // if the appeal is fetched through case selected appeals, re-use that existing appeal
+      // information.
+      if (this.props.caseSelectedAppeal &&
+        (this.props.caseSelectedAppeal.vacols_id === this.props.match.params.vacolsId)) {
+        this.props.onReceiveAppealDetails(this.props.caseSelectedAppeal);
       } else {
-        fetchAppealDetails(match.params.vacolsId);
+        this.props.fetchAppealDetails(this.props.match.params.vacolsId);
       }
-    } else if (appeal?.vacols_id === match.params.vacolsId) {
-      onReceiveAppealDetails(appeal);
+
+      // if appeal is loaded from the assignments and it matches the vacols id
+      // in the url
+    } else if (this.props.appeal.vacols_id === this.props.match.params.vacolsId) {
+      this.props.onReceiveAppealDetails(this.props.appeal);
     }
   }
 
   render() {
-    const { documents, docFilterCriteria, viewingDocumentsOrComments, featureToggles } = this.props;
-    const noDocuments = !_.size(documents) && _.size(docFilterCriteria?.searchQuery) > 0;
-
+    const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
     let tableView;
 
     if (noDocuments) {
       tableView = <NoSearchResults />;
-    } else if (viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
-      tableView = <CommentsTable {...this.props} />;
+    } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
+      tableView = <CommentsTable
+        documents={this.props.documents}
+        onJumpToComment={this.props.onJumpToComment}
+      />;
     } else {
-
       tableView = <DocumentsTable
         documents={this.props.documents}
         documentPathBase={this.props.documentPathBase}
@@ -84,36 +81,31 @@ export class PdfListView extends React.Component {
       />;
     }
 
-    return (
-      <div>
-        {this.props.queueRedirectUrl && (
-          <BackToQueueLink
-            queueRedirectUrl={this.props.queueRedirectUrl}
-            queueTaskType={this.props.queueTaskType}
-            veteranFullName={this.props.appeal?.veteran_full_name}
-            vbmsId={this.props.appeal?.vbms_id}
+    return <div>
+      {this.props.queueRedirectUrl && <BackToQueueLink
+        queueRedirectUrl={this.props.queueRedirectUrl}
+        queueTaskType={this.props.queueTaskType}
+        veteranFullName={this.props.appeal.veteran_full_name}
+        vbmsId={this.props.appeal.vbms_id} />}
+      <LastRetrievalAlert
+        userHasEfolderRole={this.props.userHasEfolderRole}
+        efolderExpressUrl={this.props.efolderExpressUrl}
+        appeal={this.props.appeal} />
+      <AppSegment filledBackground>
+        <div className="section--document-list">
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
+          {this.props.featureToggles.bandwidthBanner &&
+            <BandwidthAlert displayBanner={this.props.showBandwidthBanner} />}
+          <DocumentListHeader
+            documents={this.props.documents}
+            noDocuments={noDocuments}
+            clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
           />
-        )}
-
-        <LastRetrievalAlert
-          userHasEfolderRole={this.props.userHasEfolderRole}
-          efolderExpressUrl={this.props.efolderExpressUrl}
-          appeal={this.props.appeal} />
-        <AppSegment filledBackground>
-          <div className="section--document-list">
-            <ClaimsFolderDetails {...this.props} />
-            {featureToggles?.bandwidthBanner && <BandwidthAlert />}
-            <DocumentListHeader
-              documents={documents}
-              noDocuments={noDocuments}
-              clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
-            />
-            {tableView}
-          </div>
-        </AppSegment>
-        <LastRetrievalInfo {...this.props} />
-      </div>
-    );
+          {tableView}
+        </div>
+      </AppSegment>
+      <LastRetrievalInfo appeal={this.props.appeal} />
+    </div>;
   }
 }
 
@@ -144,13 +136,14 @@ PdfListView.propTypes = {
   appeal: PropTypes.object,
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
+  readerSearchImprovements: PropTypes.bool,
   featureToggles: PropTypes.object,
-  match: PropTypes.object.isRequired,
+  match: PropTypes.object,
   caseSelectedAppeal: PropTypes.object,
-  onReceiveAppealDetails: PropTypes.func.isRequired,
-  fetchAppealDetails: PropTypes.func.isRequired,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
   docFilterCriteria: PropTypes.object,
-  viewingDocumentsOrComments: PropTypes.oneOf(Object.values(DOCUMENTS_OR_COMMENTS_ENUM)),
+  viewingDocumentsOrComments: PropTypes.string,
   documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
   queueRedirectUrl: PropTypes.string,
@@ -159,4 +152,6 @@ PdfListView.propTypes = {
   showBandwidthBanner: PropTypes.bool
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PdfListView);
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfListView);

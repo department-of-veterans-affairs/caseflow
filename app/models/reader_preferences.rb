@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-class ReaderPreferences
 
+class ReaderPreferences
   def self.get(preference)
     preference_name = preference.to_s.upcase
     value = client.get(preference_name) || ENV[preference_name]
@@ -21,7 +21,7 @@ class ReaderPreferences
       client.set(preference_name, new_value.to_s)
       "#{preference_name} set to #{new_value}"
     else
-       "#{preference_name} is not in the list of allowed preferences.. #{valid_preferences}"
+      "#{preference_name} is not in the list of allowed preferences.. #{valid_preferences}"
     end
   end
 
@@ -49,25 +49,26 @@ class ReaderPreferences
     @redis ||= Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 
-    # Default values are stored as ENV enviroment dependent values in the file
-    # appeals-deployment/ansible/roles/caseflow-certification/defaults/main.yml
-    # Example:
-    # http_env_specific_environment:
-    # prod:
-    #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
-    #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
+  # Default values are stored as ENV enviroment dependent values in the file
+  # appeals-deployment/ansible/roles/caseflow-certification/defaults/main.yml
+  # Example:
+  # http_env_specific_environment:
 
-    # prodtest:
-    #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
-    #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
+  # prod:
+  # READER_DELAY_BEFORE_PROGRESS_BAR: 1000
+  # READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
 
-    # preprod:
-    #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
-    #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
+  # prodtest:
+  # READER_DELAY_BEFORE_PROGRESS_BAR: 1000
+  # READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
 
-    # uat:
-    #   READER_DELAY_BEFORE_PROGRESS_BAR: 1000
-    #   READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
+  # preprod:
+  # READER_DELAY_BEFORE_PROGRESS_BAR: 1000
+  # READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
+
+  # uat:
+  # READER_DELAY_BEFORE_PROGRESS_BAR: 1000
+  # READER_SHOW_PROGRESS_BAR_THRESHOLD: 3000
 
   def self.bandwidth_warning_enabled?
     max_file_wait_time = ENV.fetch("MAX_FILE_WAIT_TIME", nil)
@@ -75,6 +76,6 @@ class ReaderPreferences
   end
 
   def self.valid_preferences
-    @valid_preferences ||= ENV.select { |feature, value| feature.include?("READER") }.keys
+    @valid_preferences ||= ENV.select { |feature, _value| feature.include?("READER") }.keys
   end
 end
