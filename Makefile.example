@@ -247,8 +247,24 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	bundle exec rake db:drop:etl db:create:etl db:schema:load:etl
-	bundle exec rake db:drop:primary db:create:primary db:schema:load:primary
+	bundle exec rake db:drop:primary db:create:primary
+	make create_custom_pg_types
+	make instantiate_oracle_fdw
+	make create_foreign_tables
+	bundle exec rake db:schema:load:primary
 	make consolidated_db_scripts
+
+make determine-db-name: ## If RAILS_ENV is set to 'test' then returns the test database's name. Otherwise, it returns the development DB's name.
+	if [ "$RAILS_ENV" = "test" ];  then echo "caseflow_certification_test"; else echo "caseflow_certification_development"; fi
+
+instantiate_oracle_fdw: ## Instantiates the oracle_fdw extension in the Postgres DB and some tangential configuration
+	psql -h localhost -U postgres -d "$(make determine-db-name)" -a -f docker-bin/pg/setup_extensions.sql
+
+create_custom_pg_types: ## Establishes custom types used within certain Postgresql functions
+	psql -h localhost -U postgres -d "$(make determine-db-name)" -a -f local/sql/create_custom_types.sql
+
+create_foreign_tables: ## Creates foreign tables in the Postgresql database that can be used to access VACOLS data
+	psql -h localhost -U postgres -d "$(make determine-db-name)" t -a -f local/sql/create_foreign_tables_for_vacols.sql
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
@@ -344,6 +360,9 @@ docs: erd doc-schema	# Build all documentation
 
 check-fks: # Check for missing foreign keys
 	bundle exec rake immigrant:check_keys
+
+yard-server: # Opens a YARD documentation server with hotreloading enabled on port 8088 by default
+	yard server -r
 
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help
