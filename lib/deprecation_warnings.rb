@@ -8,7 +8,8 @@ module DeprecationWarnings
 
   # Regular expressions for Rails 7.0 deprecation warnings that we have addressed in the codebase
   RAILS_7_0_FIXED_DEPRECATION_WARNING_REGEXES = [
-    /Initialization autoloaded the constant/
+    /Initialization autoloaded the constant/,
+    /Calling `\[\]=` to an ActiveModel\:\:Errors is deprecated/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
