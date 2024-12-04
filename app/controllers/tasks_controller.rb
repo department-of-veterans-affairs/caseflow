@@ -194,14 +194,14 @@ class TasksController < ApplicationController
     file_paths.each do |current_file_path|
       file_name = current_file_path.split("/").last
       document_params =
-      {
-        veteran_file_number: appeal.veteran_file_number,
-        document_type: "Hearing Transcript",
-        document_subject: "notifications",
-        document_name: file_name,
-        application: "notification-report",
-        file: current_file_path
-      }
+        {
+          veteran_file_number: appeal.veteran_file_number,
+          document_type: "Hearing Transcript",
+          document_subject: "notifications",
+          document_name: file_name,
+          application: "notification-report",
+          file: current_file_path
+        }
       response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
       if response.success?
         # change status of ReviewTranscriptTask
@@ -229,8 +229,20 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
+  end
 
-    render json: { success: true }, status: :ok
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+
+    render json: {}, status: :ok
+  rescue StandardError => error
+    render_update_errors(error)
   end
 
   def send_initial_notification_letter
