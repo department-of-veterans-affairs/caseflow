@@ -328,7 +328,7 @@ class AssignToView extends React.Component {
                 name="Assign to selector"
                 searchable
                 hideLabel={actionData.drop_down_label ? null : true}
-                errorMessage={highlightFormItems && highlightInvalidFormItems ? 'This field is required' : null}
+                errorMessage={highlightFormItems && this.state.selectedValue === null ? 'This field is required' : null}
                 label={this.determineDropDownLabel(actionData)}
                 placeholder={this.determinePlaceholder(this.props, actionData)}
                 value={this.state.selectedValue}
