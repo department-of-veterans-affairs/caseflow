@@ -32,7 +32,6 @@ const PdfDocument = memo(({
 }) => {
 
   const isFileVisible = doc.content_url === file;
-  const visibility = isFileVisible ? 'visible' : 'hidden';
 
   const containerStyle = {
     width: '100%',
@@ -44,7 +43,7 @@ const PdfDocument = memo(({
     alignContent: 'start',
     justifyContent: 'center',
     gap: '8rem',
-    visibility: `${visibility}`,
+    visibility: `${isFileVisible ? 'visible' : 'hidden'}`,
     margin: '0 auto',
     marginBottom: '-25px',
     position: 'absolute',
