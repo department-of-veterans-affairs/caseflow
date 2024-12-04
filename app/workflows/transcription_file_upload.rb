@@ -15,7 +15,6 @@ class TranscriptionFileUpload
     zip: "transcript_text",
     json: "transcript_text"
   }.freeze
-  
 
   class FileUploadError < StandardError; end
 
