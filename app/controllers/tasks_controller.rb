@@ -194,14 +194,14 @@ class TasksController < ApplicationController
     file_paths.each do |current_file_path|
       file_name = current_file_path.split("/").last
       document_params =
-      {
-        veteran_file_number: appeal.veteran_file_number,
-        document_type: "Hearing Transcript",
-        document_subject: "notifications",
-        document_name: file_name,
-        application: "notification-report",
-        file: current_file_path
-      }
+        {
+          veteran_file_number: appeal.veteran_file_number,
+          document_type: "Hearing Transcript",
+          document_subject: "notifications",
+          document_name: file_name,
+          application: "notification-report",
+          file: current_file_path
+        }
       response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
       if response.success?
         # change status of ReviewTranscriptTask
@@ -229,6 +229,7 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
+  end
 
   def cancel_review_transcript_task
     instructions = params[:task][:instructions]
@@ -243,8 +244,6 @@ class TasksController < ApplicationController
   rescue StandardError => error
     render_update_errors(error)
   end
-
-  private
 
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
