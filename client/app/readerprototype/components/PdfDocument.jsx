@@ -6,7 +6,12 @@ import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
-import { clearDocumentLoadError, clearPdfDocument, setDocumentLoadError, setPdfDocument } from '../../reader/Pdf/PdfActions';
+import {
+  clearDocumentLoadError,
+  clearPdfDocument,
+  setDocumentLoadError,
+  setPdfDocument
+} from '../../reader/Pdf/PdfActions';
 import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
 import ApiUtil from '../../util/ApiUtil';
@@ -160,7 +165,7 @@ const PdfDocument = memo(({
     setMetricsLogged(false);
 
     pdfMetrics.current.getStartTime = new Date().getTime();
-    pdfjsLoadingTaskRef.current = await ApiUtil.get(url, requestOptions).
+    await ApiUtil.get(url, requestOptions).
       then((response) => {
         pdfLoadingTaskRef.current = getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
       }).
