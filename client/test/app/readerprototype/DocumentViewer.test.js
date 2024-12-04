@@ -39,8 +39,8 @@ def('history', () => []);
 def('match', () => ({
   params: { docId: '1', vacolsId: '3575931' },
 }));
-def('document1', () => documentFactory({ id: 1 }));
-def('document2', () => documentFactory({ id: 2 }));
+def('document1', () => documentFactory({ id: 1, content_url: '/document/1/pdf' }));
+def('document2', () => documentFactory({ id: 2, content_url: '/document/2/pdf' }));
 def('props', () => ({
   allDocuments: [
     get.document1,
@@ -83,6 +83,10 @@ const getStore = () => (
           },
           tagOptions: [],
           openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
+        },
+        pdf: {
+          pdfDocuments: {},
+          documentErrors: {}
         },
       },
     },

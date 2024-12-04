@@ -31,7 +31,8 @@ const PdfDocument = memo(({
   zoomLevel,
 }) => {
 
-  const isFileVisible = doc.content_url === file;
+  /* eslint-disable camelcase */
+  const isFileVisible = doc?.content_url === file;
 
   const containerStyle = {
     width: '100%',
