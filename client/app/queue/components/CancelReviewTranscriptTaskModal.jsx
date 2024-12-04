@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
+import COPY from '../../../COPY';
+import { requestPatch } from '../uiReducer/uiActions';
 
 const CancelReviewTranscriptTaskModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [notes, setNotes] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsSubmitDisabled(notes === '');
@@ -18,7 +22,32 @@ const CancelReviewTranscriptTaskModal = (props) => {
   };
 
   const submit = () => {
-    // TODO: requestPatch to update the status
+    const formatInstructions = () => {
+      return [
+        COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+        COPY.UPLOAD_TRANSCRIPTION_VBMS_CANCEL_ACTION_TYPE,
+        notes
+      ];
+    };
+
+    const requestParams = () => {
+      return {
+        data: {
+          task: {
+            instructions: formatInstructions()
+          }
+        }
+      };
+    };
+
+    dispatch(
+      requestPatch(
+        `/tasks/${props.taskId}/cancel_review_transcript_task`,
+        requestParams()
+      )
+    ).then(() => {
+      props.closeModal();
+    });
   };
 
   const handleTextareaFieldChange = (event) => {
