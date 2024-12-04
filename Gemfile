@@ -16,6 +16,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
+gem "bundler", "~> 2.4.22"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "dbd86859856d161d84b0bba4d67a8b62e4684996"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
@@ -23,11 +24,14 @@ gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/conn
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
 gem "dry-schema", "~> 1.4"
+gem "faraday"
+gem "faraday-multipart"
 gem "fast_jsonapi"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
+gem "jwt"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
@@ -85,12 +89,13 @@ gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
 gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "4ed23adddb3f584d3a530ef64dcb9ea0cf0eb2b3"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "spreadsheet", "~> 1.3"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time

@@ -706,10 +706,6 @@ $form-width: 575px;
   }
 }
 
-.hearing-time-scheduled-in-timezone {
-  margin-top: 0;
-}
-
 // Transcription Files Table
 .transcription-files-table {
   margin-top: 0;
@@ -762,5 +758,9 @@ $form-width: 575px;
       border-top: 1px solid $color-gray-lighter;
       padding-top: 3rem;
     }
+  }
+
+  .hearing-time-scheduled-in-timezone {
+    margin-top: 0;
   }
 }

@@ -100,6 +100,9 @@ Rails.application.routes.draw do
 
     namespace :events do
       namespace :v1 do
+        post '/person_updated', to: 'person_updated#person_updated'
+        post '/person_updated_error', to: 'person_updated#person_updated_error'
+        get '/does_person_exist', to: 'person_updated#does_person_exist'
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
         post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
@@ -241,6 +244,10 @@ Rails.application.routes.draw do
     namespace :hearing_day do
       get "/:hearing_day_id/filled_hearing_slots", to: "filled_hearing_slots#index"
     end
+    get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
+    get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
+    resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
+    get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -263,7 +270,19 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
+  get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
+  get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
+  get 'hearings/transcription_files/locked', to: 'hearings/transcription_files#locked'
+  post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
+  get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")
+  get 'hearings/transcription_files/selected_files_info/:file_ids', to: 'hearings/transcription_files#selected_files_info'
+  get 'hearings/transcription_packages/transcription_package_tasks', to: 'hearings/transcription_packages#transcription_package_tasks'
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
+  get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
+  get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
+  get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
+  post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
+  get 'hearings/transcription_files/fetch_file', to: 'hearings/transcription_files#fetch_file'
 
   resources :hearings, only: [:update, :show]
 
@@ -434,7 +453,8 @@ Rails.application.routes.draw do
     member do
       post :reschedule
       post :request_hearing_disposition_change
-      patch :change_type, to: "tasks/change_type#update"
+      patch :change_type, to: 'tasks/change_type#update'
+      patch :upload_transcription_to_vbms
     end
     resources(:place_hold, only: [:create], controller: "tasks/place_hold")
     resources(:end_hold, only: [:create], controller: "tasks/end_hold")
@@ -506,6 +526,13 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
+
+    resources :load_tests, only: [:index]
+    get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
+    post "/load_tests/run_load_tests", to: "load_tests#run_load_tests", as: "run_load_tests"
+
+    post "/load_test_api/user", to: "load_test_api#user", as: "user"
+    get "/load_test_api/target", to: "load_test_api#target", as: "target"
 
     resources :hearings, only: [:index]
 
