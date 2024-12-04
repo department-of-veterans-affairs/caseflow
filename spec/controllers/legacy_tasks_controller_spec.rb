@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
-  let(:instructions) { "Complete the review and draft a decision." }
-
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["System Admin"])
@@ -117,7 +115,6 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-    let(:instructions) { "Complete the review and draft a decision." } # Add instructions definition
     before do
       User.stub = user
       @staff_user = create(:staff, role, user: user)
@@ -165,7 +162,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           judge: user,
           attorney: attorney,
           vacols_id: @appeal.vacols_id,
-          instructions: [instructions]
+          instructions: []
         ).and_return(true)
 
         post :create, params: { tasks: params }
@@ -197,7 +194,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           judge: user,
           attorney: attorney,
           vacols_id: @appeal.vacols_id,
-          instructions: [instructions]
+          instructions: []
         ).and_return(true)
 
         post :create, params: { tasks: params }
