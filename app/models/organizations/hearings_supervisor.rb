@@ -5,8 +5,8 @@ class HearingsSupervisor < Organization
     HearingsSupervisor.first || HearingsSupervisor.create(name: "Hearings Supervisor", url: "hearings-supervisors")
   end
 
-  def can_receive_task?(task)
-    #this will be implemented in the future
+  def can_receive_task?
+    # this will be implemented in the future
     false
   end
 end
