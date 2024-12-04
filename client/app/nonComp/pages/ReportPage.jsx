@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -632,6 +633,7 @@ RHFCheckboxGroup.propTypes = {
 EventCheckboxGroup.propTypes = {
   options: PropTypes.array,
   onChange: PropTypes.func,
+  field: PropTypes.object,
   header: PropTypes.string,
   name: PropTypes.string
 };
