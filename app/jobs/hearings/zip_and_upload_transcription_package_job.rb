@@ -6,13 +6,13 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   S3_BUCKET = "vaec-appeals-caseflow"
   class ZipTranscriptionPackageUploadError < StandardError; end
 
-  retry_on TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer do |job, _exception|
-    job.cleanup_tmp_files
-    details_hash = { error: { type: "upload" }, provider: "S3" }
-    error_details = job.build_error_details(exception, details_hash)
-    job.send_transcription_issues_email(error_details)
-    fail ZipTranscriptionPackageUploadError
-  end
+  # retry_on TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer do |job, _exception|
+  #   job.cleanup_tmp_files
+  #   details_hash = { error: { type: "upload" }, provider: "S3" }
+  #   error_details = job.build_error_details(exception, details_hash)
+  #   job.send_transcription_issues_email(error_details)
+  #   fail ZipTranscriptionPackageUploadError
+  # end
 
   def perform(work_order)
     @work_order = work_order
@@ -21,7 +21,7 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
     ActiveRecord::Base.transaction do
       fetch_files
       transcription_package_tmp = create_master_file_zip
-      upload_transcription_package_to_s3(transcription_package_tmp)
+      # upload_transcription_package_to_s3(transcription_package_tmp)
       save_transcription_package_in_database(transcription_package_tmp)
     end
   end

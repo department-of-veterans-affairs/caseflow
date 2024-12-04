@@ -20,6 +20,31 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     }
   end
 
+  def create_package
+    puts 'create_package'
+    puts params
+    result = TranscriptionPackages.new(transcription_pispatch_params).call
+
+   # if result.success?
+      success_message = { message: "Package successfully uploaded to BOX.com." }
+      #if contractor_name.present?
+      #  success_message[:hearing_ids] = hearing_ids
+      #end
+      render json: success_message
+   # else
+   #   render json: result.errors[0], status: :bad_request
+   # end
+  end
+
+  def transcription_pispatch_params
+    params
+      .permit(:work_order_name,
+              :sent_to_transcriber_date,
+              :return_date,
+              :contractor_name,
+              hearings: [:hearing_id, :hearing_type])
+  end
+
   def apply_search
     return if params[:search].blank?
 
