@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
 import ReaderFooter from './components/ReaderFooter';
