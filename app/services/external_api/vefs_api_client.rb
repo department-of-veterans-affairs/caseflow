@@ -1,16 +1,29 @@
 # frozen_string_literal: true
 
+require "httparty"
+
 class ExternalApi::VefsApiClient
+  include HTTParty
+
+  base_uri ENV["VEFS_API_BASE_URL"]
+  raise_on ["4[0-9]*", "5[0-9]*"] # Will raise exception if HTTP response code is in matching range
+
   def fetch_cmp_document_content_by_uuid(cmp_document_uuid)
+    response = nil
     doc_content = nil
 
-    response = do_api_request(
-      endpoint: v1_api_files_endpoint(cmp_document_uuid),
-      method: :get
-    )
+    MetricsService.record(
+      "Fetch content for CMP document with UUID #{cmp_document_uuid}",
+      service: :vefs_api_client,
+      name: "fetch_cmp_document_content_by_uuid"
+    ) do
+      response = do_api_request(
+        endpoint: "/api/v1/rest/files/#{cmp_document_uuid}/content",
+        method: :get
+      )
+    end
 
-    if response.success?
-      # Parse content from JSON response
+    if response.present? && response.success?
       doc_content = response.body
     end
 
@@ -19,43 +32,81 @@ class ExternalApi::VefsApiClient
 
   private
 
-  def do_api_request(endpoint:, method:, params: nil, headers: nil)
+  def do_api_request(endpoint:, method:, params: {}, headers: {})
     response = nil
 
     begin
       case method
       when :get
-        response = api_connection.get(endpoint, params, headers)
+        response = self.class.get(
+          endpoint,
+          headers: bearer_token_header.merge!(headers),
+          query: params
+        )
       else
         fail "Unsupported HTTP method: #{method}"
       end
-    rescue Faraday::Error => error
-      # Error reporting here
+    rescue HTTParty::ResponseError => error
+      Rails.logger.error(error)
+      vefs_error_handler.handle_error(error: error, error_details: {})
     end
 
     response
   end
 
-  def api_connection
-    # Set Faraday to use a bearer token for auth, send/receive JSON, and
-    # raise an error on 4xx and 5xx responses
-    @api_connection ||= Faraday.new(url: base_url) do |builder|
-      builder.request :authorization, "Bearer", -> { bearer_token }
-      builder.request :json
-      builder.response :json
-      builder.response :raise_error
-    end
+  def vefs_error_handler
+    @vefs_error_handler ||= ErrorHandlers::VefsApiErrorHandler.new
   end
 
-  def base_url
-    "http://localhost:8080"
+  def bearer_token_header
+    {
+      "Authorization": "Bearer #{bearer_token}"
+    }
   end
 
   def bearer_token
-    SecureRandom.uuid
+    return @bearer_token if @bearer_token.present?
+
+    response = self.class.post(
+      "/api/v1/rest/api/v1/token",
+      body: bearer_token_json_body,
+      headers: {
+        "Content-Type" => "application/json",
+        "Accept" => "text/plain"
+      }
+    )
+
+    if response.present? && response.success?
+      @bearer_token = response.body
+    end
+
+    @bearer_token
   end
 
-  def v1_api_files_endpoint(cmp_document_uuid)
-    "/api/v1/rest/files/#{cmp_document_uuid}/content"
+  # rubocop:disable Metrics/MethodLength
+  def bearer_token_json_body
+    {
+      "applicationID": "ShareUI",
+      "appToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9",
+      "assuranceLevel": 2,
+      "birthDate": "1978-05-20",
+      "correlationIds": [
+        "77779102^NI^200M^USVHA^P",
+        "912444689^PI^200BRLS^USVBA^A",
+        "6666345^PI^200CORP^USVBA^A",
+        "1105051936^NI^200DOD^USDOD^A",
+        "912444689^SS"
+      ],
+      "email": "jane.doe@va.gov",
+      "firstName": "JANE",
+      "gender": "FEMALE",
+      "lastName": "DOE",
+      "middleName": "M",
+      "prefix": "Ms",
+      "stationID": "310",
+      "suffix": "S",
+      "userID": "vhaislXXXXX"
+    }.to_json
   end
+  # rubocop:enable Metrics/MethodLength
 end

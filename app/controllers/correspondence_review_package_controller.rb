@@ -44,12 +44,11 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def pdf
     doc_content = nil
-
     pdf_id = pdf_params["pdf"]["pdf_id"]
 
     if FeatureToggle.enabled?(:vefs_integration)
-      cmp_document = CmpDocument.find(pdf_id)
-      doc_content = cmp_document_fetcher.get_cmp_document_content(cmp_document.cmp_document_uuid)
+      correspondence_document = CorrespondenceDocument.find_by(uuid: pdf_id)
+      doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
     else
       document = Document.find(pdf_id)
       doc_content = document.serve

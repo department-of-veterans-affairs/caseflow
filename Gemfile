@@ -53,6 +53,7 @@ gem "opentelemetry-instrumentation-rails", require: false
 gem "opentelemetry-instrumentation-rake", require: false
 gem "opentelemetry-instrumentation-redis", require: false
 
+gem "httparty", "~> 0.22.0"
 gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
