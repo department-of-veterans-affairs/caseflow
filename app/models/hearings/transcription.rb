@@ -26,6 +26,7 @@ class Transcription < CaseflowRecord
   def self.unassign_by_task_number(task_number)
     where(task_number: task_number).update_all(transcription_status: "unassigned")
   end
+  
 
   private
 
