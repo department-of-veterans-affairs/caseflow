@@ -22,8 +22,6 @@ class Test::LoadTestsController < ApplicationController
   # Returns: Renders a JSON object with a "201" if the request successfully
   #          kicks off the Jenkins pipeline
   def run_load_tests
-    params.require(:data)
-
     # Set up Jenkins crumbIssuer URI
     crumb_issuer_uri = URI(ENV["JENKINS_CRUMB_ISSUER_URI"])
     crumb_issuer_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
@@ -95,7 +93,8 @@ class Test::LoadTestsController < ApplicationController
 
     # Create POST request to Jenkins pipeline
     jenkins_run_request = Net::HTTP::Post.new(jenkins_pipeline_uri, request_headers)
-    jenkins_run_request.body = encoded_test_recipe
+    encoded_form = URI.encode_www_form({ testRecipe: encoded_test_recipe })
+    jenkins_run_request.body = encoded_form
     jenkins_response = http.request(jenkins_run_request)
 
     # Raise error if the pipeline run is not created
