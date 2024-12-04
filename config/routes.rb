@@ -34,12 +34,14 @@ Rails.application.routes.draw do
       get 'ineligible_judge_list'
       get 'appeals_tied_to_non_ssc_avlj'
       get 'appeals_tied_to_avljs_and_vljs'
+      post 'reset_all_appeals'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
       post 'run_demo_non_avlj_appeals'
       post 'run_demo_docket_priority'
       post 'run_return_legacy_appeals_to_board'
+      post 'run_full_suite_seeds'
     end
   end
 
@@ -475,6 +477,14 @@ Rails.application.routes.draw do
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
+  end
+
+  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get 'test/seeds', :to => 'test_seeds#seeds'
+
+      scope path: 'seeds', as: 'seeds' do
+        post 'run-demo/:seed_type/:seed_count', to: 'test_seeds#run_demo'
+      end
   end
   # :nocov:
 
