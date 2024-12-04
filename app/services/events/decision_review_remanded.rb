@@ -46,7 +46,6 @@ class Events::DecisionReviewRemanded
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: supplemental_claim)
 
-          # NOTE: end_product_establishment & station_id is coming from the payload
           # claim_review will be a supplemental_claim since it is a REMAND
           epe = Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser: parser,
                                                                               claim_review: supplemental_claim,
