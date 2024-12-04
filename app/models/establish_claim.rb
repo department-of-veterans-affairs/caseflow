@@ -166,7 +166,7 @@ class EstablishClaim < Dispatch::Task
       return :missing_decision if appeal.decisions.empty?
 
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-    rescue VBMS::ClientError, ClaimEvidenceApi::Error::ClaimEvidenceApiError => error
+    rescue VBMS::ClientError => error
       Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"
       Raven.capture_exception(error, extra: { establish_claim: id })
       return :failed
