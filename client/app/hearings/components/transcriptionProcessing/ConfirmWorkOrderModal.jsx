@@ -189,7 +189,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     const hearings = transcriptionFiles.map((file) => {
       return {
         hearing_id: file.hearingId,
-        hearing_type: file.hearing_type === 'AMA' ? 'Hearing' : 'LegacyHearing'
+        hearing_type: file.appealType === 'AMA' ? 'Hearing' : 'LegacyHearing'
       };
     });
 

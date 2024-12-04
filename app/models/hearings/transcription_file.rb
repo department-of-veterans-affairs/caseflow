@@ -48,7 +48,7 @@ class TranscriptionFile < CaseflowRecord
   }
 
   scope :unassigned, lambda {
-    where("transcription_packages.status IS NULL")
+    where("file_type != 'zip' AND transcription_packages.status IS NULL")
   }
 
   scope :completed, lambda {
