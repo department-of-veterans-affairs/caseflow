@@ -702,7 +702,7 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "with reader role", skip: "Flaky test" do
+    context "with reader role" do
       before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
