@@ -21,11 +21,10 @@ RSpec.describe HearingsSupervisor, type: :model do
 
   describe "can_receive_task?" do
     # this will be more filled in when the method gets written
-    let(:task) { create(:task) }
     let(:hearings_supervisor) { described_class.new }
 
     it "will always return false" do
-      expect(hearings_supervisor.can_receive_task?(task)).to eq(false)
+      expect(hearings_supervisor.can_receive_task?).to eq(false)
     end
   end
 end
