@@ -53,6 +53,7 @@ export class ReaderLoadingScreen extends React.Component {
       }}
       failStatusMessageChildren={failStatusMessageChildren}
       metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}
+      readerPreferences={this.props.readerPreferences}
       prefetchDisabled={this.props.featureToggles.prefetchDisabled}>
       {this.props.children}
     </LoadingDataDisplay>;
@@ -68,7 +69,9 @@ ReaderLoadingScreen.propTypes = {
   onReceiveDocs: PropTypes.func,
   onReceiveManifests: PropTypes.func,
   vacolsId: PropTypes.string,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  readerPreferences: PropTypes.object,
+  progressBarOptions: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

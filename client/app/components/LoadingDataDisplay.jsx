@@ -200,6 +200,7 @@ LoadingDataDisplay.propTypes = {
   timeoutMs: PropTypes.number,
   metricsLoadScreen: PropTypes.bool,
   prefetchDisabled: PropTypes.bool,
+  readerPreferences: PropTypes.object,
 };
 
 LoadingDataDisplay.defaultProps = {

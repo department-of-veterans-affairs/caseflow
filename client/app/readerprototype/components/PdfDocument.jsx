@@ -12,6 +12,8 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import ProgressBar from './ProgressBar';
+import ProgressBarUtil from '../util/ProgressBarUtil';
 
 const PdfDocument = ({
   currentPage,
@@ -20,7 +22,10 @@ const PdfDocument = ({
   rotateDeg,
   setIsDocumentLoadError,
   setNumPages,
-  zoomLevel }) => {
+  onrequestCancel,
+  zoomLevel,
+  featureToggles,
+  readerPreferences }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -28,6 +33,14 @@ const PdfDocument = ({
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
   const metricsLoggedRef = useRef(metricsLogged);
+  const requestRef = useRef(null);
+  const showProgressBarRef = useRef(false);
+  const [progressData, setProgressData] = useState({
+    progressPercentage: 0,
+    loadedBytes: 0,
+    totalBytes: 0,
+  });
+  const fileSize = doc.file_size;
 
   const containerStyle = {
     width: '100%',
@@ -97,6 +110,15 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
+  const handleCancelRequest = () => {
+    if (requestRef.current) {
+      // Abort the download
+      requestRef.current.abort();
+      // Redirect
+      onrequestCancel();
+    }
+  };
+
   useEffect(() => {
     const getDocData = async () => {
       pdfMetrics.current.renderedPageCount = 0;
@@ -110,10 +132,39 @@ const PdfDocument = ({
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        onProgress: ({ loaded }) => {
+          const percentage = ProgressBarUtil.calculateProgress({ loaded, fileSize });
+          const enlapsedTime = new Date().getTime() - (pdfMetrics.current.getStartTime || 0);
+          const downloadSpeed = Number((loaded / (enlapsedTime)).toFixed(0));
+          const shouldShow = ProgressBarUtil.shouldShowProgressBar({
+            enlapsedTime,
+            downloadSpeed,
+            percentage,
+            loaded,
+            fileSize,
+            readerPreferences
+          });
+
+          if (!showProgressBarRef.current && shouldShow) {
+            showProgressBarRef.current = true;
+          }
+
+          setProgressData({
+            progressPercentage: percentage,
+            loadedBytes: loaded,
+            totalBytes: fileSize,
+          });
+        },
+        cancellableRequest: ({ request }) => {
+          requestRef.current = request;
+        }
       };
 
       pdfMetrics.current.getStartTime = new Date().getTime();
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
+        requestRef.current = null;
+        showProgressBarRef.current = false;
+
         return response.body;
       });
 
@@ -170,11 +221,28 @@ const PdfDocument = ({
   }, [doc.id]);
 
   useEffect(() => {
+    return () => {
+      if (requestRef.current) {
+        requestRef.current.abort();
+        showProgressBarRef.current = false;
+      }
+    };
+  }, [doc.id]);
+
+  useEffect(() => {
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
+      {showProgressBarRef.current && featureToggles.readerProgressBar && (
+        <ProgressBar
+          progressPercentage={Number(progressData.progressPercentage)}
+          loadedBytes={progressData.loadedBytes}
+          totalBytes={progressData.totalBytes}
+          handleCancelRequest={handleCancelRequest}
+        />
+      )}
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
@@ -202,12 +270,16 @@ PdfDocument.propTypes = {
     filename: PropTypes.string,
     id: PropTypes.number,
     type: PropTypes.string,
+    file_size: PropTypes.number,
   }),
   isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
   setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  onrequestCancel: PropTypes.func,
+  readerPreferences: PropTypes.object,
+  featureToggles: PropTypes.object,
 };
 
 export default PdfDocument;

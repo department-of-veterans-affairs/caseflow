@@ -178,4 +178,8 @@ Rails.application.configure do
 
   # Appeals Consumer
   config.hosts << "host.docker.internal"
+
+  #Reader Preferences
+  ENV["READER_DELAY_BEFORE_PROGRESS_BAR"] = "1000"
+  ENV["READER_SHOW_PROGRESS_BAR_THRESHOLD"] = "3000"
 end

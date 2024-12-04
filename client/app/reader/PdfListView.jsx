@@ -20,6 +20,11 @@ import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
+
+  toggleShowBandwidthBanner = () => {
+    this.setState({ warningIconShown: true });
+  };
+
   setClearAllFiltersCallbacks = (callbacks) => {
     this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
   };
@@ -27,7 +32,8 @@ export class PdfListView extends React.Component {
   constructor() {
     super();
     this.state = {
-      clearAllFiltersCallbacks: []
+      clearAllFiltersCallbacks: [],
+      warningIconShown: false
     };
   }
 
@@ -70,6 +76,8 @@ export class PdfListView extends React.Component {
         showPdf={this.props.showPdf}
         setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
         featureToggles={this.props.featureToggles}
+        readerPreferences={this.props.readerPreferences}
+        showBandwidthWarning={this.toggleShowBandwidthBanner}
       />;
     }
 
@@ -86,7 +94,8 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          {this.props.featureToggles.bandwidthBanner && <BandwidthAlert /> }
+          {this.props.featureToggles.bandwidthBanner &&
+            <BandwidthAlert displayBanner={this.props.showBandwidthBanner} />}
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -103,7 +112,7 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     documents: getFilteredDocuments(state),
-    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
+    ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments', 'showBandwidthBanner'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
@@ -138,7 +147,9 @@ PdfListView.propTypes = {
   documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
   queueRedirectUrl: PropTypes.string,
-  queueTaskType: PropTypes.node
+  queueTaskType: PropTypes.node,
+  readerPreferences: PropTypes.object,
+  showBandwidthBanner: PropTypes.bool
 };
 
 export default connect(

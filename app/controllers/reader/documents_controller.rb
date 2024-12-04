@@ -28,6 +28,10 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   private
 
+  def client
+    @client ||= Redis.new
+  end
+
   def appeal
     @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
   end
@@ -56,6 +60,7 @@ class Reader::DocumentsController < Reader::ApplicationController
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = tags_by_doc_id[document.id].to_a
+        object[:file_size] = document.file_size
       end
     end
   end
