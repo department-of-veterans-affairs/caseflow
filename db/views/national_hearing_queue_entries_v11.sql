@@ -56,7 +56,8 @@ WITH latest_cutoff_date AS (
     cached_appeal_attributes.suggested_hearing_location,
     COALESCE(request_issues_status.aggregate_mst_status, false) IS TRUE AS mst_indicator,
     COALESCE(request_issues_status.aggregate_pact_status, false) IS TRUE AS pact_indicator,
-    veterans.date_of_death IS NOT NULL AS veteran_deceased_indicator
+    veterans.date_of_death IS NOT NULL AS veteran_deceased_indicator,
+    stream_type = 'court_remand' AS cavc_indicator
   FROM
     appeals
     JOIN tasks ON tasks.appeal_type = 'Appeal'
@@ -137,7 +138,8 @@ WITH latest_cutoff_date AS (
       WHEN fvi.pact = 'Y' then true
       ELSE false
     END AS pact_indicator,
-    correspondent.sfnod IS NOT NULL AS veteran_deceased_indicator
+    correspondent.sfnod IS NOT NULL AS veteran_deceased_indicator,
+    brieff.bfac = '7' AS cavc_indicator
   FROM
     legacy_appeals
     JOIN tasks ON tasks.appeal_type = 'LegacyAppeal'
