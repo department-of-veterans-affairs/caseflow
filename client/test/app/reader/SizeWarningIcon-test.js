@@ -4,7 +4,7 @@ import { update } from '../../util/ReducerUtil';
 export const initialState = {
   scheduledHearingsList: [],
   fetchingHearings: false,
-  isWarningIconAndBannerEnabled: false,
+  warningIconAndBanner: false,
   dropdowns: {
     judges: {},
     hearingCoordinators: {},

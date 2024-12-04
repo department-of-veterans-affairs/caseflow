@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const SizeWarningIcon = (props) => {
-  const { size, className, isWarningIconAndBannerEnabled } = props;
+  const { size, className, warningIconAndBanner } = props;
 
-  if (!isWarningIconAndBannerEnabled) {
+  if (!warningIconAndBanner) {
     return null;
   }
 
@@ -40,7 +40,7 @@ SizeWarningIcon.propTypes = {
   /**
   Enables or disables the Size Warning Icon based on the feature toggle.
   */
-  isWarningIconAndBannerEnabled: PropTypes.bool.isRequired
+  warningIconAndBanner: PropTypes.bool.isRequired
 };
 
 SizeWarningIcon.defaultProps = {

@@ -21,7 +21,7 @@ class BandwidthAlert extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.isWarningIconAndBannerEnabled && 'connection' in navigator) {
+    if (this.props.warningIconAndBanner && 'connection' in navigator) {
       this.updateConnectionInfo();
     }
   }
@@ -43,9 +43,9 @@ class BandwidthAlert extends React.Component {
   };
 
   render() {
-    const { isWarningIconAndBannerEnabled } = this.props;
+    const { warningIconAndBanner } = this.props;
 
-    if (!isWarningIconAndBannerEnabled) {
+    if (!warningIconAndBanner) {
       return null;
     }
 
@@ -66,7 +66,7 @@ class BandwidthAlert extends React.Component {
 }
 
 BandwidthAlert.propTypes = {
-  isWarningIconAndBannerEnabled: PropTypes.bool.isRequired
+  warningIconAndBanner: PropTypes.bool.isRequired
 };
 
 export default BandwidthAlert;
