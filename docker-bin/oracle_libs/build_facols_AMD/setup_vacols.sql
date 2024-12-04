@@ -27,7 +27,9 @@ ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME unlimited;
 @/ORCL/vacols_copy_6_procedures_dev.sql
 @/ORCL/vacols_copy_6_procedures_test.sql
 
-alter database datafile '/opt/oracle/oradata/BVAP/system01.dbf' resize 798m;
+dbms_space_admin.tablespace_rebuild_bitmaps;
+
+alter database datafile '/opt/oracle/oradata/BVAP/system01.dbf' resize 1000m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_attach_ndx.dbf' resize 401m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_brieff.dbf' resize 17m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_death.dbf' resize 17m;
@@ -49,7 +51,7 @@ alter database datafile '/opt/oracle/oradata/BVAP/vcl_issues.dbf' resize 97m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_folder01.dbf' resize 17m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_priorlc_ndx.dbf' resize 649m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_titrnum_ndx.dbf' resize 89m;
-alter database datafile '/opt/oracle/oradata/BVAP/sysaux01.dbf' resize 440m;
+alter database datafile '/opt/oracle/oradata/BVAP/sysaux01.dbf' resize 500m;
 alter database datafile '/opt/oracle/oradata/BVAP/users01.dbf' resize 34m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_corres01.dbf' resize 49m;
 alter database datafile '/opt/oracle/oradata/BVAP/vcl_ndx.dbf' resize 529m;
@@ -59,5 +61,6 @@ alter database datafile '/opt/oracle/oradata/BVAP/vcl_othdocs_ndx.dbf' resize 33
 
 exec DBMS_XDB_CONFIG.sethttpsport(0);
 alter system set dispatchers='';
+alter system disable restricted session;
 
 exit

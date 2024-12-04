@@ -5,7 +5,7 @@ namespace :local do
   task :build do # rubocop:disable Rails/RakeEnvironment
     puts ">>> BEGIN local:build"
     puts ">>> 01/08 Downloading FACOLS image from ECR"
-    system("./local/vacols/build_push.sh rake") || abort
+    system("./docker-bin/oracle_libs/build_push.sh rake") || abort
 
     puts ">>> 02/08 Starting docker containers in the background"
     system("docker-compose up -d") || abort

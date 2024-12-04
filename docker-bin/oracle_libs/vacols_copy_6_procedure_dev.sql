@@ -43,6 +43,8 @@ FOR r IN (select snamel, snamef, bfcorlid, bfmpro, bfcurloc
 end;
 /
 
+GRANT EXECUTE on dmdftypes to sys;
+/
 
   CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."MATRIX_DEL" (fkey IN dmdftypes.ftypkey%TYPE,
                                         fval IN dmdftypes.ftypval%TYPE)

@@ -1,5 +1,11 @@
 version: '3'
 services:
+  vacols-db:
+    container_name: VACOLS_DB
+    image: vacols_db:latest
+    ports:
+      - "1521:1521"
+
   appeals-redis:
     container_name: appeals-redis
     image: redis:6.2.6
@@ -8,7 +14,7 @@ services:
 
   appeals-postgres:
     image: postgres:14.8
-    container_name: appeals-db
+    container_name: appeals-pg
     ports:
       - "5432:5432"
     volumes:
@@ -17,7 +23,6 @@ services:
      - POSTGRES_PASSWORD=postgres
 
   appeals-localstack-aws:
-    platform: linux/amd64
     container_name: localstack
     image: localstack/localstack:0.14.5
     ports:
@@ -28,7 +33,6 @@ services:
       - ./local/sqs/conf:/conf
 
   appeals-metabase:
-    platform: linux/amd64
     container_name: metabase
     build:
       context: metabase

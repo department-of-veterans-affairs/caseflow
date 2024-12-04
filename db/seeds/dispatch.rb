@@ -16,7 +16,7 @@ module Seeds
         # Tasks prepared on today's date will not be picked up
         ::Dispatch::Task.all.each(&:prepare!)
         # Appeal decisions (decision dates) for partial grants have to be within 3 days
-        CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+        CSV.foreach(Rails.root.join("docker-bin/oracle_libs", "cases.csv"), headers: true) do |row|
           row_hash = row.to_h
           if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
             VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)

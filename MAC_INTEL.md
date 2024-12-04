@@ -39,7 +39,7 @@
 8. Upon completion, navigate to caseflow-facols (`cd ~/appeals/caseflow-facols`)
     1. Run: `git lfs install` (needed to initialize large file storage in repo)
     2. Run: `git lfs pull` (this will pull the large zipfile)
-    3. Copy the `~/appeals/caseflow-facols/build_facols` directory into `~/appeals/caseflow/local/vacols/` directory.
+    3. Copy the `~/appeals/caseflow-facols/build_facols` directory into `~/appeals/caseflow/docker-bin/oracle_libs/` directory.
 
 9. Navigate to the caseflow directory in your terminal (type: `cd ~/appeals/caseflow`) and checkout the grant/setup-no-aws branch `git checkout grant/setup-no-aws`
 
@@ -79,7 +79,7 @@
 
 20. Run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
 
-21. Navigate to `~/appeals/caseflow/local/vacols` in terminal (type: `cd ~/appeals/caseflow/local/vacols`)
+21. Navigate to `~/appeals/caseflow/docker-bin/oracle_libs` in terminal (type: `cd ~/appeals/caseflow/docker-bin/oracle_libs`)
 
 22. To install the latest and enterprise Oracle Database version follow (https://seanstacey.org/deploying-an-oracle-database-19c-as-a-docker-container/2020/09/) guide.
     1. Go to http://container-registry.oracle.com/ (Here log in and opt for Database)
