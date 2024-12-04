@@ -188,7 +188,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
     return <div className="cf-modal-scroll">
       <QueueFlowModal
         {...modalProps}
-        onCancel={() => this.setState({ showModal: false, selectedAssignee: null, instructions: null })}
+        onCancel={() => this.setState({ showModal: false, selectedAssignee: null, instructions: '' })}
         icon="warning"
       >
         {this.modalAlert()}
