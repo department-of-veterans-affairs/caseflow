@@ -400,7 +400,7 @@ export default class QueueTable extends React.PureComponent {
 
         // Using a more complex split than | to work with issue category strings that contain |
         // This essentially will still split values on '|' but not on ' | '
-        const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
+        const values = columnAndValues[1]?.split('=')[1].split(/(?<!\s)\|(?!\s)/);
 
         if (column) {
           if (column.filterOptions) {
@@ -879,7 +879,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
   tabPaginationOptions: PropTypes.shape({
-    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),

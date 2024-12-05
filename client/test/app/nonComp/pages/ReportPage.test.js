@@ -1,8 +1,8 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -10,22 +10,23 @@ import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import { MemoryRouter as Router } from 'react-router-dom';
+import createNonCompStore from '../nonCompStoreCreator';
+import savedSearchesData from '../../../data/nonComp/savedSearchesData';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+import COPY from 'app/../COPY';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+    const store = createNonCompStore(storeValues);
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
@@ -45,7 +46,17 @@ describe('ReportPage', () => {
   };
 
   const clickOnReportType = async () => {
-    setup({ nonComp: { businessLineUrl: 'vha' } });
+    setup(
+      {
+        nonComp: {
+          businessLineUrl: 'vha'
+        },
+        savedSearch:
+        {
+          fetchedSearches:
+          { searches: [], userSearches: [] }
+        }
+      });
 
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
@@ -82,15 +93,13 @@ describe('ReportPage', () => {
       const history = createMemoryHistory();
       const storeValues = {};
 
-      const store = createStore(
-        CombinedNonCompReducer,
-        storeValues,
-        compose(applyMiddleware(thunk))
-      );
+      const store = createNonCompStore(storeValues);
 
       render(
         <Provider store={store}>
-          <ReportPage history={history} />
+          <Router>
+            <ReportPage history={history} />
+          </Router>
         </Provider>
       );
 
@@ -333,7 +342,7 @@ describe('ReportPage', () => {
 
   });
 
-  it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
+  it('should have  Save search, Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
     const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
@@ -343,6 +352,10 @@ describe('ReportPage', () => {
     const clearFilters = screen.getByText('Clear filters');
 
     expect(clearFilters).toHaveClass('usa-button-disabled');
+
+    const saveSearch = screen.getByText('Save search');
+
+    expect(saveSearch).toHaveClass('usa-button-disabled');
   });
 
   describe('ReportType Dropdown', () => {
@@ -357,6 +370,10 @@ describe('ReportPage', () => {
       const clearFilters = screen.getByText('Clear filters');
 
       expect(clearFilters).not.toHaveClass('usa-button-disabled');
+
+      const saveSearch = screen.getByText('Save search');
+
+      expect(saveSearch).not.toHaveClass('usa-button-disabled');
     });
 
     it('should list two radio buttons options when Event / Action is selected in ReportType', async () => {
@@ -516,4 +533,75 @@ describe('ReportPage', () => {
       }
     });
   });
+
+  describe('Save search', () =>{
+
+    it('should enable Save search button', async () => {
+      await clickOnReportType();
+      const saveSearch = screen.getByText('Save search');
+
+      expect(saveSearch).not.toHaveClass('usa-button-disabled');
+    });
+
+    it('should open Save your search model upon clicking when user search if no saved search is present', async () => {
+      await clickOnReportType();
+
+      const saveSearch = screen.getByText('Save search');
+
+      await fireEvent.click(saveSearch);
+
+      await waitFor(() => {
+        expect(screen.getByText('Save your search')).toBeTruthy();
+        expect(screen.getByText('Search Parameters')).toBeTruthy();
+        expect(screen.getByText('Name this search (Max 50 characters)')).toBeTruthy();
+        expect(screen.getByText('Description of search (Max 100 characters)')).toBeTruthy();
+      });
+    });
+
+    it('should open Limit reached Saved search modal when user search is more than equal to 10', async () => {
+      setup({ nonComp: { businessLineUrl: 'vha' }, savedSearch: savedSearchesData.savedSearches });
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
+      const saveSearch = screen.getByText('Save search');
+
+      await fireEvent.click(saveSearch);
+
+      await waitFor(() => {
+        expect(screen.getByText(COPY.SAVE_LIMIT_REACH_TITLE)).toBeTruthy();
+        expect(screen.getByText(COPY.SAVE_LIMIT_REACH_MESSAGE)).toBeTruthy();
+      });
+    });
+
+    describe('Alert message', () => {
+      it('should display a successful Alert banner', async() => {
+        setup(
+          {
+            nonComp: { businessLineUrl: 'vha' },
+            savedSearch: {
+              message: 'First Search has been saved.',
+              status: 'succeeded',
+              fetchedSearches: savedSearchesData.savedSearches.fetchedSearches,
+            }
+          });
+
+        expect(screen.getByText('First Search has been saved.')).toBeTruthy();
+      });
+
+      it('should display a Something is wrong message when error', async() => {
+        setup(
+          {
+            nonComp: { businessLineUrl: 'vha' },
+            savedSearch: {
+              message: 'First Search has been saved.',
+              status: 'failed',
+              fetchedSearches: savedSearchesData.savedSearches.fetchedSearches,
+            }
+          });
+
+        expect(screen.getByText('Something went wrong')).toBeTruthy();
+      });
+    });
+  });
 });
+/* eslint-enable max-lines */

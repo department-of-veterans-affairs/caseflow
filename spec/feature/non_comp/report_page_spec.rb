@@ -23,15 +23,31 @@ feature "NonComp Report Page", :postgres do
     # visit vha_report_url
     expect(page).to have_content("Generate task report")
     expect(page).to have_content("Type of report")
+
+    step "should have a link that leads to saved searches" do
+      click_link "View saved searches"
+      expect(page).to have_content("Saved Searches")
+    end
   end
 
   it "when report type dropdown is changed, the submit button should be enabled" do
     # visit vha_report_url
     expect(page).to have_button("Generate task report", disabled: true)
     expect(page).to have_button("Clear filters", disabled: true)
+    expect(page).to have_button("Save search", disabled: true)
     click_dropdown(text: "Status")
     expect(page).to have_button("Generate task report")
     expect(page).to have_button("Clear filters")
+    expect(page).to have_button("Save search")
+  end
+
+  it "when user search is < 10, should open save search modal" do
+    click_dropdown(text: "Status")
+    expect(page).to have_button("Save search")
+    click_button "Save search"
+
+    expect(page).to have_text("Save your search")
+    expect(page).to have_text("Search Parameters")
   end
 
   it "report page should not be accessable to non admin VHA user" do

@@ -5,7 +5,7 @@ const subject = (filterData) => buildDecisionReviewFilterInformation(filterData)
 
 describe('Parsing filter data', () => {
   it('From in progress tasks', () => {
-    const results = subject(vhaTaskFilterDetails.in_progress);
+    const results = subject(vhaTaskFilterDetails.inProgress);
 
     expect(results.filterOptions).toEqual([
       {

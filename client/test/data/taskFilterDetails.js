@@ -1,5 +1,5 @@
 export const vhaTaskFilterDetails = {
-  in_progress: {
+  inProgress: {
     '["BoardGrantEffectuationTask", "Appeal"]': 6,
     '["DecisionReviewTask", "HigherLevelReview"]': 330,
     '["DecisionReviewTask", "SupplementalClaim"]': 20,
@@ -12,7 +12,7 @@ export const vhaTaskFilterDetails = {
   },
   incomplete: {},
   pending: {},
-  in_progress_issue_types: {
+  inProgressIssueTypes: {
     CHAMPVA: 12,
     'Caregiver | Tier Level': 20,
     Other: 24,
@@ -30,7 +30,7 @@ export const vhaTaskFilterDetails = {
     'Caregiver | Other': 14,
     'Camp Lejune Family Member': 19
   },
-  completed_issue_types: {
+  completedIssueTypes: {
     'Beneficiary Travel': 17,
     'Clothing Allowance': 12,
     CHAMPVA: 15,
@@ -48,13 +48,13 @@ export const vhaTaskFilterDetails = {
     'Foreign Medical Program': 13,
     'Camp Lejune Family Member': 8
   },
-  incomplete_issue_types: {},
-  pending_issue_types: {},
+  incompleteIssueTypes: {},
+  pendingIssueTypes: {},
 };
 
 export const genericTaskFilterDetails = {
-  in_progress: {},
-  in_progress_issue_types: {},
+  inProgress: {},
+  inProgressIssueTypes: {},
   completed: {},
-  completed_issue_types: {},
+  completedIssueTypes: {},
 };

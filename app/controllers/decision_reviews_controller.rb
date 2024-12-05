@@ -131,21 +131,49 @@ class DecisionReviewsController < ApplicationController
       case tab_name
       when :incomplete
         task_filter_hash[:incomplete] = incomplete_tasks_type_counts
-        task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
+        task_filter_hash[:incompleteIssueTypes] = incomplete_tasks_issue_type_counts
       when :pending
         task_filter_hash[:pending] = pending_tasks_type_counts
-        task_filter_hash[:pending_issue_types] = pending_tasks_issue_type_counts
+        task_filter_hash[:pendingIssueTypes] = pending_tasks_issue_type_counts
       when :in_progress
-        task_filter_hash[:in_progress] = in_progress_tasks_type_counts
-        task_filter_hash[:in_progress_issue_types] = in_progress_tasks_issue_type_counts
+        task_filter_hash[:inProgress] = in_progress_tasks_type_counts
+        task_filter_hash[:inProgressIssueTypes] = in_progress_tasks_issue_type_counts
       when :completed
         task_filter_hash[:completed] = completed_tasks_type_counts
-        task_filter_hash[:completed_issue_types] = completed_tasks_issue_type_counts
+        task_filter_hash[:completedIssueTypes] = completed_tasks_issue_type_counts
       else
         fail NotImplementedError "Tab name type not implemented for this business line: #{business_line}"
       end
     end
     task_filter_hash
+  end
+
+  def task_filters
+    respond_to do |format|
+      format.json do
+        render json: task_filter_details
+      end
+    end
+  end
+
+  def business_line_info
+    respond_to do |format|
+      format.json do
+        render json: {
+          businessLineConfig: business_line_config_options,
+          businessLine: business_line.name,
+          businessLineUrl: business_line.url,
+          baseTasksUrl: business_line.tasks_url,
+          isBusinessLineAdmin: business_line.user_is_admin?(current_user),
+          currentUserCssId: current_user.css_id,
+          featureToggles: {
+            decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
+            poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh, user: current_user),
+            metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+          }
+        }
+      end
+    end
   end
 
   def business_line_config_options
