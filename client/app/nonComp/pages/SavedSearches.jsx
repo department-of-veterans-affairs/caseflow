@@ -35,7 +35,7 @@ const SavedSearches = () => {
   const dispatch = useDispatch();
 
   const handleApply = () => {
-    return push(`/${businessLineUrl}/report`);
+    push(`/${businessLineUrl}/report`);
   };
 
   const buttonStyling = {

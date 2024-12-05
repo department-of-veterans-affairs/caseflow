@@ -2,12 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-
-import { formatDateStrUtc } from '../../util/DateUtil';
-
+import { formatDateStrUtc } from 'app/util/DateUtil';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
@@ -15,19 +12,16 @@ import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
-
+import { saveUserSearch, fetchedSearches, selectSavedSearch } from 'app/nonComp/actions/savedSearchSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
 import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
-
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-// eslint-disable-next-line no-duplicate-imports
-import { saveUserSearch, fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
-// eslint-disable-next-line no-duplicate-imports
 import { get, isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
 
@@ -293,8 +287,7 @@ const RHFRadioButton = ({ options, name, control, label }) => {
 const ReportPage = ({ history }) => {
   const selectedSearch = useSelector((state) => state.savedSearch.selectedSearch);
   const savedSearch = selectedSearch?.savedSearch;
-  // eslint-disable-next-line no-negated-condition
-  const conditions = !isEmpty(savedSearch?.conditions) ? Object.values(savedSearch?.conditions) : [];
+  const conditions = isEmpty(savedSearch?.conditions) ? [] : Object.values(savedSearch?.conditions);
   const specificStatus = savedSearch?.specificStatus;
   const specificEventType = savedSearch?.specificEventType;
 
