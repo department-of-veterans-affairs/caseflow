@@ -62,7 +62,7 @@ module Seeds
       s2_vet_6 = create_scenario_2_veteran(first_name: "HearNoBlock", last_name: "Six")
       s2_vet_7 = create_scenario_2_veteran(first_name: "HearNoBlock", last_name: "CAVC")
       s2_vet_8 = create_scenario_2_veteran(first_name: "HearNoBlock", last_name: "Eight")
-      s2_vet_9 = create_scenario_2_veteran(first_name: "HearNoBlock", last_name: "Nine")
+      s2_vet_9 = create_scenario_2_veteran(first_name: "HearBlock", last_name: "Nine")
       s2_vet_10 = create_scenario_2_veteran(first_name: "DoesNot", last_name: "Qualify")
 
       create(:legacy_appeal, :with_veteran, vacols_case: create(
