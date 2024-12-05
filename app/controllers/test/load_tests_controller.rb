@@ -46,9 +46,8 @@ class Test::LoadTestsController < ApplicationController
       load_test_run: "#{jenkins_response.code} #{jenkins_response.body}"
     }
   rescue StandardError => error
-    render json: {
-      error: error
-    }
+    Rails.logger.error error.message
+    render json: { error: error.message }, status: :internal_server_error
   end
 
   private
