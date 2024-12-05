@@ -46,7 +46,7 @@ class SchedulePeriod < CaseflowRecord
 
   def validate_schedule_period
     if dates_finalized_or_being_finalized?
-      errors[:base] << OverlappingSchedulePeriods.new("You have already uploaded a file for these dates.")
+      errors.add(:base, OverlappingSchedulePeriods.new("You have already uploaded a file for these dates."))
     end
   end
 

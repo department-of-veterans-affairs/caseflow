@@ -79,9 +79,9 @@ class DecisionReviewIntake < Intake
   end
 
   def set_claimant_errors
-    detail.errors[:payee_code] << payee_code_error if payee_code_error
-    detail.errors[:claimant] << claimant_required_error if claimant_required_error
-    detail.errors[:claimant] << claimant_address_error if claimant_address_error
+    detail.errors.add(:payee_code, payee_code_error) if payee_code_error
+    detail.errors.add(:claimant, claimant_required_error) if claimant_required_error
+    detail.errors.add(:claimant, claimant_address_error) if claimant_address_error
   end
 
   def claimant_address_error
