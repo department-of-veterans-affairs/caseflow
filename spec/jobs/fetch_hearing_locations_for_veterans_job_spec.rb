@@ -147,7 +147,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
 
       context "when BGS server is down" do
-        let(:server_error) { Caseflow::Error::VaDotGovServerError.new(code: 500, message: "ServerError") }
+        let(:server_error) { Savon::HTTPError.new(code: 500, message: "ServerError") }
         before(:each) do
           allow_any_instance_of(VaDotGovAddressValidator).to(
             receive(:update_closest_ro_and_ahls).and_raise(server_error)
