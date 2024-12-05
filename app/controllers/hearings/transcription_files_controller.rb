@@ -17,7 +17,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
 
   def transcription_file_tasks
-    @transcription_files = Hearings::TranscriptionFile.filterable_values
+    @transcription_files = TranscriptionFile.filterable_values
     select_based_on_tab
     apply_search
     apply_filters
@@ -32,7 +32,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def locked
-    locked_files = Hearings::TranscriptionFile.locked.preload(:locked_by)
+    locked_files = TranscriptionFile.locked.preload(:locked_by)
     files = []
     locked_files.each do |file|
       status = file.locked_by_id == current_user.id ? "selected" : "locked"
@@ -44,7 +44,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def lock
-    files = Hearings::TranscriptionFile.where(id: params[:file_ids])
+    files = TranscriptionFile.where(id: params[:file_ids])
     status = params[:status] && params[:status].to_s == "true" ? true : false
     lockable_file_ids = []
     files.each do |file|
@@ -61,7 +61,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
       locked_at = nil
     end
 
-    Hearings::TranscriptionFile.where(id: lockable_file_ids).update_all(
+    TranscriptionFile.where(id: lockable_file_ids).update_all(
       locked_by_id: locked_by_id, locked_at: locked_at
     )
 
@@ -79,7 +79,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def selected_files_info
     files = []
     ids = params[:file_ids].split(",")
-    Hearings::TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
+    TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
       hearing = transcription_file.hearing
       files << {
         id: transcription_file.id,
@@ -100,7 +100,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   def fetch_file
     docket_number = params[:docket_number]
-    file_path = Hearings::TranscriptionFile.fetch_file_by_docket_and_type(docket_number)
+    file_path = TranscriptionFile.fetch_file_by_docket_and_type(docket_number)
 
     if file_path
       send_file file_path, filename: File.basename(file_path), type: "application/vnd.ms-excel"
@@ -116,7 +116,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   private
 
   def file
-    @file ||= Hearings::TranscriptionFile.find(params[:file_id])
+    @file ||= TranscriptionFile.find(params[:file_id])
   end
 
   def select_based_on_tab

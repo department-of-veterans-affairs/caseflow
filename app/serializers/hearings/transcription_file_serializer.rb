@@ -2,7 +2,6 @@
 
 class TranscriptionFileSerializer
   include FastJsonapi::ObjectSerializer
-
   attribute :id
   attribute :docket_number
   attribute :hearing_type

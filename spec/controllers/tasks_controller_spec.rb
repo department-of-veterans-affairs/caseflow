@@ -1676,7 +1676,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
     let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
     let!(:create_transcription_task) do
-      Hearings::TranscriptionFile.create!(
+      TranscriptionFile.create!(
         hearing_id: hearing.id,
         hearing_type: "Hearing",
         file_name: file_name,
@@ -1687,7 +1687,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         aws_link: "vaec-appeals-caseflow-test/transcript_pdf/#{file_name}"
       )
     end
-    let(:transcription_file) { Hearings::TranscriptionFile.find_by(file_name: file_name) }
+    let(:transcription_file) { TranscriptionFile.find_by(file_name: file_name) }
     let(:user) { create(:default_user) }
     let(:root_task) { create(:root_task, appeal: hearing.appeal) }
     let(:distribution_task) { create(:distribution_task, parent: root_task) }

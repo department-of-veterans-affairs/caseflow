@@ -63,7 +63,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def most_recent_returned_file_time
-    Hearings::TranscriptionFile.maximum(:date_returned_box)
+    TranscriptionFile.maximum(:date_returned_box)
   end
 
   def find_webex_formatted_files(files)

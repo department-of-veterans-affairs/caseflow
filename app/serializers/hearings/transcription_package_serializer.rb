@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionPackageSerializer
+class TranscriptionPackageSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
