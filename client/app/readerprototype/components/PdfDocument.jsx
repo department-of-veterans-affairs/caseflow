@@ -16,6 +16,7 @@ import { storeMetrics } from '../../util/Metrics';
 import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
 import { getPageIndexWithMatch } from '../../reader/selectors';
 import ReaderFooter from './ReaderFooter';
+import { annotationPlacement } from '../selectors';
 
 const PdfDocument = ({
   currentPage,
@@ -42,6 +43,30 @@ const PdfDocument = ({
     justifyContent: 'center',
     gap: '8rem',
   };
+
+  const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (!isPlacingAnnotation && event.code === 'PageDown') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage + listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+
+      if (!isPlacingAnnotation && event.code === 'PageUp') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage - listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentPage]);
 
   const dispatch = useDispatch();
 
