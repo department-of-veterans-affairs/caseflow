@@ -6,23 +6,14 @@ import PropTypes from 'prop-types';
 import Checkbox from '../../components/Checkbox';
 
 const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }) => {
+  const [checked, setChecked] = useState(featureToggle.default_status);
+
   const handleFeatureToggleSelect = (selectedFeature, value) => {
-    const currentFeatureToggles = currentState.user.user.feature_toggles;
-    let featureToggleObjCopy = {};
+    const currentFeatureToggles = currentState.user.feature_toggles;
 
-    if (value) {
-      const updatedFeatureToggles = {
-        ...currentFeatureToggles,
-        [selectedFeature]: value
-      };
+    setChecked(!checked);
 
-      featureToggleObjCopy = updatedFeatureToggles;
-    } else {
-      // eslint-disable-next-line no-unused-vars
-      const { [selectedFeature]: removedValue, ...updatedFeatureToggles } = currentFeatureToggles;
-
-      featureToggleObjCopy = updatedFeatureToggles;
-    }
+    currentFeatureToggles[selectedFeature] = value;
 
     updateState({
       ...currentState,
@@ -39,19 +30,20 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
   return (
     <div className="load-test-container-checkbox">
       <Checkbox
-        label={featureToggle}
-        name={featureToggle}
+        label={featureToggle.name}
+        name={featureToggle.name}
         onChange={(value) => {
-          handleFeatureToggleSelect(featureToggle, value);
+          handleFeatureToggleSelect(featureToggle.name, value);
         }}
-        isChecked={Boolean(currentState.user.user.feature_toggles[featureToggle] ?? false)}
+        isChecked={checked}
+        defaultValue={featureToggle.default_status}
       />
     </div>
   );
 };
 
 FeatureToggleConfiguration.propTypes = {
-  featureToggle: PropTypes.string,
+  featureToggle: PropTypes.object,
   currentState: PropTypes.object,
   updateState: PropTypes.func
 };

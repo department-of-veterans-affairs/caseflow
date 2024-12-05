@@ -49,6 +49,12 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
+    when "LegacyHearing"
+      target_data_type = LegacyHearing
+      target_data_column = "vacols_id"
+    when "HearingDay"
+      target_data_type = HearingDay
+      target_data_column = "id"
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
@@ -61,42 +67,48 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
+    when "Veteran"
+      target_data_type = Veteran
+      target_data_column = "file_number"
+    when "User"
+      target_data_type = User
+      target_data_column = "css_id"
+    when "Claimant"
+      target_data_type = Claimant
+      target_data_column = "participant_id"
+    when "Notification"
+      target_data_type = Notification
+      target_data_column = "id"
+    when "Organization"
+      target_data_type = Organization
+      target_data_column = "url"
+      # name will also work because find_by_name_or_url is used
     end
-
-    get_target_data_id(params[:target_id], target_data_type, target_data_column)
+    get_target_data_object(params[:target_id], target_data_type, target_data_column)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
 
-  # Private: If no target_id is provided, use the target_id of sample data instead
-  # Returns the target_data_id of each target_data_type
-  # For Metric returns the entire target_data object
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def get_target_data_id(target_id, target_data_type, target_data_column)
-    target_data_id = if target_data_type.to_s == "Metric"
-                       target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "Veteran"
-                       target_id.presence ? Veteran.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "SupplementalClaim"
-                       target_id.presence ? SupplementalClaim.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "Appeal"
-                       target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "HearingDay"
-                       target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
-                     elsif target_id.presence
-                       target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
-                     else
-                       target_data_type.all.sample[target_data_column.to_sym]
-                     end
+  # Private: If no target_id is provided, sample an object of the specified type instead
+  # Returns the target_data_object of each target_data_type
+  # rubocop:disable Layout/LineLength
+  def get_target_data_object(target_id, target_data_type, target_data_column)
+    target_data_object = if target_data_type.to_s == "Organization"
+                           target_id.presence ? Organization.find_by_name_or_url(target_id) : target_data_type.order("RANDOM()").limit(10).first
+                         elsif target_id.presence
+                           target_data_type.find_by("#{target_data_column}": target_id)
+                         else
+                           target_data_type.order("RANDOM()").limit(1).first
+                         end
 
-    if target_data_id.nil?
+    if target_data_object.nil?
       fail ActiveRecord::RecordNotFound.new(
         message: "Data returned nil when trying to find #{params[:target_type]}"
       )
     end
 
-    target_data_id
+    target_data_object
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Layout/LineLength
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
@@ -132,11 +144,19 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: functions
   # Response: None
   def grant_or_deny_functions(functions)
+<<<<<<< HEAD
+    functions.select { |_key, value| value == true }.each do |key, _value|
+      Functions.grant!(key, users: [LOAD_TESTING_USER])
+    end
+    functions.select { |_key, value| value == false }.each do |key, _value|
+      Functions.deny!(key, users: [LOAD_TESTING_USER])
+=======
     functions.select { |_k, v| v == true }.each do |k, _v|
       Functions.grant!(k, users: [LOAD_TESTING_USER])
     end
     functions.select { |_k, v| v == false }.each do |k, _v|
       Functions.deny!(k, users: [LOAD_TESTING_USER])
+>>>>>>> uat/FY25Q1.5.0
     end
   end
 
@@ -147,6 +167,16 @@ class Test::LoadTestApiController < Api::ApplicationController
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
 
+<<<<<<< HEAD
+    organizations.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      organization.add_user(user) unless organization.users.include?(user)
+    end
+    organizations.select { |orgs| orgs[:admin].to_s == "true" }.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      OrganizationsUser.make_user_admin(user, organization)
+    end
+=======
     organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
@@ -156,6 +186,7 @@ class Test::LoadTestApiController < Api::ApplicationController
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
     end
+>>>>>>> uat/FY25Q1.5.0
   end
 
   # Private: Method to remove user from all organizations before adding back to only relevant orgs for this test run

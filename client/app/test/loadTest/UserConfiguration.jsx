@@ -19,24 +19,24 @@ export default function UserConfiguration(props) {
 
   const filteredStations = [];
   const stationsMapping = new Map();
-
   const functionsAvailable = props.form_values.functions_available;
-  const featureToggles = props.featuresList;
+  const roles = props.form_values.all_csum_roles;
+  const organizations = props.form_values.all_organizations;
+  const featureToggles = props.form_values.feature_toggles_available;
   const currentState = props.currentState;
   const updateState = props.updateState;
+  const errors = props.errors;
 
   const handleStationSelect = ({ value }) => {
-    stationIsSelected(true);
     setStationSelected(value);
+    setOfficeSelected('');
     updateState(
       {
         ...currentState,
         user: {
           ...currentState.user,
-          user: {
-            ...currentState.user.user,
-            station_id: value
-          }
+          station_id: value,
+          regional_office: ''
         }
       }
     );
@@ -86,11 +86,9 @@ export default function UserConfiguration(props) {
     );
   };
 
-  featureToggles.sort();
-
   return (
     <div>
-      <p>Station ID</p>
+      <h3><strong>Station ID</strong></h3>
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
@@ -101,55 +99,68 @@ export default function UserConfiguration(props) {
         filterOption={() => true}
         value={stationSelected}
       />
-      { isSelectedStation &&
-        (<div>
-          <br />
-          <p>Regional Office</p>
-          <SearchableDropdown
-            name="Regional office dropdown"
-            hideLabel
-            options={officeAvailable} searchable
-            onChange={(newVal) => {
-              handleOfficeSelect(newVal);
-            }}
-            filterOption={() => true}
-            value={officeSelected}
+      {errors.station_id && <div className="error">{errors.station_id}</div>}
+      <br />
+      <h3><strong>Regional Office</strong></h3>
+      <SearchableDropdown
+        name="Regional office dropdown"
+        hideLabel
+        options={officeAvailable} searchable
+        onChange={(newVal) => {
+          handleOfficeSelect(newVal);
+        }}
+        filterOption={() => true}
+        value={officeSelected}
+      />
+      {errors.regional_office && <div className="error">{errors.regional_office}</div>}
+      <br />
+      <h3 className="header-style"><strong>Organizations</strong></h3>
+      <div className="load-test-container">
+        {organizations.map((organization) => (
+          <OrganizationsConfiguration
+            key={organization}
+            currentState={currentState}
+            updateState={props.updateState}
+            org={organization}
           />
-          { isSelectedOffice &&
-            (<div>
-              <br />
-              <p>Organizations</p>
-              <div className="load-test-container">
-                <OrgCheckboxSection {...props} />
-              </div>
-              <br />
-              <h2><strong>Functions</strong></h2>
-              <div className="load-test-container test-class-sizing">
-                {functionsAvailable.map((functionOption) => (
-                  <FunctionConfiguration
-                    key={functionOption}
-                    functionOption={functionOption}
-                    currentState={currentState}
-                    updateState={props.updateState}
-                  />
-                ))}
-              </div>
-              <br />
-              <h2><strong>Feature Toggles</strong></h2>
-              <div className="load-test-container test-class-sizing">
-                {featureToggles.map((featureToggle) => (
-                  <FeatureToggleConfiguration
-                    key={featureToggle}
-                    featureToggle={featureToggle}
-                    currentState={currentState}
-                    updateState={props.updateState}
-                  />
-                ))}
-              </div>
-            </div>
-            )}
-        </div>
-        )}
+        ))}
+      </div>
+      <br />
+      <h3 className="header-style"><strong>Functions</strong></h3>
+      <div className="load-test-container test-class-sizing">
+        {functionsAvailable.map((functionOption) => (
+          <FunctionConfiguration
+            key={functionOption}
+            functionOption={functionOption}
+            currentState={currentState}
+            updateState={props.updateState}
+          />
+        ))}
+      </div>
+      <br />
+      <h3 className="header-style"><strong>Roles</strong></h3>
+      <div className="load-test-container test-class-sizing">
+        {roles.map((role) => (
+          <RoleConfiguration
+            key={role}
+            role={role}
+            currentState={currentState}
+            updateState={props.updateState}
+          />
+        ))}
+      </div>
+      <br />
+      <h3 className="header-style"><strong>Feature Toggles</strong></h3>
+      <div className="load-test-container test-class-sizing">
+        {featureToggles.map((featureToggle) => (
+          <FeatureToggleConfiguration
+            key={featureToggle.name}
+            featureToggle={featureToggle}
+            currentState={currentState}
+            updateState={props.updateState}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -161,5 +172,6 @@ UserConfiguration.propTypes = {
   functions_available: PropTypes.array,
   register: PropTypes.func,
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  errors: PropTypes.object
 };
