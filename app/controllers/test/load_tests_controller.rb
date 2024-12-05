@@ -2,6 +2,7 @@
 
 class Test::LoadTestsController < ApplicationController
   include ProdtestOnlyConcern
+  skip_before_action :verify_authentication, only: [:build_cookie]
 
   LOAD_TESTING_USER = "LOAD_TESTER"
 
