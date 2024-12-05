@@ -184,7 +184,9 @@ const PdfDocument = memo(({
         dispatch(setPdfDocument(url, pdfDocument));
         pdfDocumentRef.current = pdfDocument;
 
-        dispatch(getDocumentText(pdfDocument, doc.content_url));
+        if (isFileVisible) {
+          dispatch(getDocumentText(pdfDocument, doc.content_url));
+        }
       }).
       catch((err) => {
         console.error(`ERROR with PDFJS for ${doc.content_url}: ${err}`);
@@ -214,7 +216,9 @@ const PdfDocument = memo(({
             textContentContainer[i] = text;
           });
         }
-        setTextContent(textContentContainer);
+        if (isFileVisible) {
+          setTextContent(textContentContainer);
+        }
       });
   };
 
