@@ -30,7 +30,6 @@ class Remediations::VeteranRecordRemediationService
       Rails.logger.error "An error occurred during remediation: #{error.message}"
       SlackService.new.send_notification("Job failed during remediation: #{error.message}",
                                          "Error in #{self.class.name}")
-      # false # Indicate failure
     end
   end
 
@@ -40,12 +39,11 @@ class Remediations::VeteranRecordRemediationService
     begin
       duplicate_veterans_collections = @dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      # true
     rescue StandardError => error
       Rails.logger.error "an error occured #{error}"
       SlackService.new.send_notification("Job failed with error: #{error.message}", "Error in #{self.class.name}")
       false # Indicate failure
-      # sentry log / metabase dashboard
+      # do we want to add catches for sentry log / metabase dashboard??
     end
   end
 
