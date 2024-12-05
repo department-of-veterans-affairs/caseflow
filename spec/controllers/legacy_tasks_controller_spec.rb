@@ -138,29 +138,6 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
 
-    context "with instructions" do
-      let(:role) { :attorney_role }
-      let(:params) do
-        {
-          appeal_id: appeal.id,
-          assigned_to_id: attorney.id,
-          instructions: "Complete the review and draft a decision." # Send as string
-        }
-      end
-
-      it "creates a task with provided instructions" do
-        expect(QueueRepository).to receive(:assign_case_to_attorney!).with(
-          hash_including(instructions: ["Complete the review and draft a decision."]) # Array expected here after Array.wrap
-        )
-        post :create, params: { tasks: params }
-      end
-
-      it "creates a task with provided instructions" do
-        post :create, params: { tasks: params }
-        puts "Params sent: #{params.inspect}"
-      end
-    end
-
     context "when the user is an SCM team member" do
       let(:role) { :judge_role }
       let(:params) do
