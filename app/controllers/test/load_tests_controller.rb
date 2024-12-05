@@ -34,7 +34,7 @@ class Test::LoadTestsController < ApplicationController
     # If the crumbIssuer response is successful, send the Jenkins request to kick off the pipeline
     if crumb_response.is_a?(Net::HTTPOK)
       request_headers = generate_request_headers(crumb_response)
-      encoded_test_recipe = encode_test_recipe(params[:data].to_s)
+      encoded_test_recipe = encode_test_recipe(request.body.string)
 
       jenkins_response = send_jenkins_run_request(request_headers, encoded_test_recipe)
     else
