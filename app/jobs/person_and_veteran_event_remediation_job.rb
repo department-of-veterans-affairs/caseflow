@@ -15,26 +15,87 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   private
 
+  class PersonRemediation
+    def initialize(event_record)
+      @event_record = event_record
+    end
+
+    def call
+      if duplicate_ids.size >= 1
+        Remediations::DuplicatePersonRemediationService.new(
+          duplicate_person_ids: duplicate_ids,
+          event_record: event_record,
+          updated_person_id: original_id
+        ).remediate!
+      end
+    end
+
+    private
+
+    attr_reader :event_record
+
+    def duplicate_ids
+      @duplicate_ids ||= Person.where(ssn: ssn).map(&:id).reject { |id| id == original_id }
+    end
+
+    def ssn
+      event_record.evented_record.ssn
+    end
+
+    def original_id
+      @original_id ||= event_record.evented_record_id
+    end
+  end
+
   def run_person_remediation
     find_events("Person").select do |event_record|
-      original_id = event_record.evented_record_id
-      dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
-      if dup_ids.size >= 1
-        Remediations::DuplicatePersonRemediationService
-          .new(updated_person_id: original_id, duplicate_person_ids: dup_ids, event_record: event_record).remediate!
+      PersonRemediation.new(event_record).call
+    end
+  end
+
+  class VeteranRemediation
+    def initialize(event_record)
+      @event_record = event_record
+    end
+
+    def call
+      if before_file_num != after_file_num || duplicate_ids.size >= 1
+        Remediations::VeteranRecordRemediationService.new(
+          before_file_num,
+          after_file_num,
+          event_record
+        ).remediate!
       end
+    end
+
+    private
+
+    attr_reader :event_record
+
+    def duplicate_ids
+      Veteran.where(ssn: ssn).map(&:id).reject { |id| id == original_id }
+    end
+
+    def ssn
+      event_record.evented_record.ssn
+    end
+
+    def before_file_num
+      @before_file_num ||= event_record.info["before_data"]["file_number"]
+    end
+
+    def after_file_num
+      @after_file_num ||= event_record.info["record_data"]["file_number"]
+    end
+
+    def original_id
+      @original_id ||= event_record.evented_record_id
     end
   end
 
   def run_veteran_remediation
     find_events("Veteran").select do |event_record|
-      before_fn = event_record.info["before_data"]["file_number"]
-      after_fn = event_record.info["record_data"]["file_number"]
-      original_id = event_record.evented_record_id
-      dup_ids = Veteran.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
-      if before_fn != after_fn || dup_ids.size >= 1
-        Remediations::VeteranRecordRemediationService.new(before_fn, after_fn, event_record).remediate!
-      end
+      VeteranRemediation.new(event_record).call
     end
   end
 

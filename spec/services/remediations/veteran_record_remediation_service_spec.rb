@@ -50,17 +50,19 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
   end
 
   describe "#remediate!" do
+    before do
+      mock_classes.each do |mock_instance|
+        column = column_mapping[mock_instance.class]
+        expect(mock_instance).to receive(:update!).with(after_fn).and_wrap_original do
+          mock_instance.send("#{column}=", after_fn)
+        end
+      end
+    end
+
     context "when there are duplicate veterans" do
       it "runs dup_fix and updates the file_number for duplicates and destroys the duplicate veterans" do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
-
-        mock_classes.each do |mock_instance|
-          column = column_mapping[mock_instance.class]
-          expect(mock_instance).to receive(:update!).with(after_fn).and_wrap_original do
-            mock_instance.send("#{column}=", after_fn)
-          end
-        end
 
         expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
@@ -83,13 +85,6 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
       it "does not run dup_fix and updates file_number normally" do
         # Expect that `dup_fix` should not be called in this scenario.
         expect(vet_record_service).not_to receive(:dup_fix)
-
-        mock_classes.each do |mock_instance|
-          column = column_mapping[mock_instance.class]
-          expect(mock_instance).to receive(:update!).with(after_fn).and_wrap_original do
-            mock_instance.send("#{column}=", after_fn)
-          end
-        end
 
         vet_record_service.remediate!
 
