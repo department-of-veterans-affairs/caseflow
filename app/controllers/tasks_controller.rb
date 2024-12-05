@@ -188,23 +188,14 @@ class TasksController < ApplicationController
 
   def upload_transcription_to_vbms
     pdf_file = Hearings::TranscriptionFile.where(file_type: "pdf")
-    .find_by(docket_number: appeal.docket_number)
+      .find_by(docket_number: appeal.docket_number)
 
-    file_path = pdf_file.fetch_file_from_s3!
-    file_name = file_path.split("/").last
-    document_params = {
-      veteran_file_number: appeal.veteran_file_number,
-      document_type: "Hearing Transcript",
-      document_subject: "notifications",
-      document_name: file_name,
-      application: "notification-report",
-      file: file_path
-    }
+    document_params = format_document_params(pdf_file)
 
     response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
     if response.success?
       complete_transcript_review
-      set_flash_vbms_upload_success(file_name, appeal)
+      set_flash_vbms_upload_success(document_params[:document_name], appeal)
       render json: {
         data: {
           message: "Upload to VBMS successful."
@@ -216,6 +207,20 @@ class TasksController < ApplicationController
   def error_found_upload_transcription_to_vbms
     file_name = params[:file_info][:file_name]
     set_flash_vbms_upload_success(file_name, appeal)
+  end
+
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+
+    render json: {}, status: :ok
+  rescue StandardError => error
+    render_update_errors(error)
   end
 
   private
@@ -235,20 +240,6 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
-  end
-
-  def cancel_review_transcript_task
-    instructions = params[:task][:instructions]
-
-    ActiveRecord::Base.transaction do
-      task = ReviewTranscriptTask.find(params[:id])
-      task.cancel_task_and_child_subtasks
-      task.update!(instructions: instructions)
-    end
-
-    render json: {}, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
   end
 
   def send_initial_notification_letter
@@ -473,6 +464,19 @@ class TasksController < ApplicationController
     flash[:custom] = {
       title: format(COPY::TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_TITLE, appeal.veteran_full_name),
       message: format(COPY::TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_DETAIL, appeal.veteran_full_name, file_name)
+    }
+  end
+
+  def format_document_params(file)
+    file_path = file.fetch_file_from_s3!
+    file_name = file_path.split("/").last
+    {
+      veteran_file_number: appeal.veteran_file_number,
+      document_type: "Hearing Transcript",
+      document_subject: "notifications",
+      document_name: file_name,
+      application: "notification-report",
+      file: file_path
     }
   end
 end
