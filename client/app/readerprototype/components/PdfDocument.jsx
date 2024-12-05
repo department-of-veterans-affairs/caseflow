@@ -282,11 +282,8 @@ const PdfDocument = memo(({
   }, [metricsLogged]);
 
   const renderPages = () => {
-    if (!isFileVisible) {
-      return null;
-    }
     // eslint-disable-next-line no-underscore-dangle
-    if (pdfDocumentRef.current && !pdfDocumentRef.current._transport.destroyed) {
+    if (isFileVisible && pdfDocumentRef.current && !pdfDocumentRef.current._transport.destroyed) {
       return pdfPages.map((page, index) => (
         <Page
           setCurrentPage={setCurrentPage}
