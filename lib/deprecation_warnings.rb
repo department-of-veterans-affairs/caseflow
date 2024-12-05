@@ -16,7 +16,8 @@ module DeprecationWarnings
     /ActiveModel\:\:Errors#to_xml is deprecated/,
     /ActiveModel\:\:Errors#keys is deprecated/,
     /ActiveModel\:\:Errors#values is deprecated/,
-    /ActiveModel\:\:Errors#slice\! is deprecated/
+    /ActiveModel\:\:Errors#slice\! is deprecated/,
+    /ActiveModel\:\:Errors#to_h is deprecated/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
