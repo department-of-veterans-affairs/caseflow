@@ -2256,7 +2256,7 @@ DEPENDENCIES
   statsd-instrument
   stringex
   strong_migrations
-  test-prof
+  test-prof (= 1.4.2)
   timecop
   tty-tree
   tzinfo (~> 2.0)
