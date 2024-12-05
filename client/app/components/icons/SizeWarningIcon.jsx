@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES } from '../../constants/AppConstants';
 
 export const SizeWarningIcon = (props) => {
-  const { size, className, warningIconAndBanner } = props;
-
-  if (!warningIconAndBanner) {
-    return null;
-  }
+  const { size, className } = props;
 
   return ( <svg aria-title="Large File Warning"
     title="Large File Warning" xmlns="http://www.w3.org/2000/svg"

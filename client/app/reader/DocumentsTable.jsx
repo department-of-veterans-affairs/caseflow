@@ -722,7 +722,8 @@ class DocumentsTable extends React.Component {
         valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size}
           browserSpeedInBytes={mbpsToBps}
           warningThreshold={this.props.readerPreferences}
-          enableBandwidthBanner={this.props.enableBandwidthBanner} />,
+          enableBandwidthBanner={this.props.enableBandwidthBanner}
+          featureToggles={this.props.featureToggles} />,
       },
     ];
   };

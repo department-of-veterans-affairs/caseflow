@@ -10,7 +10,7 @@ const DocSizeIndicator = (props) => {
   const waitTime = parseInt(props.warningThreshold, 10) || 15;
 
   const showIcon = () => {
-    if (downloadTime > waitTime) {
+    if (props.featureToggles.warningIconAndBanner && (downloadTime > waitTime)) {
       props.enableBandwidthBanner();
 
       return true;
