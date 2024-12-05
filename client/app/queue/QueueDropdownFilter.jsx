@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
-import { startCase } from 'lodash';
 import ReceiptDatePicker from '../components/ReceiptDatePicker';
 import TaskCompletedDatePicker from '../components/TaskCompletedDatePicker';
 
