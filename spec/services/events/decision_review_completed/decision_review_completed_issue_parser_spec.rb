@@ -33,7 +33,22 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedIssuePars
       nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
       type: "RequestIssue",
       original_caseflow_request_issue_id: 679,
-      veteran_participant_id: "1826209"
+      veteran_participant_id: "1826209",
+      decision_issue: {
+        benefit_type: "compensation",
+        contention_reference_id: 7_905_752,
+        decision_text: "service connected",
+        description: nil,
+        diagnostic_code: nil,
+        disposition: "Granted",
+        end_product_last_action_date: 19_594,
+        participant_id: "1826209",
+        percent_number: "50",
+        rating_issue_reference_id: nil,
+        rating_profile_date: nil,
+        rating_promulgation_date: nil,
+        subject_text: "This broadcast may not be reproduced"
+      }
     }
   end
 
@@ -210,6 +225,77 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedIssuePars
   describe "#ri_veteran_participant_id" do
     it "returns the veteran_participant_id" do
       expect(subject.ri_veteran_participant_id).to eq("1826209")
+    end
+  end
+
+  describe "parsed decision_issue internals" do
+
+    it "parse whole decision_issue" do
+      expect(subject.decision_issue).to eq(
+        {
+          benefit_type: "compensation",
+          contention_reference_id: 7_905_752,
+          decision_text: "service connected",
+          description: nil,
+          diagnostic_code: nil,
+          disposition: "Granted",
+          end_product_last_action_date: 19_594,
+          participant_id: "1826209",
+          percent_number: "50",
+          rating_issue_reference_id: nil,
+          rating_profile_date: nil,
+          rating_promulgation_date: nil,
+          subject_text: "This broadcast may not be reproduced"
+        }
+      )
+    end
+
+    it "parse decision_issue_benefit_type" do
+      expect(subject.decision_issue_benefit_type).to eq("compensation")
+    end
+
+    it "parse decision_issue_contention_reference_id" do
+      expect(subject.decision_issue_contention_reference_id).to eq(7_905_752)
+    end
+
+    it "parse decision_issue_decision_text" do
+      expect(subject.decision_issue_decision_text).to eq("service connected")
+    end
+
+    it "parse decision_issue_description" do
+      expect(subject.decision_issue_description).to eq(nil)
+    end
+
+    it "parse decision_issue_diagnostic_code" do
+      expect(subject.decision_issue_diagnostic_code).to eq(nil)
+    end
+
+    it "parse decision_issue_disposition" do
+      expect(subject.decision_issue_disposition).to eq("Granted")
+    end
+
+    it "parse decision_issue_end_product_last_action_date" do
+      expect(subject.decision_issue_end_product_last_action_date).to eq(19_594)
+    end
+
+    it "parse decision_issue_participant_id" do
+      expect(subject.decision_issue_participant_id).to eq("1826209")
+    end
+
+    it "parse decision_issue_percent_number" do
+      expect(subject.decision_issue_percent_number).to eq("50")
+    end
+
+    it "parse decision_issue_rating_issue_reference_id" do
+      expect(subject.decision_issue_rating_issue_reference_id).to eq(nil)
+    end
+
+    it "parse decision_issue_rating_promulgation_date" do
+      expect(subject.decision_issue_rating_promulgation_date).to eq(nil)
+    end
+
+    it "parse decision_issue_subject_text" do
+      expect(subject.decision_issue_subject_text).to eq("This broadcast may not be reproduced")
     end
   end
 
