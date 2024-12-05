@@ -144,15 +144,9 @@ class Test::LoadTestApiController < Api::ApplicationController
       )
     end
 
-<<<<<<< HEAD
     target_data_id
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
-=======
-    target_data_object
-  end
-  # rubocop:enable Layout/LineLength
->>>>>>> feature/APPEALS-59217
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
@@ -188,19 +182,11 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: functions
   # Response: None
   def grant_or_deny_functions(functions)
-<<<<<<< HEAD
     functions.select { |_k, v| v == true }.each do |k, _v|
       Functions.grant!(k, users: [LOAD_TESTING_USER])
     end
     functions.select { |_k, v| v == false }.each do |k, _v|
       Functions.deny!(k, users: [LOAD_TESTING_USER])
-=======
-    functions.select { |_key, value| value == true }.each do |key, _value|
-      Functions.grant!(key, users: [LOAD_TESTING_USER])
-    end
-    functions.select { |_key, value| value == false }.each do |key, _value|
-      Functions.deny!(key, users: [LOAD_TESTING_USER])
->>>>>>> feature/APPEALS-59217
     end
   end
 
@@ -211,7 +197,6 @@ class Test::LoadTestApiController < Api::ApplicationController
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
 
-<<<<<<< HEAD
     organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
@@ -220,15 +205,6 @@ class Test::LoadTestApiController < Api::ApplicationController
     organizations.select { |organization| organization[:admin] == false || "false" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
-=======
-    organizations.each do |org|
-      organization = Organization.find_by_name_or_url(org[:url])
-      organization.add_user(user) unless organization.users.include?(user)
-    end
-    organizations.select { |orgs| orgs[:admin].to_s == "true" }.each do |org|
-      organization = Organization.find_by_name_or_url(org[:url])
-      OrganizationsUser.make_user_admin(user, organization)
->>>>>>> feature/APPEALS-59217
     end
   end
 
