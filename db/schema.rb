@@ -2717,11 +2717,6 @@ ActiveRecord::Schema.define(version: 2024_12_02_162812) do
       END $function$
   SQL
 
-
-  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
-      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
-  SQL
-
   create_view "remands", sql_definition: <<-SQL
       SELECT supplemental_claims.id,
       supplemental_claims.benefit_type,
