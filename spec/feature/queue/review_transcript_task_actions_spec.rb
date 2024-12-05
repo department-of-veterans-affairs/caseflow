@@ -2,18 +2,19 @@
 
 RSpec.feature "Case Details page ReviewTranscriptTask actions" do
   let(:hearing) { create(:hearing) }
+  let(:appeal) { hearing.appeal }
   let(:hearing_user) { create(:user) }
-  let(:veteran_full_name) { hearing.appeal.veteran_full_name }
+  let(:veteran_full_name) { appeal.veteran_full_name }
 
   describe "No errors found: Upload transcript to VBMS" do
     before do
       HearingAdmin.singleton.add_user(hearing_user)
       User.authenticate!(user: hearing_user)
       @task = ReviewTranscriptTask.create(
-        appeal: hearing.appeal,
+        appeal: appeal,
         assigned_to: hearing_user,
         assigned_by: User.system_user,
-        parent: hearing.appeal.root_task,
+        parent: appeal.root_task,
         status: "assigned"
       )
       @file_name = "#{hearing.docket_number}_#{hearing.id}_Hearing.pdf"
@@ -27,11 +28,11 @@ RSpec.feature "Case Details page ReviewTranscriptTask actions" do
       )
       create(:transcription, hearing: hearing)
 
-      allow_any_instance_of(TasksController).to receive(:appeal).and_return(hearing.appeal)
+      allow_any_instance_of(TasksController).to receive(:appeal).and_return(appeal)
     end
 
     it "displays a success banner on success" do
-      visit "/queue/appeals/#{hearing.appeal.uuid}"
+      visit "/queue/appeals/#{appeal.uuid}"
 
       click_dropdown(
         id: "available-actions",
@@ -52,10 +53,10 @@ RSpec.feature "Case Details page ReviewTranscriptTask actions" do
       User.authenticate!(user: hearing_user)
 
       @task = ReviewTranscriptTask.create(
-        appeal: hearing.appeal,
+        appeal: appeal,
         assigned_to: hearing_user,
         assigned_by: User.system_user,
-        parent: hearing.appeal.root_task,
+        parent: appeal.root_task,
         status: "assigned"
       )
 
@@ -74,7 +75,7 @@ RSpec.feature "Case Details page ReviewTranscriptTask actions" do
 
       create(:transcription, hearing: hearing)
 
-      allow_any_instance_of(TasksController).to receive(:appeal).and_return(hearing.appeal)
+      allow_any_instance_of(TasksController).to receive(:appeal).and_return(appeal)
     end
 
     after do
@@ -82,14 +83,14 @@ RSpec.feature "Case Details page ReviewTranscriptTask actions" do
     end
 
     it "displays a success banner on success" do
-      visit "/queue/appeals/#{hearing.appeal.uuid}"
+      visit "/queue/appeals/#{appeal.uuid}"
 
       click_dropdown(
         id: "available-actions",
         text: "Errors found and corrected: Upload transcript to VBMS"
       )
 
-      attach_file('cf-file-input', File.absolute_path("./lib/pdfs/#{@file_name}"), visible: false)
+      attach_file("cf-file-input", File.absolute_path("./lib/pdfs/#{@file_name}"), visible: false)
 
       fill_in "Please provide context and instructions for this action", with: "The are test notes, from our tester."
 
@@ -112,6 +113,7 @@ RSpec.feature "Case Details page ReviewTranscriptTask actions" do
         status: "assigned"
       )
     end
+
     it "cancels the ReviewTranscriptTask" do
       visit "/queue/appeals/#{appeal.uuid}"
 
