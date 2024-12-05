@@ -86,6 +86,7 @@
     "dotenv-webpack": "^8.1.0",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.8.3",
+    "enzyme": "^3.11.0",
     "expose-loader": "^0.7.3",
     "faker": "^4.1.0",
     "file-loader": "^2.0.0",
