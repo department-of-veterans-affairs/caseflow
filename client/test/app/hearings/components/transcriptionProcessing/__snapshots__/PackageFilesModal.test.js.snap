@@ -155,7 +155,6 @@ exports[`Package files modal matches snapshot 1`] = `
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="object-object-label"
                             aria-owns="object-object-listbox"
                             autocapitalize="none"
                             autocomplete="off"

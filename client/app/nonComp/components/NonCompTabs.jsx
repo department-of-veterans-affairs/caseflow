@@ -122,15 +122,15 @@ const NonCompTabsUnconnected = (props) => {
       }
     } else {
       // Sets the last 7 days filter on first swap to the completed tasks tab if the temp date filter is not set
-      const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
-        some((item) => item.includes('col=completedDateColumn'));
+      // const containsCompletedDateFilter = completedTabPaginationOptions['filter[]'].
+      // some((item) => item.includes('col=completedDateColumn'));
 
-      if (!containsCompletedDateFilter) {
-        const sevenDaysAgoString = moment().subtract(7, 'days').
-          format('YYYY-MM-DD');
+      // if (!containsCompletedDateFilter) {
+      const sevenDaysAgoString = moment().subtract(7, 'days').
+        format('YYYY-MM-DD');
 
-        completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
-      }
+      completedTabPaginationOptions['filter[]'].push(`col=completedDateColumn&val=last7,${sevenDaysAgoString},`);
+      // }
     }
   }
 

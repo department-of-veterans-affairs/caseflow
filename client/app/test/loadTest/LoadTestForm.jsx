@@ -87,5 +87,6 @@ export default function LoadTestForm(props) {
 
 LoadTestForm.propTypes = {
   currentState: PropTypes.object,
-  updateState: PropTypes.func
+  updateState: PropTypes.func,
+  setShowAlert: PropTypes.func
 };
