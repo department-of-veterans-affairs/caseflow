@@ -157,7 +157,7 @@ const Page = memo(({
   return (
     <div
       id={`canvasWrapper-${page.pageNumber}`}
-      className="prototype-canvas-wrapper"
+      className={`prototype-canvas-wrapper ${isVisibleRef.current ? 'visible-page' : 'invisible-page'}`}
       style={wrapperStyle}
       ref={wrapperRef}
     >
