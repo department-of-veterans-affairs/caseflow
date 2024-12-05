@@ -207,6 +207,13 @@ FactoryBot.define do
       establishment_processed_at { nil }
     end
 
+    trait :create_business_line do
+      after(:create) do |hlr, _evaluator|
+        hlr.submit_for_processing!
+        hlr.create_business_line_tasks!
+      end
+    end
+
     trait :with_disposition do
       after(:create) do |sc, evaluator|
         create(:decision_issue,
