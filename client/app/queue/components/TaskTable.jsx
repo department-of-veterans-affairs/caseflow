@@ -127,6 +127,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={this.getDefaultSortHash()}
     enablePagination
+    prepareTasks
     onHistoryUpdate={this.props.onHistoryUpdate}
     preserveFilter={this.props.preserveQueueFilter}
     rowClassNames={(task) =>

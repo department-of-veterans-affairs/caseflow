@@ -10,7 +10,6 @@ import {
   createQueueReducer,
   getAppealId,
   getTaskId,
-  enterModalRadioOptions,
   enterTextFieldOptions,
   selectFromDropdown
 } from './modalUtils';
@@ -22,7 +21,6 @@ import {
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 import userEvent from '@testing-library/user-event';
-
 
 const renderAssignToView = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);

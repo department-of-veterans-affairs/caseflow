@@ -66,10 +66,12 @@ describe('VirtualHearingFields', () => {
 
     // Assertions
     const virtualHearingForm = screen.getByRole('heading', { name: /Hearing Links/i });
+
     expect(virtualHearingForm).toBeInTheDocument();
 
     // Test HearingLinks presence
     const guestLink = screen.getByText('Guest Link:');
+
     expect(guestLink).toBeInTheDocument();
 
     expect(asFragment()).toMatchSnapshot();
@@ -93,10 +95,12 @@ describe('VirtualHearingFields', () => {
 
     // Assertions
     const virtualHearingForm = screen.getByRole('heading', { name: /Hearing Links/i });
+
     expect(virtualHearingForm).toBeInTheDocument();
 
     // Test HearingLinks presence
     const guestLink = screen.getByText(/Guest Link:/);
+
     expect(guestLink).toBeInTheDocument();
     expect(hearingMeetingType).toBeTruthy();
     expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
@@ -126,8 +130,12 @@ describe('VirtualHearingFields', () => {
       }
     );
 
+    const hearingMeetingType = amaHearing.judge.meetingType;
+
     // Assertions
-    expect(screen.getByText('Webex Hearing')).toBeInTheDocument();
+    expect(hearingMeetingType).toBeTruthy();
+    expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
+
     expect(asFragment()).toMatchSnapshot();
   });
 

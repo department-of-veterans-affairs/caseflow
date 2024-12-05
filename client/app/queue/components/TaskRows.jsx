@@ -78,6 +78,10 @@ const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
 };
 
+const completedOrCancelledReviewTranscriptTask = (task) => {
+  return task.type === 'ReviewTranscriptTask' && ['completed', 'cancelled'].includes(task.status);
+};
+
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
@@ -292,6 +296,39 @@ class TaskRows extends React.PureComponent {
     ) : null;
   };
 
+  taskInstructionDetailsItem = (instructions) => {
+    // instructions is an Array
+    // instructions[0] - task details text
+    // instructions[1] - task action chosen by user
+    // instructions[2] - task notes from user
+    const divStyle = { marginTop: '1rem' };
+
+    return (
+      <div style={divStyle}>
+        <small>DETAILS:</small>
+        <div style={divStyle}>
+          <div style={{ whiteSpace: 'pre-line' }}>
+            {instructions[0]}
+          </div>
+        </div>
+        <hr></hr>
+        <div style={{ ...divStyle, marginBottom: '1rem' }}>
+          <b>{instructions[1]}</b>
+          { instructions.size === 4 &&
+            <div>
+              <small>SELECTED FILE</small>
+              <p>{instructions[3]}</p>
+            </div>
+          }
+        </div>
+        <div style={divStyle}>
+          <small>DETAILS</small>
+        </div>
+        <p>{instructions[2]}</p>
+      </div>
+    );
+  };
+
   taskInstructionsWithLineBreaks = (task) => {
     if (!task.instructions || !task.instructions.length) {
       return <br />;
@@ -486,14 +523,18 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
-            {!establishmentTask(task) &&
-            <dt style={{ width: '100%' }}>
-              {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
-            </dt>
+            {completedOrCancelledReviewTranscriptTask(task) ?
+              this.taskInstructionDetailsItem(task.instructions) :
+              (!establishmentTask(task) &&
+              <dt style={{ width: '100%' }}>
+                {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+              </dt>)
             }
-            <dd style={{ width: '100%' }}>
-              {this.taskInstructionsWithLineBreaks(task)}
-            </dd>
+            {!completedOrCancelledReviewTranscriptTask(task) &&
+              <dd style={{ width: '100%' }}>
+                {this.taskInstructionsWithLineBreaks(task)}
+              </dd>
+            }
           </React.Fragment>
         )}
         <Button
