@@ -21,7 +21,7 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
                                 "decision_review_completed_example.json"))
     end
 
-    # This method creates a new instance of DecisionReviewCreatedParser in order to
+    # This method creates a new instance of DecisionReviewCompletedParser in order to
     # mimic the parsing of a payload recieved by appeals-consumer
     # arguments being passed in are the sample_header and example_response
     def load_example
@@ -51,6 +51,10 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
 
   def station_id
     @payload[:station].presence
+  end
+
+  def detail_type
+    @payload[:detail_type].presence
   end
 
   def claim_review_informal_conference

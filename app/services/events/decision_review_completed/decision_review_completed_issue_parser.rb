@@ -133,8 +133,12 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
     @issue.dig(:veteran_participant_id).presence
   end
 
+  def decision_issue
+    @issue[:decision_issue] || []
+  end
+
   def decision_issue_benefit_type
-    @issue.dig(:decision_issue, :benefit_type)
+    @issue.dig(:decision_issue, :benefit_type).presence
   end
 
   def decision_issue_contention_reference_id
@@ -142,11 +146,11 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
   end
 
   def decision_issue_decision_text
-    @issue.dig(:decision_issue, :decision_text)
+    @issue.dig(:decision_issue, :decision_text).presence
   end
 
   def decision_issue_description
-    @issue.dig(:decision_issue, :description)
+    @issue.dig(:decision_issue, :description).presence
   end
 
   def decision_issue_diagnostic_code
@@ -154,7 +158,7 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
   end
 
   def decision_issue_disposition
-    @issue.dig(:decision_issue, :disposition)
+    @issue.dig(:decision_issue, :disposition).presence
   end
 
   def decision_issue_end_product_last_action_date
@@ -162,11 +166,11 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
   end
 
   def decision_issue_participant_id
-    @issue.dig(:decision_issue, :participant_id)
+    @issue.dig(:decision_issue, :participant_id).presence
   end
 
   def decision_issue_percent_number
-    @issue.dig(:decision_issue, :percent_number)
+    @issue.dig(:decision_issue, :percent_number).presence
   end
 
   def decision_issue_rating_issue_reference_id
@@ -182,6 +186,6 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
   end
 
   def decision_issue_subject_text
-    @issue.dig(:decision_issue, :subject_text)
+    @issue.dig(:decision_issue, :subject_text).presence
   end
 end
