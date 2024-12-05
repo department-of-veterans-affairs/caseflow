@@ -3,6 +3,7 @@
 class Test::LoadTestApiController < Api::ApplicationController
   include ProdtestOnlyConcern
 
+  API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
   LOAD_TESTING_USER = "LOAD_TESTER"
 
@@ -36,7 +37,7 @@ class Test::LoadTestApiController < Api::ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -143,11 +144,19 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: functions
   # Response: None
   def grant_or_deny_functions(functions)
+<<<<<<< HEAD
     functions.select { |_key, value| value == true }.each do |key, _value|
       Functions.grant!(key, users: [LOAD_TESTING_USER])
     end
     functions.select { |_key, value| value == false }.each do |key, _value|
       Functions.deny!(key, users: [LOAD_TESTING_USER])
+=======
+    functions.select { |_k, v| v == true }.each do |k, _v|
+      Functions.grant!(k, users: [LOAD_TESTING_USER])
+    end
+    functions.select { |_k, v| v == false }.each do |k, _v|
+      Functions.deny!(k, users: [LOAD_TESTING_USER])
+>>>>>>> uat/FY25Q1.5.0
     end
   end
 
@@ -158,6 +167,7 @@ class Test::LoadTestApiController < Api::ApplicationController
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
 
+<<<<<<< HEAD
     organizations.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
@@ -166,6 +176,17 @@ class Test::LoadTestApiController < Api::ApplicationController
       organization = Organization.find_by_name_or_url(org[:url])
       OrganizationsUser.make_user_admin(user, organization)
     end
+=======
+    organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      organization.add_user(user) unless organization.users.include?(user)
+      OrganizationsUser.make_user_admin(user, organization)
+    end
+    organizations.select { |organization| organization[:admin] == false || "false" }.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      organization.add_user(user) unless organization.users.include?(user)
+    end
+>>>>>>> uat/FY25Q1.5.0
   end
 
   # Private: Method to remove user from all organizations before adding back to only relevant orgs for this test run

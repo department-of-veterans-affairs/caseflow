@@ -60,7 +60,28 @@ describe('UserConfiguration', () => {
   });
 
   it('renders the Regional Office dropdown when Station ID dropdown is selected', async () => {
-    setup(defaultProps);
+    const mockProps = {
+      filteredStations: [{ value: '101', label: '101' }],
+      officeAvailable: 'VACO',
+      form_values: { functions_available: '' },
+      featuresList: ['Toggle1', 'Toggle2', 'Toggle3'],
+      currentState: {
+        scenarios: [],
+        user: {
+          user: {
+            station_id: '',
+            regional_office: '',
+            roles: [],
+            functions: {},
+            organizations: [],
+            feature_toggles: {}
+          }
+        }
+      },
+      updateState: jest.fn()
+    };
+
+    renderUserConfiguration(mockProps);
 
     const stationDropdown = screen.getByRole('combobox', { name: 'Station id dropdown' });
 

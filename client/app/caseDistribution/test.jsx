@@ -487,6 +487,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Demo AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingAod}
                                 loadingText="Reseeding AOD Hearing Held Seeds"
+                                disabled={this.props.disableAcdDemoSeeds}
                               />
                             </div>
                             <div className="lever-right csv-download-right">
@@ -499,6 +500,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Demo Non-AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingNonAod}
                                 loadingText="Reseeding NON AOD Hearing Held Seeds"
+                                disabled={this.props.disableAcdDemoSeeds}
                               />
                             </div>
                             <div className="lever-right csv-download-right">
@@ -511,6 +513,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Docket Time Goal (AMA non-pri) Seeds"
                                 loading={this.state.isReseedingAmaDocketGoals}
                                 loadingText="Reseeding Docket Time Goal (AMA non-pri) Seeds"
+                                disabled={this.props.disableAcdDemoSeeds}
                               />
                             </div>
                             <div className="lever-right csv-download-right">
@@ -523,6 +526,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
                                 loadingText="Reseeding Docket-type Seeds"
+                                disabled={this.props.disableAcdDemoSeeds}
                               />
                             </div>
                             <div className="lever-right csv-download-right">
@@ -535,6 +539,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run non-SSC AVLJ and Appeal Seeds"
                                 loading={this.state.isReseedingNonSSCAVLJAppeals}
                                 loadingText="Reseeding non-SSC AVLJ and Appeal Seeds"
+                                disabled={this.props.disableAcdDemoSeeds}
                               />
                             </div>
                             <div className="lever-right csv-download-right">

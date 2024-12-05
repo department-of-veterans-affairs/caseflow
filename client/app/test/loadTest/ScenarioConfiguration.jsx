@@ -1,4 +1,7 @@
+/* eslint-disable max-lines, max-len */
+
 import React, { useState } from 'react';
+
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';

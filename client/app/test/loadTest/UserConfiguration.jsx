@@ -1,14 +1,20 @@
+/* eslint-disable import/extensions */
+/* eslint-disable max-lines, max-len */
+
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import SearchableDropdown from '../../components/SearchableDropdown';
+
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
-import OrganizationsConfiguration from './OrganizationsConfiguration';
-import RoleConfiguration from './RoleConfiguration';
+import OrgCheckboxSection from './OrgCheckboxSection';
 
 export default function UserConfiguration(props) {
   const [stationSelected, setStationSelected] = useState('');
+  const [isSelectedStation, stationIsSelected] = useState(false);
+  const [isSelectedOffice, officeIsSelected] = useState(false);
   const [officeSelected, setOfficeSelected] = useState('');
 
   const filteredStations = [];
@@ -64,13 +70,17 @@ export default function UserConfiguration(props) {
   }
 
   const handleOfficeSelect = ({ value }) => {
+    officeIsSelected(true);
     setOfficeSelected(value);
     props.updateState(
       {
         ...currentState,
         user: {
           ...currentState.user,
-          regional_office: value
+          user: {
+            ...currentState.user.user,
+            regional_office: value
+          }
         }
       }
     );

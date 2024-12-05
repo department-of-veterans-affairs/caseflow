@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+/* eslint-disable max-lines, max-len */
+
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../../components/Checkbox';
@@ -17,7 +19,10 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
       ...currentState,
       user: {
         ...currentState.user,
-        feature_toggles: currentFeatureToggles
+        user: {
+          ...currentState.user.user,
+          feature_toggles: featureToggleObjCopy
+        }
       }
     });
   };

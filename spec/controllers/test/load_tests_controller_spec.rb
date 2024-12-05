@@ -35,6 +35,7 @@ describe Test::LoadTestsController, :postgres, type: :controller do
       it "returns a CSRF token for use with K6" do
         get :build_cookie
         expect(response.status).to eq 200
+        expect(JSON.parse(response.body)["message"]).to eq "logged in"
       end
     end
 

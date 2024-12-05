@@ -22,15 +22,13 @@
       "value": "User",
       "label": "User"
     }],
-    "targetId": "User css_id"
+    "targetId": "User id"
   },
-  {
-    "scenario": "hearingDayJSON",
+  {"scenario": "hearingDayJSON",
     "targetType": [],
     "targetId": ""
   },
-  {
-    "scenario": "supplementalClaimsEdit",
+  {"scenario": "supplementalClaimsEdit",
     "targetType": [{
       "value": "SupplementalClaim",
       "label": "Supplemental Claim"
@@ -106,10 +104,16 @@
       "value": "Claimant",
       "label": "Claimant"
     }],
-    "targetId": "Claimant participant_id"
+    "targetId": "Participant id"
   },
-  {
-    "scenario": "updatePowerOfAttorney",
+  {"scenario": "higherLevelReviewUpdate",
+    "targetType": [{
+      "value": "HigherLevelReview",
+      "label": "Higher Level Review"
+    }],
+    "targetId": "HigherLevelReview uuid"
+  },
+  {"scenario": "updatePowerOfAttorney",
     "targetType": [{
       "value": "Appeal",
       "label": "Appeal"},
@@ -119,23 +123,19 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
-  {
-    "scenario": "schedule",
+  {"scenario": "schedule",
     "targetType": [],
     "targetId": ""
   },
-  {
-    "scenario": "search",
+  {"scenario": "search",
     "targetType": [],
     "targetId": ""
   },
-  {
-    "scenario": "queue",
+  {"scenario": "queue",
     "targetType": [],
     "targetId": ""
   },
-  {
-    "scenario": "queueAppeal",
+  {"scenario": "queueAppeal",
     "targetType": [{
       "value": "Appeal",
       "label": "Appeal"},
@@ -145,16 +145,14 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
-  {
-    "scenario": "v2MetricLogs",
+  {"scenario": "v2MetricLogs",
     "targetType": [{
       "value": "Metric",
       "label": "Metric"
     }],
     "targetId": ""
   },
-  {
-    "scenario": "readerIndex",
+  {"scenario": "readerIndex",
     "targetType": [{
       "value": "Appeal",
       "label": "Appeal"
