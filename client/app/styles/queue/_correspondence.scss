@@ -1951,7 +1951,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     left: 0;
     z-index: 9999;
     width: 100%;
-    background-color: white;
+    background-color: $color-white;
   }
 
   .react-select__control {
