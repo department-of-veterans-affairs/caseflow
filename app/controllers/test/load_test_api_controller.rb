@@ -37,11 +37,7 @@ class Test::LoadTestApiController < Api::ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
-<<<<<<< HEAD
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-=======
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
->>>>>>> feature/APPEALS-59217
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -53,15 +49,12 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Hearing"
       target_data_type = Hearing
       target_data_column = "uuid"
-<<<<<<< HEAD
-=======
     when "LegacyHearing"
       target_data_type = LegacyHearing
       target_data_column = "vacols_id"
     when "HearingDay"
       target_data_type = HearingDay
       target_data_column = "id"
->>>>>>> feature/APPEALS-59217
     when "HigherLevelReview"
       target_data_type = HigherLevelReview
       target_data_column = "uuid"
@@ -74,7 +67,6 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
-<<<<<<< HEAD
     end
 
     get_target_data_id(params[:target_id], target_data_type, target_data_column)
@@ -103,7 +95,6 @@ class Test::LoadTestApiController < Api::ApplicationController
                      end
 
     if target_data_id.nil?
-=======
     when "Veteran"
       target_data_type = Veteran
       target_data_column = "file_number"
@@ -138,7 +129,6 @@ class Test::LoadTestApiController < Api::ApplicationController
                          end
 
     if target_data_object.nil?
->>>>>>> feature/APPEALS-59217
       fail ActiveRecord::RecordNotFound.new(
         message: "Data returned nil when trying to find #{params[:target_type]}"
       )
