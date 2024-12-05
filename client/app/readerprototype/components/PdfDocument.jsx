@@ -310,7 +310,7 @@ const PdfDocument = memo(({
   };
 
   return (
-    <div id="pdfContainer" className={file} style={containerStyle}>
+    <div id={isFileVisible ? 'pdfContainer' : ''} className={file} style={containerStyle}>
       {isLoadError ? <DocumentLoadError doc={doc} /> : renderPages()}
     </div>
   );
