@@ -163,4 +163,40 @@ RSpec.describe TranscriptionPackage, type: :model do
     transcription_package = TranscriptionPackage.last
     expect(transcription_package.contents_count).to eq(0)
   end
+
+  describe "#next_task_number" do
+    let!(:transcription_package_1) do
+      create(
+        :transcription_package,
+        task_number: "BVA-2026-0091",
+        contractor: c_1,
+        created_at: "2024-09-01 00:00:00",
+        expected_return_date: "2024-09-15",
+        legacy_hearings: [lh_1],
+        hearings: [h_1]
+      )
+    end
+
+    let!(:transcription_package_2) do
+      create(
+        :transcription_package,
+        task_number: "BVA-2026-0001",
+        contractor: c_1,
+        created_at: "2024-09-01 00:00:00",
+        expected_return_date: "2024-09-15",
+        legacy_hearings: [lh_1],
+        hearings: [h_1]
+      )
+    end
+
+    it "defaults to 1 if no package from the fiscal year is found" do
+      Timecop.freeze(Time.utc(2026, 10, 1, 12, 0, 0))
+      expect(TranscriptionPackage.next_task_number).to eq("BVA-2027-0001")
+    end
+
+    it "increments by one more than the newest package for a year" do
+      Timecop.freeze(Time.utc(2026, 9, 30, 12, 0, 0))
+      expect(TranscriptionPackage.next_task_number).to eq("BVA-2026-0092")
+    end
+  end
 end
