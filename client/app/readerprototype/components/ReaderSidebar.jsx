@@ -24,18 +24,23 @@ import Comments from './Comments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import IssueTags from './IssueTags';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAppealDetails, setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
+import { fetchAppealDetails, setOpenedAccordionSections, togglePdfSidebar } from '../../reader/PdfViewer/PdfViewerActions';
 import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
+import { sidebarClass, sidebarWrapper } from '../util/styles';
 
 const ReaderSidebar = ({
   doc,
-  toggleSideBar,
+  hideSideBar,
   vacolsId
 }) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const onAccordionOpenOrClose = (openedSections) => dispatch(setOpenedAccordionSections(openedSections, []));
+
+  const toggleSideBar = () => {
+    dispatch(togglePdfSidebar());
+  };
 
   useEffect(() => {
     dispatch(fetchAppealDetails(vacolsId));
@@ -45,7 +50,7 @@ const ReaderSidebar = ({
   const openedAccordionSections = useSelector(openedAccordionSectionsSelector);
 
   return (
-    <nav id="prototype-sidebar">
+    <div className={sidebarClass(hideSideBar)} {...sidebarWrapper}>
       <div className="cf-sidebar-header">
         <Button name="hide menu"
           classNames={['cf-pdf-button']}
@@ -137,7 +142,7 @@ const ReaderSidebar = ({
           </Modal>
         </div>
       )}
-    </nav>
+    </div>
   );
 };
 
@@ -149,9 +154,7 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  documents: PropTypes.array,
-  showSideBar: PropTypes.bool,
-  toggleSideBar: PropTypes.func,
+  hideSideBar: PropTypes.bool,
   vacolsId: PropTypes.string
 };
 
