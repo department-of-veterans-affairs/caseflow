@@ -175,6 +175,10 @@ Rails.application.configure do
   # Dynatrace variables
   ENV["STATSD_ENV"] = "test"
 
+  # Reader Preferences variables
+  ENV["READER_DELAY_BEFORE_PROGRESS_BAR"] = "1000"
+  ENV["READER_SHOW_PROGRESS_BAR_THRESHOLD"] = "3000"
+
   config.sqs_create_queues = true
   config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'
 end
