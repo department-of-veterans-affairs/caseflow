@@ -210,26 +210,10 @@ class TasksController < ApplicationController
     end
   end
 
-  private
-
-  def cancel_review_transcript_task
-    instructions = params[:task][:instructions]
-
-    ActiveRecord::Base.transaction do
-      task = ReviewTranscriptTask.find(params[:id])
-      task.cancel_task_and_child_subtasks
-      task.update!(instructions: instructions)
-    end
-    render json: {
-      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
-    }
-  end
-
   def error_found_upload_transcription_to_vbms
     file_name = params["file_info"]["file_name"]
     tmp_folder = Base64Service.to_file(params["file_info"]["file"], file_name)
     current_file_path = tmp_folder.tempfile
-
     info_file = split_filename(file_name)
     # upload_file_S3 and modified transcription_files table
     transcription_file = Hearings::TranscriptionFile.find_by(
@@ -257,7 +241,21 @@ class TasksController < ApplicationController
     else
       render json: { success: false }, status: :bad_request
     end
-    render json: { success: true }, status: :ok
+  end
+
+  private
+
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
   end
 
   def split_filename(file_name)
