@@ -35,7 +35,8 @@ export default function UserConfiguration(props) {
           ...currentState.user,
           user: {
             ...currentState.user.user,
-            station_id: value
+            station_id: value,
+            regional_office: ''
           }
         }
       }
@@ -90,7 +91,7 @@ export default function UserConfiguration(props) {
 
   return (
     <div>
-      <p>Station ID</p>
+      <h3><strong>Station ID</strong></h3>
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
@@ -161,5 +162,10 @@ UserConfiguration.propTypes = {
   functions_available: PropTypes.array,
   register: PropTypes.func,
   currentState: PropTypes.object,
+<<<<<<< HEAD
   updateState: PropTypes.func
+=======
+  updateState: PropTypes.func,
+  errors: PropTypes.object
+>>>>>>> feature/APPEALS-59217
 };

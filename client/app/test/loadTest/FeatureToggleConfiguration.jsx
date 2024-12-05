@@ -28,10 +28,14 @@ const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }
       ...currentState,
       user: {
         ...currentState.user,
+<<<<<<< HEAD
         user: {
           ...currentState.user.user,
           feature_toggles: featureToggleObjCopy
         }
+=======
+        feature_toggles: currentFeatureToggles
+>>>>>>> feature/APPEALS-59217
       }
     });
   };

@@ -131,3 +131,18 @@ $case-movement-button-bg-color: #07648d;
 .usa-button-case-movement:hover {
   background: $case-movement-button-bg-color;
 }
+
+.csv-download-left {
+  width: 32%;
+  margin-bottom: 50px;
+}
+
+.csv-download-right {
+  width: 65%;
+  margin-bottom: 50px;
+  vertical-align: top;
+}
+
+.csv-download-alignment {
+  border-bottom: 0;
+}

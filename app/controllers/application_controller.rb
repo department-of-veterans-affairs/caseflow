@@ -246,6 +246,7 @@ class ApplicationController < ApplicationBaseController
     add_team_management_items(admin_urls)
     add_user_management_items(admin_urls)
     add_case_distribution_item(admin_urls)
+    add_test_seeds_item(admin_urls)
 
     admin_urls.flatten
   end

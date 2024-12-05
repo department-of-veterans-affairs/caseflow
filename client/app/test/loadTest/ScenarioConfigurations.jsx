@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 /* eslint-disable max-lines, max-len */
 
+=======
+>>>>>>> feature/APPEALS-59217
 import React from 'react';
 import PropTypes from 'prop-types';
 import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios';
