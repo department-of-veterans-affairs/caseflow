@@ -5,10 +5,11 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
+import QueueFlowModal from './components/QueueFlowModal';
 
 import COPY from '../../COPY';
 
-import { onReceiveAmaTasks } from './QueueActions';
+import { legacyBlockedAdvanceToJudge, onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -17,7 +18,6 @@ import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import RadioField from '../components/RadioField';
-import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 
 const ADVANCEMENT_REASONS = [
@@ -90,16 +90,21 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
     const { appeal, task, isLegacy } = this.props;
 
-    if (isLegacy) {
-      return;
+    const successMessage = {
+      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
+      detail: this.actionData().message_detail
+    };
+
+    if (isLegacy && this.actionData().type === 'LegacyAppealAssignmentTrackingTask') {
+      return this.props.legacyBlockedAdvanceToJudge({
+        tasks: [task],
+        assigneeId: this.state.selectedAssignee,
+        instructions: this.state.instructions,
+        cancelledTasks: this.actionData().blocking_tasks,
+        cancellationReason: this.state.selectedReason,
+        cancellationInstructions: this.state.cancellationInstructions,
+      }, successMessage);
     }
-    // if (isLegacy) {
-    //   return this.props.legacyBlockedAdvanceToJudge({
-    //     tasks: [task],
-    //     assigneeId: this.state.selectedValue,
-    //     instructions: this.state.instructions
-    //   }, successMessage);
-    // }
 
     const payload = {
       data: {
@@ -117,11 +122,6 @@ class BlockedAdvanceToJudgeView extends React.Component {
           }
         ]
       }
-    };
-
-    const successMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
-      detail: this.actionData().message_detail
     };
 
     return this.props.
@@ -170,24 +170,25 @@ class BlockedAdvanceToJudgeView extends React.Component {
       return;
     }
 
-    const { highlightFormItems } = this.props;
+    const { highlightFormItems, appeal } = this.props;
 
+    const actionData = this.actionData();
     const options = this.actionData().options;
     const selectedJudgeName = this.getAssigneeLabel() || 'judge';
 
+    const modalProps = {
+      title: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+      pathAfterSubmit: (actionData && actionData.redirect_after) || `/queue/appeals/${appeal.externalId}`,
+      button: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+      closeButton: true,
+      submit: this.submit,
+      validateForm: this.validateModal
+    };
+
     return <div className="cf-modal-scroll">
-      <Modal
-        title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE}
-        buttons={[{
-          classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Close',
-          onClick: () => this.setState({ showModal: false })
-        }, {
-          classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
-          name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
-          onClick: this.submit
-        }]}
-        closeHandler={() => this.setState({ showModal: false })}
+      <QueueFlowModal
+        {...modalProps}
+        onCancel={() => this.setState({ showModal: false, selectedAssignee: null, instructions: '' })}
         icon="warning"
       >
         {this.modalAlert()}
@@ -213,7 +214,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
         />
-      </Modal>
+      </QueueFlowModal>
     </div>;
   }
 
@@ -281,7 +282,8 @@ BlockedAdvanceToJudgeView.propTypes = {
     instructions: PropTypes.string,
     taskId: PropTypes.string
   }),
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  legacyBlockedAdvanceToJudge: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -298,7 +300,8 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       resetSuccessMessages,
-      highlightInvalidFormItems
+      highlightInvalidFormItems,
+      legacyBlockedAdvanceToJudge
     },
     dispatch
   );

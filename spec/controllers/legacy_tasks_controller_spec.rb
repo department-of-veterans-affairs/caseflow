@@ -497,4 +497,68 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST legacy_tasks/blocked_assign_to_judge" do
+    let(:assigning_judge) { create(:user) }
+    let(:assignee_judge) { create(:user) }
+    let(:assigning_judge_staff) { create(:staff, :judge_role, user: assigning_judge) }
+    let!(:assignee_judge_staff) { create(:staff, :judge_role, user: assignee_judge) }
+    let(:blocked_appeal) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             vacols_case: create(:case_with_form_9, staff: assigning_judge_staff))
+    end
+    let(:params) do
+      {
+        "appeal_id": blocked_appeal.id,
+        "assigned_to_id": assignee_judge.id,
+        "instructions": ["just testing this out", "here are the instructions", "last one"]
+      }
+    end
+
+    before do
+      User.stub = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+      FeatureToggle.enable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+    end
+
+    after do
+      FeatureToggle.disable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+    end
+
+    shared_examples "scm user reassigns case" do
+      it "should be successful" do
+        expect(VACOLS::Case.find_by(bfkey: blocked_appeal.vacols_id).bfcurloc).to eq assigning_judge.vacols_uniq_id
+        patch :blocked_assign_to_judge, params: { tasks: params }
+        expect(response.status).to eq 200
+        expect(VACOLS::Case.find_by(bfkey: blocked_appeal.vacols_id).bfcurloc).to eq assignee_judge.vacols_uniq_id
+      end
+
+      it "should cancel all blocking tasks" do
+        expect(HearingTask.find_by(appeal_id: blocked_appeal.id).present?).to be true
+        expect(HearingTask.find_by(appeal_id: blocked_appeal.id).status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(ScheduleHearingTask.find_by(appeal_id: blocked_appeal.id).present?).to be true
+        expect(ScheduleHearingTask.find_by(appeal_id: blocked_appeal.id).status).to eq(Constants.TASK_STATUSES.assigned)
+        patch :blocked_assign_to_judge, params: { tasks: params }
+        expect(response.status).to eq 200
+        expect(HearingTask.find_by(appeal_id: blocked_appeal.id).status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(ScheduleHearingTask.find_by(appeal_id: blocked_appeal.id).status)
+          .to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      it "should create a LegacyAppealAssignmentTrackingTask" do
+        expect(LegacyAppealAssignmentTrackingTask.find_by(appeal_id: blocked_appeal.id).present?).to be false
+        patch :blocked_assign_to_judge, params: { tasks: params }
+        expect(response.status).to eq 200
+        expect(LegacyAppealAssignmentTrackingTask.find_by(appeal_id: blocked_appeal.id).present?).to be true
+        expect(LegacyAppealAssignmentTrackingTask.find_by(appeal_id: blocked_appeal.id).status)
+          .to eq(Constants.TASK_STATUSES.completed)
+        expect(LegacyAppealAssignmentTrackingTask.find_by(appeal_id: blocked_appeal.id).instructions)
+          .to eq(params[:instructions])
+        expect(LegacyAppealAssignmentTrackingTask.find_by(appeal_id: blocked_appeal.id).assigned_to)
+          .to eq(assignee_judge)
+      end
+    end
+
+    it_behaves_like "scm user reassigns case"
+  end
 end

@@ -385,6 +385,7 @@ Rails.application.routes.draw do
 
   resources :legacy_tasks, only: [:create, :update]
   post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
+  post '/legacy_tasks/blocked_assign_to_judge', to: 'legacy_tasks#blocked_assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
