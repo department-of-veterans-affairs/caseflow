@@ -12,11 +12,14 @@ describe QueueRepository, :all_dbs do
   context ".assign_case_to_attorney!" do
     before do
       RequestStore.store[:current_user] = judge
+      allow(LegacyAppeal).to receive(:find_by).with(vacols_id: vacols_case.bfkey).and_return(legacy_appeal)
     end
 
     let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "SAMD456", station_id: User::BOARD_STATION_ID) }
+    let(:instructions) { "Complete the review and draft a decision." }
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     def vacols_id
       vacols_case.bfkey
     end
@@ -34,7 +37,7 @@ describe QueueRepository, :all_dbs do
         expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
 
         QueueRepository.assign_case_to_attorney!(
-          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id, instructions: [instructions]
         )
 
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
@@ -48,6 +51,11 @@ describe QueueRepository, :all_dbs do
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
         expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
+
+        tracking_task = LegacyAppealAssignmentTrackingTask.last
+        expect(tracking_task).to be_present
+        expect(tracking_task.appeal).to eq legacy_appeal
+        expect(tracking_task.instructions).to eq [instructions]
       end
     end
 
@@ -59,12 +67,12 @@ describe QueueRepository, :all_dbs do
         RequestStore.store[:current_user] = scm_user
       end
 
-      it "should assign a case to attorney" do
+      it "should assign a case to attorney and create a tracking task" do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid
         expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
 
         QueueRepository.assign_case_to_attorney!(
-          assigned_by: scm_user, judge: judge, attorney: attorney, vacols_id: vacols_id
+          assigned_by: scm_user, judge: judge, attorney: attorney, vacols_id: vacols_id, instructions: [instructions]
         )
 
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
@@ -78,6 +86,15 @@ describe QueueRepository, :all_dbs do
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
         expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
+
+        tracking_task = LegacyAppealAssignmentTrackingTask.last
+        expect(tracking_task).to be_present
+        expect(tracking_task.appeal.vacols_id).to eq vacols_id
+        expect(tracking_task.assigned_to).to eq attorney
+        expect(tracking_task.assigned_by).to eq scm_user
+        expect(tracking_task.instructions).to eq [instructions]
+        expect(tracking_task.appeal).to eq legacy_appeal
+        expect(tracking_task.status).to eq Constants.TASK_STATUSES.completed
       end
     end
 
@@ -87,7 +104,7 @@ describe QueueRepository, :all_dbs do
       it "should raise ActiveRecord::RecordNotFound" do
         expect do
           QueueRepository.assign_case_to_attorney!(
-            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id, instructions: [instructions]
           )
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -99,7 +116,7 @@ describe QueueRepository, :all_dbs do
 
         expect do
           QueueRepository.assign_case_to_attorney!(
-            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id, instructions: [instructions]
           )
         end.to raise_error(Caseflow::Error::LegacyCaseAlreadyAssignedError)
       end
@@ -115,7 +132,7 @@ describe QueueRepository, :all_dbs do
                                deteam: "D5",
                                deprod: "DEV")
         QueueRepository.assign_case_to_attorney!(
-          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id, instructions: [instructions]
         )
         decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
         expect(decass_results.count).to eq 1

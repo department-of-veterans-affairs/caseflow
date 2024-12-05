@@ -5,6 +5,7 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let(:instructions) { "Complete the review and draft a decision." }
 
   let!(:judge_staff) do
     create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
@@ -19,7 +20,8 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       JudgeCaseAssignmentToAttorney.create(
         appeal_id: appeal_id,
         assigned_by: assigned_by,
-        assigned_to: assigned_to
+        assigned_to: assigned_to,
+        instructions: instructions
       )
     end
 
@@ -28,9 +30,45 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       let(:assigned_by) { judge }
       let(:assigned_to) { attorney }
 
-      it "it is successful" do
-        expect(QueueRepository).to receive(:assign_case_to_attorney!).once
+      it "is successful and passes instructions" do
+        expect(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          hash_including(instructions: [instructions])
+        ).once
+
         expect(subject.valid?).to eq true
+        expect(subject.errors).to be_empty
+      end
+    end
+
+    context "when instructions are missing" do
+      let(:appeal_id) { appeal.id }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+      let(:instructions) { nil }
+
+      it "is successful and uses an empty array for instructions" do
+        expect(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          hash_including(instructions: [])
+        ).once
+
+        expect(subject.valid?).to eq true
+        expect(subject.errors).to be_empty
+      end
+    end
+
+    context "when instructions are not an array" do
+      let(:appeal_id) { appeal.id }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+      let(:instructions) { "Draft decision memo." }
+
+      it "normalizes instructions into an array" do
+        expect(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          hash_including(instructions: ["Draft decision memo."])
+        ).once
+
+        expect(subject.valid?).to eq true
+        expect(subject.errors).to be_empty
       end
     end
 
