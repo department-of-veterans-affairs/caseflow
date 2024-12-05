@@ -188,7 +188,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
 
   # Purpose: Get hearing date from associated hearing_day
   #
-  # Returns: string, a date formated like mm/dd/yyyy
+  # Returns: string, a date formatted like mm/dd/yyyy
   def hearing_date
     scheduled_for.to_formatted_s(:short_date)
   end

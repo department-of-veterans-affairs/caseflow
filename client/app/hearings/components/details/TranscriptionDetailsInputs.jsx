@@ -23,7 +23,7 @@ const TranscriptionDetailsInputs = ({
 
   return (
     <React.Fragment>
-      <div {...rowThirds}>
+      <div {...rowThirds} data-testid="transcription-details-inputs">
         <TextField
           name="taskNumber"
           label="Task #"
@@ -46,7 +46,7 @@ const TranscriptionDetailsInputs = ({
         />
         <div />
       </div>
-      <div {...rowThirds}>
+      <div {...rowThirds} data-testid="transcription-details-date-inputs">
         <DateSelector
           name="sentToTranscriberDate"
           label="Sent to Transcriber"

@@ -6,11 +6,15 @@ class Hearings::TranscriptionFilesController < ApplicationController
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
   before_action :verify_transcription_user, only: [:transcription_file_tasks]
 
+  rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
+
+  # Downloads file and sends to user's local computer
   def download_transcription_file
     tmp_location = file.fetch_file_from_s3!
     File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
     file.clean_up_tmp_location
   end
+
 
   def transcription_file_tasks
     @transcription_files = Hearings::TranscriptionFile.filterable_values
@@ -103,6 +107,10 @@ class Hearings::TranscriptionFilesController < ApplicationController
     else
       render json: { error: "File not found" }, status: :not_found
     end
+  end
+
+  def render_page_not_found
+    redirect_to "/404"
   end
 
   private

@@ -190,6 +190,7 @@ export class CaseTitleDetails extends React.PureComponent {
             <div id="document-id">
               <CopyTextButton
                 text={appeal.documentID}
+                textToCopy={appeal.documentID}
                 label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
               />
               {appeal.canEditDocumentId && (

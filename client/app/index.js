@@ -9,7 +9,7 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 // External Dependencies
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
@@ -42,8 +42,10 @@ import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
 import Login from 'app/login';
+import TestApp from 'app/test/TestApp';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
+import LoadTest from 'app/test/loadTest/LoadTest';
 import PerformanceDegradationBanner from 'app/components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from 'app/establishClaimAdmin';
 import Queue from 'app/queue/index';
@@ -72,8 +74,10 @@ const COMPONENTS = {
   EstablishClaimPage,
   CaseWorker,
   Login,
+  TestApp,
   TestUsers,
   TestData,
+  LoadTest,
   Error403,
   Error404,
   Error500,
@@ -153,8 +157,10 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
 
   const renderApp = (Component) => {
     const element = wrapComponent(Component);
+    const container = document.getElementById(domNodeId);
+    const root = createRoot(container);
 
-    render(element, document.getElementById(domNodeId));
+    root.render(element);
   };
 
   renderApp(component);

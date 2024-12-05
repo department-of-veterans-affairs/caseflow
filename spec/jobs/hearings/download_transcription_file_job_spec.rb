@@ -328,6 +328,49 @@ describe Hearings::DownloadTranscriptionFileJob do
           include_examples "sends email template"
         end
       end
+
+      context "job redownloads and reconverts" do
+        let(:file_type) { "vtt" }
+        let!(:upload_date) { 1.day.ago }
+        let!(:converted_date) { 1.day.ago }
+        let!(:transcription_file) do
+          Hearings::TranscriptionFile.find_or_create_by!(
+            hearing_id: hearing.id,
+            hearing_type: hearing.class.to_s,
+            file_name: file_name,
+            file_type: file_type,
+            docket_number: hearing.docket_number,
+            file_status: "Successful upload (AWS)",
+            date_upload_aws: upload_date,
+            date_converted: converted_date,
+            aws_link: "www.test.com"
+          )
+        end
+
+        it "does not redownload non vtt files if already exists in aws" do
+          transcription_file.update!(file_type: "mp3")
+          subject
+          expect(File.exist?(tmp_location)).to eq(false)
+        end
+
+        it "does not redownload vtt files if already converted" do
+          transcription_file.update!(file_status: "Successful conversion")
+          subject
+          expect(File.exist?(tmp_location)).to eq(false)
+        end
+
+        it "does not reupload if file was already uploaded" do
+          transcription_file.update!(date_upload_aws: upload_date)
+          subject
+          expect(transcription_file.date_upload_aws).to eq(upload_date)
+        end
+
+        it "does not reconvert if vtt has already converted file to rtf" do
+          transcription_file.update!(date_converted: converted_date)
+          subject
+          expect(transcription_file.date_converted).to eq(converted_date)
+        end
+      end
     end
   end
 end

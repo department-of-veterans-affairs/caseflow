@@ -1699,4 +1699,73 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_button("Add this issue", disabled: false)
     end
   end
+
+  context "when remove_comp_and_pen_intake is enabled and benefit type is compensation or pension" do
+    %w[pension compensation].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:higher_level_review_disable) do
+          create(
+            :higher_level_review,
+            :processed,
+            intake: create(:intake),
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            informal_conference: false,
+            same_office: false,
+            benefit_type: benefit_type
+          )
+        end
+
+        let(:request_issue_disable) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: higher_level_review_disable,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
+
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          higher_level_review_disable.create_issues!([request_issue_disable])
+          higher_level_review_disable.establish!
+          higher_level_review_disable.reload
+          request_issue.reload
+        end
+
+        after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
+
+        it "Requested issues dropdown is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
+          expect(page).to have_content(benefit_type.capitalize)
+        end
+
+        it "Edit claim label button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit claim label", disabled: true)
+        end
+
+        it "Add Issue button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Add issue", disabled: true)
+        end
+
+        it "Edit contention title button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit contention title", disabled: true)
+        end
+      end
+    end
+  end
 end

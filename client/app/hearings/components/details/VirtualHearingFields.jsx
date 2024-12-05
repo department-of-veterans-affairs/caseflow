@@ -7,9 +7,7 @@ import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import StringUtil from '../../../util/StringUtil';
 
-export const VirtualHearingFields = (
-  { hearing, virtualHearing }
-) => {
+export const VirtualHearingFields = ({ hearing, virtualHearing }) => {
   const user = useContext(HearingsUserContext);
 
   const checkCancelled = () => {
@@ -23,7 +21,7 @@ export const VirtualHearingFields = (
       header="Hearing Links"
     >
       <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider)} Hearing</strong>
+        <strong>{StringUtil.capitalizeFirst(hearing?.conferenceProvider || 'Pexip')} Hearing</strong>
       </div>
       <HearingLinks
         user={user}

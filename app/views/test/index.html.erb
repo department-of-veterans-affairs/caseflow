@@ -1,0 +1,24 @@
+<% content_for :page_title do %>&nbsp &gt &nbspTest Users<% end %>
+
+<% content_for :full_page_content do %>
+  <%= react_component("TestApp", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    page: "TestApp",
+    feedbackUrl: feedback_url,
+    currentUser: current_user.to_hash,
+    isGlobalAdmin: current_user.global_admin?,
+    dependenciesFaked: ApplicationController.dependencies_faked?,
+    form_values: Test::TestControllerHelper.form_values,
+    testUsersList: Test::TestControllerHelper.test_users,
+    featuresList: Test::TestControllerHelper.features_list,
+    appSelectList: Test::UsersController::APPS,
+    userSession: Test::TestControllerHelper.user_session(params[:id], session),
+    timezone: { getlocal: Time.now.getlocal.zone, zone: Time.zone.name },
+    epTypes: Test::TestControllerHelper.ep_types,
+    featureToggles: {
+      interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
+      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+    }
+  }) %>
+<% end %>
