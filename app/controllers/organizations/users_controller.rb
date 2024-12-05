@@ -6,16 +6,39 @@ class Organizations::UsersController < OrganizationsController
       format.html { render template: "queue/index" }
       format.json do
         organization_users = organization.users
-
         render json: {
           organization_name: organization.name,
           judge_team: organization.type == JudgeTeam.name,
           dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users),
           membership_requests: pending_membership_requests,
-          isVhaOrg: vha_organization?
+          isVhaOrg: vha_organization?,
+          organization_permissions: organization.organization_permissions.select(
+            :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
+          ),
+          organization_user_permissions: user_permissions
         }
       end
+    end
+  end
+
+  def modify_user_permission
+    user_id, permission_name = user_permission_params
+
+    org_permission = organization.organization_permissions.find_by(permission: permission_name)
+    target_user = organization.organizations_users.find_by(user_id: user_id)
+
+    if org_user_permission_checker.can?(
+      permission_name: org_permission.permission,
+      organization: organization,
+      user: target_user.user
+    )
+      disable_permission(user_id: user_id, org_permission: org_permission, target_user: target_user)
+      render json: { checked: false }
+
+    else
+      enable_permission(user_id: user_id, org_permission: org_permission, target_user: target_user)
+      render json: { checked: true }
     end
   end
 
@@ -55,6 +78,38 @@ class Organizations::UsersController < OrganizationsController
   end
 
   private
+
+  def user_permissions
+    organization.organizations_users.sort_by(&:user_id).as_json(
+      only: [:user_id],
+      include: [
+        organization_user_permissions: { include: [organization_permission: { only: [:permission, :permitted] }] }
+      ]
+    )
+  end
+
+  def disable_permission(user_id:, org_permission:, target_user:)
+    organization.organizations_users
+      .find_by(user_id: user_id).organization_user_permissions
+      .find_by(
+        organization_permission: org_permission,
+        organizations_user: target_user
+      )
+      .update(permitted: false)
+  end
+
+  def enable_permission(user_id:, org_permission:, target_user:)
+    organization.organizations_users.find_by(user_id: user_id)
+      .organization_user_permissions
+      .find_or_create_by!(
+        organization_permission: org_permission,
+        organizations_user: target_user
+      ).update!(permitted: true)
+  end
+
+  def org_user_permission_checker
+    @org_user_permission_checker ||= OrganizationUserPermissionChecker.new
+  end
 
   def user_to_modify
     @user_to_modify ||= User.find(params.require(:id))
@@ -108,5 +163,12 @@ class Organizations::UsersController < OrganizationsController
       is_collection: true,
       params: { organization: organization }
     )
+  end
+
+  def user_permission_params
+    params.permit(:userId, :permissionName)
+    user_id = params[:userId]
+    permission_name = params[:permissionName].strip
+    [user_id, permission_name]
   end
 end

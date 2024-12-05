@@ -17,6 +17,7 @@ const ALTERNATE_COLUMN_NAMES = {
   hearingLocation: 'Hearing Location',
   readableEventType: 'Actvitity',
   eventUser: 'User',
+  'Receipt Date': 'VA DOR',
   closedAt: 'Date Completed'
 };
 

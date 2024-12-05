@@ -139,6 +139,18 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
+  putIntofilter = (filtersForColumn, columnName, value) => {
+    let newValue = [];
+
+    if ((columnName === 'Receipt Date') || (columnName === 'Date Completed')) {
+      newValue = [value];
+    } else {
+      newValue = filtersForColumn.concat([value]);
+    }
+
+    return newValue;
+  }
+
   updateSelectedFilter = (value, columnName, resetValue) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
@@ -152,7 +164,7 @@ class TableFilter extends React.PureComponent {
       } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = this.putIntofilter(filtersForColumn, columnName, value);
       }
     } else {
       newFilters = newFilters.concat([value]);
@@ -163,6 +175,7 @@ class TableFilter extends React.PureComponent {
     let newFilteredByList = _.clone(filteredByList);
 
     newFilteredByList[columnName] = newFilters;
+
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
   }
@@ -275,6 +288,8 @@ TableFilter.defaultProps = {
 };
 
 TableFilter.propTypes = {
+  isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,
