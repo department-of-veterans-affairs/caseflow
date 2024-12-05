@@ -210,26 +210,7 @@ class TasksController < ApplicationController
     end
   end
 
-  def error_found_upload_transcription_to_vbms; end
-
   private
-
-  def complete_transcript_review
-    return unless task.type == "ReviewTranscriptTask" && task.status == "in_progress"
-
-    Transcription.where(task_id: task.id).update_all(
-      updated_by_id: current_user.id,
-      uploaded_to_vbms_date: Time.zone.now,
-      updated_at: Time.zone.now
-    )
-
-    task.update!(
-      instructions: params[:task][:instructions],
-      status: Constants.TASK_STATUSES.completed,
-      closed_at: Time.zone.now,
-      completed_by_id: current_user.id
-    )
-  end
 
   def cancel_review_transcript_task
     instructions = params[:task][:instructions]
@@ -276,8 +257,6 @@ class TasksController < ApplicationController
     else
       render json: { success: false }, status: :bad_request
     end
-  end
-
     render json: { success: true }, status: :ok
   end
 
