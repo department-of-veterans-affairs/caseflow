@@ -162,10 +162,6 @@ UserConfiguration.propTypes = {
   functions_available: PropTypes.array,
   register: PropTypes.func,
   currentState: PropTypes.object,
-<<<<<<< HEAD
-  updateState: PropTypes.func
-=======
   updateState: PropTypes.func,
   errors: PropTypes.object
->>>>>>> feature/APPEALS-59217
 };
