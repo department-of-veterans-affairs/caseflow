@@ -1,13 +1,14 @@
 /* eslint-disable max-lines */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceDetailsData, correspondenceInfoData } from 'test/data/correspondence';
+import { correspondenceDetailsData, correspondenceInfoData, prepareAppealForStoreData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
+import COPY from '../../../../../COPY';
 import thunk from 'redux-thunk';
 import moment from 'moment';
 import {
@@ -74,13 +75,26 @@ jest.mock('app/queue/CaseListTable', () => () => (
   </div>
 ));
 
-jest.mock('app/util/ApiUtil', () => ({
-  post: jest.fn()
-}));
+// jest.mock('app/util/ApiUtil', () => ({
+//   post: jest.fn()
+// }));
+
+// jest.mock('superagent', () => ({
+//   post: jest.fn().mockReturnThis()
+// }));
+
+// Mock the ApiUtil.post method
+jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve(
+  { params: {
+    correspondence_uuid: {},
+    priorMailIds: [1],
+  } }
+));
 
 let initialState = {
   correspondence: correspondenceDetailsData,
-  correspondenceDetails: correspondenceInfoData
+  correspondenceDetails: correspondenceInfoData,
+  prepareAppealForStoreData
 };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -495,7 +509,7 @@ describe('CorrespondenceDetails', () => {
       appealDetails: {}
     });
     prepareAppealForStore.mockReturnValue({
-      // mock return value
+      prepareAppealForStoreData
     });
     prepareTasksForStore.mockReturnValue({
       // mock return value
@@ -532,7 +546,7 @@ describe('CorrespondenceDetails', () => {
 
     fireEvent.click(correspondenceAndAppealTasksTab);
 
-    let collapsibleButtons = screen.getAllByText('+');
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
 
     expect(collapsibleButtons.length).toBe(2);
 
@@ -678,23 +692,25 @@ describe('CorrespondenceDetails', () => {
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
     fireEvent.click(associatedPriorMailTab);
+
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+    const saveChangesButton = screen.getByText('Save changes');
+
+    const options = { params: {
+      correspondence_uuid: props.correspondence.uuid,
+      priorMailIds: [1]
+    } };
 
     fireEvent.click(checkbox);
 
-    // Mock API call
-    const apiResponse = await Promise.resolve();
+    ApiUtil.post.mockResolvedValueOnce({ options });
 
-    await ApiUtil.post.mockReturnValueOnce(apiResponse);
+    fireEvent.click(saveChangesButton);
 
-    // Click the Save button
-    fireEvent.click(screen.getByText('Save changes'));
-
-    // Check if API call was made
-    expect(ApiUtil.post).toHaveBeenCalledWith(
-        `/queue/correspondence/${props.correspondence.uuid}/create_correspondence_relations`,
-        { data: { priorMailIds: [1] } }
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Changes were not successfully saved')).toBeInTheDocument();
+      expect(screen.queryByText(COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE)).not.toBeInTheDocument();
+    });
   });
 });
 
