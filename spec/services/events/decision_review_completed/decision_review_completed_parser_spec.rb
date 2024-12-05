@@ -22,6 +22,7 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
 
   let(:completed_issues) do
     [{
+      id: 12,
       benefit_type: "compensation",
       closed_at: 1_702_067_145_000,
       closed_status: "closed",
@@ -33,6 +34,11 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
       contested_rating_issue_reference_id: nil,
       decision_date: 18_475,
       decision_review_issue_id: 908,
+      is_unidentified: nil,
+      nonrating_issue_bgs_id: "13",
+      nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
+      nonrating_issue_category: "Accrued Benefits",
+      nonrating_issue_description: "The user entered description if the issue is a nonrating issue",
       original_caseflow_request_issue_id: 123_45,
       ramp_claim_id: nil,
       rating_issue_associated_at: nil,
@@ -43,20 +49,20 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
       vacols_id: nil,
       vacols_sequence_id: nil,
       veteran_participant_id: "210002659",
-      "decision_issue": {
-        "benefit_type": "compensation",
-        "contention_reference_id": 7905752,
-        "decision_text": "service connected",
-        "description": null,
-        "diagnostic_code": null,
-        "disposition": "Granted",
-        "end_product_last_action_date": 19594,
-        "participant_id": "1826209",
-        "percent_number": "50",
-        "rating_issue_reference_id": null,
-        "rating_profile_date": null,
-        "rating_promulgation_date": null,
-        "subject_text": "This broadcast may not be reproduced"
+      decision_issue: {
+        benefit_type: "compensation",
+        contention_reference_id: 7_905_752,
+        decision_text: "service connected",
+        description: nil,
+        diagnostic_code: nil,
+        disposition: "Granted",
+        end_product_last_action_date: 19_594,
+        participant_id: "1826209",
+        percent_number: "50",
+        rating_issue_reference_id: nil,
+        rating_profile_date: nil,
+        rating_promulgation_date: nil,
+        subject_text: "This broadcast may not be reproduced"
       }
     }]
   end
@@ -105,7 +111,7 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
 
     # We are testing that each attribute returns the correct value
     describe "completed_issues" do
-      it "returns an empty array if no completed issues" do
+      it "returns parsed array of completed issues" do
         expect(subject.completed_issues).to eq(completed_issues)
       end
     end
