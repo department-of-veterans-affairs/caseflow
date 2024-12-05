@@ -12,7 +12,8 @@ module DeprecationWarnings
     /Calling `\[\]=` to an ActiveModel\:\:Errors is deprecated/,
     /Calling `clear` to an ActiveModel\:\:Errors message array in order to delete all errors is deprecated/,
     /Calling `delete` to an ActiveModel\:\:Errors messages hash is deprecated/,
-    /Calling `<<` to an ActiveModel\:\:Errors message array in order to add an error is deprecated/
+    /Calling `<<` to an ActiveModel\:\:Errors message array in order to add an error is deprecated/,
+    /ActiveModel\:\:Errors#to_xml is deprecated/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
