@@ -9,6 +9,33 @@ class Hearings::NationalHearingQueueController < ApplicationController
     # December 31, 2019 is the fallback date in the event no user-defined cutoff dates exist.
     date ||= Date.new(2019, 12, 31)
 
-    render json: { cutoff_date: date, user_can_edit: false }
+    begin
+      verified_date = Date.iso8601(date)
+    rescue ArgumentError
+      return invalid_date
+    end
+
+    render json: { cutoff_date: verified_date, user_can_edit: false }
+  end
+
+  def update_cutoff_date(cutoff_date)
+    record = SchedulableCutoffDate.create!(
+      cutoff_date: cutoff_date,
+      created_by_id: current_user.id,
+      created_at: Time.zone.now
+    )
+    record
+  end
+
+  private
+
+  def invalid_date
+    render json: {
+      "errors": [
+        "status": "400",
+        "title": "Invalid Date",
+        "detail": "Please enter a valid date"
+      ]
+    }, status: :unprocessable_entity
   end
 end
