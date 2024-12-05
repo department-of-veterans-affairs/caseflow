@@ -183,10 +183,6 @@ const PdfDocument = memo(({
 
         dispatch(setPdfDocument(url, pdfDocument));
         pdfDocumentRef.current = pdfDocument;
-
-        if (isFileVisible) {
-          dispatch(getDocumentText(pdfDocument, doc.content_url));
-        }
       }).
       catch((err) => {
         console.error(`ERROR with PDFJS for ${doc.content_url}: ${err}`);
@@ -230,6 +226,7 @@ const PdfDocument = memo(({
       pdfDocumentRef.current = pdfDocs?.[file];
       if (isFileVisible) {
         getPdfPages(pdfDocs?.[file]);
+        dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
       }
     } else {
       getPdfDocument(file);
@@ -240,6 +237,7 @@ const PdfDocument = memo(({
   useMemo(() => {
     if (pdfDocs?.[doc.content_url] && isFileVisible) {
       getPdfPages(pdfDocs?.[doc.content_url]);
+      dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
     }
   }, [doc.content_url]);
 
@@ -247,6 +245,7 @@ const PdfDocument = memo(({
   useMemo(() => {
     if (pdfDocumentRef.current && isFileVisible) {
       getPdfPages(pdfDocumentRef.current);
+      dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
     }
   }, [pdfDocumentRef.current]);
 

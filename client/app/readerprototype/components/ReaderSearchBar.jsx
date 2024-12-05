@@ -129,7 +129,7 @@ const ReaderSearchBar = ({ file }) => {
     } else {
       dispatch(searchText(value));
     }
-  }, 500);
+  }, 200);
 
   const index = totalMatches === 0 ? 0 : foundIndex + 1;
   const internalText = `${index} of ${totalMatches > 9999 ? 'many' : totalMatches}`;
