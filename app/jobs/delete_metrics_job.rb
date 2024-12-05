@@ -13,9 +13,9 @@ class DeleteMetricsJob < CaseflowJob
   def perform
     return unless options_included?
 
-    metric_ids = metric_ids
+    ids_to_delete = metric_ids
 
-    destroy_in_batches(metric_ids) unless metric_ids.blank?
+    destroy_in_batches(ids_to_delete) unless ids_to_delete.blank?
   end
 
   def perform_dry_run
@@ -64,21 +64,27 @@ class DeleteMetricsJob < CaseflowJob
   end
 
   def metric_ids
-    query_options = []
-    @options.each do |option_name, option_value|
-      case option_name
+    option_names = []
+    option_values = []
+
+    @options.each do |name, value|
+      case name
       when :metric_type
-        query_options << "metric_type = \'#{option_value}\'"
+        option_names << "metric_type = ?"
+        option_values << value
       when :months
-        query_options << "created_at < \'#{option_value}\'"
+        option_names << "created_at < ?"
+        option_values << value
       when :metric_product
-        query_options << "metric_product = \'#{option_value}\'"
+        option_names << "metric_product = ?"
+        option_values << value
       when :metric_message
-        query_options << "metric_message ILIKE  \'%#{option_value}%\'"
+        option_names << "metric_message ILIKE ?"
+        option_values << value
       end
     end
 
-    Metric.where(query_options.join(" AND ")).ids
+    Metric.where(option_names.join(" AND "), *option_values).ids
   end
 
   def destroy_in_batches(ids)

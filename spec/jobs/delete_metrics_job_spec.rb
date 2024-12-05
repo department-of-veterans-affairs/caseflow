@@ -93,15 +93,15 @@ RSpec.describe DeleteMetricsJob, type: :job do
     end
   end
 
-  describe "#get_metric_ids" do
+  describe "#metric_ids" do
     it "returns IDs of metrics matching the query" do
       create_four_month_old_metrics
-      expect(job.send(:get_metric_ids)).to match_array(@four_month_old_metrics.map(&:id))
+      expect(job.send(:metric_ids)).to match_array(@four_month_old_metrics.map(&:id))
     end
 
     it "returns an empty array if no metrics match the query" do
       create_one_month_old_metrics
-      expect(job.send(:get_metric_ids)).to eq([])
+      expect(job.send(:metric_ids)).to eq([])
     end
   end
 
