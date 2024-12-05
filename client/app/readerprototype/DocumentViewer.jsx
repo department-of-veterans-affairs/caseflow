@@ -14,9 +14,10 @@ import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
-import { showSideBarSelector } from './selectors';
+import { hideSideBarSelector, showSideBarSelector } from './selectors';
 import { getRotationDeg } from './util/documentUtil';
 import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { pdfUiClass, pdfWrapper } from './util/styles';
 
 const DocumentViewer = memo((props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +33,7 @@ const DocumentViewer = memo((props) => {
   if (!doc) {
     return;
   }
+  const hideSideBar = useSelector(hideSideBarSelector);
 
   const currentDocIndex = filteredDocuments.indexOf(doc);
   const prevDoc = filteredDocuments?.[currentDocIndex - 1];
@@ -122,17 +124,18 @@ const DocumentViewer = memo((props) => {
         <title>{`${(doc?.type) || ''} | Document Viewer | Caseflow Reader`}</title>
       </Helmet>
       <div id="prototype-reader" className="cf-pdf-page-container">
-        <div id="prototype-reader-main">
+        <div className={pdfUiClass(hideSideBar)} {...pdfWrapper}>
           <ReaderToolbar
             disableZoomIn={props.zoomLevel === ZOOM_LEVEL_MAX}
             disableZoomOut={props.zoomLevel === ZOOM_LEVEL_MIN}
             doc={doc}
+            hideSideBar={hideSideBar}
             documentPathBase={props.documentPathBase}
             resetZoomLevel={() => props.onZoomChange(100)}
             rotateDocument={() => setRotateDeg(getRotationDeg(rotateDeg))}
             setZoomInLevel={handleZoomIn}
             setZoomOutLevel={handleZoomOut}
-            showClaimsFolderNavigation={props.allDocuments.length > 1}
+            showClaimsLink={props.allDocuments.length > 1}
             showSearchBar={showSearchBar}
             toggleSearchBar={setShowSearchBar}
             showSideBar={showSideBar}
@@ -176,8 +179,7 @@ const DocumentViewer = memo((props) => {
         {showSideBar && (
           <ReaderSidebar
             doc={doc}
-            showSideBar={showSideBar}
-            toggleSideBar={() => dispatch(togglePdfSidebar())}
+            hideSideBar={hideSideBar}
             vacolsId={props.match.params.vacolsId}
           />
         )}

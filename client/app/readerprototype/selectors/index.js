@@ -38,3 +38,6 @@ export const pdfSelector = (state) => ({
   pdfDocs: state.pdf.pdfDocuments,
   docLoadErrors: state.pdf.documentErrors
 });
+export const scaleSelector = (state) => state.pdfViewer.scale;
+export const storeDocumentsSelector = (state) => state.documents;
+export const hideSideBarSelector = (state) => state.pdfViewer.hidePdfSidebar;
