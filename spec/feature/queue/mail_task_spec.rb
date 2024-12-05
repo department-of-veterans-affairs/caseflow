@@ -280,7 +280,7 @@ RSpec.feature "MailTasks", :postgres do
         expect(page).to have_content("You have successfully")
       end
 
-      it "sends proper notifications", skip: "test is failing in local env and github actions" do
+      it "sends proper notifications" do
         scheduled_payload = AppellantNotification.create_payload(appeal,
                                                                  Constants.EVENT_TYPE_FILTERS.hearing_scheduled).to_json
         if appeal.hearings.any?
