@@ -24,7 +24,7 @@ export const annotationPlacement = (state) => ({
   selectedAnnotationId: state.annotationLayer.selectedAnnotationId,
   placingAnnotationIconPageCoords: state.annotationLayer.placingAnnotationIconPageCoords,
 });
-export const editingAnnotationsSelector = (state) => Object.values(state.annotationLayer.editingAnnotations);
+export const editingAnnotationsSelector = (state) => Object.values(state.annotationLayer.editingAnnotations || {});
 
 export const openedAccordionSectionsSelector = (state) => state.pdfViewer.openedAccordionSections;
 export const modalInfoSelector = (state) => ({
@@ -33,3 +33,8 @@ export const modalInfoSelector = (state) => ({
 });
 
 export const showSideBarSelector = (state) => !state.pdfViewer.hidePdfSidebar;
+
+export const pdfSelector = (state) => ({
+  pdfDocs: state.pdf.pdfDocuments,
+  docLoadErrors: state.pdf.documentErrors
+});
