@@ -3,7 +3,7 @@
 class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   # Checks if API is disabled
   before_action do
-    if FeatureToggle.enabled?(:disable_person_updated_eventing)
+    unless FeatureToggle.enabled?(:enable_person_updated_eventing)
       render json: {
         errors: [
           {

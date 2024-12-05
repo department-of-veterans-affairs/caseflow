@@ -14,7 +14,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
   describe "before_action :check_api_disabled" do
     context "when API is disabled" do
       before do
-        allow(FeatureToggle).to receive(:enabled?).with(:disable_person_updated_eventing).and_return(true)
+        allow(FeatureToggle).to receive(:enabled?).with(:enable_person_updated_eventing).and_return(false)
       end
 
       it "returns a 501 status and error message" do
@@ -34,7 +34,7 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
 
     context "when API is enabled" do
       before do
-        allow(FeatureToggle).to receive(:enabled?).with(:disable_person_updated_eventing).and_return(false)
+        allow(FeatureToggle).to receive(:enabled?).with(:enable_person_updated_eventing).and_return(true)
       end
 
       it "allows the action to proceed" do
@@ -56,6 +56,8 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
       header_attributes.each do |header, attribute|
         request.headers[header] = attributes[attribute]
       end
+
+      allow(FeatureToggle).to receive(:enabled?).with(:enable_person_updated_eventing).and_return(true)
 
       allow(Events::PersonUpdated).to receive(:new).with(
         payload["event_id"],
@@ -130,6 +132,8 @@ RSpec.describe Api::Events::V1::PersonUpdatedController, :postgres, type: :contr
       allow(Events::PersonUpdatedError).to receive(:new).with(
         event_id, 2, "some error"
       ).and_return(person_error)
+
+      allow(FeatureToggle).to receive(:enabled?).with(:enable_person_updated_eventing).and_return(true)
     end
 
     context "when service error handling is successful" do

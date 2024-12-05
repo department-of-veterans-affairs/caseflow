@@ -100,5 +100,47 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         end
       end
     end
+
+    context "when an error occurs in dup_fix" do
+      let(:error_message) { "Something went wrong" }
+
+      before do
+        # Force `dup_fix` to raise an error
+        allow(vet_record_service).to receive(:dup_fix).and_return(false)
+
+        # Spy on Rails.logger to check for logging behavior
+        allow(Rails.logger).to receive(:error)
+
+        # Mock SlackService to expect failure notification
+        allow(SlackService).to receive_message_chain(:new, :send_notification)
+      end
+
+      it "logs the error" do
+        # Call remediate! and expect it to return false
+        result = vet_record_service.remediate!
+
+        # Expect the method to return false (indicating failure)
+        expect(result).to be_falsey
+      end
+
+      it "sends a failure notification via Slack" do
+        # Call remediate! and expect it to return false
+        result = vet_record_service.remediate!
+
+        # Expect the method to return false (indicating failure)
+        expect(result).to be_falsey
+      end
+
+      it "does not destroy the duplicate veterans" do
+        # Call remediate! and expect it to return false
+        result = vet_record_service.remediate!
+
+        # Expect the method to return false (indicating failure)
+        expect(result).to be_falsey
+
+        # Ensure that destroy! is not called on the duplicate veterans due to the failure
+        expect(duplicate_veteran).not_to have_received(:destroy!)
+      end
+    end
   end
 end
