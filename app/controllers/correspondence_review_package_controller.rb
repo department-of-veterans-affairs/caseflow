@@ -43,18 +43,9 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
-    correspondence_document = CorrespondenceDocument.find_by(uuid: params["pdf_id"])
-
     if correspondence_document.present?
       if FeatureToggle.enabled?(:vefs_integration)
-        doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
-
-        expires_in 30.days, public: true
-        send_data(
-          doc_content,
-          type: "application/pdf",
-          disposition: "inline"
-        )
+        fetch_correspondence_document_from_vefs
       else
         expires_in 30.days, public: true
         send_file(
@@ -64,13 +55,36 @@ class CorrespondenceReviewPackageController < CorrespondenceController
         )
       end
     else
-      render json: {
-        "errors": ["message": "Could not find correspondence document with given UUID"]
-      }, status: :not_found
+      correspondence_document_not_found_response
     end
   end
 
   private
+
+  def correspondence_document
+    @correspondence_document ||= CorrespondenceDocument.find_by(uuid: params["pdf_id"])
+  end
+
+  def fetch_correspondence_document_from_vefs
+    doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
+
+    if doc_content.present?
+      expires_in 30.days, public: true
+      send_data(
+        doc_content,
+        type: "application/pdf",
+        disposition: "inline"
+      )
+    else
+      correspondence_document_not_found_response
+    end
+  end
+
+  def correspondence_document_not_found_response
+    render json: {
+      "errors": ["message": "Could not find correspondence document with given UUID"]
+    }, status: :not_found
+  end
 
   def cmp_document_fetcher
     @cmp_document_fetcher ||= CmpDocumentFetcher.new
