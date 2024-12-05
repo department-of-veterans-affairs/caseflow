@@ -213,7 +213,10 @@ class TasksController < ApplicationController
     end
   end
 
-  def error_found_upload_transcription_to_vbms; end
+  def error_found_upload_transcription_to_vbms
+    file_name = params[:file_info][:file_name]
+    set_flash_vbms_upload_success(file_name, appeal)
+  end
 
   private
 
