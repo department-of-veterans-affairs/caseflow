@@ -169,11 +169,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-document-table-data-filled {
   background: $color-blue;
   color: $color-white;
+  cursor: pointer;
 }
 
 .correspondence-document-table-data-empty {
   background: $color-white;
   color: $color-blue;
+  cursor: pointer;
 }
 
 .correspondence-intake-appeal-button {
@@ -1731,4 +1733,3 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-left: 0;
   padding-top: 0;
 }
-

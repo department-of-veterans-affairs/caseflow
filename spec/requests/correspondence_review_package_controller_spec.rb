@@ -7,6 +7,7 @@ describe CorrespondenceReviewPackageController, type: :request do
 
   describe "#pdf" do
     let(:mock_cmp_document_fetcher) { instance_double(CmpDocumentFetcher) }
+    let!(:correspondence_document) { create(:correspondence_document) }
 
     before do
       allow(CmpDocumentFetcher).to receive(:new).and_return(mock_cmp_document_fetcher)
@@ -17,9 +18,17 @@ describe CorrespondenceReviewPackageController, type: :request do
       User.authenticate!(user: mail_team_supervisor_user)
     end
 
-    context "with vefs_integration feature toggle enabled" do
-      let!(:cmp_document) { create(:cmp_document) }
+    it "returns not found if the correspondence document does not exist" do
+      get(
+        correspondence_review_package_pdf_path(pdf_id: "bogus-uuuid"),
+        as: :json
+      )
 
+      expect(response).to have_http_status(:not_found)
+      expect(response.content_type).to eq("application/json; charset=utf-8")
+    end
+
+    context "with vefs_integration feature toggle enabled" do
       before do
         FeatureToggle.enable!(:vefs_integration)
       end
@@ -30,12 +39,11 @@ describe CorrespondenceReviewPackageController, type: :request do
 
       it "requests CMP document content" do
         expect(mock_cmp_document_fetcher).to receive(:get_cmp_document_content)
-          .with(cmp_document.cmp_document_uuid)
+          .with(correspondence_document.uuid)
           .and_return(fixture_file_upload("spec/fixtures/example.pdf", "application/pdf"))
 
         get(
-          correspondence_review_package_pdf_path(pdf_id: cmp_document.id),
-          params: { pdf: { pdf_id: cmp_document.id } },
+          correspondence_review_package_pdf_path(pdf_id: correspondence_document.uuid),
           as: :json
         )
 
@@ -45,8 +53,6 @@ describe CorrespondenceReviewPackageController, type: :request do
     end
 
     context "with vefs_integration feature toggle disabled" do
-      let!(:document) { create(:document) }
-
       before do
         FeatureToggle.disable!(:vefs_integration)
       end
@@ -55,8 +61,7 @@ describe CorrespondenceReviewPackageController, type: :request do
         expect(mock_cmp_document_fetcher).not_to receive(:get_cmp_document_content)
 
         get(
-          correspondence_review_package_pdf_path(pdf_id: document.id),
-          params: { pdf: { pdf_id: document.id } },
+          correspondence_review_package_pdf_path(pdf_id: correspondence_document.uuid),
           as: :json
         )
 

@@ -43,29 +43,31 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
-    doc_content = nil
-    pdf_id = pdf_params["pdf"]["pdf_id"]
+    correspondence_document = CorrespondenceDocument.find_by(uuid: params["pdf_id"])
 
-    if FeatureToggle.enabled?(:vefs_integration)
-      correspondence_document = CorrespondenceDocument.find_by(uuid: pdf_id)
-      doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
+    if correspondence_document.present?
+      if FeatureToggle.enabled?(:vefs_integration)
+        doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
+
+        expires_in 30.days, public: true
+        send_data(
+          doc_content,
+          type: "application/pdf",
+          disposition: "inline"
+        )
+      else
+        expires_in 30.days, public: true
+        send_file(
+          correspondence_document.pdf_location,
+          type: "application/pdf",
+          disposition: "inline"
+        )
+      end
     else
-      document = Document.find(pdf_id)
-      doc_content = document.serve
+      render json: {
+        "errors": ["message": "Could not find correspondence document with given UUID"]
+      }, status: :not_found
     end
-
-    document_disposition = "inline"
-    if pdf_params[:download]
-      document_disposition = "attachment; filename='#{pdf_params[:type]}-#{pdf_params[:id]}.pdf'"
-    end
-
-    # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      doc_content,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
   end
 
   private
@@ -110,10 +112,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   def correspondence_params
     params.require(:correspondence).permit(:correspondence, :notes, :correspondence_type_id, :va_date_of_receipt)
       .merge(params.require(:veteran).permit(:file_number, :first_name, :last_name))
-  end
-
-  def pdf_params
-    params.permit(pdf: [:pdf_id, :type, :id, :download])
   end
 
   def update_veteran_on_correspondence
