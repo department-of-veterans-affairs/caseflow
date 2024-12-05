@@ -6,7 +6,6 @@ import Button from '../../components/Button';
 import FileUpload from '../../components/FileUpload';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
-import { sprintf } from 'sprintf-js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { requestPatch } from '../uiReducer/uiActions';
@@ -40,15 +39,12 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
     props.closeModal();
   };
 
+  const redirectAfterSubmit = () => {
+    window.location = `/queue/appeals/${props.appealId}`;
+  };
+
   const submit = () => {
-    // W.I.P.
-    // This is where we will send the backend request to upload to VBMS.
-    // selectedFile.file contains the base64 encoded string containing the PDF.
-    // selectedFile.fileName contains the file's name only.
-    //
-    // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
-    // in which case we'll need to send props.taskId along with the request.
-    const { task, appeal } = props;
+    const { task } = props;
 
     const formatInstructions = () => {
       return [
@@ -69,18 +65,18 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
             file: selectedFile.file,
             file_name: selectedFile.fileName
           },
+          appeal_id: props.appealId
         }
       };
     };
 
-    const successMsg = {
-      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
-    };
-
-    // setLoading(true);
+    setLoading(true);
 
     return props.requestPatch(`/tasks/${task.taskId}
-      /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
+      /error_found_upload_transcription_to_vbms`, requestParams()
+    ).then(() => {
+      redirectAfterSubmit();
+    });
   };
 
   const handleFileChange = (file) => {
