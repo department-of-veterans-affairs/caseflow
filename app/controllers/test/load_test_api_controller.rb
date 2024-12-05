@@ -3,7 +3,6 @@
 class Test::LoadTestApiController < Api::ApplicationController
   include ProdtestOnlyConcern
 
-  API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
   LOAD_TESTING_USER = "LOAD_TESTER"
 
@@ -67,34 +66,6 @@ class Test::LoadTestApiController < Api::ApplicationController
     when "Metric"
       target_data_type = Metric
       target_data_column = "uuid"
-    end
-
-    get_target_data_id(params[:target_id], target_data_type, target_data_column)
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
-
-  # Private: If no target_id is provided, use the target_id of sample data instead
-  # Returns the target_data_id of each target_data_type
-  # For Metric returns the entire target_data object
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def get_target_data_id(target_id, target_data_type, target_data_column)
-    target_data_id = if target_data_type.to_s == "Metric"
-                       target_id.presence ? Metric.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "Veteran"
-                       target_id.presence ? Veteran.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "SupplementalClaim"
-                       target_id.presence ? SupplementalClaim.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "Appeal"
-                       target_id.presence ? Appeal.find_by_uuid(target_id) : target_data_type.all.sample
-                     elsif target_data_type.to_s == "HearingDay"
-                       target_id.presence ? HearingDay.find(target_id) : target_data_type.all.sample
-                     elsif target_id.presence
-                       target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
-                     else
-                       target_data_type.all.sample[target_data_column.to_sym]
-                     end
-
-    if target_data_id.nil?
     when "Veteran"
       target_data_type = Veteran
       target_data_column = "file_number"
@@ -134,9 +105,9 @@ class Test::LoadTestApiController < Api::ApplicationController
       )
     end
 
-    target_data_id
+    target_data_object
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Layout/LineLength
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
@@ -172,11 +143,11 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Params: functions
   # Response: None
   def grant_or_deny_functions(functions)
-    functions.select { |_k, v| v == true }.each do |k, _v|
-      Functions.grant!(k, users: [LOAD_TESTING_USER])
+    functions.select { |_key, value| value == true }.each do |key, _value|
+      Functions.grant!(key, users: [LOAD_TESTING_USER])
     end
-    functions.select { |_k, v| v == false }.each do |k, _v|
-      Functions.deny!(k, users: [LOAD_TESTING_USER])
+    functions.select { |_key, value| value == false }.each do |key, _value|
+      Functions.deny!(key, users: [LOAD_TESTING_USER])
     end
   end
 
@@ -187,14 +158,13 @@ class Test::LoadTestApiController < Api::ApplicationController
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
 
-    organizations.select { |organization| organization[:admin] == true || "true" }.each do |org|
+    organizations.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
-      OrganizationsUser.make_user_admin(user, organization)
     end
-    organizations.select { |organization| organization[:admin] == false || "false" }.each do |org|
+    organizations.select { |orgs| orgs[:admin].to_s == "true" }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
-      organization.add_user(user) unless organization.users.include?(user)
+      OrganizationsUser.make_user_admin(user, organization)
     end
   end
 
