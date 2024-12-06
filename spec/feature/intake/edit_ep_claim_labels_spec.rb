@@ -48,7 +48,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       contested_rating_issue_profile_date: rating.profile_date,
       decision_review: higher_level_review,
       benefit_type: benefit_type,
-      contested_issue_description: "PTSD denied"
+      contested_issue_description: "PTSD denied",
+      decision_date: rating.promulgation_date
     )
   end
 
@@ -200,6 +201,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       after { FeatureToggle.disable!(:correct_claim_reviews) }
 
       before do
+        higher_level_review.update!(benefit_type: "education")
         rating_ep = higher_level_review.end_product_establishments.find_by(code: "030HLRR")
         nonrating_ep = higher_level_review.end_product_establishments.find_by(code: "030HLRNR")
 
