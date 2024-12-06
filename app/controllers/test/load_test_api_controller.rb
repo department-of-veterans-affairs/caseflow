@@ -189,7 +189,7 @@ class Test::LoadTestApiController < Api::ApplicationController
       FeatureToggle.enable!(key.to_sym, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(key.to_sym, user: user)
     end
     feature_toggles.select { |_key, value| value == false }.each do |key, _value|
-      if FeatureToggle.details_for(key.to_sym).key?(:users)
+      if FeatureToggle.details_for(key.to_sym)&.key?(:users)
         FeatureToggle.disable!(key.to_sym, users: [LOAD_TESTING_USER])
       end
     end
