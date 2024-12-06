@@ -258,17 +258,16 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 	bundle exec rake db:schema:load:primary
 	make consolidated_db_scripts
 
-make determine-db-name: ## If RAILS_ENV is set to 'test' then returns the test database's name. Otherwise, it returns the development DB's name.
-	if [ "$RAILS_ENV" = "test" ];  then echo "caseflow_certification_test"; else echo "caseflow_certification_development"; fi
+DB_NAME = $(shell if [ "$RAILS_ENV" = "test" ];  then echo "caseflow_certification_test"; else echo "caseflow_certification_development"; fi)
 
 instantiate_oracle_fdw: ## Instantiates the oracle_fdw extension in the Postgres DB and some tangential configuration
-	psql -h localhost -U postgres -d "$(make determine-db-name)" -a -f docker-bin/pg/setup_extensions.sql
+	psql -h localhost -U postgres -d $(DB_NAME) -a -f docker-bin/pg/setup_extensions.sql
 
 create_custom_pg_types: ## Establishes custom types used within certain Postgresql functions
-	psql -h localhost -U postgres -d "$(make determine-db-name)" -a -f local/sql/create_custom_types.sql
+	psql -h localhost -U postgres -d $(DB_NAME) -a -f local/sql/create_custom_types.sql
 
 create_foreign_tables: ## Creates foreign tables in the Postgresql database that can be used to access VACOLS data
-	psql -h localhost -U postgres -d "$(make determine-db-name)" t -a -f local/sql/create_foreign_tables_for_vacols.sql
+	psql -h localhost -U postgres -d $(DB_NAME) t -a -f local/sql/create_foreign_tables_for_vacols.sql
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
