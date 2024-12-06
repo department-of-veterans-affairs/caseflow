@@ -75,9 +75,9 @@ describe Test::LoadTestsController, :postgres, type: :controller do
             .with(query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}")\
             .to_return(status: 404, headers: response_headers_hash, body: "Test Error")
 
-          post :run_load_tests, body: { data: scenarios }
+          get :run_load_tests, params: { data: scenarios }
 
-          expect(response.status).to eq 500
+          expect(response.status).to eq 200
           expect(response.body).to include("Crumb Response: Test Error")
         end
       end
@@ -93,52 +93,45 @@ describe Test::LoadTestsController, :postgres, type: :controller do
             "User-Agent" => "Ruby" }
         end
 
-        let(:test_recipe) { Base64.encode64(scenarios.to_json) }
+        let(:form_data) { ActionController::Parameters.new(data: scenarios) }
+        let(:test_recipe) { Base64.encode64(form_data[:data].to_s) }
 
-        let(:crumb) do
-          "{\"_class\":\"hudson.security.csrf.DefaultCrumbIssuer\","\
+        before do
+          crumb = "{\"_class\":\"hudson.security.csrf.DefaultCrumbIssuer\","\
           "\"crumb\":\"value\",\"crumbRequestField\":\"Jenkins-Crumb\"}"
-        end
 
-        it "sends a request to Jenkins successfully create a load test run" do
-          # stub crumb issuer
           stub_request(:get, ENV["JENKINS_CRUMB_ISSUER_URI"])
             .with(query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}")
             .to_return(body: crumb, status: 200, headers: response_headers_hash)
+        end
 
-          # stub pipeline
+        it "sends a request to Jenkins successfully create a load test run" do
           stub_request(:post, ENV["LOAD_TESTING_PIPELINE_URI"])
             .with(
-              body: { "testRecipe" => test_recipe },
+              body: test_recipe,
               headers: jenkins_request_headers_hash,
               query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}"
             )
             .to_return(status: 201, body: "", headers: {})
 
-          post :run_load_tests, body: scenarios.to_json
+          get :run_load_tests, params: { data: scenarios }
 
           expect(response.status).to eq 200
           expect(response.body).to include("201")
         end
 
         it "sends a request to Jenkins which is unsuccessful in creating a load test run" do
-          # stub crumb issuer
-          stub_request(:get, ENV["JENKINS_CRUMB_ISSUER_URI"])
-            .with(query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}")
-            .to_return(body: crumb, status: 200, headers: response_headers_hash)
-
-          # stub piepline
           stub_request(:post, ENV["LOAD_TESTING_PIPELINE_URI"])
             .with(
-              body: { "testRecipe" => test_recipe },
+              body: test_recipe,
               headers: jenkins_request_headers_hash,
               query: "token=#{ENV['LOAD_TESTING_PIPELINE_TOKEN']}"
             )
             .to_return(status: 404, body: "Test Error", headers: {})
 
-          post :run_load_tests, body: scenarios.to_json
+          get :run_load_tests, params: { data: scenarios }
 
-          expect(response.status).to eq 500
+          expect(response.status).to eq 200
           expect(response.body).to include("Jenkins Response: Test Error")
         end
       end

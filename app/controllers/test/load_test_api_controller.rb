@@ -144,14 +144,10 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Response: None
   def grant_or_deny_functions(functions)
     functions.select { |_key, value| value == true }.each do |key, _value|
-      Functions.grant!(key, users: LOAD_TESTING_USER)
+      Functions.grant!(key, users: [LOAD_TESTING_USER])
     end
     functions.select { |_key, value| value == false }.each do |key, _value|
-      begin
-        Functions.deny!(key, users: LOAD_TESTING_USER)
-      rescue TypeError
-        Functions.deny!(key, users: [LOAD_TESTING_USER])
-      end
+      Functions.deny!(key, users: [LOAD_TESTING_USER])
     end
   end
 
