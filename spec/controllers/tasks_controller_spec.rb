@@ -1705,6 +1705,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         task: {
           instructions: "testing"
         },
+        appeal_id: hearing.appeal.uuid,
         id: review_transcript_task.id.to_s
       }
     end
