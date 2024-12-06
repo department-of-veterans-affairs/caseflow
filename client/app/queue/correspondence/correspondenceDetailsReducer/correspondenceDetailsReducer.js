@@ -10,7 +10,20 @@ export const initialState = {
     tasksUnrelatedToAppeal: {}
   },
   tasksUnrelatedToAppealEmpty: false,
-  expandedLinkedAppeals: []
+  expandedLinkedAppeals: [],
+  veteranInformation: {},
+  correspondenceStatus: {},
+  mailTasks: {},
+  // might be the same as expandedLinkedAppeals
+  linkedAppeals: {},
+  // array of appeal Ids
+  existingAppeals: [],
+  tasksNotRelatedToAnAppeal: {},
+  correspondenceTypes: {},
+  generalInformation: {},
+  responseLetters: {},
+  linkedCorrespondences: {},
+  allCorrespondences: {}
 };
 
 export const correspondenceDetailsReducer = (state = initialState, action = {}) => {
