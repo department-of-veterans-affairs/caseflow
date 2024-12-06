@@ -75,6 +75,7 @@ const CorrespondenceReturnToInboundOpsModal = (props) => {
     >
       <RadioField
         id="returnReasonRadioField"
+        className={['return-to-iot-radio-field']}
         name={COPY.CORRESPONDENCE_RETURN_TO_INBOUND_OPS_MODAL_SUBTITLE}
         options={returnReasonOptions}
         value={reasonSelected}

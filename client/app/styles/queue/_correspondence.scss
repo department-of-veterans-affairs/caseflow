@@ -1509,6 +1509,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-top: 20px;
   }
 
+  .correspondence-details-alert-banner {
+    margin-right: 20px;
+  }
 }
 
 .task-not-related-title {
@@ -2005,3 +2008,9 @@ notes-column {
 .add-related-task-modal .cf-modal-body {
   width: 550px;
 }
+
+.return-to-iot-radio-field {
+  margin-bottom: 20px;
+}
+
+
