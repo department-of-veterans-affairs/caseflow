@@ -112,7 +112,8 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def correspondence_details_access
     access_redirect unless correspondence.status == Constants.CORRESPONDENCE_STATUSES.pending ||
-                           correspondence.status == Constants.CORRESPONDENCE_STATUSES.completed
+                           correspondence.status == Constants.CORRESPONDENCE_STATUSES.completed || 
+                           correspondence.status == Constants.CORRESPONDENCE_STATUSES.action_required
   end
 
   def access_redirect

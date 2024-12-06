@@ -103,4 +103,41 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "correspondence_details_access" do
+    let!(:current_user) { create(:inbound_ops_team_supervisor) }
+    let(:veteran) { create(:veteran) }
+    let!(:correspondence) { create(:correspondence, :action_required, veteran: veteran) }
+    let(:root_task) { instance_double("CorrespondenceRootTask") }
+
+    before do
+      allow(controller).to receive(:correspondence).and_return(correspondence)
+      allow(controller).to receive(:access_redirect)
+      allow(correspondence).to receive(:root_task).and_return(root_task)
+    end
+
+    context "when correspondence status is pending" do
+      it "does not redirect" do
+        allow(root_task).to receive(:correspondence_status).and_return(Constants.CORRESPONDENCE_STATUSES.pending)
+        controller.send(:correspondence_details_access)
+        expect(controller).not_to have_received(:access_redirect)
+      end
+    end
+
+    context "when correspondence status is completed" do
+      it "does not redirect" do
+        allow(root_task).to receive(:correspondence_status).and_return(Constants.CORRESPONDENCE_STATUSES.completed)
+        controller.send(:correspondence_details_access)
+        expect(controller).not_to have_received(:access_redirect)
+      end
+    end
+
+    context "when correspondence status is action_required" do
+      it "does not redirect" do
+        allow(root_task).to receive(:correspondence_status).and_return(Constants.CORRESPONDENCE_STATUSES.action_required)
+        controller.send(:correspondence_details_access)
+        expect(controller).not_to have_received(:access_redirect)
+      end
+    end
+  end
 end
