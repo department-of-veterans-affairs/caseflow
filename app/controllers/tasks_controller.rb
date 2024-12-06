@@ -215,14 +215,24 @@ class TasksController < ApplicationController
     tmp_folder = Base64Service.to_file(params["file_info"]["file"], file_name)
     current_file_path = tmp_folder.tempfile
     info_file = split_filename(file_name)
-    # upload_file_S3 and modified transcription_files table
+    response = process_information_to_vbms(info_file, file_name, current_file_path)
+    if response.success?
+      # change status of ReviewTranscriptTask
+      complete_transcript_review
+    else
+      render json: { success: false }, status: :bad_request
+    end
+  end
+
+  private
+
+  def process_information_to_vbms(info_file, file_name, current_file_path)
     transcription_file = Hearings::TranscriptionFile.find_by(
       hearing_id: info_file[:hearing_id],
       hearing_type: info_file[:hearing_type],
       file_type: info_file[:extension]
     )
     transcription_file.upload_content_to_s3!(current_file_path)
-
     appeal = transcription_file.hearing.appeal
     document_params =
       {
@@ -234,16 +244,8 @@ class TasksController < ApplicationController
         file: current_file_path
       }
 
-    response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
-    if response.success?
-      # change status of ReviewTranscriptTask
-      complete_transcript_review
-    else
-      render json: { success: false }, status: :bad_request
-    end
+    PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
   end
-
-  private
 
   def cancel_review_transcript_task
     instructions = params[:task][:instructions]

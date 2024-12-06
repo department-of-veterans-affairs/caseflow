@@ -29,15 +29,19 @@ class TranscriptionFileUpload
 
   # Purpose: Uploads transcription file to its corresponding location in S3
   def call(content_or_filepath = @transcription_file.tmp_location, type = :filepath)
-    content_or_filepath.key?(:content_or_filepath) ?
-      S3Service.store_file(s3_location, content_or_filepath[:content_or_filepath], type) :
-      S3Service.store_file(s3_location, content_or_filepath, type)
+    S3Service.store_file(s3_location, begin
+      if content_or_filepath.key?(:content_or_filepath)
+        content_or_filepath[:content_or_filepath]
+      else
+        content_or_filepath
+      end
+    end, type)
 
     @transcription_file.update_status!(process: :upload, status: :success, upload_link: s3_location)
     Rails.logger.info("File #{file_name} successfully uploaded to S3 location: #{s3_location}")
   rescue StandardError => error
     @transcription_file.update_status!(process: :upload, status: :failure)
-    raise FileUploadError "Amazon S3 service responded with error: #{error}"
+    raise FileUploadError, "Amazon S3 service responded with error: #{error}"
   end
 
   private
