@@ -9,7 +9,6 @@ import { FitToScreenIcon } from '../../../components/icons/FitToScreenIcon';
 const CorrespondencePdfToolBar = (props) => {
   const {
     doc,
-    documentPathBase,
     zoomIn,
     zoomOut,
     fitToScreen,
@@ -24,9 +23,9 @@ const CorrespondencePdfToolBar = (props) => {
           ariaLabel="open document in new tab"
           target="_blank"
           button="matte"
-          href={`/reader/appeal${documentPathBase}/${doc.id}`}>
+          href={`/reader/appeal/${doc.correspondence_id}/documents/${doc.id}`}>
           <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
-            <span title="Open in new tab">{doc.type}</span>
+            <span title="Open in new tab">{doc.document_title}</span>
             <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
           </h1>
         </Link>
@@ -68,7 +67,6 @@ const CorrespondencePdfToolBar = (props) => {
 
 CorrespondencePdfToolBar.propTypes = {
   doc: PropTypes.object,
-  documentPathBase: PropTypes.string,
   zoomIn: PropTypes.func,
   zoomOut: PropTypes.func,
   fitToScreen: PropTypes.func,

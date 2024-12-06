@@ -140,7 +140,7 @@ lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
 
 rubocop: ## Run linter for ruby
-	bundle exec rake rubocop -a
+	bundle exec rubocop -a
 
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint

@@ -1,0 +1,17 @@
+meta {
+  name: 500 API Token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/token
+  body: none
+  auth: none
+}
+
+tests {
+  test("Failed API Token POST", function() {
+    expect(res.status).to.equal(500);
+  });
+}

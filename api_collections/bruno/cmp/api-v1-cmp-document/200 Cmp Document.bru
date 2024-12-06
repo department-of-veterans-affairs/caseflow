@@ -1,0 +1,29 @@
+meta {
+  name: 200 Cmp Document
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/cmp/document
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "packetUuid": "cffd1510-60b5-47ea-a2b2-89459b92f14e",
+    "documentId": "ad5bf647ae687g",
+    "documentUuid": "a0872b22-f743-4ad1-b510-dad98037ad26",
+    "dateOfReceipt": "2024-11-07",
+    "nonVbmsDocTypeName": "example-vbms-name",
+    "packetUuid": "77b12f7a-8529-4315-8194-dcd70c34f8f9",
+    "vbmsDocTypeId": 84
+  }
+}
+
+tests {
+  test("Successful CMP Document POST", function() {
+    expect(res.status).to.equal(200);
+  });
+}
