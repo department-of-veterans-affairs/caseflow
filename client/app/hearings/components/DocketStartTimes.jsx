@@ -29,12 +29,10 @@ export const DocketStartTimes = ({
     return `Half-Day ${amOrPm} (${halfDaySlotCount} slots at ${timeInRoTimezone} ${zoneName}${nonEasternTimezoneInfo})`;
   };
 
-  const selectedDate = hearingDayDate || moment(new Date()).format('YYYY-MM-DD');
-
   const formatTimeLabels = (amStartTimeString, pmStartTimeString, fullDaySlots, timezone) => {
     const zoneName = shortZoneName(timezone);
-    const amTimeInEastern = roTimezoneToEastern(`${selectedDate} ${amStartTimeString}`, timezone, true);
-    const pmTimeInEastern = roTimezoneToEastern(`${selectedDate} ${pmStartTimeString}`, timezone, true);
+    const amTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, timezone, true);
+    const pmTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, timezone, true);
     const amTimeWithAM = formatWithAMPM(amStartTimeString, timezone);
     const pmTimeWithPM = formatWithAMPM(pmStartTimeString, timezone);
 
@@ -59,12 +57,12 @@ export const DocketStartTimes = ({
       },
       {
         displayText: halfDayAmLabel,
-        value: roTimezoneToEastern(`${selectedDate} ${amStartTimeString}`, roTimezone),
+        value: roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, roTimezone),
         slotCount: fullDaySlots / 2
       },
       {
         displayText: halfDayPmLabel,
-        value: roTimezoneToEastern(`${selectedDate} ${pmStartTimeString}`, roTimezone),
+        value: roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, roTimezone),
         slotCount: fullDaySlots / 2
       }
     ];
