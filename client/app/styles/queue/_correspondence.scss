@@ -13,7 +13,7 @@ $color-white: #ffffff;
 $color-black: #323a45;
 $color-background-color: #f1f1f1;
 $color-red: #cd2026;
-$color-dark-red: #ff0000;
+$color-bright-red: #ff0000;
 $color-gray-darker: #5b616b;
 $color-gray: #5b616b;
 $color-bg-hsl: hsl(0, 0%, 100%);
@@ -34,6 +34,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .external-link-icon-a {
   color: $color-blue;
+  font-weight: bold;
 }
 
 .external-link-icon-wrapper {
@@ -515,6 +516,16 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   min-width: 750px;
 }
 
+.cf-modal-body {
+  color: $color-black;
+
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
 .checkbox-modal-size {
   display: flex;
   flex-direction: column;
@@ -526,6 +537,25 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   transform: scale(1.3);
   translate: 0;
   margin: 80px auto 50px 100px;
+}
+
+.checkbox-modal-size-corr-details {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding: 0;
+  width: 105%;
+  margin-bottom: -15px;
+
+  .cf-form-checkboxes {
+    margin-bottom: 0;
+    margin-top: 1rem;
+  }
+
+  .cf-form-checkbox {
+    padding-top: 5px;
+  }
 }
 
 .confirm-correspondence-view-border {
@@ -953,10 +983,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .response-letter-table-borderless-first-item {
-    display: block;
     width: 100%;
     margin-left: 5%;
     padding-bottom: 1.25rem;
+    padding-left: 2.3rem;
   }
 
   .response-letter-table-borderless {
@@ -1075,13 +1105,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
 .task-selection-dropdown-box {
-  width: 45rem;
-  }
-
-.new-tasks-gray-border-styling {
-  display: block;
-  margin-right: 2rem;
-  margin-bottom: 2rem;
+  width: 100%;
   }
 
 .area-above-add-tasks-button-not-related {
@@ -1220,7 +1244,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
 
     .error-msg {
-      color: $color-dark-red;
+      color: $color-bright-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
@@ -1280,17 +1304,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
 
     .error-msg {
-      color: $color-dark-red;
+      color: $color-bright-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
     }
   }
-}
-
-.select-container-styles {
-  width: 100%;
-  display: inline-block;
 }
 
 .non-related-task {
@@ -1324,6 +1343,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 30px;
 }
 
+.correspondence-response-letters {
+  .cf-modal-divider {
+    padding-bottom: 0;
+  }
+
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
 .new-letter-container {
   display: inline-block;
   padding: 2rem;
@@ -1346,10 +1377,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .details-page-letter-container {
   float: left;
-  height: 540px;
   width: 100%;
-  overflow: auto;
-  padding: 18px;
   position: relative;
 }
 
@@ -1468,12 +1496,20 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .last-item {
     margin-left: auto;
   }
+
+  .unwrap-text {
+    min-width: 215px;
+  }
 }
 
 .correspondence-case-timeline-container {
   border: 1px solid $color-gray-lighter;
   min-height: 200px;
-  padding-left: 30px;
+  padding-left: 20px;
+
+  #case-timeline-table {
+    margin-top: 20px;
+  }
 
 }
 
@@ -1597,22 +1633,33 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .link-icon-spacing {
-  // margin-bottom: -10px;
   margin-left: 10px;
 }
 
-.correspondence-details-alert-banner {
-  padding-right: 30px;
+.correspondence-details-alert-banner-inner {
+  .usa-alert-text {
+    line-height: 0.8;
+  }
 }
 
 .tasks-added-container {
   border: 1px solid $color-cream;
-  margin-bottom: 20px;
-  padding-top: 0;
+  padding: 20px 20px 30px;
 }
 
 .task-added-header {
   font-weight: bold;
+  font-size: 15px;
+  padding-right: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.number-of-issues-header {
+  font-weight: bold;
+
+  span {
+    padding-left: 10px;
+  }
 }
 
 .correspondence-tasks-added {
@@ -1620,18 +1667,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-left: 2%;
   flex-direction: row;
   display: flex;
-  width: 98%;
-  margin-left: 1%;
-  margin-top: 15px;
 }
 
 .corr-tasks-added-col {
   flex-direction: column;
   width: 15%;
+  padding: 0 1.5rem 0 0;
+
+  .stream-type {
+    text-transform: capitalize;
+  }
+}
+
+.corr-tasks-added-col:not(:last-child) .task-added-value {
+  border-right: 2px solid $color-bg-gray;
+  margin-right: 3%;
+  padding-right: 1.5rem;
 }
 
 .first-row {
-  padding-right: 3%;
+  //padding-right: 3%;
   flex-wrap: nowrap;
   min-width: fit-content;
 }
@@ -1642,12 +1697,67 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: block;
 }
 
+.tasks-added-text-alternate {
+  padding-top: 20px;
+  //padding-bottom: 20px;
+  display: block;
+
+  .tasks-added-button-spacing {
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.tasks-added-text-second-alternate {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
+
+  .tasks-added-button-spacing {
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.case-details-header-badge,
 .case-details-badge {
   display: flex;
   width: fit-content;
   flex-grow: 1;
   padding: 3px;
   background-color: $color-white;
+  min-width: 166px;
+}
+
+.case-details-badge {
+  border: 1px solid $color-gray-lighter;
+}
+
+.case-details-header-badge {
+  flex-grow: unset;
+  margin: 12px 17px 12px 2px;
+
+  a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .cf-pdf-external-link-icon {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.existing-appeals-table {
+  a {
+    color: $color-blue;
+
+    .cf-pdf-external-link-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
 }
 
 .link-icon-container {
@@ -1655,12 +1765,37 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .tasks-added-details {
-  margin-left: 40px;
+  .left-section {
+    tr {
+      td {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.tasks-added-banner-alert {
+  .correspondence-details-alert-banner {
+    padding-right: 0;
+  }
+}
+
+.task-banner-alert .usa-alert.usa-alert-slim {
+  padding-top: 4px;
+}
+
+.correspondence-details-alert-banner .usa-alert {
+  padding-right: 20px;
+  margin-top: 20px;
+
+  .usa-alert-body .usa-alert-text {
+    font-size: 17px;
+  }
 }
 
 .grayLineStyling {
   width: 5px;
-  background: $color-gray;
+  background: $color-gray-lighter;
   margin: auto;
   position: absolute;
   top: 30px;
@@ -1732,4 +1867,143 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   text-align: left;
   padding-left: 0;
   padding-top: 0;
+}
+
+.correspondence-details-page {
+  .cf-modal-body {
+    .cf-modal-controls {
+      .cf-btn-link {
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.add-task-modal-container {
+  .task-selection-dropdown-box {
+    margin-bottom: 1.5rem;
+  }
+
+  .task-selection-title {
+    color: $color-black;
+    margin-bottom: 0.6rem;
+  }
+
+  .add-task-dropdown-style {
+    width: 100%;
+  }
+
+  .add-autotext-button {
+    margin-top: 1rem;
+    color: $color-blue;
+  }
+
+  .remove-task-button {
+    color: $color-bright-red;
+    float: right;
+    margin-top: 1rem;
+  }
+
+}
+
+.select-container-styles {
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.new-tasks-gray-border-styling {
+  display: block;
+  border: 1px solid $color-cream;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.gray-border {
+  border: 1px solid $color-cream;
+  padding: 1.5rem;
+}
+
+.margin-bottom-for-add-task-view {
+  margin-bottom: 2rem;
+}
+
+
+.add-task-dropdown-style {
+  // Override the control (outer container) for the select dropdown
+  .react-select__control {
+    border-color: $color-black;
+    border-radius: 0;
+    height: 50px;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      border-color: $color-black;
+    }
+  }
+
+  // Adjust the dropdown menu styles
+  .react-select__menu {
+    border-radius: 0;
+  }
+
+  // Set the color for each option
+  .react-select__option {
+    color: $color-black;
+  }
+
+  // Style the indicator separator
+  .react-select__indicator-separator {
+    background-color: $color-black;
+    width: 1px;
+    margin: 0 6px;
+    height: 48px;
+  }
+
+  // Style the dropdown indicator (arrow)
+  .react-select__dropdown-indicator {
+    color: $color-black;
+    padding-right: 15px;
+    padding-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    font: bold;
+
+    &:hover {
+      color: $color-black; // Keep arrow black on hover
+    }
+  }
+
+  // Hover style for options
+  .react-select__option--is-focused {
+    background-color: $color-gray-darker;
+    color: $color-white;
+  }
+
+  .react-select__option--is-selected {
+    background-color: $color-gray-darker;
+    color: $color-white;
+  }
+
+  // Set the value container (where selected option text is displayed)
+  .react-select__value-container {
+    padding: 0 8px;
+    line-height: 50px;
+    position: unset;
+  }
+}
+
+.back-button {
+  margin-left: 240px;
+}
+
+notes-column {
+  width: 25%;
+}
+
+.add-related-task-modal .cf-modal-body {
+  width: 550px;
 }

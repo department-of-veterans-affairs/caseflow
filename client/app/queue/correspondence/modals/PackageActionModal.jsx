@@ -93,7 +93,13 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
-    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
+    // Add textInputReason if necessary for certain actions
+    if (
+      (packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        packageActionModal === 'splitPackage') &&
+      textInputReason !== ''
+    ) {
       data.instructions.push(textInputReason);
     }
 
@@ -101,22 +107,8 @@ const PackageActionModal = (props) => {
       data.instructions.push(radioValue);
     }
 
-    if (
-      (isOtherOption ||
-        packageActionModal === 'removePackage' ||
-        packageActionModal === 'reassignPackage' ||
-        packageActionModal === 'splitPackage') &&
-      textInputReason !== ''
-    ) {
-      data.instructions.push(textInputReason);
-    }
-
-    if (
-      (packageActionModal === 'removePackage' ||
-        packageActionModal === 'reassignPackage' ||
-        packageActionModal === 'splitPackage') &&
-      textInputReason !== ''
-    ) {
+    // Add textInputReason if isOtherOption is true
+    if (isOtherOption && textInputReason !== '' && !data.instructions.includes(textInputReason)) {
       data.instructions.push(textInputReason);
     }
 
@@ -129,11 +121,11 @@ const PackageActionModal = (props) => {
         props.updateLastAction(packageActionModal);
         history.replace('/queue/correspondence/');
       }
-    }
-    ).
+    }).
       catch(() => {
         console.error('Review Package Action already exists');
       });
+
     setTextInputReason('');
   };
 

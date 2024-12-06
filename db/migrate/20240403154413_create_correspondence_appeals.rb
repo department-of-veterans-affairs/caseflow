@@ -1,4 +1,6 @@
 class CreateCorrespondenceAppeals < ActiveRecord::Migration[6.0]
+  include Caseflow::Migrations::AddIndexConcurrently
+
   def change
     revert do
       reversible do |direction|
@@ -9,6 +11,8 @@ class CreateCorrespondenceAppeals < ActiveRecord::Migration[6.0]
 
             t.timestamps
           end
+          add_safe_index :correspondences_appeals, [:correspondence_id], name: "index on correspondence_id"
+          add_safe_index :correspondences_appeals, [:appeal_id], name: "index on appeal_id"
         end
         direction.down do
          drop_table :correspondences_appeals

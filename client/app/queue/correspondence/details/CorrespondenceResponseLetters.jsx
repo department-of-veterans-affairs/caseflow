@@ -78,8 +78,8 @@ const CorrespondenceResponseLetters = (props) => {
           <table className="response-letter-table-borderless-no-background gray-border">
             <tbody>
               <tr>
-                <td className="response-letter-table-borderless-first-item">
-                  <strong>Letter response expiration:</strong>
+                <td className="response-letter-table-borderless-first-item" colSpan={4}>
+                  <strong>Letter Response Expiration:</strong>
                   <span className="response-letter-table-borderless">
                     {letter.days_left}
                   </span>
@@ -87,19 +87,19 @@ const CorrespondenceResponseLetters = (props) => {
               </tr>
               <tr>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Date response letter sent</strong>
+                  <strong>Date Response Letter Sent</strong>
                 </th>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Letter type</strong>
+                  <strong>Letter Type</strong>
                 </th>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Letter title</strong>
+                  <strong>Letter Title</strong>
                 </th>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Letter subcategory</strong>
+                  <strong>Letter Subcategory</strong>
                 </th>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Letter subcategory reasons</strong>
+                  <strong>Letter Subcategory Reason</strong>
                 </th>
               </tr>
               <tr>

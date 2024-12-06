@@ -19,7 +19,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   describe "POST #create_package_action_task" do
     context "RemovePackageTask creation" do
       before do
-        task_creation_params.merge!(type: "removePackage", instructions: "please remove task, thanks")
+        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
         post :create_package_action_task, params: task_creation_params
       end
 
@@ -37,7 +37,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
 
     context "SplitPackageTask creation" do
       before do
-        task_creation_params.merge!(type: "splitPackage", instructions: "Reason for SplitPackage")
+        task_creation_params.merge!(type: "splitPackage", instructions: ["Reason for SplitPackage"])
         post :create_package_action_task, params: task_creation_params
       end
 
@@ -55,7 +55,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
 
     context "MergePackageTask creation" do
       before do
-        task_creation_params.merge!(type: "mergePackage", instructions: "Reason for MergePackage")
+        task_creation_params.merge!(type: "mergePackage", instructions: ["Reason for MergePackage"])
         post :create_package_action_task, params: task_creation_params
       end
 
