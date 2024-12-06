@@ -3,9 +3,9 @@
 # Class to handle creating Auto-Remand SupplementalClaims
 class Events::DecisionReviewRemanded::CreateRemandClaimReview
   class << self
-    def process!(parser:)
+    def process!(event:, parser:)
       if parser.detail_type == "SupplementalClaim"
-        create_supplemental_claim(parser)
+        create_supplemental_claim(parser, event)
       end
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewRemandedCreateRemandClaimReviewError, error.message
@@ -13,7 +13,7 @@ class Events::DecisionReviewRemanded::CreateRemandClaimReview
 
     private
 
-    def create_supplemental_claim(parser)
+    def create_supplemental_claim(parser, event)
       sc = SupplementalClaim.create!(
         auto_remand: parser.claim_review_auto_remand,
         benefit_type: parser.claim_review_benefit_type,
