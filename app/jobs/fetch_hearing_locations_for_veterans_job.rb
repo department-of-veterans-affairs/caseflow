@@ -72,7 +72,7 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
           sleep_before_retry_on_limit_error
 
           break
-        rescue Savon::HTTPError => error
+        rescue Caseflow::Error::VaDotGovServerError, Savon::HTTPError => error
           raise error
         rescue StandardError => error
           actionable = !NONACTIONABLE_ERRORS.include?(error.class)
