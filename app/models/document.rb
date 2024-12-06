@@ -156,6 +156,14 @@ class Document < CaseflowRecord
     vbms_document_id.to_s
   end
 
+  def file_size
+    begin
+      size = File.size(default_path)
+    rescue StandardError
+    end
+    size.present? ? size : 0
+  end
+
   def default_path
     File.join(Rails.root, "tmp", "pdfs", file_name)
   end
