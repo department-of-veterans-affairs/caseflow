@@ -145,7 +145,7 @@ group :test, :development, :demo, :make_docs do
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
-  gem "test-prof"
+  gem "test-prof", "1.4.2"
   gem "timecop"
   gem "webdrivers"
 end
