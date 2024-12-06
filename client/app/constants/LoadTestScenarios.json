@@ -270,7 +270,7 @@
     "targetId": "Hearing Day id"
   },
   {
-    "scenario": "scheduleHearingTasksColumnsAmaTabJSON",
+    "scenario": "scheduleHearingTasksColumnsAMATabJSON",
     "targetType": [{
       "value": "HearingDay",
       "label": "Hearing Day"
