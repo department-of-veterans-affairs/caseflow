@@ -2,7 +2,7 @@
 
 class ErrorHandlers::VefsApiErrorHandler
   def handle_error(error:, error_details:)
-    report_error_to_sentry(error: error, error_details: error_details)
+    report_error_to_sentry(error: error, _error_details: error_details)
   end
 
   private
