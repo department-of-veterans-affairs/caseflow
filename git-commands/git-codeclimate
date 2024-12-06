@@ -3,27 +3,30 @@
 # accepts a file path or will run codeclimate on the entire project
 file=$1
 
+code_climate_build () {
+  docker run \
+      --interactive --tty --rm \
+      --env CODECLIMATE_CODE="$PWD" \
+      --volume "$PWD":/code \
+      --volume /var/run/docker.sock:/var/run/docker.sock \
+      --volume /tmp/cc:/tmp/cc \
+      codeclimate/codeclimate $1 $2
+}
+
 docker pull codeclimate/codeclimate
-
-docker run \
-  --interactive --tty --rm \
-  --env CODECLIMATE_CODE="$PWD" \
-  --volume "$PWD":/code \
-  --volume /var/run/docker.sock:/var/run/docker.sock \
-  --volume /tmp/cc:/tmp/cc \
-  codeclimate/codeclimate help
-
-# install engines in .codeclimate.yml
-codeclimate engines:install
 
 # run tests for single file or entire project
 if [ ! -z "$1" ]; then
 # analyze changes on file
   echo "running codeClimate CLI for $file"
-  codeclimate analyze $file
+# install engines in .codeclimate.yml
+  code_climate_build engines:install
+  code_climate_build analyze $file
 else
   echo "running CodeClimate CLI for entire project"
   # timeout set for 1 hour to allow time to run entire project
   # default timeout is 15 mins
-  CONTAINER_TIMEOUT_SECONDS=3600 codeclimate analyze
+  code_climate_build engines:install
+  CONTAINER_TIMEOUT_SECONDS=3600 code_climate_build analyze
+
 fi
