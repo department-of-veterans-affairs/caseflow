@@ -109,6 +109,8 @@ class LegacyTasksController < ApplicationController
   end
 
   def reassign_to_judge
+    return unless FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
+
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
     QueueRepository.reassign_case_to_judge!(

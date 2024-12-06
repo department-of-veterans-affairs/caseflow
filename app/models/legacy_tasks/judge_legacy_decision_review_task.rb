@@ -6,7 +6,9 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   end
 
   def reassign_action
-    # Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+    return unless FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
+
+    Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
     Constants.TASK_ACTIONS.LEGACY_DECISION_REASSIGN_TO_JUDGE.to_h
   end
 
