@@ -1,10 +1,10 @@
 <% content_for :page_title do %>&nbsp;&gt; Test Data<% end %>
 
 <% content_for :full_page_content do %>
-  <%= react_component("TestApp", props: {
+  <%= react_component("TestData", props: {
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls,
-    page: "TestApp",
+    page: "TestData",
     currentUser: current_user.to_hash,
     veteranRecords: veteran_records
   }) %>
