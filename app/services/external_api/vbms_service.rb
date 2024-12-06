@@ -25,6 +25,7 @@ class ExternalApi::VBMSService
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.fetch_documents_for(appeal, _user = nil)
     if use_ce_api?
       begin
@@ -75,7 +76,6 @@ class ExternalApi::VBMSService
     update_document(appeal, uploadable_document)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms(appeal, uploadable_document)
     if use_ce_api?
       begin
