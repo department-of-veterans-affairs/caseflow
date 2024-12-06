@@ -44,5 +44,11 @@
   "evidenceWindowBanner": {
     "message": "The waive evidence window request has been removed from the \"Evidence submission window\" task.",
     "type": "success"
+  },
+
+  "changeTaskTypeSuccessBanner": {
+    "title": "Success",
+    "message": "You have changed the task type from %s to %s. These changes are now reflected in the tasks section below.",
+    "type": "success"
   }
 }

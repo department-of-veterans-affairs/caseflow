@@ -2,8 +2,8 @@
 
 RSpec.describe WorkQueue::CorrespondenceTaskUnrelatedToAppealSerializer do
   let(:user) { create(:user, css_id: "USER123") }
-  let(:organization) { create(:organization, id: 21, name: "InboundOpsTeam") }
-  let(:correspondence) { create(:correspondence, id: 42) }
+  let(:organization) { create(:organization, name: "InboundOpsTeam") }
+  let(:correspondence) { create(:correspondence) }
   let(:current_user) { user }
 
   before { RequestStore[:current_user] = current_user }
