@@ -410,3 +410,11 @@ class ExternalApi::VBMSService
     end
   end
 end
+
+
+
+WHEN (((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ("C")) OR
+      ((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ("D")) OR
+      ((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ("E")))
+THEN TRUE
+ELSE FALSE
