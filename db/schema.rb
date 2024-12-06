@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_02_162812) do
+ActiveRecord::Schema.define(version: 2024_11_27_181409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1130,11 +1130,6 @@ ActiveRecord::Schema.define(version: 2024_12_02_162812) do
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
     t.index ["uuid"], name: "index_hearings_on_uuid"
-  end
-
-  create_table "hearings_supervisors", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "higher_level_reviews", comment: "Intake data for Higher Level Reviews.", force: :cascade do |t|
@@ -2473,44 +2468,6 @@ ActiveRecord::Schema.define(version: 2024_12_02_162812) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
-  create_function :update_claim_status_trigger_function, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.update_claim_status_trigger_function()
-       RETURNS trigger
-       LANGUAGE plpgsql
-      AS $function$
-          declare
-            string_claim_id varchar(25);
-            epe_id integer;
-          begin
-            if (NEW."EP_CODE" LIKE '04%'
-                OR NEW."EP_CODE" LIKE '03%'
-                OR NEW."EP_CODE" LIKE '93%'
-                OR NEW."EP_CODE" LIKE '68%')
-                and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
-
-              string_claim_id := cast(NEW."CLAIM_ID" as varchar);
-
-              select id into epe_id
-              from end_product_establishments
-              where (reference_id = string_claim_id
-              and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
-
-              if epe_id > 0
-              then
-                if not exists (
-                  select 1
-                  from priority_end_product_sync_queue
-                  where end_product_establishment_id = epe_id
-                ) then
-                  insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
-                  values (now(), epe_id, now());
-                end if;
-              end if;
-            end if;
-            return null;
-          end;
-        $function$
-  SQL
   create_function :gather_vacols_ids_of_hearing_schedulable_legacy_appeals, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.gather_vacols_ids_of_hearing_schedulable_legacy_appeals()
        RETURNS text
@@ -2564,7 +2521,7 @@ ActiveRecord::Schema.define(version: 2024_12_02_162812) do
       DECLARE
       	bfcorkey_ids TEXT;
       BEGIN
-      	SELECT string_agg(DISTINCT format($$'%s'$$, bfcorkey), ',')
+      	SELECT string_agg ( DISTINCT quote_literal (bfcorkey), ',' )
       	INTO bfcorkey_ids
       	FROM brieffs_awaiting_hearing_scheduling();
 
@@ -2717,29 +2674,6 @@ ActiveRecord::Schema.define(version: 2024_12_02_162812) do
       END $function$
   SQL
 
-  create_view "remands", sql_definition: <<-SQL
-      SELECT supplemental_claims.id,
-      supplemental_claims.benefit_type,
-      supplemental_claims.created_at,
-      supplemental_claims.decision_review_remanded_id,
-      supplemental_claims.decision_review_remanded_type,
-      supplemental_claims.establishment_attempted_at,
-      supplemental_claims.establishment_canceled_at,
-      supplemental_claims.establishment_error,
-      supplemental_claims.establishment_last_submitted_at,
-      supplemental_claims.establishment_processed_at,
-      supplemental_claims.establishment_submitted_at,
-      supplemental_claims.filed_by_va_gov,
-      supplemental_claims.legacy_opt_in_approved,
-      supplemental_claims.receipt_date,
-      supplemental_claims.updated_at,
-      supplemental_claims.uuid,
-      supplemental_claims.veteran_file_number,
-      supplemental_claims.veteran_is_not_claimant,
-      supplemental_claims.type
-     FROM supplemental_claims
-    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
-  SQL
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
            SELECT schedulable_cutoff_dates.cutoff_date

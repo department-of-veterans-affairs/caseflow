@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingsSupervisors < Organization
+class HearingsSupervisor < Organization
   def self.singleton
     HearingsSupervisor.first || HearingsSupervisor.create(name: "Hearings Supervisor", url: "hearings-supervisors")
   end
