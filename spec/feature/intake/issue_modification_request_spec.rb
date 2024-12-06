@@ -105,9 +105,11 @@ feature "Issue Modification Request", :postgres do
     User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
   end
 
+  let(:freeze_time) { Time.utc(2024, 5, 15, 19, 0, 5) }
+
   before do
     vha_org.add_user(current_user)
-    Timecop.freeze
+    Timecop.freeze(freeze_time)
   end
 
   after do

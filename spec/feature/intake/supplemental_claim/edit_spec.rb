@@ -611,7 +611,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
 
         expect(withdrawn_issue).to_not be_nil
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at.to_date).to eq(1.day.ago.to_date)
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
@@ -653,7 +653,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at.to_date).to eq(1.day.ago.to_date)
 
         sleep 1
 
@@ -664,7 +664,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(find("div", class: "withdrawn-issue")).to have_content(
           "PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawn on"
         )
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at.to_date).to eq(1.day.ago.to_date)
       end
     end
   end
