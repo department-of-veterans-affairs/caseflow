@@ -272,24 +272,25 @@ RSpec.feature "MailTasks", :postgres do
           else
             fill_in("Veteran Email (for these notifications only)", with: email)
           end
+
+          scheduled_payload = AppellantNotification
+            .create_payload(appeal, Constants.EVENT_TYPE_FILTERS.hearing_scheduled)
+            .to_json
+          if appeal.hearings.any?
+            postpone_payload = AppellantNotification
+              .create_payload(appeal, Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
+              .to_json
+            expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+          end
+          expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
           click_button("Schedule")
         end
       end
 
+      after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
+
       it "gets scheduled" do
         expect(page).to have_content("You have successfully")
-      end
-
-      it "sends proper notifications" do
-        scheduled_payload = AppellantNotification.create_payload(appeal,
-                                                                 Constants.EVENT_TYPE_FILTERS.hearing_scheduled).to_json
-        if appeal.hearings.any?
-          postpone_payload = AppellantNotification.create_payload(appeal,
-                                                                  Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
-            .to_json
-          expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
-        end
-        expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
       end
     end
 
