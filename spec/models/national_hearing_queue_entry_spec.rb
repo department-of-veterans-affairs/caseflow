@@ -688,6 +688,366 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
   end
 
+  context "priority_queue_number" do
+    after(:each) { clean_up_after_threads }
+
+    subject { NationalHearingQueueEntry.refresh }
+
+    context "whenever the queue is blank" do
+      it "No errors are thrown whenever the queue is refreshed" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
+    context "Whenever there are a variety of items in the queue" do
+      let(:one_day_ago) { 1.day.ago }
+      let(:two_weeks_ago) { 2.weeks.ago }
+
+      let!(:legacy_cavc_aod_appeal_one) do
+        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+        end
+      end
+
+      let!(:legacy_cavc_aod_appeal_two) do
+        vacols_case = create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "7")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:legacy_cavc_aod_appeal_three) do
+        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:ama_cavc_aod_appeal_one) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          stream_type: "court_remand",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:ama_cavc_aod_appeal_two) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          stream_type: "court_remand",
+          receipt_date: one_day_ago
+        )
+      end
+
+      let!(:ama_cavc_aod_appeal_three) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          stream_type: "court_remand",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:legacy_cavc_appeal_one) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:legacy_cavc_appeal_two) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "7")).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:legacy_cavc_appeal_three) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:ama_cavc_appeal_one) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "court_remand",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:ama_cavc_appeal_two) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "court_remand",
+          receipt_date: one_day_ago
+        )
+      end
+
+      let!(:ama_cavc_appeal_three) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "court_remand",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:ama_aod_appeal_one) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:ama_aod_appeal_two) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          receipt_date: one_day_ago
+        )
+      end
+
+      let!(:ama_aod_appeal_three) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          aod_based_on_age: true,
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:legacy_aod_appeal_one) do
+        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:legacy_aod_appeal_two) do
+        vacols_case = create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "1")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:legacy_aod_appeal_three) do
+        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")
+
+        create(
+          :diary,
+          tsktknm: vacols_case.bfkey,
+          tskactcd: "B"
+        )
+
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: vacols_case).tap do |appeal|
+                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+               end
+      end
+
+      let!(:ama_appeal_one) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "original",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:ama_appeal_two) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "original",
+          receipt_date: one_day_ago
+        )
+      end
+
+      let!(:ama_appeal_three) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          stream_type: "original",
+          receipt_date: two_weeks_ago
+        )
+      end
+
+      let!(:legacy_appeal_one) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")).tap do |appeal|
+          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+        end
+      end
+
+      let!(:legacy_appeal_two) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "1")).tap do |appeal|
+          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+        end
+      end
+
+      let!(:legacy_appeal_three) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")).tap do |appeal|
+          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+        end
+      end
+
+      it "The appeals are ordered correctly based upon their attributes", bypass_cleaner: true do
+        subject
+
+        ##############
+        #  CAVC + AOD
+        ##############
+
+        # Two week old CAVC + AOD Legacy Appeals
+        expect(legacy_cavc_aod_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 1
+        expect(legacy_cavc_aod_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 2
+
+        # Two week old CAVC + AOD AMA Appeals
+        expect(ama_cavc_aod_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 3
+        expect(ama_cavc_aod_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 4
+
+        # One day old CAVC + AOD Legacy Appeal
+        expect(legacy_cavc_aod_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 5
+
+        # One day old CAVC + AOD AMA Appeal
+        expect(ama_cavc_aod_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 6
+
+        #############################
+        #  CAVC Remands - Non-AOD
+        #############################
+
+        # Two week old CAVC Remanded Legacy Appeals
+        expect(legacy_cavc_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 7
+        expect(legacy_cavc_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 8
+
+        # Two week old CAVC Remanded AMA Appeals
+        expect(ama_cavc_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 9
+        expect(ama_cavc_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 10
+
+        # One day old CAVC Remanded Legacy Appeal
+        expect(legacy_cavc_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 11
+
+        # One day old CAVC Remanded AMA Appeal
+        expect(ama_cavc_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 12
+
+        ###################################
+        #  AOD - Original Docket Streams
+        ###################################
+
+        # Two week old AOD Legacy Appeals
+        expect(legacy_aod_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 13
+        expect(legacy_aod_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 14
+
+        # Two week old AOD AMA Appeals
+        expect(ama_aod_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 15
+        expect(ama_aod_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 16
+
+        # One day old AOD Legacy Appeal
+        expect(legacy_aod_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 17
+
+        # One day old AOD AMA Appeal
+        expect(ama_aod_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 18
+
+        ###################################
+        #  Original Docket Streams - Non-AOD
+        ###################################
+
+        # Two week old original Legacy Appeals
+        expect(legacy_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 19
+        expect(legacy_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 20
+
+        # Two week old original AMA Appeals
+        expect(ama_appeal_one.national_hearing_queue_entry.priority_queue_number).to eq 21
+        expect(ama_appeal_three.national_hearing_queue_entry.priority_queue_number).to eq 22
+
+        # One day old original Legacy Appeal
+        expect(legacy_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 23
+
+        # One day old original AMA Appeal
+        expect(ama_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 24
+      end
+    end
+  end
+
   def clean_up_after_threads
     DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events])
   end
