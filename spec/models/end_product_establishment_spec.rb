@@ -808,6 +808,12 @@ describe EndProductEstablishment, :postgres do
       subject { end_product_establishment.status_active?(sync: true) }
 
       context "when the EP is cleared" do
+        before do
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
+        after do
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
         let(:synced_status) { "PEND" }
         let(:ep_status_code) { "CLR" }
 
@@ -896,10 +902,23 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "returns true if cleared and a disabled benefit type" do
+        before do
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
         let(:status_type_code) { "CLR" }
         let(:source) { create(:request_issue, benefit_type: benefit_type) }
 
         it { is_expected.to eq(true) }
+      end
+
+      context "returns nil if benefit_type_syncing_disabled" do
+        before do
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
+        let(:status_type_code) { "CLR" }
+        let(:source) { create(:request_issue, benefit_type: benefit_type) }
+
+        it { is_expected.to eq(nil) }
       end
 
       context "when BGS throws an error" do

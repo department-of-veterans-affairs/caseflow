@@ -2678,6 +2678,40 @@ describe RequestIssue, :all_dbs do
         end
       end
     end
+
+    context "#syncing_disabled_for_benefit_type?" do
+      let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
+
+      context "It returns true when benefit_type_syncing_disabled enabled and benefit is compensation or pension" do
+        before do
+          request_issue.benefit_type = "compensation"
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
+
+        it "feature toggle benefit_type_syncing_disable is enabled" do
+          expect(FeatureToggle.enabled?(:benefit_type_syncing_disabled, user: current_user)).to eq(true)
+        end
+
+        it "should return true when FeatureToggle benefit_type_syncing_disabled enabled" do
+          expect(request_issue.syncing_disabled_for_benefit_type?).to eq(true)
+        end
+      end
+
+      context "It returns false when benefit_type_syncing_disabled disabled and benefit is not compensation or pension" do
+        before do
+          request_issue.benefit_type = "fiduciary"
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
+
+        it "feature toggle benefit_type_syncing_disable is not enabled" do
+          expect(FeatureToggle.enabled?(:benefit_type_syncing_disabled, user: current_user)).to eq(false)
+        end
+
+        it "should return false when FeatureToggle benefit_type_syncing_disabled disabled" do
+          expect(request_issue.syncing_disabled_for_benefit_type?).to eq(false)
+        end
+      end
+    end
   end
 
   context "#save_decision_date!" do
