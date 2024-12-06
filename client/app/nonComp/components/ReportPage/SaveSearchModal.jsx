@@ -33,7 +33,7 @@ export const SaveSearchModal = ({ setShowSaveSearchModal }) => {
       search: {
         name,
         description,
-        savedSearch: saveSearchParams
+        saved_search: saveSearchParams
       }
     };
 
