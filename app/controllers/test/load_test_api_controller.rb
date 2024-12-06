@@ -186,11 +186,11 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Response: None
   def enable_or_disable_feature_toggles(feature_toggles, user)
     feature_toggles.select { |_key, value| value == true }.each do |key, _value|
-      FeatureToggle.enable!(key, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(key, user: user)
+      FeatureToggle.enable!(key.to_sym, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(key.to_sym, user: user)
     end
     feature_toggles.select { |_key, value| value == false }.each do |key, _value|
-      if FeatureToggle.details_for(key).key?(:users)
-        FeatureToggle.disable!(key, users: [LOAD_TESTING_USER])
+      if FeatureToggle.details_for(key.to_sym).key?(:users)
+        FeatureToggle.disable!(key.to_sym, users: [LOAD_TESTING_USER])
       end
     end
   end
