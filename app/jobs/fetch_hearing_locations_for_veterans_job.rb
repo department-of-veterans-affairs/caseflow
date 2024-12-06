@@ -8,7 +8,7 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
   QUERY_TRAVEL_BOARD_LIMIT = 100
   JOB_DURATION = 1.hour
 
-  discard_on(Savon::HTTPError) do |job, exception|
+  discard_on(Caseflow::Error::VaDotGovServerError, Savon::HTTPError) do |job, exception|
     Rails.logger.warn("Discarding #{job.class.name} #{job.job_id} failed with error: #{exception}")
   end
 
