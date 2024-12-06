@@ -243,7 +243,7 @@ rollback: etl-rollback db-rollback	## Rollback all Rails databases
 fresh:  ## https://github.com/imsky/git-fresh - updates local main to match origin, stashes changes, prunes remote branches
 	git fresh
 
-establish-dbs: ## Used to perform the initial creation of the primary and ETL Porgresql databases
+establish-dbs: ## Used to perform the initial creation of the primary and ETL Postgresql databases
 	bundle exec db:create:primary db:schema:load:primary
 	bundle exec rake db:create:etl db:schema:load:etl
 
