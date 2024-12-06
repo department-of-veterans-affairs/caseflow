@@ -1486,6 +1486,8 @@
   "RETURN_TO_SCT_MODAL_BODY": "Returning this case to SCT will cancel the current task and remove the case from your queue.",
   "RETURN_TO_SCT_SUCCESS_BANNER_TITLE": "You have successfully returned %s's case to the SCT Queue",
   "RETURN_TO_SCT_SUCCESS_BANNER_DETAIL": "If you have made a mistake, please email SCT Coordinator to manage any changes.",
+  "TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_TITLE": "You have successfully uploaded %s's final transcript to VBMS",
+  "TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_DETAIL": "%s %s is now available in VBMS.",
   "VHA_POA_NAME_NOT_LISTED": "VHA does not allow manual entry of unrecognized POAs. Please proceed to next step for the intake, as you do not need to enter additional information.",
   "CASE_DISTRIBUTION_TITLE": "Case Distribution Algorithm Values",
   "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"Docket Date.\"",
