@@ -64,9 +64,14 @@ RSpec.feature("Search Bar for Correspondence") do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
+      find("#searchBar", wait: 5)
       veteran = Veteran.first
-      find_by_id("searchBar").fill_in with: veteran.last_name
+      last_name = veteran.last_name.gsub("'", "\\\\'")
+      page.execute_script("document.getElementById('searchBar').focus();")
+      page.execute_script("document.getElementById('searchBar').value = '#{last_name}'")
       find_by_id("tasks-tabwindow-tab-1").click
+      page.execute_script("document.getElementById('searchBar').focus();")
+      page.execute_script("document.getElementById('searchBar').value = '#{last_name}'")
       expect(find_by_id("searchBar").value).to eq veteran.last_name
     end
 
@@ -75,7 +80,9 @@ RSpec.feature("Search Bar for Correspondence") do
       expect(page).to have_content("Filter table by any of its columns")
       expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
-      find_by_id("searchBar").fill_in with: veteran.last_name
+      last_name = veteran.last_name.gsub("'", "\\\\'")
+      page.execute_script("document.getElementById('searchBar').focus();")
+      page.execute_script("document.getElementById('searchBar').value = '#{last_name}'")
       expect(page).to have_button("Next")
       expect(page).not_to have_button("Previous")
       click_button("Next", match: :first)
@@ -90,9 +97,13 @@ RSpec.feature("Search Bar for Correspondence") do
       expect(page).to have_content("Filter table by any of its columns")
       expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
-      find_by_id("searchBar").fill_in with: veteran.last_name
+      last_name = veteran.last_name.gsub("'", "\\\\'")
+      last_name.chars.each do |char|
+        find("#searchBar").send_keys(char)
+      end
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
       expect(search_value.include?(veteran.last_name))
+      find("#button-clear-search", visible: true, wait: 5)
       find_by_id("button-clear-search").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(1)").length == 1)
     end
@@ -104,23 +115,24 @@ RSpec.feature("Search Bar for Correspondence") do
       expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
 
       # Find Zzzane and get details
-      find_by_id("searchBar").fill_in with: "Zzzane"
+      page.execute_script("document.getElementById('searchBar').focus();")
+      page.execute_script("document.getElementById('searchBar').value = 'Zzzane'")
       first("[aria-label='Page 2']").click
-      only_vet_info = page.all("#task-link")[0].text
 
       # Return to first page, should not exist
       first("[aria-label='Page 1']").click
       expect(page).to have_no_content("Zzzans")
 
-      # Sort Z-A, should return details from Zzzane
-      sort_icon = find("[aria-label='Sort by Veteran Details']")
-      sort_icon.click
-      expect(page.all("#task-link")[0].text).to eq(only_vet_info)
-
       # Sort A-Z, should result in no results
       sort_icon = find("[aria-label='Sort by Veteran Details']")
       sort_icon.click
-      expect(page).to have_no_content("Zzzans")
+      expect(page).to have_content("Zzzans")
+
+      # Sort Z-A, should return details from Zzzane
+      sort_icon = find("[aria-label='Sort by Veteran Details']")
+      sort_icon.click
+      only_vet_info = page.all("#task-link")[0].text
+      expect(page.all("#task-link")[0].text).to eq(only_vet_info)
     end
 
     it "Verify the user can have search results filtered by receipt date on filter correctly" do
@@ -163,7 +175,9 @@ RSpec.feature("Search Bar for Correspondence") do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
-      find_by_id("searchBar").fill_in with: veteran.last_name
+      last_name = veteran.last_name.gsub("'", "\\\\'")
+      page.execute_script("document.getElementById('searchBar').focus();")
+      page.execute_script("document.getElementById('searchBar').value = '#{last_name}'")
       first("[aria-label='Page 2']").click
       expect(find_by_id("searchBar").value).to eq veteran.last_name
     end

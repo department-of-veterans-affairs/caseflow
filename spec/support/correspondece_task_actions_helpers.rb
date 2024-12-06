@@ -85,7 +85,6 @@ module CorrespondenceTaskActionsHelpers
   def check_task_action(options = {})
     correspondence = options[:correspondence]
     visit_correspondence(correspondence)
-
     dropdowns = open_last_task_dropdown
     perform_task_action(dropdowns, options)
 
@@ -100,7 +99,7 @@ module CorrespondenceTaskActionsHelpers
   end
 
   def open_last_task_dropdown
-    dropdowns = page.all(".cf-btn-link")
+    dropdowns = page.all(".toggleButton-plus-or-minus")
     dropdowns.last.click
     dropdowns
   end

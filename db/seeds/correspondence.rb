@@ -10,16 +10,16 @@ module Seeds
     def initialize
       initial_id_values
       if RequestStore[:current_user].blank?
-        RequestStore[:current_user] = User.find_by_css_id("INBOUND_OPS_TEAM_MAIL_INTAKE_USER")
+        RequestStore[:current_user] = User.find_by_css_id("IOT_USER")
       end
     end
 
     def inbound_ops_team_user
-      @inbound_ops_team_user ||= User.find_by_css_id("INBOUND_OPS_TEAM_MAIL_INTAKE_USER")
+      @inbound_ops_team_user ||= User.find_by_css_id("IOT_USER")
     end
 
     def inbound_ops_team_superuser
-      @inbound_ops_team_superuser ||= User.find_by_css_id("INBOUND_OPS_TEAM_SUPERUSER1")
+      @inbound_ops_team_superuser ||= User.find_by_css_id("IOT_SUPERUSER1")
     end
 
     def seed!
@@ -55,6 +55,12 @@ module Seeds
       while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 100
         @participant_id += 100
+      end
+      @year = Time.zone.now.strftime("%y")
+      @cavc_docket_number_last_four ||= 1000
+
+      while CavcRemand.find_by(cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four))
+        @cavc_docket_number_last_four += 100
       end
     end
 
@@ -127,14 +133,46 @@ module Seeds
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
+        (0..35).each do |i|
+          if i%5 == 1
+            appeal = create(:appeal, :with_decision_issue, :type_cavc_remand, veteran: veteran)
+            creation_params = {
+              source_appeal_id: appeal.id,
+              cavc_decision_type: "remand",
+              cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+              cavc_judge_full_name: "Clerk",
+              created_by_id: i,
+              decision_date: 1.week.ago,
+              decision_issue_ids: appeal.decision_issue_ids,
+              instructions: "Seed remand for testing",
+              represented_by_attorney: true,
+              updated_by_id: i,
+              remand_subtype: "jmr",
+              judgement_date: 1.week.ago,
+              mandate_date: 1.week.ago
+            }
+            CavcRemand.create!(creation_params)
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          elsif i%5 == 2
+            appeal = create(:appeal, :advanced_on_docket_due_to_age, veteran: veteran)
+
+            AdvanceOnDocketMotion.create!(
+              user_id: i,
+              person_id: veteran.person.id,
+              granted: true,
+              reason: Constants.AOD_REASONS.age,
+              appeal: appeal
+              )
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          else
+            appeal = create(:appeal, veteran: veteran)
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+          end
+        end
 
         # Creating inactive appeals for each veteran
         create_inactive_appeals(veteran)
 
-        35.times do
-          appeal = create(:appeal, veteran: veteran)
-          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-        end
         veterans << veteran
       end
       veterans

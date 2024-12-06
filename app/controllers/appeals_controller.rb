@@ -193,40 +193,12 @@ class AppealsController < ApplicationController
 
   private
 
-  REQUEST_ISSUE_PARAMS = %w[
-    request_issue_id
-    rating_issue_reference_id
-    rating_decision_reference_id
-    rating_issue_profile_date
-    notes
-    ramp_claim_id
-    vacols_id
-    vacols_sequence_id
-    contested_decision_issue_id
-    vbms_mst_status
-    vbms_pact_status
-    rating_issue_diagnostic_code
-    mst_status_update_reason_notes
-    pact_status_update_reason_notes
-    benefit_type
-    nonrating_issue_category
-    decision_text
-    decision_date
-    ineligible_due_to_id
-    ineligible_reason
-    withdrawal_date
-    is_predocket_needed
-    mst_status
-    pact_status
-  ].freeze
-
   def appeals_controller_params
     params.permit(
       :appeal_id,
       :any,
       :appeals_id,
-      :veteran_ids,
-      request_issues: REQUEST_ISSUE_PARAMS
+      :veteran_ids
     )
   end
 
@@ -257,7 +229,7 @@ class AppealsController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: appeal,
-      request_issues_data: appeals_controller_params[:request_issues]
+      request_issues_data: params[:request_issues]
     )
   end
 
@@ -325,7 +297,7 @@ class AppealsController < ApplicationController
     pact_removed = 0
     # get edited issues from params and reject new issues without id
     if !appeal.is_a?(LegacyAppeal)
-      existing_issues = appeals_controller_params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
+      existing_issues = params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
 
       # get added issues
       new_issues = request_issues_update.after_issues - request_issues_update.before_issues
