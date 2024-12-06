@@ -196,16 +196,14 @@ class HearingDay < CaseflowRecord
   # - Date: from the scheduled_for column for this hearing_day
   def begins_at
     # If 'first_slot_time' column has a value, use that
-    if first_slot_time.present?
-      timezone = if regional_office.nil?
-                   "America/New_York"
-                 else
-                   Constants::REGIONAL_OFFICE_INFORMATION[regional_office]["timezone"]
-                 end
-      combine_time_and_date(first_slot_time,
-                            timezone,
-                            scheduled_for)
-    end
+    timezone = if regional_office.nil?
+                 "America/New_York"
+               else
+                 Constants::REGIONAL_OFFICE_INFORMATION[regional_office]["timezone"]
+               end
+    combine_time_and_date(first_slot_time || "8:30",
+                          timezone,
+                          scheduled_for)
   end
 
   def judge_first_name
