@@ -15,13 +15,11 @@ code_climate_build () {
 
 docker pull codeclimate/codeclimate
 
-# install engines in .codeclimate.yml
-#codeclimate engines:install
-
 # run tests for single file or entire project
 if [ ! -z "$1" ]; then
 # analyze changes on file
   echo "running codeClimate CLI for $file"
+# install engines in .codeclimate.yml
   code_climate_build engines:install
   code_climate_build analyze $file
 else
