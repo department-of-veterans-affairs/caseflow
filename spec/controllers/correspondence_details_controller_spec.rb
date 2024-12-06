@@ -134,7 +134,8 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
 
     context "when correspondence status is action_required" do
       it "does not redirect" do
-        allow(root_task).to receive(:correspondence_status).and_return(Constants.CORRESPONDENCE_STATUSES.action_required)
+        allow(root_task).to receive(:correspondence_status)
+                          .and_return(Constants.CORRESPONDENCE_STATUSES.action_required)
         controller.send(:correspondence_details_access)
         expect(controller).not_to have_received(:access_redirect)
       end
