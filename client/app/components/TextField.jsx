@@ -33,7 +33,6 @@ export const TextField = (props) => {
     strongLabel,
     maxLength,
     max,
-    min,
     autoComplete,
     useAriaLabel,
     dateErrorMessage,
@@ -114,7 +113,6 @@ export const TextField = (props) => {
             title={title}
             maxLength={maxLength}
             max={max}
-            min={min}
             autoComplete={autoComplete}
             disabled={disabled}
             {...inputProps}
@@ -206,7 +204,6 @@ TextField.propTypes = {
   strongLabel: PropTypes.bool,
   maxLength: PropTypes.number,
   max: PropTypes.any,
-  min: PropTypes.any,
   autoComplete: PropTypes.string,
   inputID: PropTypes.string,
   placeholder: PropTypes.string,
