@@ -18,18 +18,21 @@ class TranscriptionPackages
   end
 
   def create_zip_file
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params.hearings) ? create_bom_file : return
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params[:hearings]) ? create_bom_file : return
   end
 
   def create_bom_file
-    Hearings::CreateBomFileJob.perform_now(work_order_params) ? create_transcription_package : return
+    Hearings::CreateBomFileJob.perform_now(work_order_params) ? zip_and_upload_transcription_package : return
   end
 
-  def create_transcription_package
-    Hearings::CreateTranscriptionPackageJob.perform_now(work_order_params) ? upload_transcription_package : return
+  def zip_and_upload_transcription_package
+    transcription_package = Hearings::ZipAndUploadTranscriptionPackageJob.perform_now(work_order_params)
+    if transcription_package.is_a?(TranscriptionPackage)
+      upload_transcription_package(transcription_package)
+    end
   end
 
-  def upload_transcription_package
-    Hearings::VaBoxUploadJob.perform_now(work_order_params)
+  def upload_transcription_package(transcription_package)
+    Hearings::VaBoxUploadJob.perform_now(transcription_package)
   end
 end

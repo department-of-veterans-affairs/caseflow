@@ -142,6 +142,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
         if filter_hash["col"] == "statusColumn"
           @transcription_files = @transcription_files.filter_by_status(filter_hash["val"].split("|"))
         end
+        if filter_hash["col"] == "contractorColumn"
+          @transcription_files = @transcription_files.filter_by_contractor(filter_hash["val"].split("|"))
+        end
       end
     end
   end
