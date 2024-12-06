@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Accordion } from '../../components/Accordion';
 import AccordionSection from '../../components/AccordionSection';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
-
 import { KeyboardIcon } from '../../components/icons/KeyboardIcon';
 import {
   categoryColumns,
@@ -18,15 +18,16 @@ import {
   searchColumns,
   searchInstructions,
 } from '../../reader/PdfKeyboardInfo';
-
+import {
+  fetchAppealDetails, setOpenedAccordionSections,
+  togglePdfSidebar
+} from '../../reader/PdfViewer/PdfViewerActions';
 import SideBarCategories from '../../reader/SideBarCategories';
-import Comments from './Comments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
-import IssueTags from './IssueTags';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAppealDetails, setOpenedAccordionSections, togglePdfSidebar } from '../../reader/PdfViewer/PdfViewerActions';
 import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
 import { sidebarClass, sidebarWrapper } from '../util/styles';
+import Comments from './Comments';
+import IssueTags from './IssueTags';
 
 const ReaderSidebar = ({
   doc,
