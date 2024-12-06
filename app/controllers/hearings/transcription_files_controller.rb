@@ -182,24 +182,67 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def build_transcription_json(transcription_files)
-    tasks = []
-    transcription_files.each do |transcription_file|
-      task = {
-        id: transcription_file.id,
-        externalAppealId: transcription_file.external_appeal_id,
-        docketNumber: transcription_file.docket_number,
-        caseDetails: transcription_file.case_details,
-        isAdvancedOnDocket: transcription_file.advanced_on_docket?,
-        caseType: transcription_file.case_type,
-        hearingDate: transcription_file.hearing_date,
-        hearingType: transcription_file.hearing_type,
-        fileStatus: transcription_file.file_status
-      }
-      task = add_completed_tab_fields(task, transcription_file) if params[:tab] == "Completed"
-      task = add_all_tab_fields(task, transcription_file) if params[:tab] == "All"
-      tasks << task
+    tasks = build_tasks(transcription_files)
+    result = select_grouped_tasks(tasks)
+    filter_transcription_files(result)
+    result
+  end
+
+  def build_tasks(transcription_files)
+    transcription_files.map do |transcription_file|
+      task = base_task_fields(transcription_file)
+      task = add_tab_fields(task, transcription_file)
+      task
     end
-    tasks
+  end
+
+  def base_task_fields(transcription_file)
+    {
+      id: transcription_file.id,
+      externalAppealId: transcription_file.external_appeal_id,
+      docketNumber: transcription_file.docket_number,
+      caseDetails: transcription_file.case_details,
+      isAdvancedOnDocket: transcription_file.advanced_on_docket?,
+      caseType: transcription_file.case_type,
+      hearingDate: transcription_file.hearing_date,
+      hearingType: transcription_file.hearing_type,
+      fileStatus: transcription_file.file_status,
+      fileName: transcription_file.file_name
+    }
+  end
+
+  def add_tab_fields(task, transcription_file)
+    case params[:tab]
+    when "Completed"
+      add_completed_tab_fields(task, transcription_file)
+    when "All"
+      add_all_tab_fields(task, transcription_file)
+    else
+      task
+    end
+  end
+
+  def select_grouped_tasks(tasks)
+    grouped = tasks.group_by { |item| group_key(item) }
+    grouped.each_with_object([]) do |(_key, records), result|
+      rtf_record = find_rtf_record(records)
+      result << rtf_record if rtf_record
+    end
+  end
+
+  def group_key(item)
+    [item[:docketNumber], item[:caseDetails], item[:caseType], item[:hearingDate], item[:hearingType]]
+  end
+
+  def find_rtf_record(records)
+    rtf_record = records.find { |record| record[:fileName].end_with?(".rtf") }
+    rtf_record ||= records.first
+    rtf_record
+  end
+
+  def filter_transcription_files(result)
+    task_ids = result.map { |task| task[:id] }
+    @transcription_files = @transcription_files.where(id: task_ids)
   end
 
   def add_completed_tab_fields(task, transcription_file)
