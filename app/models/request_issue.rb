@@ -643,7 +643,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def withdraw!(withdrawal_date)
-    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
+    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_date)
   end
 
   def save_edited_contention_text!(new_description)
