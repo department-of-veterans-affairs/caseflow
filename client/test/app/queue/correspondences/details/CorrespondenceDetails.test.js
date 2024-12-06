@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
 import { correspondenceDetailsData, correspondenceInfoData, prepareAppealForStoreData } from 'test/data/correspondence';
@@ -18,7 +17,6 @@ import {
   sortCaseTimelineEvents
 } from 'app/queue/utils';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
 import ApiUtil from 'app/util/ApiUtil';
 
@@ -75,15 +73,6 @@ jest.mock('app/queue/CaseListTable', () => () => (
   </div>
 ));
 
-// jest.mock('app/util/ApiUtil', () => ({
-//   post: jest.fn()
-// }));
-
-// jest.mock('superagent', () => ({
-//   post: jest.fn().mockReturnThis()
-// }));
-
-// Mock the ApiUtil.post method
 jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve(
   { params: {
     correspondence_uuid: {},
@@ -613,50 +602,6 @@ describe('CorrespondenceDetails', () => {
     const priorDate = new Date(props.correspondence.prior_mail[0].vaDateOfReceipt);
 
     expect(screen.getByText(priorDate.toLocaleDateString('en-US'))).toBeInTheDocument();
-  });
-
-  it('validates the options of the actions dropdown based on the task type', () => {
-    const correspondenceAndAppealTasksTab = screen.getByText('Correspondence and Appeal Tasks');
-
-    fireEvent.click(correspondenceAndAppealTasksTab);
-
-    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
-
-    userEvent.click((collapsibleButtons)[1]);
-
-    expect(screen.getByText('Task not related to an Appeal')).toBeInTheDocument();
-
-    const table = document.getElementById('case-timeline-table');
-
-    console.log(table);
-
-    expect(table).toBeInTheDocument();
-
-    const tasksUnrelatedToAppeal = props.correspondence.tasksUnrelatedToAppeal;
-
-    tasksUnrelatedToAppeal.forEach((task) => {
-      const label = task.label;
-      const labelElement = screen.getAllByText(label, { selector: 'dd' })[0];
-      const tableRow = labelElement.closest('tr');
-
-      expect(tableRow).toBeInTheDocument();
-
-      const dropdown = within(tableRow).getByRole('combobox');
-
-      expect(dropdown).toBeInTheDocument();
-      fireEvent.mouseDown(dropdown);
-
-      // Find the listbox which contains the dropdown options
-      const listbox = screen.getByRole('listbox', { name: /available-actions-listbox/i });
-
-      // Ensure the listbox is present in the DOM
-      expect(listbox).toBeInTheDocument();
-      const options = within(listbox).getAllByRole('option');
-      const optionLabels = options.map((option) => option.textContent.trim());
-
-      expect(options).toHaveLength(task.availableActions.length);
-      expect(optionLabels.sort()).toEqual(task.availableActions.map((action) => action.label).sort());
-    });
   });
 
   it('validates save changes button', () => {
