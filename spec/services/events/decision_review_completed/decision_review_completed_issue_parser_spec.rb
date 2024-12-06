@@ -229,7 +229,6 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedIssuePars
   end
 
   describe "parsed decision_issue internals" do
-
     it "parse whole decision_issue" do
       expect(subject.decision_issue).to eq(
         {
