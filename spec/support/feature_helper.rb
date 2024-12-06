@@ -142,5 +142,14 @@ module FeatureHelper
     charset = ("A".."Z").to_a.concat(("a".."z").to_a)
     Array.new(length) { charset.sample }.join
   end
+
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
+
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
+  end
 end
 # rubocop:enable Metrics/ModuleLength

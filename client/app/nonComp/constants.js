@@ -26,3 +26,44 @@ export const DECISION_ISSUE_UPDATE_STATUS = {
 export const BOA_ADDRESS = '425 I St NW, Washington DC, 20001';
 export const GENERATE_REPORT_ERROR =
   'An error occurred, please try again. If the problem persists, submit a help desk ticket.';
+
+export const RESET_FORM_VALUES = {
+  reportType: '',
+  conditions: [],
+  timing: {
+    range: null,
+    startDate: '',
+    endDate: '',
+  },
+  radioEventAction: 'all_events_action',
+  radioStatus: 'all_statuses',
+  radioStatusReportType: 'last_action_taken',
+  specificStatus: {
+    incomplete: false,
+    in_progress: false,
+    pending: false,
+    completed: false,
+    cancelled: false
+  },
+  specificEventType: {
+    claim_created: false,
+    claim_closed: false,
+    claim_status_incomplete: false,
+    claim_status_pending: false,
+    claim_status_inprogress: false,
+    added_decision_date: false,
+    added_issue: false,
+    added_issue_no_decision_date: false,
+    removed_issue: false,
+    withdrew_issue: false,
+    completed_disposition: false,
+    requested_issue_modification: false,
+    requested_issue_addition: false,
+    requested_issue_removal: false,
+    requested_issue_withdrawal: false,
+    approval_of_request: false,
+    rejection_of_request: false,
+    cancellation_of_request: false,
+    edit_of_request: false,
+  }
+};

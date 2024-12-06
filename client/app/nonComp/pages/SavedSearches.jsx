@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Alert from 'app/components/Alert';
@@ -11,9 +10,8 @@ import { COLORS } from 'app/constants/AppConstants';
 import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
 import TabWindow from 'app/components/TabWindow';
 import SearchTable from 'app/queue/components/SearchTable';
-
 import DeleteModal from 'app/nonComp/components/DeleteModal';
-import { fetchedSearches, selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
+import { fetchedSearches, selectSavedSearch, disableBanner } from '../../nonComp/actions/savedSearchSlice';
 import { isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
 
@@ -36,6 +34,7 @@ const SavedSearches = () => {
 
   const handleApply = () => {
     push(`/${businessLineUrl}/report`);
+    dispatch(disableBanner(null))
   };
 
   const buttonStyling = {

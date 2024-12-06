@@ -14,7 +14,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
-import { saveUserSearch, fetchedSearches, selectSavedSearch } from 'app/nonComp/actions/savedSearchSlice';
+import {
+  saveUserSearch,
+  fetchedSearches,
+  selectSavedSearch,
+  disableBanner } from 'app/nonComp/actions/savedSearchSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
@@ -24,6 +28,7 @@ import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 import { get, isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
+import { RESET_FORM_VALUES } from 'app/nonComp/constants';
 
 import {
   REPORT_TYPE_OPTIONS,
@@ -304,72 +309,31 @@ const ReportPage = ({ history }) => {
     radioStatusReportType: savedSearch?.radioStatusReportType || 'last_action_taken',
     specificStatus: {
       incomplete: specificStatus?.incomplete || false,
-      in_progress: specificStatus?.inProgress || false,
+      in_progress: specificStatus?.in_progress || false,
       pending: specificStatus?.pending || false,
       completed: specificStatus?.completed || false,
       cancelled: specificStatus?.cancelled || false
     },
     specificEventType: {
-      claim_created: specificEventType?.claimCreated || false,
-      claim_closed: specificEventType?.claimClosed || false,
-      claim_status_incomplete: specificEventType?.claimStatusIncomplete || false,
-      claim_status_pending: specificEventType?.claimStatusPending || false,
-      claim_status_inprogress: specificEventType?.claimStatusInprogress || false,
-      added_decision_date: specificEventType?.addedDecisionDate || false,
-      added_issue: specificEventType?.addedIssue || false,
-      added_issue_no_decision_date: specificEventType?.addedIssueNoDecisionDate || false,
-      removed_issue: specificEventType?.removedIssue || false,
-      withdrew_issue: specificEventType?.withdrewIssue || false,
-      completed_disposition: specificEventType?.completedDisposition || false,
-      requested_issue_modification: specificEventType?.requestedIssueModification || false,
-      requested_issue_addition: specificEventType?.requestedIssueAddition || false,
-      requested_issue_removal: specificEventType?.requestedIssueRemoval || false,
-      requested_issue_withdrawal: specificEventType?.requestedIssueWithdrawal || false,
-      approval_of_request: specificEventType?.approvalOfRequest || false,
-      rejection_of_request: specificEventType?.rejectionOfRequest || false,
-      cancellation_of_request: specificEventType?.cancellationOfRequest || false,
-      edit_of_request: specificEventType?.cancellationOfRequest || false,
-    }
-  };
-
-  const resetFormValues = {
-    reportType: '',
-    conditions: [],
-    timing: {
-      range: null,
-      startDate: '',
-      endDate: '',
-    },
-    radioEventAction: 'all_events_action',
-    radioStatus: 'all_statuses',
-    radioStatusReportType: 'last_action_taken',
-    specificStatus: {
-      incomplete: false,
-      in_progress: false,
-      pending: false,
-      completed: false,
-      cancelled: false
-    },
-    specificEventType: {
-      claim_created: false,
-      claim_closed: false,
-      claim_status_incomplete: false,
-      claim_status_pending: false,
-      claim_status_inprogress: false,
-      added_decision_date: false,
-      added_issue: false,
-      added_issue_no_decision_date: false,
-      removed_issue: false,
-      withdrew_issue: false,
-      completed_disposition: false,
-      requested_issue_modification: false,
-      requested_issue_addition: false,
-      requested_issue_removal: false,
-      requested_issue_withdrawal: false,
-      approval_of_request: false,
-      rejection_of_request: false,
-      cancellation_of_request: false,
-      edit_of_request: false,
+      claim_created: specificEventType?.claim_created || false,
+      claim_closed: specificEventType?.claim_closed || false,
+      claim_status_incomplete: specificEventType?.claim_status_incomplete || false,
+      claim_status_pending: specificEventType?.claim_status_pending || false,
+      claim_status_inprogress: specificEventType?.claim_status_inprogress || false,
+      added_decision_date: specificEventType?.added_decision_date || false,
+      added_issue: specificEventType?.added_issue || false,
+      added_issue_no_decision_date: specificEventType?.added_issue_no_decision_date || false,
+      removed_issue: specificEventType?.removed_issue || false,
+      withdrew_issue: specificEventType?.withdrew_issue || false,
+      completed_disposition: specificEventType?.completed_disposition || false,
+      requested_issue_modification: specificEventType?.requested_issue_modification || false,
+      requested_issue_addition: specificEventType?.requested_issue_addition || false,
+      requested_issue_removal: specificEventType?.requested_issue_removal || false,
+      requested_issue_withdrawal: specificEventType?.requested_issue_withdrawal || false,
+      approval_of_request: specificEventType?.approval_of_request || false,
+      rejection_of_request: specificEventType?.rejection_of_request || false,
+      cancellation_of_request: specificEventType?.cancellation_of_request || false,
+      edit_of_request: specificEventType?.cancellation_of_request || false,
     }
   };
 
@@ -392,10 +356,8 @@ const ReportPage = ({ history }) => {
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
   const onInvalid = (errors) => console.error(errors);
-
   const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const saveLimitCount = userSearches.length;
 
   const processConditionOptions = (condition, options) => {
@@ -463,6 +425,7 @@ const ReportPage = ({ history }) => {
 
   const handleViewSavedSearch = () => {
     dispatch(selectSavedSearch({}));
+    dispatch(disableBanner(null));
   };
 
   const submitForm = (data) => {
@@ -479,7 +442,7 @@ const ReportPage = ({ history }) => {
 
   const handleClearFilters = () => {
     dispatch(selectSavedSearch({}));
-    reset(resetFormValues);
+    reset(RESET_FORM_VALUES);
   };
 
   useEffect(() => {
@@ -508,7 +471,6 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isDirty
           isGenerateButtonDisabled={isDisabledGroup}
           savedSearch={savedSearch}
           handleClearFilters={handleClearFilters}
@@ -604,7 +566,6 @@ const ReportPage = ({ history }) => {
 ReportPageButtons.propTypes = {
   history: PropTypes.object,
   isGenerateButtonDisabled: PropTypes.bool,
-  saveSearch: PropTypes.object,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
   handleSaveSearch: PropTypes.func,

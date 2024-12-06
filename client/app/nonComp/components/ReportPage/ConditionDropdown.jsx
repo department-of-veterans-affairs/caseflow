@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 export const ConditionDropdown = ({ control, filteredOptions, name, field }) => {
-  let [disabled, setDisabled] = useState(false);
+  const isDisabled = !isEmpty(field.condition);
+  let [disabled, setDisabled] = useState(isDisabled);
 
   const dropdownName = `${name}.condition`;
   const { errors } = useFormContext();
