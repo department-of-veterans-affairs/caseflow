@@ -258,7 +258,7 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 	bundle exec rake db:schema:load:primary
 	make consolidated_db_scripts
 
-DB_NAME = $(shell if [ "$RAILS_ENV" = "test" ];  then echo "caseflow_certification_test"; else echo "caseflow_certification_development"; fi)
+DB_NAME = $(shell if [ "${RAILS_ENV}" = "test" ];  then echo "caseflow_certification_test"; else echo "caseflow_certification_development"; fi)
 
 instantiate_oracle_fdw: ## Instantiates the oracle_fdw extension in the Postgres DB and some tangential configuration
 	psql -h localhost -U postgres -d $(DB_NAME) -a -f docker-bin/pg/setup_extensions.sql
