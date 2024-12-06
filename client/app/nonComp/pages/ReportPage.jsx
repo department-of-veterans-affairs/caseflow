@@ -472,7 +472,6 @@ const ReportPage = ({ history }) => {
         <ReportPageButtons
           history={history}
           isGenerateButtonDisabled={isDisabledGroup}
-          savedSearch={savedSearch}
           handleClearFilters={handleClearFilters}
           handleSubmit={handleSubmit(submitForm, onInvalid)}
           handleSaveSearch={handleSubmit(handleSave)}
