@@ -156,7 +156,7 @@ RSpec.feature "Notifications View" do
 
         # clear filter
         filter.click
-        page.find("button", text: "Clear Event filter").click
+        page.find("button", text: "Clear filter").click
 
         # by notification type
         filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[1]
@@ -171,7 +171,7 @@ RSpec.feature "Notifications View" do
 
         # clear filter
         filter.click
-        page.find("button", text: "Clear Notification Type filter").click
+        page.find("button", text: "Clear filter").click
 
         # by recipient information
         filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[2]
@@ -186,7 +186,7 @@ RSpec.feature "Notifications View" do
 
         # clear filter
         filter.click
-        page.find("button", text: "Clear Recipient Information filter").click
+        page.find("button", text: "Clear filter").click
 
         # by status
         filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[3]
@@ -201,7 +201,7 @@ RSpec.feature "Notifications View" do
 
         # clear filter
         filter.click
-        page.find("button", text: "Clear Status filter").click
+        page.find("button", text: "Clear filter").click
 
         # by multiple columns at once
         filters = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)
