@@ -7,7 +7,7 @@ class ErrorHandlers::VefsApiErrorHandler
 
   private
 
-  def report_error_to_sentry(error:, error_details:)
+  def report_error_to_sentry(error:, _error_details:)
     Raven.capture_exception(
       error,
       tags: { feature: "vefs_integration" },
