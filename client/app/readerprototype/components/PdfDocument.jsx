@@ -1,33 +1,38 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState, useRef } from 'react';
-import Layer from './Comments/Layer';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
+import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
+import {
+  clearDocumentLoadError,
+  clearPdfDocument,
+  setDocumentLoadError,
+  setPdfDocument
+} from '../../reader/Pdf/PdfActions';
+import { getDocumentText } from '../../reader/PdfSearch/PdfSearchActions';
+import { getPageIndexWithMatch } from '../../reader/selectors';
 import ApiUtil from '../../util/ApiUtil';
+import { storeMetrics } from '../../util/Metrics';
+import { annotationPlacement, pdfSelector } from '../selectors';
+import Layer from './Comments/Layer';
+import DocumentLoadError from './DocumentLoadError';
 import Page from './Page';
 import TextLayer from './TextLayer';
-import DocumentLoadError from './DocumentLoadError';
-import { useDispatch } from 'react-redux';
-import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
-import { storeMetrics } from '../../util/Metrics';
 
-const PdfDocument = ({
+const PdfDocument = memo(({
   currentPage,
   doc,
-  isDocumentLoadError,
+  file,
   rotateDeg,
-  setIsDocumentLoadError,
-  setNumPages,
-  zoomLevel }) => {
-  const [pdfDoc, setPdfDoc] = useState(null);
-  const [pdfPages, setPdfPages] = useState([]);
-  const dispatch = useDispatch();
-  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
-  const [allPagesRendered, setAllPagesRendered] = useState(false);
-  const [metricsLogged, setMetricsLogged] = useState(false);
-  const metricsLoggedRef = useRef(metricsLogged);
+  setCurrentPage,
+  zoomLevel,
+}) => {
+
+  /* eslint-disable camelcase */
+  const isFileVisible = doc?.content_url === file;
 
   const containerStyle = {
     width: '100%',
@@ -39,7 +44,54 @@ const PdfDocument = ({
     alignContent: 'start',
     justifyContent: 'center',
     gap: '8rem',
+    visibility: `${isFileVisible ? 'visible' : 'hidden'}`,
+    margin: '0 auto',
+    marginBottom: '-25px',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   };
+
+  const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (isFileVisible && !isPlacingAnnotation && event.code === 'PageDown') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage + listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+
+      if (isFileVisible && !isPlacingAnnotation && event.code === 'PageUp') {
+        const listItems = document.querySelectorAll('.prototype-canvas-wrapper.visible-page');
+
+        document.getElementById(`canvasWrapper-${currentPage - listItems.length}`)?.scrollIntoView();
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentPage]);
+
+  const dispatch = useDispatch();
+  const pageIndexWithMatch = useSelector(getPageIndexWithMatch);
+  const { pdfDocs, docLoadErrors } = useSelector(pdfSelector);
+
+  /* eslint-disable camelcase */
+  const isLoadError = docLoadErrors[doc?.content_url];
+
+  const [allPagesRendered, setAllPagesRendered] = useState(false);
+  const [metricsLogged, setMetricsLogged] = useState(false);
+  const [pdfPages, setPdfPages] = useState([]);
+  const [textContent, setTextContent] = useState([]);
+
+  const metricsLoggedRef = useRef(metricsLogged);
+  const pdfDocumentRef = useRef(null);
+  const pdfLoadingTaskRef = useRef(null);
+  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
 
   const handleRenderingMetrics = (renderingTime) => {
     if (renderingTime) {
@@ -97,58 +149,114 @@ const PdfDocument = ({
     setMetricsLogged(true);
   };
 
-  useEffect(() => {
-    const getDocData = async () => {
-      pdfMetrics.current.renderedPageCount = 0;
-      pdfMetrics.current.renderedTimeTotal = 0;
-      setPdfDoc(null);
-      setPdfPages([]);
-      setAllPagesRendered(false);
-      setMetricsLogged(false);
-      const requestOptions = {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      };
+  const requestOptions = {
+    cache: true,
+    withCredentials: true,
+    timeout: true,
+    responseType: 'arraybuffer',
+  };
 
-      pdfMetrics.current.getStartTime = new Date().getTime();
-      const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
-        return response.body;
+  const getPdfDocument = async (url) => {
+    pdfMetrics.current.renderedPageCount = 0;
+    pdfMetrics.current.renderedTimeTotal = 0;
+    setPdfPages([]);
+    setTextContent([]);
+    setAllPagesRendered(false);
+    setMetricsLogged(false);
+
+    pdfMetrics.current.getStartTime = new Date().getTime();
+    await ApiUtil.get(url, requestOptions).
+      then((response) => {
+        pdfLoadingTaskRef.current = getDocument({ data: response.body, pdfBug: true, verbosity: 0 });
+      }).
+      catch((error) => {
+        console.error(`ERROR with fetching doc from document API: ${error}`);
+        dispatch(setDocumentLoadError(doc.content_url));
       });
 
-      pdfMetrics.current.getEndTime = new Date().getTime();
-      const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
+    pdfMetrics.current.getEndTime = new Date().getTime();
+    await pdfLoadingTaskRef.current?.promise.
+      then((pdfDocument) => {
+        if (!pdfDocument) {
+          return dispatch(setDocumentLoadError(doc.content_url));
+        }
 
-      if (docProxy) {
-        setPdfDoc(docProxy);
-        setNumPages(docProxy.numPages);
+        dispatch(setPdfDocument(url, pdfDocument));
+        pdfDocumentRef.current = pdfDocument;
+      }).
+      catch((err) => {
+        console.error(`ERROR with PDFJS for ${doc.content_url}: ${err}`);
+        dispatch(clearPdfDocument(doc.content_url, pdfDocumentRef.current));
+
+        return null;
+      });
+  };
+
+  const getPdfPages = (pdfDocument) => {
+    let promises = [];
+    let textContentContainer = [];
+
+    for (let i = 0; i < pdfDocument?.numPages; i++) {
+      promises.push(pdfDocument.getPage(i + 1));
+    }
+
+    Promise.all(promises).
+      then((pages) => {
+        setPdfPages(pages);
+        for (let i = 0; i < pages.length; i++) {
+          pages[i].getTextContent().then((text) => {
+            textContentContainer.push(text);
+          });
+        }
+        if (isFileVisible) {
+          setTextContent(textContentContainer);
+        }
+      });
+  };
+
+  // if the doc has already been saved to the redux store (in pdfDocs)
+  // then do not call getPdfDocument()
+  // call getPdfPages() to render pages only if file is visible
+  useMemo(() => {
+    if (pdfDocs?.[file]) {
+      pdfDocumentRef.current = pdfDocs?.[file];
+      if (isFileVisible) {
+        getPdfPages(pdfDocs?.[file]);
+        dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
       }
-    };
+    } else {
+      getPdfDocument(file);
+    }
+  }, [file]);
 
-    getDocData().catch((error) => {
-      console.error(`ERROR with getting doc data: ${error}`);
-      setIsDocumentLoadError(true);
-    });
+  // render pages when user clicking next/previous
+  useMemo(() => {
+    if (pdfDocs?.[doc.content_url] && isFileVisible) {
+      getPdfPages(pdfDocs?.[doc.content_url]);
+      dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
+    }
   }, [doc.content_url]);
 
-  useEffect(() => {
-    const pageArray = [];
-
-    if (!pdfDoc) {
-      return;
+  // initial load page render
+  useMemo(() => {
+    if (pdfDocumentRef.current && isFileVisible) {
+      getPdfPages(pdfDocumentRef.current);
+      dispatch(getDocumentText(pdfDocumentRef.current, doc.content_url));
     }
-    const getPdfData = async () => {
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i);
+  }, [pdfDocumentRef.current]);
 
-        pageArray.push(page);
+  useEffect(() => {
+    clearDocumentLoadError(file);
+
+    return () => {
+      if (pdfLoadingTaskRef.current?.id === pdfDocumentRef.current?.loadingTask?.docId) {
+        pdfLoadingTaskRef.current?.destroy();
+        pdfDocumentRef.current?.destroy();
+        pdfLoadingTaskRef.current = null;
+        pdfDocumentRef.current = null;
       }
-      setPdfPages(pageArray);
     };
-
-    getPdfData();
-  }, [pdfDoc]);
+  }, [file]);
 
   useEffect(() => {
     dispatch(selectCurrentPdf(doc.id));
@@ -163,7 +271,6 @@ const PdfDocument = ({
   useEffect(() => {
     return () => {
       if (!metricsLoggedRef.current) {
-
         logMetrics();
       }
     };
@@ -173,27 +280,40 @@ const PdfDocument = ({
     metricsLoggedRef.current = metricsLogged;
   }, [metricsLogged]);
 
-  return (
-    <div id="pdfContainer" style={containerStyle}>
-      {isDocumentLoadError && <DocumentLoadError doc={doc} />}
-      {pdfPages.map((page, index) => (
+  const renderPages = () => {
+    // eslint-disable-next-line no-underscore-dangle
+    if (isFileVisible && pdfDocumentRef.current && !pdfDocumentRef.current._transport.destroyed) {
+      return pdfPages.map((page, index) => (
         <Page
+          setCurrentPage={setCurrentPage}
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
-          key={`doc-${doc.id}-page-${index}`}
+          key={`doc-${doc.id}-page-${index + 1}`}
           renderItem={(childProps) => (
             <Layer isCurrentPage={currentPage === page.pageNumber}
               documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
-              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
+              <TextLayer
+                textContent={textContent[index]}
+                zoomLevel={zoomLevel}
+                rotation={rotateDeg}
+                viewport={page.getViewport({ scale: 1 })}
+                hasSearchMatch={pageIndexWithMatch === index + 1}
+              />
             </Layer>
           )}
           setRenderingMetrics={handleRenderingMetrics}
         />
-      ))}
+      ));
+    }
+  };
+
+  return (
+    <div id={isFileVisible ? 'pdfContainer' : ''} className={file} style={containerStyle}>
+      {isLoadError ? <DocumentLoadError doc={doc} /> : renderPages()}
     </div>
   );
-};
+});
 
 PdfDocument.propTypes = {
   currentPage: PropTypes.number,
@@ -203,10 +323,11 @@ PdfDocument.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
   }),
-  isDocumentLoadError: PropTypes.bool,
+  file: PropTypes.string,
+  isFileVisible: PropTypes.bool,
   rotateDeg: PropTypes.string,
-  setIsDocumentLoadError: PropTypes.func,
-  setNumPages: PropTypes.func,
+  setCurrentPage: PropTypes.func,
+  showPdf: PropTypes.func,
   zoomLevel: PropTypes.number,
 };
 

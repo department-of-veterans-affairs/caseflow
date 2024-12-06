@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Accordion } from '../../components/Accordion';
 import AccordionSection from '../../components/AccordionSection';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
-
 import { KeyboardIcon } from '../../components/icons/KeyboardIcon';
 import {
   categoryColumns,
@@ -18,24 +18,30 @@ import {
   searchColumns,
   searchInstructions,
 } from '../../reader/PdfKeyboardInfo';
-
+import {
+  fetchAppealDetails, setOpenedAccordionSections,
+  togglePdfSidebar
+} from '../../reader/PdfViewer/PdfViewerActions';
 import SideBarCategories from '../../reader/SideBarCategories';
-import Comments from './Comments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
-import IssueTags from './IssueTags';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAppealDetails, setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
 import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
+import { sidebarClass, sidebarWrapper } from '../util/styles';
+import Comments from './Comments';
+import IssueTags from './IssueTags';
 
 const ReaderSidebar = ({
   doc,
-  toggleSideBar,
+  hideSideBar,
   vacolsId
 }) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const onAccordionOpenOrClose = (openedSections) => dispatch(setOpenedAccordionSections(openedSections, []));
+
+  const toggleSideBar = () => {
+    dispatch(togglePdfSidebar());
+  };
 
   useEffect(() => {
     dispatch(fetchAppealDetails(vacolsId));
@@ -45,7 +51,7 @@ const ReaderSidebar = ({
   const openedAccordionSections = useSelector(openedAccordionSectionsSelector);
 
   return (
-    <nav id="prototype-sidebar">
+    <div className={sidebarClass(hideSideBar)} {...sidebarWrapper}>
       <div className="cf-sidebar-header">
         <Button name="hide menu"
           classNames={['cf-pdf-button']}
@@ -137,7 +143,7 @@ const ReaderSidebar = ({
           </Modal>
         </div>
       )}
-    </nav>
+    </div>
   );
 };
 
@@ -149,9 +155,7 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  documents: PropTypes.array,
-  showSideBar: PropTypes.bool,
-  toggleSideBar: PropTypes.func,
+  hideSideBar: PropTypes.bool,
   vacolsId: PropTypes.string
 };
 

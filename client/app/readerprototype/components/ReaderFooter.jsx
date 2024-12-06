@@ -8,17 +8,28 @@ import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon'
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
-import { annotationPlacement } from '../selectors';
+import { annotationPlacement, pdfSelector } from '../selectors';
+import { isUserEditingText } from '../../reader/utils/user';
 
 const ReaderFooter = ({
   currentPage,
-  docId,
-  isDocumentLoadError,
-  numPages,
+  doc,
+  nextDocId,
+  prevDocId,
   setCurrentPage,
   showPdf,
 }) => {
+  /* eslint-disable camelcase */
+  const { pdfDocs, docLoadErrors } = useSelector(pdfSelector);
+  const pdfDocument = pdfDocs?.[doc?.content_url];
+  const numPages = pdfDocument ? pdfDocument.numPages : null;
+  const isLoadError = docLoadErrors[doc?.content_url];
+
   const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
+  const filteredDocIds = useSelector(getFilteredDocIds);
+  const currentDocIndex = filteredDocIds.indexOf(doc?.id);
+  const isDocListFiltered = useSelector(docListIsFiltered);
 
   const isValidInputPageNumber = (pageNumber) => {
     if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
@@ -49,22 +60,15 @@ const ReaderFooter = ({
     }
   };
 
-  const isDocListFiltered = useSelector((state) => docListIsFiltered(state));
-
-  const filteredDocIds = useSelector(getFilteredDocIds);
-  const currentDocIndex = filteredDocIds.indexOf(docId);
-  const getPrevDocId = () => filteredDocIds?.[currentDocIndex - 1];
-  const getNextDocId = () => {
-    return filteredDocIds?.[currentDocIndex + 1];
-  };
-
   useEffect(() => {
     const keyHandler = (event) => {
-      if (event.key === 'ArrowLeft' && !isPlacingAnnotation) {
-        showPdf(getPrevDocId())();
+      const isEditingText = isUserEditingText();
+
+      if (event.key === 'ArrowLeft' && prevDocId && !isPlacingAnnotation && !isEditingText) {
+        showPdf(prevDocId)();
       }
-      if (event.key === 'ArrowRight' && !isPlacingAnnotation) {
-        showPdf(getNextDocId())();
+      if (event.key === 'ArrowRight' && nextDocId && !isPlacingAnnotation && !isEditingText) {
+        showPdf(nextDocId)();
       }
     };
 
@@ -102,11 +106,11 @@ const ReaderFooter = ({
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
-        {getPrevDocId() && (
+        {prevDocId && (
           <Button
             name="previous"
             classNames={['cf-pdf-button']}
-            onClick={showPdf(getPrevDocId())}
+            onClick={showPdf(prevDocId)}
             ariaLabel="previous PDF"
           >
             <PageArrowLeftIcon />
@@ -118,7 +122,7 @@ const ReaderFooter = ({
       <div className="cf-pdf-buttons-center">
         <span>
           <span className="page-progress-indicator">
-            {!isDocumentLoadError && footerCenterContent()}
+            {!isLoadError && footerCenterContent()}
           </span>
           |
         </span>
@@ -128,11 +132,11 @@ const ReaderFooter = ({
       </div>
 
       <div className="cf-pdf-footer-buttons-right">
-        {getNextDocId() && (
+        {nextDocId && (
           <Button
             name="next"
             classNames={['cf-pdf-button cf-right-side']}
-            onClick={showPdf(getNextDocId())}
+            onClick={showPdf(nextDocId)}
             ariaLabel="next PDF"
           >
             <span className="right-button-label">Next</span>
@@ -146,9 +150,9 @@ const ReaderFooter = ({
 
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
-  docId: PropTypes.number,
-  isDocumentLoadError: PropTypes.bool,
-  numPages: PropTypes.number,
+  doc: PropTypes.object,
+  nextDocId: PropTypes.number,
+  prevDocId: PropTypes.number,
   setCurrentPage: PropTypes.func,
   showPdf: PropTypes.func,
 };
