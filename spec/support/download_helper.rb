@@ -35,7 +35,7 @@ module DownloadHelpers
   end
 
   def downloading?
-    downloads.grep(/\.part$/).any?
+    downloads.grep(/\.(part|crdownload|download)$/).any?
   end
 
   def clear_downloads

@@ -8,6 +8,7 @@ import { vhaTaskFilterDetails, genericTaskFilterDetails } from '../../data/taskF
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { VHA_INCOMPLETE_TAB_DESCRIPTION, VHA_PENDING_REQUESTS_TAB_DESCRIPTION } from '../../../COPY';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 const basicVhaProps = {
   businessLine: 'Veterans Health Administration',
@@ -40,8 +41,6 @@ const basicGenericProps = {
 };
 
 beforeEach(() => {
-  // jest.clearAllMocks();
-
   // Mock ApiUtil get so the tasks will appear in the queues.
   ApiUtil.get = jest.fn().mockResolvedValue({
     tasks: { data: [] },
@@ -90,7 +89,10 @@ const renderNonCompTabs = (props) => {
 
   return render(
     <Provider store={store}>
-      <NonCompTabsUnconnected />
+      <Router>
+        <NonCompTabsUnconnected />
+      </Router>
+
     </Provider>
   );
 };
@@ -177,7 +179,7 @@ describe('NonCompTabsVha', () => {
     fireEvent.click(tabs[3]);
 
     await waitFor(() => {
-      expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
+      expect(screen.getByText('Cases completed (Last 7 Days)')).toBeInTheDocument();
     });
 
     // Check for the correct completed tasks header values
@@ -232,7 +234,6 @@ describe('NonCompTabsGeneric', () => {
     expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
-    console.log('tabs', tabs)
 
     fireEvent.click(tabs[1]);
 
