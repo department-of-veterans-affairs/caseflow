@@ -6,6 +6,16 @@ describe HearingDay, :all_dbs do
     allow(ENV).to receive(:fetch).and_call_original
   end
 
+  def format_begins_at_from_db(time_string, scheduled_for)
+    db_hour, db_minute = time_string.split(":")
+    timezone = if regional_office_key.nil?
+                 "America/New_York"
+               else
+                 Constants::REGIONAL_OFFICE_INFORMATION[regional_office_key]["timezone"]
+               end
+    scheduled_for.in_time_zone(timezone).change(hour: db_hour, min: db_minute)
+  end
+
   context "#create" do
     let(:test_hearing_date_vacols) do
       current_date = Time.zone.today
@@ -361,6 +371,7 @@ describe HearingDay, :all_dbs do
   context "begins_at" do
     context "no db value for begins_at" do
       subject { hearing_day.begins_at }
+      let(:default_slot_time) { "08:30" }
       let(:first_slot_time) { nil }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
@@ -375,15 +386,15 @@ describe HearingDay, :all_dbs do
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
-        it "begins_at returns nil" do
-          expect(subject).to eq(nil)
+        it "begins_at returns default" do
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(default_slot_time, scheduled_for))
         end
       end
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
-        it "begins_at returns nil" do
-          expect(subject).to eq(nil)
+        it "begins_at returns default" do
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(default_slot_time, scheduled_for))
         end
       end
       selected_ro_ids.each do |ro|
@@ -391,8 +402,8 @@ describe HearingDay, :all_dbs do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
 
-          it "begins_at returns nil" do
-            expect(subject).to eq(nil)
+          it "begins_at returns default" do
+            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(default_slot_time, scheduled_for))
           end
         end
 
@@ -400,8 +411,8 @@ describe HearingDay, :all_dbs do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:travel] }
 
-          it "begins_at returns nil" do
-            expect(subject).to eq(nil)
+          it "begins_at returns default" do
+            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(default_slot_time, scheduled_for))
           end
         end
       end
@@ -419,16 +430,6 @@ describe HearingDay, :all_dbs do
           first_slot_time: first_slot_time,
           scheduled_for: scheduled_for
         )
-      end
-
-      def format_begins_at_from_db(time_string, scheduled_for)
-        db_hour, db_minute = time_string.split(":")
-        timezone = if regional_office_key.nil?
-                     "America/New_York"
-                   else
-                     Constants::REGIONAL_OFFICE_INFORMATION[regional_office_key]["timezone"]
-                   end
-        scheduled_for.in_time_zone(timezone).change(hour: db_hour, min: db_minute)
       end
 
       context "a virtual day" do
