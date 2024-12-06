@@ -9,7 +9,7 @@ import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
+import { onReceiveAmaTasks, legacyDecisionReassignToJudge, legacyReassignToJudge, setOvertime } from './QueueActions';
 
 import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -111,7 +111,7 @@ class AssignToView extends React.Component {
     };
 
     if (isReassignAction) {
-      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
+      return this.reassignTask(taskType === 'JudgeLegacyAssignTask', taskType === 'JudgeLegacyDecisionReviewTask');
     }
 
     return this.props.
@@ -138,7 +138,7 @@ class AssignToView extends React.Component {
     return assignee;
   };
 
-  reassignTask = (isLegacyReassignToJudge = false) => {
+  reassignTask = (isLegacyReassignToJudge = false, isLegacyDecisionReassignToJudge = false) => {
     const task = this.props.task;
     const payload = {
       data: {
@@ -156,6 +156,14 @@ class AssignToView extends React.Component {
 
     if (isLegacyReassignToJudge) {
       return this.props.legacyReassignToJudge({
+        tasks: [task],
+        assigneeId: this.state.selectedValue,
+        instructions: this.state.instructions
+      }, successMsg);
+    }
+
+    if (isLegacyDecisionReassignToJudge) {
+      return this.props.legacyDecisionReassignToJudge({
         tasks: [task],
         assigneeId: this.state.selectedValue,
         instructions: this.state.instructions
@@ -384,6 +392,7 @@ AssignToView.propTypes = {
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
+  legacyDecisionReassignToJudge: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
   task: PropTypes.shape({
@@ -413,6 +422,7 @@ const mapDispatchToProps = (dispatch) =>
       onReceiveAmaTasks,
       highlightInvalidFormItems,
       legacyReassignToJudge,
+      legacyDecisionReassignToJudge,
       setOvertime,
       resetSuccessMessages
     },

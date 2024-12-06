@@ -166,6 +166,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def legacy_decision_reassign_to_judge_data(_task, _user = nil)
+      {
+        selected: nil,
+        options: users_to_options(Judge.list_all),
+        type: "JudgeLegacyDecisionReviewTask"
+      }
+    end
+
     def dispatch_return_to_judge_data(task, _user = nil)
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,

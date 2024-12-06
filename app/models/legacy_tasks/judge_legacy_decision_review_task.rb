@@ -6,7 +6,8 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   end
 
   def reassign_action
-    Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+    # Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+    Constants.TASK_ACTIONS.LEGACY_DECISION_REASSIGN_TO_JUDGE.to_h
   end
 
   def available_actions(current_user, _role)
