@@ -23,6 +23,8 @@ export default function TestUsers(props) {
   const [isReseeding, setIsReseeding] = useState(false);
   const [optionalSeedingError, setOptionalSeedingError] = useState(null);
   const [isOptionalSeeding, setIsOptionalSeeding] = useState(false);
+  const [isGeneratingApiKey, setIsGeneratingApiKey] = useState(false);
+  const [apiKeyString, setApiKeyString] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [hideSensitivityBanner, setHideSensitivityBanner] = useState(true);
 
@@ -92,6 +94,20 @@ export default function TestUsers(props) {
       setOptionalSeedingError(err);
       setIsOptionalSeeding(false);
     });
+  };
+
+  const generateApiKey = () => {
+    setIsGeneratingApiKey(true);
+    ApiUtil.get('/test/generate_api_key').
+      then((response) => {
+        setApiKeyString(response.body.api_key_string);
+      }).
+      catch((err) => {
+        console.warn(err);
+      }).
+      finally(() => {
+        setIsGeneratingApiKey(false);
+      });
   };
 
   const filteredUserOptions = useMemo(() => {
@@ -261,6 +277,23 @@ export default function TestUsers(props) {
                   loading={isOptionalSeeding}
                   loadingText="Running optional seed" />
                 <br /> <br />
+                <h3>API Keys</h3>
+                <p>
+                API Keys are used for testing API endpoints in demo using a utility such as curl or Bruno.
+                After generating the key, the key string is not accessible. Save the key string after generating it,
+                or you will need to generate a new one the next time you perform API testing.
+                </p>
+                <p>
+                To use the API key, add it as a header in an HTTP request in the format 'Authorization: Bearer
+                key_string', or add it as a Bearer token in Bruno.
+                </p>
+                <Button
+                  onClick={generateApiKey}
+                  name="Generate API Key"
+                  loading={isGeneratingApiKey}
+                  loadingText="Generating Key"
+                />
+                <p>{apiKeyString ? `API Key String: ${apiKeyString}` : ''}</p>
                 <h3>Global Feature Toggles Enabled:</h3>
                 <SearchableDropdown
                   name="feature_toggles"
