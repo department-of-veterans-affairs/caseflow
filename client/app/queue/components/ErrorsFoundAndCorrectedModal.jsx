@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import FileUpload from '../../components/FileUpload';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
+import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -48,19 +49,19 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    const { task, appeal } = props;
+    try {
+      const { task, appeal } = props;
 
-    const formatInstructions = () => {
-      return [
-        COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
-        COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE,
-        notes,
-        selectedFile.fileName
-      ];
-    };
+      const formatInstructions = () => {
+        return [
+          COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+          COPY.UPLOAD_TRANSCRIPTION_VBMS_ERRORS_ACTION_TYPE,
+          notes,
+          selectedFile.fileName
+        ];
+      };
 
-    const requestParams = () => {
-      return {
+      const requestParams = {
         data: {
           task: {
             instructions: formatInstructions()
@@ -71,16 +72,26 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
           },
         }
       };
-    };
 
-    const successMsg = {
-      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
-    };
+      const successMsg = {
+        title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
+      };
 
-    // setLoading(true);
+      setLoading(true);
 
-    return props.requestPatch(`/tasks/${task.taskId}
-      /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
+      return props.requestPatch(`/tasks/${task.taskId}
+        /error_found_upload_transcription_to_vbms`, requestParams, successMsg);
+    } catch (err) {
+      const error = get(err, 'response.body.errors[0]', {
+        title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
+      });
+
+      props.showErrorMessage(error);
+    } finally {
+      setLoading(false);
+      props.history.push(`/queue/appeals/${props.appealId}`);
+    }
   };
 
   const handleFileChange = (file) => {
@@ -146,6 +157,8 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
 };
 
 ErrorsFoundAndCorrectedModal.propTypes = {
+  history: PropTypes.object,
+  showErrorMessage: PropTypes.func,
   closeModal: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,

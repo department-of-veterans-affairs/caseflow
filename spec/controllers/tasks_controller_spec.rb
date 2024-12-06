@@ -1668,7 +1668,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
   end
 
-  describe "PATH tasks/:id/modal/upload_transcription_vbms" do
+  describe "PATH tasks/:id/modal/error_found_upload_transcription_to_vbms" do
     let(:file_type) { "pdf" }
     let(:hearing) { create(:hearing) }
     let(:docket_number) { hearing.docket_number }
@@ -1705,7 +1705,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         task: {
           instructions: "testing"
         },
-        id: review_transcript_task.id.to_s
+        id: review_transcript_task.id.to_s,
+        file_info: {
+          file: "dGhpcyBpcyBhIHRlc3QgZmlsZQ==",
+          file_name: file_name
+        }
       }
     end
 
@@ -1713,9 +1717,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       review_transcript_task.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
-    subject { patch :upload_transcription_to_vbms, params: params }
+    subject { patch :error_found_upload_transcription_to_vbms, params: params }
 
-    it "updates status ReviewTranscriptTask to completed" do
+    it "updates status for ReviewTranscriptTask to completed" do
       subject
       expect(response.status).to eq 200
     end

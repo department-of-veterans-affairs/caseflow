@@ -128,6 +128,10 @@ class Hearings::TranscriptionFile < CaseflowRecord
     TranscriptionFileUpload.new(self).call
   end
 
+  def upload_content_to_s3!(file)
+    TranscriptionFileUpload.new(self).call(content_or_filepath: file, type: :content)
+  end
+
   # Purpose: Converts transcription file from vtt to rtf
   #
   # Returns: string, tmp location of rtf (or xls/csv file if error)
