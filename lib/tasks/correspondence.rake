@@ -139,13 +139,13 @@ def create_inbound_ops_permissions
       permission: permission,
       organization: InboundOpsTeam.singleton
     ) do |perm|
-      perm.enabled = true
+      perm.enabled = false
       perm.description = Faker::Hipster.sentence
     end
   end
   OrganizationPermission.find_by(permission: "superuser").update!(
     description: "Superuser: Split, Merge, and Reassign",
-    default_for_admin: true,
+    default_for_admin: true
   )
   OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
   OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
