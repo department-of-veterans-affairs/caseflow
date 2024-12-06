@@ -323,7 +323,8 @@ feature "NonComp Dispositions Task Page", :postgres do
         scroll_to(page, align: :bottom)
         expect(page).to have_button("Complete", disabled: false)
         click_button("Complete")
-        expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1")
+        expect(page).to have_content("Cases completed (Last 7 Days)")
+        expect(current_url).to include("#{business_line_url}?tab=completed&page=1")
       end
 
       step "completed Decision review task should have specific decision date provided during completion" do
@@ -515,6 +516,7 @@ feature "NonComp Dispositions Task Page", :postgres do
 
         expect(page).to have_css(".usa-button-disabled", text: "Request issue modification")
         expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
+        expect(page).to have_content(COPY::DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE)
       end
 
       it "should disable the edit issues button" do
