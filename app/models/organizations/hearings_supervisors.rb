@@ -2,7 +2,7 @@
 
 class HearingsSupervisors < Organization
   def self.singleton
-    HearingsSupervisor.first || HearingsSupervisor.create(name: "Hearings Supervisor", url: "hearings-supervisors")
+    HearingsSupervisors.first || HearingsSupervisors.create(name: "Hearings Supervisors", url: "hearings-supervisors")
   end
 
   def can_receive_task?
