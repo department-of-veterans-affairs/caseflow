@@ -27,6 +27,7 @@ gem "fast_jsonapi"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
+gem "httparty", "~> 0.22.0"
 gem "icalendar"
 gem "kaminari"
 gem "logstasher"
@@ -53,7 +54,6 @@ gem "opentelemetry-instrumentation-rails", require: false
 gem "opentelemetry-instrumentation-rake", require: false
 gem "opentelemetry-instrumentation-redis", require: false
 
-gem "httparty", "~> 0.22.0"
 gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"

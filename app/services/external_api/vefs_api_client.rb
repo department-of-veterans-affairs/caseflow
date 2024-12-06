@@ -65,11 +65,24 @@ class ExternalApi::VefsApiClient
   end
 
   def bearer_token
-    return @bearer_token if @bearer_token.present?
+    @bearer_token ||= if Rails.in_upper_env?
+                        generate_bearer_token
+                      else
+                        fetch_bearer_token
+                      end
+  end
+
+  def generate_bearer_token
+    # TODO: Update to generate a bearer token
+    fetch_bearer_token
+  end
+
+  def fetch_bearer_token
+    fetched_token = nil
 
     response = self.class.post(
       "/api/v1/rest/api/v1/token",
-      body: bearer_token_json_body,
+      body: bearer_token_request_json_body,
       headers: {
         "Content-Type" => "application/json",
         "Accept" => "text/plain"
@@ -77,14 +90,14 @@ class ExternalApi::VefsApiClient
     )
 
     if response.present? && response.success?
-      @bearer_token = response.body
+      fetched_token = response.body
     end
 
-    @bearer_token
+    fetched_token
   end
 
   # rubocop:disable Metrics/MethodLength
-  def bearer_token_json_body
+  def bearer_token_request_json_body
     {
       "applicationID": "ShareUI",
       "appToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9",
