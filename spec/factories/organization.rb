@@ -79,5 +79,10 @@ FactoryBot.define do
       type { "HearingsManagement" }
       name { "Hearings Management" }
     end
+
+    factory :hearings_supervisors do
+      type { "HearingsSupervisors" }
+      name { "Hearings Supervisors" }
+    end
   end
 end
