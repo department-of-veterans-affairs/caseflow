@@ -32,6 +32,7 @@ class Hearing < CaseflowRecord
   include HearingConcern
   include HasHearingEmailRecipientsConcern
   include ConferenceableConcern
+  include RedactedAttributesConcern
 
   # VA Notify Hooks
   prepend HearingScheduled
@@ -96,6 +97,14 @@ class Hearing < CaseflowRecord
             Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
           )
         }
+
+  ATTRS_TO_REDACT = [
+    { name: :notes, alias: false},
+    { name: :judge_id, alias: false},
+    { name: :judge, alias: true}
+  ].freeze
+
+  redact_attributes
 
   HEARING_TYPES = {
     R: "Virtual",
