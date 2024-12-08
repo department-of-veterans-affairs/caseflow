@@ -36,6 +36,7 @@ class LegacyHearing < CaseflowRecord
   include HearingConcern
   include HasHearingEmailRecipientsConcern
   include ConferenceableConcern
+  include RedactedAttributesConcern
 
   # VA Notify Hooks
   prepend HearingScheduled
@@ -101,6 +102,16 @@ class LegacyHearing < CaseflowRecord
 
   after_create :update_appeal_states_on_hearing_create
   after_update :update_appeal_states_on_hearing_update
+
+  ATTRS_TO_REDACT = [
+    { name: :notes, alias: true, class_method: true },
+    { name: :judge_id, alias: true, class_method: true },
+    { name: :user_id, alias: false },
+    { name: :judge, alias: true, class_method: false }
+  ].freeze
+
+  redact_attributes
+
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
