@@ -101,7 +101,7 @@ class Hearing < CaseflowRecord
   ATTRS_TO_REDACT = [
     { name: :notes, alias: false},
     { name: :judge_id, alias: false},
-    { name: :judge, alias: true}
+    { name: :judge, alias: true, class_method: true}
   ].freeze
 
   redact_attributes
