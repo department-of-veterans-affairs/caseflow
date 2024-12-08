@@ -53,7 +53,6 @@ class ExternalApi::VBMSService
       ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def self.fetch_document_series_for(appeal)
     if use_ce_api?
