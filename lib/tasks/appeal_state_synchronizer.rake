@@ -11,6 +11,12 @@ namespace :appeal_state_synchronizer do
     backfill_appeal_information
   end
 
+  task sync_legacy_appeal_decisions: :environment do
+    include SyncDecidedAppealsHelper
+
+    sync_decided_appeals
+  end
+
   def map_appeal_hearing_scheduled_state(appeal_state)
     if !appeal_state.appeal&.hearings&.empty? && appeal_state.appeal.hearings.max_by(&:scheduled_for).disposition.nil?
       return { hearing_scheduled: true }

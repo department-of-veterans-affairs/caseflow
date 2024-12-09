@@ -7,10 +7,12 @@
 # rubocop:disable Metrics/ClassLength
 class Veteran < CaseflowRecord
   include AssociatedBgsRecord
+  include EventConcern
 
   has_many :available_hearing_locations,
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
+  has_one :event_record, as: :evented_record
 
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,

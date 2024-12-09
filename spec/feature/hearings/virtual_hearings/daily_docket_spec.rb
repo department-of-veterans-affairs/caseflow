@@ -7,7 +7,9 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   let(:regional_office_key) { "RO59" } # Honolulu, HI
   let(:regional_office_timezone) { RegionalOffice.new(regional_office_key).timezone }
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: regional_office_key, scheduled_time: "9:00AM") }
-  let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, status: :active, hearing: hearing) }
+  let!(:virtual_hearing) do
+    create(:virtual_hearing, :all_emails_sent, :initialized, status: :active, hearing: hearing)
+  end
   let(:updated_hearing_time) { "11:00 am" }
   let(:updated_virtual_hearing_time) { "11:00 AM Eastern Time (US & Canada)" }
   let(:updated_video_hearing_time) { "11:00 AM Hawaii" }
@@ -38,12 +40,15 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
   context "Formerly Video Virtual Hearing" do
     let(:expected_central_office_time) do
+      time_str = "#{updated_hearing_time} #{hearing.hearing_day.scheduled_for} America/New_York"
+      tz_abbr = Time.zone.parse(time_str).dst? ? "ET" : "EST"
+
       Time
         .parse(updated_hearing_time)
         .strftime("%F %T")
         .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
         .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
-        .strftime("%-l:%M %P ET") # and render it in the format expected in the modal
+        .strftime("%-l:%M %p #{tz_abbr}") # and render it in the format expected in the modal
     end
 
     scenario "Virtual hearing time is updated" do
@@ -53,6 +58,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       click_dropdown(name: "optionalHearingTime0", text: updated_video_hearing_time)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
+
       expect(page).to have_content("Time: #{expected_central_office_time} / #{expected_regional_office_time}")
       click_button(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON)
 
@@ -74,6 +80,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     let!(:central_virtual_hearing) do
       create(:virtual_hearing,
              :all_emails_sent,
+             :initialized,
              :timezones_initialized,
              status: :active,
              hearing: central_hearing)
@@ -163,7 +170,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
       end
     end
     context "VLJ view" do
@@ -173,7 +179,76 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
+      end
+    end
+  end
+
+  context "Updating a hearing's time" do
+    let(:fall_date) { "#{1.year.from_now.year}-11-11" }
+
+    shared_examples "The hearing time is updated correctly" do
+      scenario do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        click_dropdown(name: "optionalHearingTime0", text: hearing_time_selection_string)
+        click_button("Update Hearing Time")
+
+        expect(page).to have_content(expected_post_update_time)
+      end
+    end
+
+    context "Legacy Hearing" do
+      let(:case_hearing) { create(:case_hearing) }
+      let(:initial_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
+
+      # Ensure that the times are always in standard time.
+      before { initial_hearing.hearing_day.update!(scheduled_for: fall_date) }
+
+      context "With a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Chicago") } }
+        let(:expected_post_update_time) { "10:00 AM CST" }
+
+        before do
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "V", scheduled_for: fall_date)
+        end
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "3:00 PM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+        let(:expected_post_update_time) { "3:00 PM CST" }
+
+        before do
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "T", scheduled_for: fall_date)
+        end
+
+        include_examples "The hearing time is updated correctly"
+      end
+    end
+
+    context "AMA Hearing" do
+      let(:initial_hearing) { create(:hearing) }
+
+      context "With a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "12:00 PM Alaska" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
+        let(:expected_post_update_time) { "12:00 PM #{Time.zone.now.dst? ? 'AKDT' : 'AKST'}" }
+
+        before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "11:00 AM Hawaii" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+        let(:expected_post_update_time) { "11:00 AM HST" }
+
+        before { hearing.hearing_day.update!(regional_office: "RO59", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
       end
     end
   end

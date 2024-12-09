@@ -21,11 +21,13 @@ import DateSelector from '../../../components/DateSelector';
 import ErrorAlert from '../../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../../constants';
 import EP_CLAIM_TYPES from '../../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues,
+import {
+  formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues } from '../../util/issues';
+  formatLegacyAddedIssues
+} from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import { IssueModificationRow as issueModificationRow } from 'app/intake/components/IssueModificationRow';
@@ -207,7 +209,7 @@ class AddIssuesPage extends React.Component {
     }
   };
 
-  onClickSplitAppeal =() => {
+  onClickSplitAppeal = () => {
     return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
@@ -239,7 +241,7 @@ class AddIssuesPage extends React.Component {
 
     return (
       !formType || (this.editingClaimReview() && !processedAt) ||
-       intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
+      intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -270,7 +272,7 @@ class AddIssuesPage extends React.Component {
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
       Established {this.establishmentCreditsTimestamp()}
-      { this.props.intakeUser &&
+      {this.props.intakeUser &&
         <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
       }
     </div>;
@@ -328,13 +330,15 @@ class AddIssuesPage extends React.Component {
       userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
+      isRemand,
       isLegacy,
       pendingIssueModificationRequests,
+      intakeFromVbms
     } = this.props;
 
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
+    const { useAmaActivationDate, hlrScUnrecognizedClaimants, disableAmaEventing } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -423,6 +427,7 @@ class AddIssuesPage extends React.Component {
     const showRequestIssueUpdateOptions = editPage &&
       userCanRequestIssueUpdates &&
       !originalIssuesHaveNoDecisionDate() &&
+      !isRemand &&
       intakeData.benefitType === 'vha';
 
     const disableIssueActions = editPage &&
@@ -440,7 +445,7 @@ class AddIssuesPage extends React.Component {
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickRequestAdditionalIssue()}
             >
-            + Request additional issue
+              + Request additional issue
             </Button>
           </div>
         );
@@ -455,8 +460,9 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickAddIssue()}
+              disabled={this.props.disableEditingForCompAndPen}
             >
-            + Add issue
+              + Add issue
             </Button>,
             (' '),
             <Link to="/create_split" disabled={issuesChanged}>
@@ -467,7 +473,7 @@ class AddIssuesPage extends React.Component {
                 classNames={['usa-button-secondary']}
                 disabled={issuesChanged}
               >
-              Split appeal
+                Split appeal
               </Button>
             </Link>]
           ) : (
@@ -476,9 +482,9 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               dangerStyling
               onClick={() => this.onClickAddIssue()}
-              disabled={disableIssueActions}
+              disabled={disableIssueActions || this.props.disableEditingForCompAndPen}
             >
-            + Add issue
+              + Add issue
             </Button>)}
         </div>
       );
@@ -611,15 +617,15 @@ class AddIssuesPage extends React.Component {
         content: (
           <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
             <div className="claim-label">
-              <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
+              <strong>{EP_CLAIM_TYPES[endProductCode].official_label}</strong>
             </div>
             <div className="edit-claim-label">
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
-                disabled={editDisabled}
+                disabled={editDisabled || this.props.disableEditingForCompAndPen}
               >
-              Edit claim label
+                Edit claim label
               </Button>
             </div>
           </div>
@@ -627,7 +633,18 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const intakeSystemLabelRow = () => {
+      return {
+        field: 'Intake System',
+        content: intakeFromVbms ? 'VBMS' : 'Caseflow'
+      };
+    };
+
     let rowObjects = fieldsForFormType;
+
+    if (!disableAmaEventing) {
+      rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    }
 
     Object.keys(issuesBySection).sort().
       map((key) => {
@@ -653,6 +670,7 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Requested issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen,
               disableIssueActions
             }),
           );
@@ -660,7 +678,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Withdrawn issues'
+              fieldTitle: 'Withdrawn issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         } else {
@@ -668,7 +687,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: ' '
+              fieldTitle: ' ',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         }
@@ -766,7 +786,7 @@ class AddIssuesPage extends React.Component {
         {intakeData.editIntakeIssueModalVisible && (
           <EditIntakeIssueModal
             issueIndex={this.state.issueIndex}
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             legacyIssues={issues}
             appealIsLegacy={isLegacy}
             mstIdentification={this.props.featureToggles.mstIdentification}
@@ -786,7 +806,7 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueModificationModalVisible && (
           <RequestIssueModificationModal
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
@@ -798,7 +818,7 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueRemovalModalVisible && (
           <RequestIssueRemovalModal
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
@@ -809,7 +829,7 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueWithdrawalModalVisible && (
           <RequestIssueWithdrawalModal
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            currentIssue={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
@@ -853,6 +873,8 @@ class AddIssuesPage extends React.Component {
         )}
 
         {editPage && this.establishmentCredits()}
+
+        {editPage && isRemand ? <Alert type="info" message={COPY.REMANDS_NOT_EDITABLE} /> : null}
 
         <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
 
@@ -902,7 +924,8 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -957,7 +980,9 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
+    isRemand: state.isRemand,
     isLegacy: state.isLegacy,
+    intakeFromVbms: state.intakeFromVbms
   }),
   (dispatch) =>
     bindActionCreators(

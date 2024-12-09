@@ -83,30 +83,6 @@ FactoryBot.define do
       lever_group_order { 101 }
     end
 
-    trait :disable_legacy_priority do
-      item { "disable_legacy_priority" }
-      title { "ACD Disable Legacy Priority" }
-      description { "" }
-      data_type { "boolean" }
-      value { false }
-      unit { "" }
-      algorithms_used { %w[docket proportion] }
-      lever_group { "docket_levers" }
-      lever_group_order { 105 }
-    end
-
-    trait :disable_ama_non_priority_direct_review do
-      item { "disable_ama_non_priority_direct_review" }
-      title { "ACD Disable AMA Non-Priority Direct Review" }
-      description { "" }
-      data_type { "boolean" }
-      value { false }
-      unit { "" }
-      algorithms_used { %w[docket proportion] }
-      lever_group { "docket_levers" }
-      lever_group_order { 103 }
-    end
-
     trait :ama_hearings_start_distribution_prior_to_goals do
       item { "ama_hearings_start_distribution_prior_to_goals" }
       title { "AMA Hearings Start Distribution Prior to Goals" }
@@ -239,6 +215,84 @@ FactoryBot.define do
         "Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision "\
         "before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with "\
         "a hearing held."
+      end
+      data_type { "radio" }
+      value { "14" }
+      unit { "days" }
+      options do
+        [{ item: "value",
+           data_type: "number",
+           value: 14,
+           text: "Attempt distribution to current judge for max of:",
+           unit: "days",
+           selected: true },
+         { item: "infinite", value: "infinite", text: "Always distribute to current judge" },
+         { item: "omit", value: "omit", text: "Omit variable from distribution rules" }]
+      end
+      algorithms_used { %w[docket proportion] }
+      lever_group { "affinity" }
+      lever_group_order { 3003 }
+    end
+
+    trait :aoj_affinity_days do
+      item { "aoj_affinity_days" }
+      title { "AOJ Affinity Days" }
+      description do
+        "Sets the number of days an appeal respects the affinity to the deciding judge for Legacy "\
+        "AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge."
+      end
+      data_type { "radio" }
+      value { "14" }
+      unit { "days" }
+      options do
+        [{ item: "value",
+           data_type: "number",
+           value: 14,
+           text: "Attempt distribution to current judge for max of:",
+           unit: "days",
+           selected: true },
+         { item: "infinite", value: "infinite", text: "Always distribute to current judge" },
+         { item: "omit", value: "omit", text: "Omit variable from distribution rules" }]
+      end
+      algorithms_used { %w[docket proportion] }
+      lever_group { "affinity" }
+      lever_group_order { 3003 }
+    end
+
+    trait :aoj_cavc_affinity_days do
+      item { "aoj_cavc_affinity_days" }
+      title { "AOJ CAVC Affinity Days" }
+      description do
+        "Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the "\
+        "appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing "\
+        "held, or those with a hearing held when the remanding judge is not the hearing judge."
+      end
+      data_type { "radio" }
+      value { "21" }
+      unit { "days" }
+      options do
+        [{ item: "value",
+           data_type: "number",
+           value: 21,
+           text: "Attempt distribution to current judge for max of:",
+           unit: "days",
+           selected: true },
+         { item: "infinite", value: "infinite", text: "Always distribute to current judge" },
+         { item: "omit", value: "omit", text: "Omit variable from distribution rules" }]
+      end
+      algorithms_used { %w[docket proportion] }
+      lever_group { "affinity" }
+      lever_group_order { 3003 }
+    end
+
+    trait :aoj_aod_affinity_days do
+      item { "aoj_aod_affinity_days" }
+      title { "AOJ AOD Affinity Days" }
+      description do
+        "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC "\
+        "at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals "\
+        "with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with "\
+        "no hearing held (whether or not it had been CAVC at one time)."
       end
       data_type { "radio" }
       value { "14" }
@@ -411,6 +465,129 @@ FactoryBot.define do
       lever_group { "docket_levers" }
       lever_group_order { 103 }
       control_group { "non_priority" }
+    end
+
+    trait :disable_legacy_priority do
+      item { "disable_legacy_priority" }
+      title { "ACD Disable Legacy Priority" }
+      data_type { "boolean" }
+      options do
+        [
+          {
+            displayText: "On",
+            name: Constants.DISTRIBUTION.disable_legacy_priority,
+            value: "true",
+            disabled: false
+          },
+          {
+            displayText: "Off",
+            name: Constants.DISTRIBUTION.disable_legacy_priority,
+            value: "false",
+            disabled: false
+          }
+        ]
+      end
+      value { false }
+      unit { "days" }
+      algorithms_used { %w(proportion docket) }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+      control_group { "priority" }
+    end
+
+    trait :disable_ama_priority_hearing do
+      item { "disable_ama_priority_hearing" }
+      title { "ACD Disable AMA Priority Hearing" }
+      data_type { "boolean" }
+      options do
+        [
+          {
+            displayText: "On",
+            name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+            value: "true",
+            disabled: false
+          },
+          {
+            displayText: "Off",
+            name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+            value: "false",
+            disabled: false
+          }
+        ]
+      end
+      value { false }
+      unit { "days" }
+      algorithms_used { %w(proportion docket) }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+      control_group { "priority" }
+    end
+
+    trait :disable_ama_priority_direct_review do
+      item { "disable_ama_priority_direct_review" }
+      title { "ACD Disable AMA Priority Direct Review" }
+      data_type { "boolean" }
+      options do
+        [
+          {
+            displayText: "On",
+            name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+            value: "true",
+            disabled: false
+          },
+          {
+            displayText: "Off",
+            name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+            value: "false",
+            disabled: false
+          }
+        ]
+      end
+      value { false }
+      unit { "days" }
+      algorithms_used { %w(proportion docket) }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+      control_group { "priority" }
+    end
+
+    trait :disable_ama_priority_evidence_submission do
+      item { "disable_ama_priority_direct_review" }
+      title { "ACD Disable AMA Priority Evidence Submission" }
+      data_type { "boolean" }
+      options do
+        [
+          {
+            displayText: "On",
+            name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+            value: "true",
+            disabled: false
+          },
+          {
+            displayText: "Off",
+            name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+            value: "false",
+            disabled: false
+          }
+        ]
+      end
+      value { false }
+      unit { "days" }
+      algorithms_used { %w(proportion docket) }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+      control_group { "priority" }
+    end
+
+    trait :nonsscavlj_number_of_appeals_to_move do
+      item { "nonsscavlj_number_of_appeals_to_move" }
+      title { "Non-SSC/AVLJ Number of Appeals to Move" }
+      data_type { "number" }
+      value { 2 }
+      unit { "" }
+      algorithms_used { [] }
+      lever_group { "internal" }
+      lever_group_order { 999 }
     end
   end
 end

@@ -1,12 +1,35 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsBase
-  include ActiveModel::Validations
+  class AbstractMethodError < StandardError; end
 
-  validate :vso_employee_has_access
+  # @note Data Transfer Object (DTO) for encapsulating error data grouped by attribute
+  class Errors
+    attr_accessor :messages
+
+    private :messages=
+
+    delegate :none?, to: :messages
+
+    def initialize
+      @messages = Hash.new([])
+    end
+
+    # @param attribute [Symbol] attribute the error is associated with
+    # @param title [String] summary of the error
+    # @param detail [String] detailed description of the error
+    #
+    # @example
+    #   add(:workflow, title: "Access to Veteran file prohibited",
+    #                  detail: "You do not have access to this claims file number")
+    def add(attribute, title:, detail:)
+      messages[attribute.to_sym] += [{ title: title, detail: detail }]
+    end
+  end
 
   def initialize(user:)
     @user = user
+    @errors = Errors.new
   end
 
   def call
@@ -99,7 +122,24 @@ class CaseSearchResultsBase
 
   private
 
+  attr_accessor :errors
   attr_reader :success
+
+  def valid?
+    validate_vso_employee_has_access
+    validation_hook
+    errors.none?
+  end
+
+  # @note (Optional) hook method to be implemented by subclasses for performing subclass-specific validations.
+  # @example
+  #   def validation_hook
+  #     unless foobar_has_bazbah?
+  #       errors.add(:workflow, title: "Veteran file number missing",
+  #                             detail: "HTTP_CASE_SEARCH request header must include Veteran file number")
+  #     end
+  #   end
+  def validation_hook; end
 
   def access?(file_number)
     !current_user_is_vso_employee? || bgs.can_access?(file_number)
@@ -109,7 +149,7 @@ class CaseSearchResultsBase
     @bgs ||= BGSService.new
   end
 
-  def veterans_exist
+  def validate_veterans_exist
     return unless veterans_user_can_access.empty?
 
     errors.add(:workflow, not_found_error)
@@ -146,7 +186,7 @@ class CaseSearchResultsBase
     }
   end
 
-  def vso_employee_has_access
+  def validate_vso_employee_has_access
     return unless current_user_is_vso_employee?
 
     errors.add(:workflow, prohibited_error) if

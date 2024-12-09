@@ -21,10 +21,16 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
     #{Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days}
     #{Constants.DISTRIBUTION.cavc_affinity_days}
+    #{Constants.DISTRIBUTION.cavc_aod_affinity_days}
+    #{Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearing_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals}
     #{Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals}
+    #{Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move}
+    #{Constants.DISTRIBUTION.aoj_affinity_days}
+    #{Constants.DISTRIBUTION.aoj_aod_affinity_days}
+    #{Constants.DISTRIBUTION.aoj_cavc_affinity_days}
   ).freeze
 
   FLOAT_LEVERS = %W(
@@ -183,10 +189,20 @@ class CaseDistributionLever < ApplicationRecord
       snapshot_hash
     end
 
+    def clear_distribution_lever_cache
+      lever_items = CaseDistributionLever.all.map(&:item)
+
+      # Loop through each lever item and delete the corresponding cache
+      lever_items.each do |item|
+        cache_key = "#{item}_distribution_lever_cache"
+        Rails.cache.delete(cache_key)
+      end
+    end
+
     private
 
     def method_missing_value(name)
-      lever = find_by_item(name).try(:value)
+      lever = check_distribution_lever_cache(name)
       begin
         if INTEGER_LEVERS.include?(name)
           Integer(lever)
@@ -243,6 +259,12 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       lever["options"] = options
+    end
+
+    def check_distribution_lever_cache(name)
+      Rails.cache.fetch("#{name}_distribution_lever_cache", expires_in: 2.minutes) do
+        find_by_item(name).try(:value)
+      end
     end
   end
 end

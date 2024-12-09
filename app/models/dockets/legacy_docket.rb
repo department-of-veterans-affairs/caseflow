@@ -14,6 +14,18 @@ class LegacyDocket < Docket
     LegacyAppeal.repository.ready_to_distribute_appeals
   end
 
+  def appeals_tied_to_non_ssc_avljs
+    LegacyAppeal.repository.appeals_tied_to_non_ssc_avljs
+  end
+
+  def appeals_tied_to_avljs_and_vljs
+    LegacyAppeal.repository.appeals_tied_to_avljs_and_vljs
+  end
+
+  def loc_63_appeals
+    LegacyAppeal.repository.loc_63_appeals
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|
@@ -137,10 +149,24 @@ class LegacyDocket < Docket
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def priority_appeals_affinity_date_count(in_window)
+    LegacyAppeal.repository.priority_appeals_affinity_date_count(in_window).size
+  end
+
+  def non_priority_appeals_affinity_date_count(_in_window)
+    "N/A for legacy appeals which are nonpriority and non-AOJ"
+  end
+
   # used for distribution_stats
-  # change parameters to in_window, priority once implemented
-  def affinity_date_count(*)
-    "not implemented"
+  # in_window refers to all cases with an appeal affinity still in their affinity window
+  # Out-of-window (in_window == false) refers to all other cases including cases that are
+  # out of their affinity window, tied_to, or genpop.
+  def affinity_date_count(in_window, priority)
+    if priority
+      priority_appeals_affinity_date_count(in_window)
+    else
+      non_priority_appeals_affinity_date_count(in_window)
+    end
   end
 
   private

@@ -9,7 +9,7 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 // External Dependencies
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
@@ -18,15 +18,13 @@ import { storeMetrics } from './util/Metrics';
 
 // Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
-import rootReducer from 'store/root';
-
+import rootReducer from './reader/store/root';
 // Shared Component Dependencies
-import { ErrorBoundary } from 'components/shared/ErrorBoundary';
-import Loadable from 'components/shared/Loadable';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import Loadable from './components/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
-import Router from 'app/2.0/router';
 import BaseContainer from 'app/containers/BaseContainer';
 import Certification from 'app/certification/Certification';
 
@@ -44,8 +42,10 @@ import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
 import Login from 'app/login';
+import TestApp from 'app/test/TestApp';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
+import LoadTest from 'app/test/loadTest/LoadTest';
 import PerformanceDegradationBanner from 'app/components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from 'app/establishClaimAdmin';
 import Queue from 'app/queue/index';
@@ -64,7 +64,6 @@ import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
-  Router,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
@@ -75,8 +74,10 @@ const COMPONENTS = {
   EstablishClaimPage,
   CaseWorker,
   Login,
+  TestApp,
   TestUsers,
   TestData,
+  LoadTest,
   Error403,
   Error404,
   Error500,
@@ -156,8 +157,10 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
 
   const renderApp = (Component) => {
     const element = wrapComponent(Component);
+    const container = document.getElementById(domNodeId);
+    const root = createRoot(container);
 
-    render(element, document.getElementById(domNodeId));
+    root.render(element);
   };
 
   renderApp(component);
@@ -178,7 +181,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
-        './2.0/router',
         './explain/index',
         './mpi/MPISearch',
         './admin/index',

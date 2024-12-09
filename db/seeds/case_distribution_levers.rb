@@ -304,7 +304,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
@@ -314,7 +314,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
-            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
+            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -338,7 +338,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3003
@@ -347,44 +347,6 @@ module Seeds
             item: Constants.DISTRIBUTION.aoj_affinity_days,
             title: Constants.DISTRIBUTION.aoj_affinity_days_title,
             description: "Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.",
-            data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "60",
-            unit: Constants.ACD_LEVERS.days,
-            options: [
-              {
-                item: Constants.ACD_LEVERS.value,
-                data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 60,
-                text: "Attempt distribution to current judge for max of:",
-                unit: Constants.ACD_LEVERS.days,
-                selected: true
-              },
-              {
-                item: Constants.ACD_LEVERS.infinite,
-                data_type: "",
-                value: Constants.ACD_LEVERS.infinite,
-                text: "Always distribute to current judge",
-                unit: ""
-              },
-              {
-                item: Constants.ACD_LEVERS.omit,
-                data_type: "",
-                value: Constants.ACD_LEVERS.omit,
-                text: "Omit variable from distribution rules",
-                unit: ""
-              }
-            ],
-            is_disabled_in_ui: true,
-            min_value: 0,
-            max_value: 999,
-            algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
-            lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
-            lever_group_order: 3004
-          },
-          {
-            item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
-            title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
-            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -412,7 +374,45 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
+            min_value: 0,
+            max_value: 999,
+            algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
+            lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
+            lever_group_order: 3004
+          },
+          {
+            item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
+            title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
+            description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available judge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
+            data_type: Constants.ACD_LEVERS.data_types.radio,
+            value: "14",
+            unit: Constants.ACD_LEVERS.days,
+            options: [
+              {
+                item: Constants.ACD_LEVERS.value,
+                data_type: Constants.ACD_LEVERS.data_types.number,
+                value: 14,
+                text: "Attempt distribution to current judge for max of:",
+                unit: Constants.ACD_LEVERS.days,
+                selected: true
+              },
+              {
+                item: Constants.ACD_LEVERS.infinite,
+                data_type: "",
+                value: Constants.ACD_LEVERS.infinite,
+                text: "Always distribute to current judge",
+                unit: ""
+              },
+              {
+                item: Constants.ACD_LEVERS.omit,
+                data_type: "",
+                value: Constants.ACD_LEVERS.omit,
+                text: "Omit variable from distribution rules",
+                unit: ""
+              }
+            ],
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -450,7 +450,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -784,6 +784,30 @@ module Seeds
               }
             ]
           },
+          {
+            item: Constants.DISTRIBUTION.enable_nonsscavlj,
+            title: Constants.DISTRIBUTION.enable_nonsscavlj_title,
+            description: "This is the internal lever used to enable and disable Non-SSC AVLJ work.",
+            data_type: Constants.ACD_LEVERS.data_types.boolean,
+            value: true,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
+          {
+            item: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move,
+            title: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move_title,
+            description: "This is the internal lever used to alter the number of appeals to be returned for Non-SSC AVLJs",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: 2,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 999
+          },
         ]
       end
 
@@ -824,7 +848,6 @@ module Seeds
       # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
       def full_update_lever(lever)
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-
         existing_lever.update(
           title: lever[:title],
           description: lever[:description],

@@ -383,6 +383,11 @@ class EndProductEstablishment < CaseflowRecord
     end
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    source.intake.from_decision_review_created_event?
+  end
+
   private
 
   def status_type

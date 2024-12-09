@@ -54,5 +54,10 @@
   "disable_ama_priority_direct_review": "disable_ama_priority_direct_review",
   "disable_ama_priority_direct_review_title": "ACD Disable AMA Priority Direct Review",
   "disable_ama_priority_evidence_submission": "disable_ama_priority_evidence_submission",
-  "disable_ama_priority_evidence_submission_title": "ACD Disable AMA Priority Evidence Submission"
+  "disable_ama_priority_evidence_submission_title": "ACD Disable AMA Priority Evidence Submission",
+  "enable_nonsscavlj": "enable_nonsscavlj",
+  "enable_nonsscavlj_title": "Enable Non-SSC/AVLJ",
+  "no_records_moved_message": "Job Ran Successfully, No Records Moved",
+  "nonsscavlj_number_of_appeals_to_move": "nonsscavlj_number_of_appeals_to_move",
+  "nonsscavlj_number_of_appeals_to_move_title": "Non-SSC/AVLJ Number of Appeals to Move"
 }

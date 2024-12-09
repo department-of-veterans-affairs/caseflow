@@ -97,13 +97,13 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
           .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .most_recent_hearings
@@ -120,13 +120,13 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
           .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .most_recent_hearings
@@ -143,7 +143,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
           .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
@@ -155,7 +155,7 @@ class HearingRequestDistributionQuery
           .most_recent_hearings
           .with_appeal_affinities
           .with_held_hearings
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
       end
 
     query
@@ -167,7 +167,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
           .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
@@ -179,7 +179,7 @@ class HearingRequestDistributionQuery
           .most_recent_hearings
           .with_appeal_affinities
           .with_held_hearings
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
       end
 
     query

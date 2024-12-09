@@ -84,5 +84,55 @@ describe HearingUpdateForm, :all_dbs do
         subject.update
       end
     end
+
+    context "update hearing scheduled_time" do
+      context "scheduled time not altered" do
+        it "should not update scheduled_time and scheduled_datetime" do
+          existing_scheduled_time = hearing.scheduled_time
+          existing_scheduled_datetime = hearing.scheduled_datetime
+          subject.update
+          hearing.reload
+          expect(hearing.scheduled_time).to eq existing_scheduled_time
+          expect(hearing.scheduled_datetime).to eq existing_scheduled_datetime
+        end
+      end
+
+      context "scheduled time altered" do
+        let(:hearing_params) do
+          {
+            hearing: hearing.reload,
+            scheduled_time_string: "9:45 PM Eastern Time (US & Canada)"
+          }
+        end
+
+        subject { HearingUpdateForm.new(hearing_params) }
+
+        it "should update scheduled_time" do
+          subject.update
+          updated_scheduled_time = hearing.scheduled_time.strftime("%H:%M")
+          expect(updated_scheduled_time).to eq "21:45"
+        end
+
+        it "should update scheduled_datetime if it is not null already" do
+          date_str = "#{hearing.hearing_day.scheduled_for} America/New_York"
+          is_dst = Time.zone.parse(date_str).dst?
+
+          hearing.update(
+            scheduled_datetime: "2021-04-23T11:30:00#{is_dst ? '-04:00' : '-05:00'}",
+            scheduled_in_timezone: "America/New_York"
+          )
+          subject.update
+          updated_scheduled_datetime = hearing.scheduled_datetime
+
+          expect(updated_scheduled_datetime.strftime("%Y-%m-%d %H:%M %z"))
+            .to eq "#{hearing.hearing_day.scheduled_for.strftime('%Y-%m-%d')} 21:45 #{is_dst ? '-0400' : '-0500'}"
+        end
+
+        it "should not update scheduled_datetime if it is null already" do
+          subject.update
+          expect(hearing.scheduled_datetime).to eq nil
+        end
+      end
+    end
   end
 end

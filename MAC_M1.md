@@ -187,14 +187,14 @@ Running Caseflow
 	  2. that you are using arm64 brew by doing `which brew` and ensuring the output is `/opt/homebrew/bin/brew`
 3. Open caseflow in VSCode (optional), or navigate to the caseflow directory in your terminal and:
 	  1. `brew install yarn`
-4. Ensure you are on master branch and up to date by running
-    1. ```git checkout master```
+4. Ensure you are on main branch and up to date by running
+    1. ```git checkout main```
     2. ```git fetch```
-    3. ```git pull origin master```
+    3. ```git pull origin main```
 5. Start Vacols UTM VM (if not already running)
 6. run `make up-m1` to create the docker containers and volumes
 7. run `make reset` to (re)create and seed the database; this takes a while (~45 minutes)
-	  1. if you get a database not found error, run `bundle exec rake db:drop db:create db:schema:load`, and then run `make reset` again
+	  1. if you get a database not found error, run `bundle exec rake db:drop:primary db:create:primary db:schema:load:primary`, and then run `make reset` again
 8. open a second terminal tab/window
 9. run `make run-backend-m1` in one tab, and `make run-frontend` in the other
 	  1. the backend should launch on `localhost:3000`. go there in your browser to access Caseflow
@@ -215,6 +215,320 @@ Note: It takes several minutes for the VACOLS VM to go through its startup and l
 
 ---
 # Installation Workarounds
+
+M3 Mac Gem Installation
+---
+**Follow these steps if you are getting errors when running `bundle install`**
+
+1. Create a new file `script.py` with the following contents:
+   ```
+	import subprocess
+	import re
+
+	#string = subprocess.check_output("gem query --local", shell=True)
+	#string = re.findall("(?![^\\(]*\\))[A-Za-z-_]+", string.decode("utf-8"))
+
+	with open("./gems.txt") as file:
+	    lines = [line.rstrip() for line in file]
+
+	for i in lines:
+		print("bundle config build." + i + " --with-cflags=\"-Wno-error=incompatible-function-pointer-types\" --with-cppflags=\"-Wno-compound-token-split-by-macro\"")
+		output = subprocess.check_output("bundle config build." + i + " --with-cflags=\"-Wno-error=incompatible-function-pointer-types\" --with-cppflags=\"-Wno-compound-token-split-by-macro\"", shell=True)
+
+   ```
+2. Create a new file `gems.txt` with the following contents:
+   ```
+	aasm
+	actioncable
+	actionmailbox
+	actionmailer
+	actionpack
+	actiontext
+	actionview
+	activejob
+	activemodel
+	activerecord
+	activerecord-import
+	activerecord-oracle_enhanced-adapter
+	activestorage
+	activesupport
+	acts_as_tree
+	addressable
+	akami
+	amoeba
+	anbt-sql-formatter
+	ast
+	aws-sdk
+	aws-sdk-core
+	aws-sdk-resources
+	aws-sigv4
+	backport
+	benchmark-ips
+	bgs
+	bootsnap
+	bourbon
+	brakeman
+	browser
+	builder
+	bullet
+	bummr
+	bundler-audit
+	business_time
+	byebug
+	capybara
+	capybara-screenshot
+	caseflow
+	choice
+	claide
+	claide-plugins
+	cliver
+	coderay
+	colored2
+	colorize
+	concurrent-ruby
+	connect_mpi
+	connect_vbms
+	connection_pool
+	console_tree_renderer
+	cork
+	countries
+	crack
+	crass
+	d3-rails
+	danger
+	database_cleaner
+	date
+	ddtrace
+	debase
+	debase-ruby_core_source
+	derailed_benchmarks
+	diff-lcs
+	docile
+	dogstatsd-ruby
+	dotenv
+	dotenv-rails
+	dry-configurable
+	dry-container
+	dry-core
+	dry-equalizer
+	dry-inflector
+	dry-initializer
+	dry-logic
+	dry-schema
+	dry-types
+	ecma-re-validator
+	erubi
+	execjs
+	factory_bot
+	factory_bot_rails
+	faker
+	faraday
+	faraday-http-cache
+	faraday_middleware
+	fast_jsonapi
+	fasterer
+	ffi
+	foreman
+	formatador
+	fuzzy_match
+	get_process_mem
+	git
+	globalid
+	govdelivery-tms
+	guard
+	guard-compat
+	guard-rspec
+	gyoku
+	hana
+	hashdiff
+	heapy
+	holidays
+	httpclient
+	httpi
+	i18n
+	i18n_data
+	icalendar
+	ice_cube
+	immigrant
+	jaro_winkler
+	jmespath
+	jquery-rails
+	jshint
+	json
+	json_schemer
+	kaminari
+	kaminari-actionview
+	kaminari-activerecord
+	kaminari-core
+	knapsack_pro
+	kramdown
+	kramdown-parser-gfm
+	launchy
+	libv8
+	listen
+	logstasher
+	loofah
+	lumberjack
+	mail
+	marcel
+	maruku
+	memory_profiler
+	meta_request
+	method_source
+	mime-types
+	mime-types-data
+	mini_mime
+	minitest
+	moment_timezone-rails
+	momentjs-rails
+	msgpack
+	multi_json
+	multipart-post
+	multiverse
+	nap
+	neat
+	nenv
+	net-imap
+	net-pop
+	net-protocol
+	net-smtp
+	newrelic_rpm
+	nio4r
+	no_proxy_fix
+	nokogiri
+	nori
+	notiffany
+	octokit
+	open4
+	paper_trail
+	parallel
+	paranoia
+	parser
+	pdf-forms
+	pdfjs_viewer-rails
+	pdfkit
+	pg
+	pluck_to_hash
+	pry
+	pry-byebug
+	public_suffix
+	puma
+	racc
+	rack
+	rack-contrib
+	rack-test
+	rails
+	rails-dom-testing
+	rails-erd
+	rails-html-sanitizer
+	railties
+	rainbow
+	rake
+	rb-fsevent
+	rb-inotify
+	rb-readline
+	rchardet
+	react_on_rails
+	redis
+	redis-actionpack
+	redis-activesupport
+	redis-classy
+	redis-mutex
+	redis-namespace
+	redis-rack
+	redis-rails
+	redis-store
+	ref
+	regexp_parser
+	request_store
+	reverse_markdown
+	rexml
+	roo
+	rspec
+	rspec-core
+	rspec-expectations
+	rspec-github
+	rspec-mocks
+	rspec-rails
+	rspec-retry
+	rspec-support
+	rspec_junit_formatter
+	rubocop
+	rubocop-performance
+	rubocop-rails
+	ruby-debug-ide
+	ruby-graphviz
+	ruby-oci8
+	ruby-plsql
+	ruby-prof
+	ruby-progressbar
+	ruby_dep
+	ruby_parser
+	rubyzip
+	safe_shell
+	safe_yaml
+	sass
+	sass-listen
+	sass-rails
+	savon
+	sawyer
+	scss_lint
+	selenium-webdriver
+	sentry-raven
+	sexp_processor
+	shellany
+	shoryuken
+	shoulda-matchers
+	simplecov
+	simplecov-html
+	single_cov
+	sixarm_ruby_unaccent
+	sniffybara
+	socksify
+	solargraph
+	sprockets
+	sprockets-rails
+	sql_tracker
+	statsd-instrument
+	stringex
+	strong_migrations
+	terminal-table
+	test-prof
+	therubyracer
+	thor
+	thread_safe
+	tilt
+	timecop
+	timeout
+	tty-tree
+	tzinfo
+	uglifier
+	unicode-display_width
+	unicode_utils
+	uniform_notifier
+	uri_template
+	validates_email_format_of
+	wasabi
+	webdrivers
+	webmock
+	webrick
+	websocket
+	websocket-driver
+	websocket-extensions
+	xmldsig
+	xmlenc
+	xmlmapper
+	xpath
+	yard
+	zeitwerk
+	ziptz
+   ```
+3. Move both files into the `caseflow` root folder
+4. In your Terminal, run `python3 script.py`
+5. Run `bundle install` again
+6. If any gems fail to install, manually install it by running `gem install` (e.g. `gem install pg:1.1.4`) and then run `bundle install` again to check for additional failures
+7. Once `bundle install` stops throwing errors, return to the last step for Script 2 (run ```./scripts/dev_env_setup_step2.sh```)
+
 
 OpenSSL
 ---
@@ -252,7 +566,7 @@ The following steps are an alternative to step 7 of the Running Caseflow section
     * d. `make reset`
         * i. Resets caseflow and ETL database schemas, seeds databases, and enables feature flags
         * **If `make reset` returns database not found error:
-            * a. Run command `bundle exec rake db:drop`
+            * a. Run command `bundle exec rake db:drop:primary`
             * b. Download caseflow-db-backup.gz (not able to share this download via policy, ask in the slack channel)
             * c. Enter terminal, navigate to ~/Downloads
             * e. Run command

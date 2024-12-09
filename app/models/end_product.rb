@@ -23,7 +23,9 @@ class EndProduct
     "930AMADOR" => "AMA Difference of Opinion - Rating",
     "930AMADONR" => "AMA Difference of Opinion - NR",
     "930DORPMC" => "PMC AMA Difference of Opinion - Rating",
-    "930DONRPMC" => "PMC AMA Difference of Opinion - NR"
+    "930DONRPMC" => "PMC AMA Difference of Opinion - NR",
+    "930ADORPMC" => "PMC AMA Difference of Opinion - Rating",
+    "930ADONRPMC" => "PMC AMA Difference of Opinion - NR"
   }.freeze
 
   RAMP_CODES = {

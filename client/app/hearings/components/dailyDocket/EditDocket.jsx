@@ -30,7 +30,7 @@ import { fullWidth } from 'app/queue/constants';
 import { REQUEST_TYPE_OPTIONS } from 'app/hearings/constants';
 import HEARING_REQUEST_TYPES from 'constants/HEARING_REQUEST_TYPES';
 import ApiUtil from 'app/util/ApiUtil';
-import { getRegionalOffice, readableDocketType, formatRoomOption } from 'app/hearings/utils';
+import { getRegionalOffice, readableDocketType, formatRoomOption, splitSelectedTime } from 'app/hearings/utils';
 import COPY from '../../../../COPY';
 import { DocketStartTimes } from '../DocketStartTimes';
 
@@ -112,6 +112,16 @@ export const EditDocket = (props) => {
     );
   };
 
+  const handleStartTimeChange = (value) => {
+    // Process the start time value to return the time without a timezone
+    const selectedTime = splitSelectedTime(value)[0];
+
+    // Convert the value from '8:00 AM Eastern Time' to '8:00'
+    const finalValue = moment(selectedTime, 'h:mm a').format('HH:mm');
+
+    setFirstSlotTime(finalValue);
+  };
+
   const handleChange = (key) => (value) => {
     // If changing from Central to some other request type, regional office needs to be cleared for reselection
     if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.central) {
@@ -177,6 +187,7 @@ export const EditDocket = (props) => {
               amStartTime={travel ? '9:00' : '8:30'}
               pmStartTime={travel ? '13:00' : '12:30'}
               roTimezone={fields?.regionalOffice?.timezone}
+              hearingDayDate={props?.docket?.scheduledFor}
             />
           }
           {!virtual && (
@@ -218,15 +229,16 @@ export const EditDocket = (props) => {
                 label="Start Time of Slots"
                 enableZone
                 localZone="America/New_York"
-                onChange={setFirstSlotTime}
+                onChange={handleStartTimeChange}
                 value={firstSlotTime}
+                hearingDayDate={props?.docket?.scheduledFor}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={`${props?.docket?.scheduledFor}T${firstSlotTime}:00-${zoneOffset}`}
+                  slotStartTime={`${props?.docket?.scheduledFor}T${firstSlotTime}:00${zoneOffset}`}
                   slotLength={fields?.slotLengthMinutes}
                   slotCount={numberOfSlots}
                   hearingDate={props?.docket?.scheduledFor}

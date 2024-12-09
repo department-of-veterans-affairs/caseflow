@@ -1,1 +1,0 @@
-VANotifyService = (ApplicationController.dependencies_faked? ? Fakes::VANotifyService : ExternalApi::VANotifyService)

@@ -17,11 +17,13 @@ export const mapDataToInitialState = function(props = {}) {
     userIsVhaAdmin,
     userCanSplitAppeal,
     userCanRequestIssueUpdates,
+    isRemand,
     userFullName,
     userCssId,
     isLegacy,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
@@ -47,6 +49,7 @@ export const mapDataToInitialState = function(props = {}) {
     userIsVhaAdmin,
     userCanSplitAppeal,
     userCanRequestIssueUpdates,
+    isRemand,
     userCssId,
     userFullName,
     isLegacy,
@@ -69,7 +72,8 @@ export const mapDataToInitialState = function(props = {}) {
     updatedIssues: null,
     editEpUpdateError: null,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   };
 };
 
