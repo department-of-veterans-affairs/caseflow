@@ -73,7 +73,7 @@ export const AddTasksAppealsView = (props) => {
     <div className="gray-border" >
       <div className="review-tasks-and-appeal-box">
         <h1 className="review-tasks-and-appeals-title">Review Tasks & Appeals</h1>
-        <p>Review any previously completed tasks by the mail team and add new tasks for
+        <p>Review any previously completed tasks by the Inbound Ops team and add new tasks for
       either the mail package or for linked appeals, if any.</p>
         <div>
           <h2 className="mail-tasks-title">Mail Tasks</h2>

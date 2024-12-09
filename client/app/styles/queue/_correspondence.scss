@@ -386,8 +386,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-related-correspondence {
-  border: 2px solid $color-gray-lighter;
-  margin-bottom: 5rem;
+  border: 1px solid $color-gray-lighter;
   padding: 3rem 4rem;
 }
 
@@ -529,12 +528,17 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-direction: column;
   overflow-y: scroll;
   max-height: 400px;
-  padding: 0% 10px 1%;
   width: 73%;
   overflow-x: hidden;
   transform: scale(1.3);
   translate: 0;
-  margin: 80px auto 50px 100px;
+  margin: 80px auto 50px 74px;
+
+  .cf-form-checkbox {
+    label {
+      vertical-align: sub;
+    }
+  }
 }
 
 .checkbox-modal-size-corr-details {
@@ -557,8 +561,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .confirm-correspondence-view-border {
-  border: 2px solid $color-gray-lighter;
-  margin-bottom: 20px;
+  border: 1px solid $color-gray-lighter;
 }
 
 .checkbox-column-inline-style {
@@ -603,7 +606,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .add-task-appeals-styling {
 
-  border: 2px solid $color-gray-lighter;
+  border: 1px solid $color-gray-lighter;
   padding: 0.5rem 2.5rem;
   height: 215px;
 }
@@ -1050,10 +1053,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .mail-tasks-option-left-styling {
   display: inline-block;
   margin-right: 14rem;
+
+  span {
+    vertical-align: sub;
+  }
 }
 
 .mail-tasks-option-right-styling {
   display: inline-block;
+
+  span {
+    vertical-align: sub;
+  }
 }
 
 .tasks-related-to-an-appeal-title {
@@ -1097,14 +1108,17 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .task-selection-box-for-new-tasks {
   display: block;
   padding: 2rem;
-  margin-bottom: 3rem;
-  width: 50rem;
-
-  }
+  //margin-bottom: 3rem;
+  max-width: 45rem;
+}
 
 .task-selection-dropdown-box {
   width: 100%;
+
+  .task-selection-title {
+    margin-bottom: 10px;
   }
+}
 
 .area-above-add-tasks-button-not-related {
   padding: 0;
@@ -1147,17 +1161,17 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-task-container {
-  margin-left: 5%;
+  //margin-left: 5%;
   padding-right: 20px;
 }
 
 .add-tasks-button-for-unrelated-appeals {
-  padding: 2.5rem;
+  padding: 2rem 2.5rem;
   }
 
 
 .margin-top-for-add-task-view {
-  padding-top: 20px;
+  padding-top: 30px;
 }
 
 .width-of-add-tasks-button-text {
@@ -1328,12 +1342,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .myletters {
   width: 100%;
   display: inline-block;
+  padding-top: 20px;
 }
 
 .letter {
   width: 50%;
   float: left;
-  height: 840px;
 }
 
 .add-letter-container {
@@ -1509,6 +1523,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-top: 20px;
   }
 
+  .correspondence-details-alert-banner {
+    margin-right: 20px;
+  }
 }
 
 .task-not-related-title {
@@ -1907,13 +1924,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .select-container-styles {
   width: 100%;
   display: inline-block;
-  margin-bottom: 1.5rem;
+  padding-bottom: 2rem;
 }
 
 .new-tasks-gray-border-styling {
   display: block;
-  border: 1px solid $color-cream;
-  padding: 1rem;
+  //border: 1px solid $color-cream;
+  padding: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1929,6 +1946,17 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .add-task-dropdown-style {
   // Override the control (outer container) for the select dropdown
+
+  .css-11shgvv-Menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    background-color: $color-white;
+  }
+
   .react-select__control {
     border-color: $color-black;
     border-radius: 0;
@@ -1998,10 +2026,16 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-left: 240px;
 }
 
-notes-column {
+.notes-column {
   width: 25%;
 }
 
 .add-related-task-modal .cf-modal-body {
   width: 550px;
 }
+
+.return-to-iot-radio-field {
+  margin-bottom: 20px;
+}
+
+
