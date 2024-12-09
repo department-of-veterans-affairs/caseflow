@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { fetchCorrespondencesAppealsTasks, fetchVeteranInformation, updateCorrespondenceInfo,
+import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
   updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
@@ -470,7 +470,6 @@ const CorrespondenceDetails = (props) => {
     });
 
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
-    dispatch(fetchVeteranInformation);
   }, []);
 
   const correspondenceTasks = () => {
@@ -1072,8 +1071,7 @@ CorrespondenceDetails.propTypes = {
   correspondence_uuid: PropTypes.string,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   appealsFromStore: PropTypes.object,
-  deleteAppeal: PropTypes.func,
-  fetchVeteranInformation: PropTypes.func
+  deleteAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -1087,8 +1085,7 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     updateCorrespondenceInfo,
     deleteAppeal,
-    updateExpandedLinkedAppeals,
-    fetchVeteranInformation
+    updateExpandedLinkedAppeals
   }, dispatch)
 );
 
