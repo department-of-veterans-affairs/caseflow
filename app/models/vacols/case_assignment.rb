@@ -101,6 +101,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
     # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
+             "brieff.bfcurloc as current_location",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
              "brieff.bfdloout as assigned_to_location_date",

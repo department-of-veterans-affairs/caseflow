@@ -8,9 +8,9 @@ class LegacyWorkQueue
       tasks_from_vacols_tasks(vacols_tasks, user)
     end
 
-    def tasks_by_appeal_id(appeal_id)
+    def tasks_by_appeal_id(appeal_id, current_user = nil)
       vacols_tasks = repository.tasks_for_appeal(appeal_id)
-      tasks_from_vacols_tasks(vacols_tasks)
+      tasks_from_vacols_tasks(vacols_tasks, current_user)
     end
 
     def repository
@@ -19,12 +19,22 @@ class LegacyWorkQueue
 
     private
 
+    def allow_scm_to_advance_to_judge(task, user)
+      %w[81 83].include?(task["current_location"]) &&
+        user&.can_act_on_behalf_of_judges? &&
+        FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_noblock)
+    end
+
     def tasks_from_vacols_tasks(vacols_tasks, user = nil)
       return [] if vacols_tasks.empty?
 
       vacols_appeals = repository.appeals_by_vacols_ids(vacols_tasks.map(&:vacols_id))
 
       vacols_tasks.zip(vacols_appeals).map do |task, appeal|
+        if allow_scm_to_advance_to_judge(task, user)
+          next AssignmentLegacyTask.from_vacols(task, appeal, user)
+        end
+
         user = validate_or_create_user(user, task.assigned_to_css_id)
 
         task_class = AttorneyLegacyTask
