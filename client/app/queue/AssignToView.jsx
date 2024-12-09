@@ -16,12 +16,16 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
 const validInstructions = (instructions) => {
   return instructions?.length > 0;
+};
+
+const validAssignee = (selectedValue) => {
+  return selectedValue !== null;
 };
 
 const selectedAction = (props) => {
@@ -328,7 +332,9 @@ class AssignToView extends React.Component {
                 name="Assign to selector"
                 searchable
                 hideLabel={actionData.drop_down_label ? null : true}
-                errorMessage={highlightFormItems && highlightInvalidFormItems ? 'This field is required' : null}
+                errorMessage={
+                  highlightFormItems && !validAssignee(this.state.selectedValue) ? 'This field is required' : null
+                }
                 label={this.determineDropDownLabel(actionData)}
                 placeholder={this.determinePlaceholder(this.props, actionData)}
                 value={this.state.selectedValue}
@@ -356,8 +362,9 @@ class AssignToView extends React.Component {
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
             optional={actionData.body_optional}
-            // eslint-disable-next-line max-len
-            errorMessage={highlightFormItems && !validInstructions(this.state.instructions) ? 'Instructions field is required' : null}
+            errorMessage={highlightFormItems &&
+              !validInstructions(this.state.instructions) ? 'Instructions field is required' : null
+            }
             required={this.props.task.type === 'JudgeLegacyDecisionReviewTask'}
           />
         )}
@@ -379,7 +386,6 @@ AssignToView.propTypes = {
     veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
-  highlightInvalidFormItems: PropTypes.func,
   highlightFormItems: PropTypes.bool,
   isReassignAction: PropTypes.bool,
   isTeamAssign: PropTypes.bool,
@@ -412,7 +418,6 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       requestSave,
       onReceiveAmaTasks,
-      highlightInvalidFormItems,
       legacyReassignToJudge,
       setOvertime,
       resetSuccessMessages
