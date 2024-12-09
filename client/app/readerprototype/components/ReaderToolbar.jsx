@@ -1,21 +1,27 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import Button from '../../components/Button';
-import Link from '../../components/Link';
 import { DownloadIcon } from '../../components/icons/DownloadIcon';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { FitToScreenIcon } from '../../components/icons/FitToScreenIcon';
 import { LeftChevronIcon } from '../../components/icons/LeftChevronIcon';
 import { RotateIcon } from '../../components/icons/RotateIcon';
 import { SearchIcon } from '../../components/icons/SearchIcon';
+import Link from '../../components/Link';
+import { INTERACTION_TYPES } from '../../reader/analytics';
+import { stopPlacingAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
-import { CATEGORIES } from '../util/readerConstants';
+import { togglePdfSidebar } from '../../reader/PdfViewer/PdfViewerActions';
+import { CATEGORIES } from '../utils/readerConstants';
+import { pdfToolbarStyles } from '../utils/styles';
 
 const ReaderToolbar = ({
   resetZoomLevel,
   documentPathBase,
   doc,
-  showClaimsFolderNavigation,
+  showClaimsLink,
   setZoomOutLevel,
   disableZoomOut,
   setZoomInLevel,
@@ -24,8 +30,7 @@ const ReaderToolbar = ({
   rotateDocument,
   toggleSearchBar,
   showSearchBar,
-  showSideBar,
-  toggleSideBar
+  hideSideBar,
 }) => {
   // eslint-disable-next-line no-unused-vars
   const [_searchTerm, setSearchTerm] = useState(null);
@@ -40,6 +45,8 @@ const ReaderToolbar = ({
     toggleSearchBar(true);
   };
 
+  const dispatch = useDispatch();
+
   const handleClickDocumentTypeLink = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
   };
@@ -49,16 +56,26 @@ const ReaderToolbar = ({
     window.open(`${doc.content_url}?type=${doc.type}&download=true`);
   };
 
+  const onBackToClaimsFolder = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    dispatch(stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI));
+  };
+
   return (
     <div id="prototype-toolbar" className="cf-pdf-header cf-pdf-toolbar">
-      <div className="toolbar-section">
-        {showClaimsFolderNavigation && (
-          <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte">
-            <LeftChevronIcon /> &nbsp; Back
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
+        {showClaimsLink && (
+          <Link
+            to={`${documentPathBase}`}
+            name="backToClaimsFolder"
+            button="matte"
+            onClick={onBackToClaimsFolder}>
+            <LeftChevronIcon />
+            &nbsp; Back
           </Link>
         )}
       </div>
-      <div className="toolbar-section">
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
         <span className="category-icons-and-doc-type">
           <span className="cf-pdf-doc-category-icons">
             <DocumentCategoryIcons doc={doc} />
@@ -82,7 +99,7 @@ const ReaderToolbar = ({
           </span>
         </span>
       </div>
-      <div className="toolbar-section">
+      <div className="toolbar-section"  {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
         <span className="cf-pdf-button-text">Zoom:</span>
         <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
         <Button
@@ -137,16 +154,16 @@ const ReaderToolbar = ({
         >
           <SearchIcon />
         </Button>
-        {!showSideBar &&
-          <span>
+        {hideSideBar && (
+          <span {...pdfToolbarStyles.openSidebarMenu}>
             <Button
               name="open sidebar menu"
               classNames={['cf-pdf-button']}
-              onClick={toggleSideBar}>
+              onClick={() => dispatch(togglePdfSidebar())}>
               <strong> Open menu </strong>
             </Button>
           </span>
-        }
+        )}
       </div>
     </div>
   );
@@ -160,7 +177,7 @@ ReaderToolbar.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
   }),
-  showClaimsFolderNavigation: PropTypes.bool,
+  showClaimsLink: PropTypes.bool,
   resetZoomLevel: PropTypes.func,
   setZoomOutLevel: PropTypes.func,
   disableZoomOut: PropTypes.bool,
@@ -168,8 +185,7 @@ ReaderToolbar.propTypes = {
   disableZoomIn: PropTypes.bool,
   zoomLevel: PropTypes.number,
   rotateDocument: PropTypes.func,
-  showSideBar: PropTypes.bool,
-  toggleSideBar: PropTypes.func,
+  hideSideBar: PropTypes.bool,
   toggleSearchBar: PropTypes.func,
   showSearchBar: PropTypes.bool,
 };
