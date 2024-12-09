@@ -1452,7 +1452,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         context "versus a CAVC only appeal" do
           let!(:cavc_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
 
-          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+          it "the CAVC appeal has the higher priority", bypass_cleaner: true do
             subject
 
             expect(
@@ -1465,7 +1465,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         context "versus an AOD only appeal" do
           let!(:aod_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
 
-          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+          it "the AOD appeal has the higher priority", bypass_cleaner: true do
             subject
 
             expect(
