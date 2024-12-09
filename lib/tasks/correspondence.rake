@@ -7,34 +7,36 @@ require_relative "../../db/seeds/vbms_document_types"
 namespace :correspondence do
   desc "setup data for intake correspondence (autotext and correspondence type)in UAT/PROD"
   task :setup_correspondence_data, [] => :environment do |_|
-    STDOUT.puts("Creating data for Auto Text Table")
+    $stdout.puts("Creating data for Auto Text Table")
     create_auto_text_table
-    STDOUT.puts("Creating data for VBMS Document Types Table")
+    $stdout.puts("Creating data for VBMS Document Types Table")
     create_document_types
-    STDOUT.puts("Creating data for Correspondence Types Table")
+    $stdout.puts("Creating data for Correspondence Types Table")
     create_correspondence_types
+    $stdout.puts("Creating Inbound Ops Team permissions")
+    create_inbound_ops_permissions
   end
 
   desc "create correspondence test data in demo given a veteran file number (does not work in UAT due to FactoryBot)"
   task :create_correspondence_test_data, [] => :environment do |_|
     catch(:error) do
-      throw :error, STDOUT.puts("Please add a user to the request store") if RequestStore[:current_user].blank?
-      STDOUT.puts("This script will create correspondences from queue_correspondences.rb and\n
+      throw :error, $stdout.puts("Please add a user to the request store") if RequestStore[:current_user].blank?
+      $stdout.puts("This script will create correspondences from queue_correspondences.rb and\n
         multi_correspondences.rb for a veteran based off their file number\n
         These will be assigned to RequstStore[:current_user] (currently
           #{RequestStore[:current_user].css_id})")
-      STDOUT.puts("Enter the veteran's file number")
+      $stdout.puts("Enter the veteran's file number")
       veteran_file_number = STDIN.gets.chomp
 
       vet = Veteran.find_by_file_number_or_ssn(veteran_file_number)
-      throw :error, STDOUT.puts("Veteran cannot be found") if vet.blank?
+      throw :error, $stdout.puts("Veteran cannot be found") if vet.blank?
 
-      STDOUT.puts("Running multi_correspondences.rb")
+      $stdout.puts("Running multi_correspondences.rb")
       Seeds::MultiCorrespondences.new.seed!(RequestStore[:current_user], vet)
 
-      STDOUT.puts("Running queue_correspondences.rb")
+      $stdout.puts("Running queue_correspondences.rb")
       Seeds::QueueCorrespondences.new.seed!(RequestStore[:current_user], vet)
-      STDOUT.puts("Success!! Correspondences have been seeded. Well done friend!")
+      $stdout.puts("Success!! Correspondences have been seeded. Well done friend!")
     end
   end
 
@@ -45,9 +47,9 @@ namespace :correspondence do
       veteran = Veteran.find_by_file_number_or_ssn(args.vet_file_number.to_s)
       user = RequestStore[:current_user]
 
-      throw :error, STDOUT.puts("Correspondences created must be greater than 0") if num_cor <= 0
-      throw :error, STDOUT.puts("Veteran not found") if veteran.blank?
-      throw :error, STDOUT.puts("No user in the request store") if user.blank?
+      throw :error, $stdout.puts("Correspondences created must be greater than 0") if num_cor <= 0
+      throw :error, $stdout.puts("Veteran not found") if veteran.blank?
+      throw :error, $stdout.puts("No user in the request store") if user.blank?
 
       (1..num_cor).each do
         corr_type = CorrespondenceType.all.sample
@@ -129,6 +131,27 @@ def create_document_types
     end
   end
   VbmsDocumentType.import(doc_types, validate: false) unless doc_types.empty?
+end
+
+def create_inbound_ops_permissions
+  OrganizationPermission.valid_permission_names.each do |permission|
+    OrganizationPermission.find_or_create_by(
+      permission: permission,
+      organization: InboundOpsTeam.singleton
+    ) do |perm|
+      perm.enabled = false
+      perm.description = "placeholder description"
+    end
+  end
+  OrganizationPermission.find_by(permission: "superuser").update!(
+    description: "Superuser: Split, Merge, and Reassign",
+    default_for_admin: true
+  )
+  OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
+  OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
+    description: "Receieve \"NOD Mail\"",
+    parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
+  )
 end
 
 # rubocop:disable Metrics/MethodLength
