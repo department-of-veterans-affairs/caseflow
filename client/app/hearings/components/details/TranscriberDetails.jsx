@@ -20,7 +20,7 @@ const TranscriberDetails = ({ hearing }) => {
         <div>
           <label style={labelStyles}>Recorder</label>
           <p style={pStyles}>
-            {StringUtil.capitalizeFirst(getSafeValue(hearing?.determineServiceName))}
+            {StringUtil.capitalizeFirst(getSafeValue(hearing?.conferenceProvider))}
           </p>
         </div>
         <div>
