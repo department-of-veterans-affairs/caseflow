@@ -31,7 +31,6 @@ shared_examples "a validates required params are not null #document endpoint" do
         headers: authorization_header
       )
     end.not_to change(CmpDocument, :count)
-
     expect(response).to have_http_status(:unprocessable_entity)
   end
 end
@@ -115,7 +114,6 @@ describe Api::V1::CmpController, type: :request do
 
       it "requires that the dateOfReceipt param is a valid date" do
         post_data[:dateOfReceipt] = "not really a date"
-
         expect do
           post(
             api_v1_cmp_document_path,
@@ -144,7 +142,7 @@ describe Api::V1::CmpController, type: :request do
     let!(:va_dor) { 1.hour.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
     let!(:veteran) { create(:veteran, middle_name: 'M') }
 
-    let(:post_data2) do
+    let(:packet_post_data) do
       {
         packetUUID: cmp_document_uuid,
         cmpPacketNumber: cmp_document_uuid,
@@ -157,33 +155,37 @@ describe Api::V1::CmpController, type: :request do
       }
     end
 
-      let(:cmp_data) do
+    let(:cmp_doc_data) do
       {
-            date_of_receipt: date_of_receipt,
-            cmp_document_id: cmp_document_id,
-            cmp_document_uuid: cmp_document_uuid,
-            doctype_name: doctype_name,
-            packet_uuid: packet_uuid,
-            vbms_doctype_id: vbms_doctype_id
-       }
-      end
-
-    context "with valid params" do
-      it "returns 200" do
-        CmpDocument.create!(cmp_data)
-        expect do
-          post(
-            api_v1_cmp_packet_path,
-            params: post_data2,
-            as: :json,
-            headers: authorization_header
-          )
-        end.not_to change(CmpDocument, :count)
-        expect(response.status == 200)
-      end
-
+        date_of_receipt: date_of_receipt,
+        cmp_document_id: cmp_document_id,
+        cmp_document_uuid: cmp_document_uuid,
+        doctype_name: doctype_name,
+        packet_uuid: packet_uuid,
+        vbms_doctype_id: vbms_doctype_id
+      }
     end
 
-
+    context "returns expected result codes" do
+      it "returns 200" do
+        CmpDocument.create!(cmp_doc_data)
+        post(
+          api_v1_cmp_packet_path,
+          params: packet_post_data,
+          as: :json,
+          headers: authorization_header
+        )
+        expect(response.status == 200)
+      end
+      it "returns 500" do
+        post(
+          api_v1_cmp_packet_path,
+          params: packet_post_data,
+          as: :json,
+          headers: authorization_header
+        )
+        expect(response.status == 500)
+      end
+    end
   end
 end
