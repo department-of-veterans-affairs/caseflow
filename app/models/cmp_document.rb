@@ -23,13 +23,16 @@ class CmpDocument < ApplicationRecord
 
     # For yyyy-mm-dd format:
     # Require non-zero first digit; require the exact number of digits for each.
-    if !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
+    if !before_val.is_a?(String) && !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val.strftime("%Y-%m-%d"))
       errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
       return
     end
 
-    # Validates dateOfReceipt is in yyyy-mm-dd (csv_date) format and is parsable to a valid date
-    DateTime.strptime(before_val, Date::DATE_FORMATS[:csv_date])
+    if before_val.is_a?(String) && !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
+      errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
+      return
+    end
+
   rescue Date::Error
     errors.add(:date_of_receipt, "date_of_receipt must be a valid date")
   end
