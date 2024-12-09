@@ -7,19 +7,6 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
     User.authenticate!(user: user)
   end
 
-  def combine_time_and_date(time, timezone, date)
-    # Parse the time string into a ruby Time instance with zone
-    time_with_zone = time.in_time_zone(timezone)
-    # Make a string like "2021-04-23 08:30:00"
-    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
-    # Parse the combined string into a ruby DateTime
-    combined_datetime = time_and_date_string.in_time_zone(timezone)
-    # Format the DateTime to iso8601 like "2021-04-23T08:30:00-06:00"
-    formatted_datetime_string = combined_datetime.iso8601
-
-    formatted_datetime_string
-  end
-
   context "Verify Initial State And Basic Errors" do
     scenario "When adding a hearing day verify initial fields present" do
       visit "hearings/schedule"
@@ -203,7 +190,13 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
           # Verify db values
           expect(HearingDay.last.reload.total_slots).to eq(total_slots)
           expect(HearingDay.last.first_slot_time).to eq(first_slot_time)
-          expect(HearingDay.last.begins_at).to eq(combine_time_and_date(first_slot_time || "8:30", Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"], HearingDay.last.scheduled_for))
+          expect(HearingDay.last.begins_at)
+            .to eq(
+              HearingDay.last.send(:combine_time_and_date,
+                                   first_slot_time || "8:30",
+                                   Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"],
+                                   HearingDay.last.scheduled_for)
+            )
         end
       end
 
@@ -323,7 +316,13 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
           # Verify db values
           expect(HearingDay.last.reload.total_slots).to eq(total_slots)
           expect(HearingDay.last.first_slot_time).to eq(first_slot_time)
-          expect(HearingDay.last.begins_at).to eq(combine_time_and_date(first_slot_time || "8:30", Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"], HearingDay.last.scheduled_for))
+          expect(HearingDay.last.begins_at)
+            .to eq(
+              HearingDay.last.send(:combine_time_and_date,
+                                   first_slot_time || "8:30",
+                                   Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"],
+                                   HearingDay.last.scheduled_for)
+            )
         end
       end
 
