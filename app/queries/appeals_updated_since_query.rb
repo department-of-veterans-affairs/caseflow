@@ -29,6 +29,7 @@ class AppealsUpdatedSinceQuery
     request_issues_updates
     vbms_uploaded_documents
     issue_modification_requests
+    national_hearing_queue_entry
   ].freeze
 
   attr_reader :since_date
