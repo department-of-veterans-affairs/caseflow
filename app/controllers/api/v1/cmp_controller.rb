@@ -22,6 +22,13 @@ class Api::V1::CmpController < Api::ApplicationController
 
   def packet
     new_packet = CmpMailPacket.new(packet_params)
+    if !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(packet_params[:va_dor])
+      render json: {
+        message: "Invalid VA DOR format. Must be YYYY-MM-DD",
+        status: :unprocessable_entity
+      }
+      return
+    end
     if new_packet.save
       cmp_doc = CmpDocument.find_by(cmp_document_uuid: new_packet[:packet_uuid])
       cmp_doc.update!(cmp_mail_packet: new_packet)
