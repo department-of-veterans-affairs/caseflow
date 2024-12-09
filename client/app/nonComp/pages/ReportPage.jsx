@@ -28,7 +28,7 @@ import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 import { get, isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
-import { RESET_FORM_VALUES } from 'app/nonComp/constants';
+import { RESET_REPORT_PAGE_FORM_VALUES } from 'app/nonComp/constants';
 
 import {
   REPORT_TYPE_OPTIONS,
@@ -296,6 +296,7 @@ const ReportPage = ({ history }) => {
   const specificStatus = savedSearch?.specificStatus;
   const specificEventType = savedSearch?.specificEventType;
 
+  /*  eslint-disable camelcase */
   const defaultFormValues = {
     reportType: savedSearch?.reportType || '',
     conditions,
@@ -336,6 +337,7 @@ const ReportPage = ({ history }) => {
       edit_of_request: specificEventType?.cancellation_of_request || false,
     }
   };
+  /*  eslint-enable camelcase */
 
   const methods = useForm({
     defaultValues: { ...defaultFormValues },
@@ -442,7 +444,7 @@ const ReportPage = ({ history }) => {
 
   const handleClearFilters = () => {
     dispatch(selectSavedSearch({}));
-    reset(RESET_FORM_VALUES);
+    reset(RESET_REPORT_PAGE_FORM_VALUES);
   };
 
   useEffect(() => {

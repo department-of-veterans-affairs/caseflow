@@ -27,7 +27,7 @@ export const BOA_ADDRESS = '425 I St NW, Washington DC, 20001';
 export const GENERATE_REPORT_ERROR =
   'An error occurred, please try again. If the problem persists, submit a help desk ticket.';
 
-export const RESET_FORM_VALUES = {
+export const RESET_REPORT_PAGE_FORM_VALUES = {
   reportType: '',
   conditions: [],
   timing: {

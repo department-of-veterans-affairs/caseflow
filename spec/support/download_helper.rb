@@ -41,4 +41,13 @@ module DownloadHelpers
   def clear_downloads
     FileUtils.rm_rf(Dir.glob(File.join(WORKDIR, "*")))
   end
+
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
+
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
+  end
 end

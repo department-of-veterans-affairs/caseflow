@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import { get, isEmpty } from 'lodash';
 
 export const ConditionDropdown = ({ control, filteredOptions, name, field }) => {
-  const isDisabled = !isEmpty(field.condition);
-  let [disabled, setDisabled] = useState(isDisabled);
+  const [disabled, setDisabled] = useState(!isEmpty(field.condition));
 
   const dropdownName = `${name}.condition`;
   const { errors } = useFormContext();
