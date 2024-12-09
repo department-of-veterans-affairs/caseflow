@@ -36,6 +36,7 @@ const CorrespondenceDetails = (props) => {
   const expandedLinkedAppeals = props.expandedLinkedAppeals;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
+  const veteranInformation = props.veteranInformation;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -501,7 +502,7 @@ const CorrespondenceDetails = (props) => {
               <a
                 rel="noopener noreferrer"
                 target="_blank"
-                href={`/reader/appeal/${correspondence.veteranFileNumber}`}
+                href={`/reader/appeal/${veteranInformation.fileNumber}`}
               >
                 View veteran documents
                 <div className="external-link-icon-wrapper">
@@ -554,7 +555,7 @@ const CorrespondenceDetails = (props) => {
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                   autoTexts= {props.autoTexts}
-
+                  veteranFullName= {veteranInformation.fullName}
                 />
               ))}
             </div>
@@ -641,7 +642,7 @@ const CorrespondenceDetails = (props) => {
               </tr>
               <tr>
                 <td className="corr-table-borderless-first-item">
-                  {correspondenceInfo?.veteranFullName} ({correspondenceInfo?.veteranFileNumber})
+                  {veteranInformation.fullName} ({veteranInformation.fileNumber})
                 </td>
                 <td>{correspondenceInfo?.correspondenceType}</td>
                 <td>{correspondenceInfo?.nod ? 'NOD' : 'Non-NOD'}</td>
@@ -982,12 +983,12 @@ const CorrespondenceDetails = (props) => {
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details correspondence-details-page">
         <div className="correspondence-details-header">
-          <h1> {correspondence?.veteranFullName} </h1>
+          <h1> {veteranInformation.fullName} </h1>
           <div className="copy-id unwrap-text">
             <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
               label="copy-id"
-              text={props.correspondence.veteranFileNumber}
+              text={veteranInformation.fileNumber}
             />
           </div>
           <p className="unwrap-text"><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
@@ -1071,7 +1072,14 @@ CorrespondenceDetails.propTypes = {
   correspondence_uuid: PropTypes.string,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   appealsFromStore: PropTypes.object,
-  deleteAppeal: PropTypes.func
+  deleteAppeal: PropTypes.func,
+  veteranInformation: PropTypes.shape({
+    id: PropTypes.number,
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    fileNumber: PropTypes.string,
+    fullName: PropTypes.string
+  })
 };
 
 const mapStateToProps = (state) => ({
