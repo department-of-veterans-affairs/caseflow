@@ -22,10 +22,7 @@ class Api::V1::CmpController < Api::ApplicationController
 
   def packet
     new_packet = CmpMailPacket.new(packet_params)
-    # new_packet.update!(va_dor: new_packet.va_dor.strftime("%Y-%m-%d"))
     if new_packet.save
-      binding.pry
-
       cmp_doc = CmpDocument.find_by(cmp_document_uuid: new_packet[:packet_uuid])
       cmp_doc.update!(cmp_mail_packet: new_packet)
       render json: { message: "CMP packet successfully created" }, status: :ok
@@ -41,12 +38,12 @@ class Api::V1::CmpController < Api::ApplicationController
 
   def cmp_document_params
     {
-      cmp_document_id: params.require(:documentId),
-      cmp_document_uuid: params.require(:documentUUID),
-      date_of_receipt: params.require(:dateOfReceipt).to_s,
-      doctype_name: params.require(:nonVbmsDocTypeName),
-      packet_uuid: params.require(:packetUUID),
-      vbms_doctype_id: params.require(:vbmsDocTypeId)
+      cmp_document_id: params[:documentId],
+      cmp_document_uuid: params[:documentUuid],
+      date_of_receipt: params[:dateOfReceipt],
+      doctype_name: params[:nonVbmsDocTypeName],
+      packet_uuid: params[:packetUuid],
+      vbms_doctype_id: params[:vbmsDocTypeId]
     }
   end
 
