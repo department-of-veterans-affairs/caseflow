@@ -89,7 +89,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         caseType: "Original",
         hearingDate: hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_1.hearing_type,
-        fileStatus: transcription_file_1.file_status
+        fileStatus: transcription_file_1.file_status,
+        fileName: transcription_file_1.file_name
       }
     end
 
@@ -103,7 +104,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         caseType: "Original",
         hearingDate: hearing_2.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_2.hearing_type,
-        fileStatus: transcription_file_2.file_status
+        fileStatus: transcription_file_2.file_status,
+        fileName: transcription_file_2.file_name
       }
     end
 
@@ -118,7 +120,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         caseType: "Original",
         hearingDate: legacy_hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_3.hearing_type,
-        fileStatus: transcription_file_3.file_status
+        fileStatus: transcription_file_3.file_status,
+        fileName: transcription_file_3.file_name
       }
     end
 
@@ -133,7 +136,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
-        fileStatus: transcription_file_4.file_status
+        fileStatus: transcription_file_4.file_status,
+        fileName: transcription_file_4.file_name
       }
     end
 
@@ -149,6 +153,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
         fileStatus: transcription_file_4.file_status,
+        fileName: transcription_file_4.file_name,
         workOrder: transcription_1.task_number,
         expectedReturnDate: transcription_package_1.expected_return_date.to_formatted_s(:short_date),
         returnDate: transcription_file_4.date_returned_box.to_formatted_s(:short_date),
@@ -168,6 +173,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
         fileStatus: transcription_file_4.file_status,
+        fileName: transcription_file_4.file_name,
         workOrder: transcription_1.task_number,
         uploadDate: transcription_file_4.date_upload_box.to_formatted_s(:short_date),
         returnDate: transcription_file_4.date_returned_box.to_formatted_s(:short_date),
@@ -225,7 +231,6 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
 
     it "filters by completed tab and adds extra fields" do
       get :transcription_file_tasks, params: { tab: "Completed" }
-
       expected_response = {
         task_page_count: 1,
         tasks: {
@@ -440,7 +445,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_1, transcription_response_2, transcription_response_3, transcription_response_4]
+          data: [transcription_response_1, transcription_response_2, transcription_response_4, transcription_response_3]
         },
         tasks_per_page: 15,
         total_task_count: 4
