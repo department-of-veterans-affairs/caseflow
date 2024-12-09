@@ -551,7 +551,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedUploadTranscriptionVBMSModal = (props) => (
-    <UploadTranscriptionVBMSNoErrorModal {...props.match.params} />
+    <UploadTranscriptionVBMSNoErrorModal
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (

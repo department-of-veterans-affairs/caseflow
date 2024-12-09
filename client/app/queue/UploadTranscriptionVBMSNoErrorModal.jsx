@@ -1,123 +1,88 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
 
+import Modal from '../components/Modal';
+import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
-
-import { requestPatch } from './uiReducer/uiActions';
-import { setAppealAttrs } from './QueueActions';
-
-import {
-  appealWithDetailSelector,
-  taskById
-} from './selectors';
-import { marginTop } from './constants';
 import COPY from '../../COPY';
+import { requestPatch } from './uiReducer/uiActions';
 
-import QueueFlowModal from './components/QueueFlowModal';
+const UploadTranscriptionVBMSNoErrorModal = (props) => {
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [notes, setNotes] = useState('');
+  const dispatch = useDispatch();
 
-class UploadTranscriptionVBMSNoErrorModal extends React.PureComponent {
+  useEffect(() => {
+    setIsSubmitDisabled(notes === '');
+  }, [notes]);
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      notes: '',
-    };
-  }
-
-  validateForm = () => Boolean(this.state.notes);
-
-  formatInstructions = () => {
-    return [
-      COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
-      COPY.UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE,
-      this.state.notes
-    ];
+  const cancel = () => {
+    props.closeModal();
   };
 
-  buildPayload = () => {
-    return {
-      data: {
-        task: {
-          instructions: this.formatInstructions()
+  const redirectAfterSubmit = () => {
+    window.location = `/queue/appeals/${props.appealId}`;
+  };
+
+  const submit = () => {
+    const formatInstructions = () => {
+      return [
+        COPY.REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS,
+        COPY.UPLOAD_TRANSCRIPTION_VBMS_NO_ERRORS_ACTION_TYPE,
+        notes
+      ];
+    };
+
+    const requestParams = () => {
+      return {
+        data: {
+          task: { instructions: formatInstructions() },
+          appeal_id: props.appealId
         }
-      }
-    };
-  }
-
-  submit = () => {
-    const { task, appeal } = this.props;
-    const payload = this.buildPayload();
-
-    const successMsg = {
-      title: sprintf(COPY.REVIEW_TRANSCRIPTION_VBMS_MESSAGE, appeal.veteranFullName)
+      };
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}/upload_transcription_to_vbms`, payload, successMsg);
-  }
-
-  actionForm = () => {
-    const { notes } = this.state;
-
-    return <React.Fragment>
-      <div>
-        <div>{COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT}</div>
-        <div {...marginTop(4)}>
-          <TextareaField
-            name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
-            onChange={(value) => this.setState({ notes: value })}
-            placeholder= "This is the reason this is being put on hold."
-            value={notes} />
-        </div>
-      </div>
-    </React.Fragment>;
+    dispatch(
+      requestPatch(`/tasks/${props.taskId}/upload_transcription_to_vbms`, requestParams())
+    ).then(() => {
+      redirectAfterSubmit();
+    });
   };
 
-  render = () => {
-    return <QueueFlowModal
-      validateForm={this.validateForm}
-      submit={this.submit}
-      title={COPY.UPLOAD_TRANSCRIPTION_VBMS_TITLE}
-      button={COPY.UPLOAD_TRANSCRIPTION_VBMS_BUTTON}
-      pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
-      submitButtonClassNames={['usa-button']}
-      submitDisabled={!this.validateForm()}
-    >
-      { this.actionForm() }
-    </QueueFlowModal>;
-  }
-}
+  const handleTextareaFieldChange = (event) => {
+    setNotes(event);
+  };
 
-UploadTranscriptionVBMSNoErrorModal.propTypes = {
-  appeal: PropTypes.shape({
-    veteranFullName: PropTypes.string
-  }),
-  appealId: PropTypes.string,
-  error: PropTypes.shape({
-    title: PropTypes.string,
-    detail: PropTypes.string
-  }),
-  requestPatch: PropTypes.func,
-  setAppealAttrs: PropTypes.func,
-  task: PropTypes.shape({
-    taskId: PropTypes.string,
-    type: PropTypes.string,
-  })
+  return (
+    <Modal
+      title={COPY.UPLOAD_TRANSCRIPTION_VBMS_TITLE}
+      closeHandler={cancel}
+      confirmButton={
+        <Button
+          disabled={isSubmitDisabled}
+          onClick={submit}>{COPY.UPLOAD_TRANSCRIPTION_VBMS_BUTTON}
+        </Button>
+      }
+      cancelButton={<Button linkStyling onClick={cancel}>Cancel</Button>}
+    >
+      <p>{COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT}</p>
+      <div className="comment-size-container">
+        <TextareaField
+          id="cf-form-textarea"
+          name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
+          onChange={handleTextareaFieldChange}
+          value={notes}
+        />
+      </div>
+    </Modal>
+  );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  error: state.ui.messages.error,
-  appeal: appealWithDetailSelector(state, ownProps),
-  task: taskById(state, { taskId: ownProps.taskId })
-});
+UploadTranscriptionVBMSNoErrorModal.propTypes = {
+  closeModal: PropTypes.func,
+  taskId: PropTypes.string,
+  appealId: PropTypes.string
+};
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
-  setAppealAttrs
-}, dispatch);
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UploadTranscriptionVBMSNoErrorModal));
+export default UploadTranscriptionVBMSNoErrorModal;
