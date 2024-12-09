@@ -11,7 +11,7 @@ import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
 import TabWindow from 'app/components/TabWindow';
 import SearchTable from 'app/queue/components/SearchTable';
 import DeleteModal from 'app/nonComp/components/DeleteModal';
-import { fetchedSearches, selectSavedSearch, disableBanner } from '../../nonComp/actions/savedSearchSlice';
+import { fetchedSearches, selectSavedSearch, clearStatus } from '../../nonComp/actions/savedSearchSlice';
 import { isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
 
@@ -34,7 +34,7 @@ const SavedSearches = () => {
 
   const handleApply = () => {
     push(`/${businessLineUrl}/report`);
-    dispatch(disableBanner(null));
+    dispatch(clearStatus(null));
   };
 
   const buttonStyling = {

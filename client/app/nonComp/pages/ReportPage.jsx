@@ -18,7 +18,7 @@ import {
   saveUserSearch,
   fetchedSearches,
   selectSavedSearch,
-  disableBanner } from 'app/nonComp/actions/savedSearchSlice';
+  clearStatus } from 'app/nonComp/actions/savedSearchSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
 import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
@@ -427,7 +427,7 @@ const ReportPage = ({ history }) => {
 
   const handleViewSavedSearch = () => {
     dispatch(selectSavedSearch({}));
-    dispatch(disableBanner(null));
+    dispatch(clearStatus(null));
   };
 
   const submitForm = (data) => {

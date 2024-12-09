@@ -80,7 +80,7 @@ const savedSearchSlice = createSlice({
     saveUserSearch: (state, action) => {
       state.saveUserSearch = action.payload;
     },
-    disableBanner: (state, action) => {
+    clearStatus: (state, action) => {
       state.status = action.payload;
     },
   },
@@ -129,4 +129,4 @@ const savedSearchSlice = createSlice({
 });
 
 export default savedSearchSlice.reducer;
-export const { selectSavedSearch, saveUserSearch, disableBanner } = savedSearchSlice.actions;
+export const { selectSavedSearch, saveUserSearch, clearStatus } = savedSearchSlice.actions;
