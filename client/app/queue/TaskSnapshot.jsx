@@ -82,7 +82,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
                 docketSwitch={docketSwitch}
               />
             )
-    )}
+          )}
         </div>
       )}
       <div {...sectionSegmentStyling}>
