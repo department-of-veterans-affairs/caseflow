@@ -187,6 +187,10 @@ class CorrespondenceDetailsController < CorrespondenceController
     correspondences_appeals_tasks
   end
 
+  def veteran_information
+    render json: Correspondence::VeteranSerializer.new(veteran_by_correspondence)
+  end
+
   private
 
   def task_params
