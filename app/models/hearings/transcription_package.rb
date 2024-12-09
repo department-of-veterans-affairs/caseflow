@@ -3,9 +3,8 @@
 class TranscriptionPackage < CaseflowRecord
   belongs_to :contractor, class_name: "TranscriptionContractor"
   has_many :transcription_package_hearings
-  has_many :hearings, through: :transcription_package_hearings
-  has_many :transcription_package_legacy_hearings
-  has_many :legacy_hearings, through: :transcription_package_legacy_hearings
+  has_many :hearings, through: :transcription_package_hearings, source: :hearing, source_type: "Hearing"
+  has_many :legacy_hearings, through: :transcription_package_hearings, source: :hearing, source_type: "LegacyHearing"
   has_many :transcriptions, foreign_key: :task_number, primary_key: :task_number
 
   scope :filter_by_date, lambda { |values, field_name|
@@ -57,7 +56,9 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def all_hearings
-    (hearings + legacy_hearings).map { |hearing| serialize_hearing(hearing) }
+    transcription_package_hearings.map do |transcription_package_hearing|
+      serialize_hearing(transcription_package_hearing.hearing)
+    end
   end
 
   def formatted_date_upload_box
@@ -69,7 +70,7 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def contents_count
-    (hearings + legacy_hearings).length
+    transcription_package_hearings.length
   end
 
   def self.cancel_by_task_number(task_number)

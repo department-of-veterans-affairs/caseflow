@@ -47,6 +47,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def write_to_workbook(workbook, work_order_name)
+    FileUtils.mkdir_p(TMP_FOLDER)
     @file_name = "#{work_order_name}.xls"
     @file_path = TMP_FOLDER.join(@file_name)
     workbook.write(@file_path)
