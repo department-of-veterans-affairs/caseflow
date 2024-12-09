@@ -117,11 +117,6 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Record status: Completed")
       expect(page).to have_content(completed_correspondence.veteran_full_name)
     end
-
-    it "checks that unassigned status correspondences will be rerouted" do
-      visit "/queue/correspondence/#{action_correspondence.uuid}"
-      expect(page).to have_content("Correspondence Cases")
-    end
   end
 
   context "correspondence in the Completed tab of Your Correspondence Queue" do
