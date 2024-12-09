@@ -19,6 +19,7 @@ class LegacyAppeal < CaseflowRecord
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
   include AppealNotificationReportConcern
+  include RedactedAttributesConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -111,6 +112,12 @@ class LegacyAppeal < CaseflowRecord
     # closed but does not have a remand return date (false is cached, nil is not).
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
+
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
+    { name: :assigned_judge, alias: true, class_method: true }
+  ].freeze
+
+  redact_attributes
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Layout/LineLength

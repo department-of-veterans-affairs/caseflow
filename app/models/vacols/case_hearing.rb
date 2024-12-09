@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseHearing < VACOLS::Record
+  include RedactedAttributesConcern
+
   self.table_name = "hearsched"
   self.primary_key = "hearing_pkseq"
   self.sequence_name = "hearsched_pkseq"
@@ -28,6 +30,12 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :corres, foreign_key: :stafkey, primary_key: :bfcorkey, class_name: "Correspondent"
 
   scope :by_dispositions, ->(dispositions) { where(hearing_disp: dispositions) }
+
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
+    { name: :notes1, alias: false }
+  ].freeze
+
+  redact_attributes
 
   HEARING_TYPE_LOOKUP = {
     central: "C",
