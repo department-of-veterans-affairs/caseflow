@@ -44,7 +44,7 @@ export default function LoadTestForm(props) {
       setErrors(newErrors);
     } else {
 
-      ApiUtil.post('/test/load_tests/run_load_tests', { currentState });
+      ApiUtil.post('/test/load_tests/run_load_tests', { data: currentState });
       props.setShowAlert(true);
       setTimeout(() => {
         window.location = '/test/load_tests';

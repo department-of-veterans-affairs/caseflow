@@ -66,7 +66,7 @@ export class PdfFile extends React.PureComponent {
       responseType: 'arraybuffer',
       metricsLogRestError: this.props.featureToggles.metricsLogRestError,
       metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
     };
 
     window.addEventListener('keydown', this.keyListener);

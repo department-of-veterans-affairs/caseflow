@@ -28,7 +28,7 @@ class SlackService
     if url && (Rails.deploy_env?(:uat) || Rails.deploy_env?(:prodtest) || Rails.deploy_env?(:prod))
       params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
       http_service.post(url, params)
-    else
+    elsif Rails.deploy_env != :test
       # rubocop:disable Rails/Output
       Rails.logger.info(pp(slack_msg))
       # rubocop:enable Rails/Output

@@ -70,7 +70,7 @@ describe AppealsReadyForDistribution do
       expect(subject[:cavc]).to be false
       expect(subject[:receipt_date]).to eq legacy_appeal_with_attributes.bfd19
       expect(subject[:ready_for_distribution_at]).to eq legacy_appeal_with_attributes.bfdloout
-      expect(subject[:hearing_judge]).to eq hearing_judge.full_name
+      expect(subject[:hearing_judge]).to eq hearing_judge.css_id
       expect(subject[:original_judge]).to be nil
       expect(subject[:veteran_file_number]).to eq legacy_appeal_with_attributes.bfcorlid
       expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
@@ -104,7 +104,7 @@ describe AppealsReadyForDistribution do
       expect(subject[:receipt_date]).to eq ama_appeal_with_attributes.receipt_date
       expect(subject[:ready_for_distribution_at])
         .to eq ama_appeal_with_attributes.tasks.where(type: DistributionTask.name).first.assigned_at
-      expect(subject[:hearing_judge]).to eq ama_appeal_with_attributes.hearings.first.judge.full_name
+      expect(subject[:hearing_judge]).to eq ama_appeal_with_attributes.hearings.first.judge.css_id
       expect(subject[:original_judge]).to be nil
       expect(subject[:veteran_file_number]).to eq ama_appeal_with_attributes.veteran_file_number
       expect(subject[:veteran_name]).to eq ama_appeal_with_attributes.veteran.name.to_s
@@ -112,11 +112,12 @@ describe AppealsReadyForDistribution do
     end
   end
 
-  context "ama_cavc_original_deciding_judge" do
+  context "ama_cavc_original_judge_task" do
     let!(:appeal) { create_realistic_cavc_case(Constants.AMA_DOCKETS.direct_review) }
 
     it "returns the original judge's CSS_ID" do
-      expect(described_class.ama_cavc_original_deciding_judge(appeal)).to eq original_deciding_judge.css_id
+      expect(described_class.ama_cavc_original_judge_task(appeal).assigned_to.css_id)
+        .to eq original_deciding_judge.css_id
     end
   end
 

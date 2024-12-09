@@ -76,9 +76,9 @@ module DistributionConcern
                     []
                   end
 
-    if sct_appeals.any?
+    if sct_appeals.any? && limit.present?
       loop do
-        inner_appeals = appeals(appeals_args)
+        inner_appeals = ready_priority_nonpriority_appeals(appeals_args)
           .limit(limit - appeals.count)
           .includes(:request_issues)
           .where("appeals.id NOT IN (?)", appeals.pluck(:id) + sct_appeals.pluck(:id))

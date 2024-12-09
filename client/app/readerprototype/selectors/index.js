@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import values from 'lodash/values';
 
 export const appealSelector = (state) => state.pdfViewer.loadedAppeal;
 
@@ -12,12 +11,12 @@ export const commentErrorSelector = (state) => state.pdfViewer.pdfSideBarError?.
 export const annotationsForDocumentId = createSelector(
   (state) => state.annotationLayer.annotations,
   (_state, documentId) => documentId,
-  (annotations, documentId) => values(annotations).filter((annotation) => annotation.documentId === documentId)
+  (annotations, documentId) => Object.values(annotations).filter((annotation) => annotation.documentId === documentId)
 );
 export const annotationsForDocumentIdAndPageId = createSelector(
   annotationsForDocumentId,
   (_state, _documentId, pageId) => pageId,
-  (annotations, pageId) => values(annotations).filter((annotation) => annotation.page === pageId)
+  (annotations, pageId) => Object.values(annotations).filter((annotation) => annotation.page === pageId)
 );
 export const annotationPlacement = (state) => ({
   placedButUnsavedAnnotation: state.annotationLayer.placedButUnsavedAnnotation,
@@ -25,7 +24,7 @@ export const annotationPlacement = (state) => ({
   selectedAnnotationId: state.annotationLayer.selectedAnnotationId,
   placingAnnotationIconPageCoords: state.annotationLayer.placingAnnotationIconPageCoords,
 });
-export const editingAnnotationsSelector = (state) => values(state.annotationLayer.editingAnnotations);
+export const editingAnnotationsSelector = (state) => Object.values(state.annotationLayer.editingAnnotations || {});
 
 export const openedAccordionSectionsSelector = (state) => state.pdfViewer.openedAccordionSections;
 export const modalInfoSelector = (state) => ({

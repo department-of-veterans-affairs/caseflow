@@ -38,7 +38,7 @@ const Icon = (props) => {
 
   useEffect(() => {
     if (selectedAnnotationId === comment.id && iconRef.current) {
-      iconRef.current.scrollIntoView({ behavior: 'smooth' });
+      iconRef.current.scrollIntoView();
     }
   }, [selectedAnnotationId, iconRef.current, comment.id]);
 

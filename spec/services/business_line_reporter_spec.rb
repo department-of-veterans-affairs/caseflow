@@ -4,6 +4,7 @@ require "rspec"
 
 describe "BusinessLineReporter" do
   let(:business_line) { create(:business_line) }
+  let(:filters) {}
 
   let(:first_appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:first_ama_task) { create(:ama_task, appeal: first_appeal, assigned_to: business_line) }
@@ -39,7 +40,7 @@ describe "BusinessLineReporter" do
   end
 
   describe "#tasks" do
-    subject { BusinessLineReporter.new(business_line).tasks }
+    subject { BusinessLineReporter.new(business_line, filters).tasks }
 
     it "returns the completed tasks" do
       expect(subject).to include(first_ama_task, second_ama_task, remand_task, hlr_task, sc_task)
@@ -47,6 +48,24 @@ describe "BusinessLineReporter" do
 
     it "does not return an open task" do
       expect(subject).to_not include(third_ama_task)
+    end
+
+    context "vha_business_line" do
+      let(:mocked_business_line) { double(VhaBusinessLine) }
+      before do
+        allow(mocked_business_line).to receive(:is_a?).with(VhaBusinessLine).and_return(true)
+        allow(mocked_business_line).to receive(:completed_tasks).and_return(VhaBusinessLine.none)
+      end
+
+      context "with filtering" do
+        let(:filters) { { my_filters: { test1: :test2 } } }
+        it "should use the business line model completed tasks method for filtering" do
+          expect(mocked_business_line).to receive(:completed_tasks).with({ filters: filters,
+                                                                           sort_by: :id,
+                                                                           sort_order: :asc })
+          BusinessLineReporter.new(mocked_business_line, filters).tasks
+        end
+      end
     end
   end
 

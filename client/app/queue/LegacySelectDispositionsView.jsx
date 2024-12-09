@@ -176,6 +176,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
       getPrevStepUrl={this.getPrevStepUrl}
       validateForm={this.validateForm}
       appealId={appealId}
+      isLegacyAppeal={appeal.isLegacyAppeal}
       {...otherProps}
     >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>

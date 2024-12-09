@@ -91,8 +91,10 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   getChosenOptions = () => filter(this.state, (val) => val.checked);
 
   getValidChosenOptions = () => {
-
-    if (this.state.error.checked === true && this.state.error.post_aoj === null) {
+    if (
+      this.state.error_satisfying_regulatory_or_statutory_duty.checked === true &&
+      this.state.error_satisfying_regulatory_or_statutory_duty.post_aoj === null
+    ) {
       return false;
     }
 

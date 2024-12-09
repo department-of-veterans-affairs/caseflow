@@ -8,7 +8,7 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
   QUERY_TRAVEL_BOARD_LIMIT = 100
   JOB_DURATION = 1.hour
 
-  discard_on(Caseflow::Error::VaDotGovServerError) do |job, exception|
+  discard_on(Savon::HTTPError) do |job, exception|
     Rails.logger.warn("Discarding #{job.class.name} #{job.job_id} failed with error: #{exception}")
   end
 
@@ -72,7 +72,7 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
           sleep_before_retry_on_limit_error
 
           break
-        rescue Caseflow::Error::VaDotGovServerError => error
+        rescue Savon::HTTPError => error
           raise error
         rescue StandardError => error
           actionable = !NONACTIONABLE_ERRORS.include?(error.class)

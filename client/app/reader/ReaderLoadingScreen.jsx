@@ -53,7 +53,7 @@ export class ReaderLoadingScreen extends React.Component {
       }}
       failStatusMessageChildren={failStatusMessageChildren}
       metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}
-      prefetchDisabled={this.props.featureToggles.prefetchDisabled}>
+      prefetchDisabled={false}>
       {this.props.children}
     </LoadingDataDisplay>;
 

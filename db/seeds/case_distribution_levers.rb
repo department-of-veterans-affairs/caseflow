@@ -244,13 +244,13 @@ module Seeds
             title: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days_title,
             description: "Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "14",
+            value: "30",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
                 item: Constants.ACD_LEVERS.value,
                 data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 14,
+                value: 30,
                 text: "Attempt distribution to current judge for max of:",
                 unit: Constants.ACD_LEVERS.days,
                 selected: true
