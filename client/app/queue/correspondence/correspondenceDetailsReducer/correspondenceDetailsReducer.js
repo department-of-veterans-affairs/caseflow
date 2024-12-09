@@ -68,7 +68,7 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
   case ACTIONS.VETERAN_INFORMATION:
     return update(state, {
       veteranInformation: {
-        $set: action.payload.expandedLinkedAppeals
+        $set: action.payload.veteranInformation
       }
     });
   default:
