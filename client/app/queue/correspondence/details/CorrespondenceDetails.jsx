@@ -1078,7 +1078,8 @@ const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
   expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
-  appealsFromStore: state.queue.appeals
+  appealsFromStore: state.queue.appeals,
+  veteranInformation: state.correspondenceDetails.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => (
