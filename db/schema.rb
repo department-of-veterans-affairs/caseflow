@@ -4,15 +4,13 @@
 #
 # This file is the source Rails uses to define your schema when running `bin/rails
 # db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
-# This file is the source Rails uses to define your schema when running `bin/rails
-# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_28_214321) do
+ActiveRecord::Schema.define(version: 2024_12_02_132509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -649,6 +647,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_214321) do
   end
 
   create_table "cmp_mail_packets", force: :cascade do |t|
+    t.bigint "cmp_mail_packet_id"
     t.string "cmp_packet_number", null: false
     t.datetime "created_at", precision: 6, null: false
     t.string "packet_source", null: false
@@ -659,6 +658,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_214321) do
     t.string "veteran_id", null: false
     t.string "veteran_last_name", null: false
     t.string "veteran_middle_initial", null: false
+    t.index ["cmp_mail_packet_id"], name: "index_cmp_mail_packets_on_cmp_mail_packet_id"
   end
 
   create_table "conference_links", force: :cascade do |t|
@@ -2335,7 +2335,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_214321) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
@@ -2573,6 +2573,7 @@ ActiveRecord::Schema.define(version: 2024_10_28_214321) do
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "cmp_documents", "cmp_mail_packets"
+  add_foreign_key "cmp_mail_packets", "cmp_mail_packets"
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"

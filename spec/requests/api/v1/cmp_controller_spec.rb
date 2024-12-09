@@ -31,7 +31,6 @@ shared_examples "a validates required params are not null #document endpoint" do
         headers: authorization_header
       )
     end.not_to change(CmpDocument, :count)
-
     expect(response).to have_http_status(:unprocessable_entity)
   end
 end
@@ -115,7 +114,6 @@ describe Api::V1::CmpController, type: :request do
 
       it "requires that the dateOfReceipt param is a valid date" do
         post_data[:dateOfReceipt] = "not really a date"
-
         expect do
           post(
             api_v1_cmp_document_path,
@@ -126,6 +124,67 @@ describe Api::V1::CmpController, type: :request do
         end.not_to change(CmpDocument, :count)
 
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe "#packet" do
+    let!(:cmp_document_id) { SecureRandom.uuid }
+    let!(:cmp_document_uuid) { SecureRandom.uuid }
+    let!(:date_of_receipt) { 1.day.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
+    let!(:packet_uuid) { SecureRandom.uuid }
+    let!(:doctype_name) { Faker::Internet.username(specifier: 8) }
+    let!(:vbms_doctype_id) { Faker::Number.within(range: 1..10) }
+
+    let!(:packed_uuid) { SecureRandom.uuid }
+    let!(:cmp_packet_number) { 1 }
+    let!(:packet_source) { Faker::Internet.username(specifier: 8) }
+    let!(:va_dor) { 1.hour.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
+    let!(:veteran) { create(:veteran, middle_name: 'M') }
+
+    let(:packet_post_data) do
+      {
+        packetUUID: cmp_document_uuid,
+        cmpPacketNumber: cmp_document_uuid,
+        packetSource: packet_source,
+        vaDor: va_dor,
+        veteranId: veteran.id,
+        veteranFirstName: veteran.first_name,
+        veteranMiddleName: veteran.middle_name,
+        veteranLastName: veteran.last_name
+      }
+    end
+
+    let(:cmp_doc_data) do
+      {
+        date_of_receipt: date_of_receipt,
+        cmp_document_id: cmp_document_id,
+        cmp_document_uuid: cmp_document_uuid,
+        doctype_name: doctype_name,
+        packet_uuid: packet_uuid,
+        vbms_doctype_id: vbms_doctype_id
+      }
+    end
+
+    context "returns expected result codes" do
+      it "returns 200" do
+        CmpDocument.create!(cmp_doc_data)
+        post(
+          api_v1_cmp_packet_path,
+          params: packet_post_data,
+          as: :json,
+          headers: authorization_header
+        )
+        expect(response.status == 200)
+      end
+      it "returns 500" do
+        post(
+          api_v1_cmp_packet_path,
+          params: packet_post_data,
+          as: :json,
+          headers: authorization_header
+        )
+        expect(response.status == 500)
       end
     end
   end
