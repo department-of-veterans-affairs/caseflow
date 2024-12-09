@@ -701,270 +701,99 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
 
     context "Whenever there are a variety of items in the queue" do
       let!(:legacy_cavc_aod_appeal_one) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-        end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true)
       end
 
       let!(:legacy_cavc_aod_appeal_two) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "7")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: true)
       end
 
       let!(:legacy_cavc_aod_appeal_three) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true)
       end
 
       let!(:ama_cavc_aod_appeal_one) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          stream_type: "court_remand",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true)
       end
 
       let!(:ama_cavc_aod_appeal_two) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          stream_type: "court_remand",
-          receipt_date: 1.day.ago
-        )
+        stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true)
       end
 
       let!(:ama_cavc_aod_appeal_three) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          stream_type: "court_remand",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true)
       end
 
       let!(:legacy_cavc_appeal_one) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true)
       end
 
       let!(:legacy_cavc_appeal_two) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "7")).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: true)
       end
 
       let!(:legacy_cavc_appeal_three) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true)
       end
 
       let!(:ama_cavc_appeal_one) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "court_remand",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true)
       end
 
       let!(:ama_cavc_appeal_two) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "court_remand",
-          receipt_date: 1.day.ago
-        )
+        stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true)
       end
 
       let!(:ama_cavc_appeal_three) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "court_remand",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true)
       end
 
       let!(:ama_aod_appeal_one) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false)
       end
 
       let!(:ama_aod_appeal_two) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          receipt_date: 1.day.ago
-        )
+        stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false)
       end
 
       let!(:ama_aod_appeal_three) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          aod_based_on_age: true,
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false)
       end
 
       let!(:legacy_aod_appeal_one) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false)
       end
 
       let!(:legacy_aod_appeal_two) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: false)
       end
 
       let!(:legacy_aod_appeal_three) do
-        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")
-
-        create(
-          :diary,
-          tsktknm: vacols_case.bfkey,
-          tskactcd: "B"
-        )
-
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: vacols_case).tap do |appeal|
-                 appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-               end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false)
       end
 
       let!(:ama_appeal_one) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "original",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false)
       end
 
       let!(:ama_appeal_two) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "original",
-          receipt_date: 1.day.ago
-        )
+        stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
       end
 
       let!(:ama_appeal_three) do
-        create(
-          :appeal,
-          :with_schedule_hearing_tasks,
-          stream_type: "original",
-          receipt_date: 2.weeks.ago
-        )
+        stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false)
       end
 
       let!(:legacy_appeal_one) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")).tap do |appeal|
-          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-        end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false)
       end
 
       let!(:legacy_appeal_two) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1")).tap do |appeal|
-          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-        end
+        stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
       end
 
       let!(:legacy_appeal_three) do
-        create(:legacy_appeal,
-               :with_schedule_hearing_tasks,
-               :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")).tap do |appeal|
-          appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
-        end
+        stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false)
       end
 
       it "The appeals are ordered correctly based upon their attributes", bypass_cleaner: true do
@@ -1043,6 +872,633 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         expect(ama_appeal_two.national_hearing_queue_entry.priority_queue_number).to eq 24
       end
     end
+
+    context "CAVC + AOD Appeals" do
+      context "Whenever there are two legacy appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+          let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+          let!(:created_second) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there are two AMA appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+          let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+          let!(:created_second) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there is a legacy appeal and an AMA appeal" do
+        context "The appeals were received on different dates" do
+          context "The legacy appeal was received first" do
+            let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+            let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+
+          context "The AMA appeal was received first" do
+            let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+            let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: true) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:legacy_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+          let!(:ama_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+
+          it "the legacy appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              legacy_appeal.national_hearing_queue_entry.priority_queue_number <
+                ama_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Priority in relation to other types of appeals" do
+        let!(:cavc_aod_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+
+        context "versus a CAVC only appeal" do
+          let!(:cavc_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                cavc_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus an AOD only appeal" do
+          let!(:aod_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                aod_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus a non CAVC or AOD appeal" do
+          let!(:regular_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+    end
+
+    context "CAVC Only Appeals" do
+      context "Whenever there are two legacy appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+          let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+          let!(:created_second) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there are two AMA appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+          let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+          let!(:created_second) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there is a legacy appeal and an AMA appeal" do
+        context "The appeals were received on different dates" do
+          context "The legacy appeal was received first" do
+            let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+            let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+
+          context "The AMA appeal was received first" do
+            let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+            let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: true) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:legacy_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+          let!(:ama_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+
+          it "the legacy appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              legacy_appeal.national_hearing_queue_entry.priority_queue_number <
+                ama_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Priority in relation to other types of appeals" do
+        let!(:cavc_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+
+        context "versus a CAVC + AOD appeal" do
+          let!(:cavc_aod_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                cavc_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus an AOD only appeal" do
+          let!(:aod_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+
+          it "the CAVC appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                aod_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus a non CAVC or AOD appeal" do
+          let!(:regular_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+
+          it "the CAVC appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+    end
+
+    context "AOD Only Appeals" do
+      context "Whenever there are two legacy appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+          let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+          let!(:created_second) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there are two AMA appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+          let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+          let!(:created_second) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there is a legacy appeal and an AMA appeal" do
+        context "The appeals were received on different dates" do
+          context "The legacy appeal was received first" do
+            let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+            let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+
+          context "The AMA appeal was received first" do
+            let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+            let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: true, cavc: false) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:legacy_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+          let!(:ama_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+
+          it "the legacy appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              legacy_appeal.national_hearing_queue_entry.priority_queue_number <
+                ama_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Priority in relation to other types of appeals" do
+        let!(:aod_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+
+        context "versus a CAVC + AOD appeal" do
+          let!(:cavc_aod_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                aod_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus a CAVC only appeal" do
+          let!(:cavc_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+
+          it "the CAVC appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                aod_only_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus a non CAVC or AOD appeal" do
+          let!(:regular_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+
+          it "the AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              aod_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+    end
+
+    context "Neither CAVC or AOD Appeals" do
+      context "Whenever there are two legacy appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+          let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+          let!(:created_second) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there are two AMA appeals" do
+        context "The appeals were received on different dates" do
+          let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+          let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+          it "the older appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              older_appeal.national_hearing_queue_entry.priority_queue_number <
+                newer_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:created_first) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+          let!(:created_second) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+          it "the appeal received earlier in the day is prioritized more highly", bypass_cleaner: true do
+            subject
+
+            expect(
+              created_first.national_hearing_queue_entry.priority_queue_number <
+                created_second.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Whenever there is a legacy appeal and an AMA appeal" do
+        context "The appeals were received on different dates" do
+          context "The legacy appeal was received first" do
+            let!(:newer_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+            let!(:older_appeal) { stage_legacy_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+
+          context "The AMA appeal was received first" do
+            let!(:newer_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+            let!(:older_appeal) { stage_ama_appeal(receipt_date: 2.weeks.ago, aod: false, cavc: false) }
+
+            it "the older appeal is prioritized higher", bypass_cleaner: true do
+              subject
+
+              expect(
+                older_appeal.national_hearing_queue_entry.priority_queue_number <
+                  newer_appeal.national_hearing_queue_entry.priority_queue_number
+              ).to eq true
+            end
+          end
+        end
+
+        context "The appeals were received on the same date" do
+          let!(:legacy_appeal) { stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+          let!(:ama_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+
+          it "the legacy appeal is prioritized higher", bypass_cleaner: true do
+            subject
+
+            expect(
+              legacy_appeal.national_hearing_queue_entry.priority_queue_number <
+                ama_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+
+      context "Priority in relation to other types of appeals" do
+        let!(:regular_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false) }
+
+        context "versus a CAVC + AOD appeal" do
+          let!(:cavc_aod_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: true) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_aod_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus a CAVC only appeal" do
+          let!(:cavc_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: true) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              cavc_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+
+        context "versus an AOD only appeal" do
+          let!(:aod_only_appeal) { stage_ama_appeal(receipt_date: 1.day.ago, aod: true, cavc: false) }
+
+          it "the CAVC + AOD appeal has the higher priority", bypass_cleaner: true do
+            subject
+
+            expect(
+              aod_only_appeal.national_hearing_queue_entry.priority_queue_number <
+                regular_appeal.national_hearing_queue_entry.priority_queue_number
+            ).to eq true
+          end
+        end
+      end
+    end
+  end
+
+  def stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
+    vacols_case = create(:case, bfhr: "1", bfd19: receipt_date, bfac: cavc ? "7" : "1")
+
+    create(:diary, tsktknm: vacols_case.bfkey, tskactcd: "B") if aod
+
+    create(:legacy_appeal,
+           :with_schedule_hearing_tasks,
+           :with_veteran,
+           vacols_case: vacols_case).tap do |appeal|
+      appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
+    end
+  end
+
+  def stage_ama_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
+    create(
+      :appeal,
+      :with_schedule_hearing_tasks,
+      stream_type: cavc ? "court_remand" : "original",
+      receipt_date: receipt_date,
+      aod_based_on_age: aod
+    )
   end
 
   def clean_up_after_threads
