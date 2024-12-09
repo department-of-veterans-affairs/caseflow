@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 export const correspondenceTypes = [
   { id: 1, name: 'Abeyance' },
   { id: 2, name: 'Attorney Inquiry' },
@@ -425,3 +427,5 @@ export const packageDocumentTypeData = {
   active: true,
   name: 'NOD',
 };
+
+/* eslint-enable max-lines */
