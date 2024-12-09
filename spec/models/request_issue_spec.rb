@@ -2274,7 +2274,7 @@ describe RequestIssue, :all_dbs do
 
       it "withdraws issue and does not flag the legacy issue optin for rollback" do
         subject
-        expect(rating_request_issue.closed_at.to_date).to eq(withdraw_date.to_date)
+        expect(rating_request_issue.closed_at).to eq(withdraw_date.to_datetime)
         expect(rating_request_issue.closed_status).to eq("withdrawn")
         expect(legacy_issue_optin.reload.rollback_created_at).to be_nil
       end

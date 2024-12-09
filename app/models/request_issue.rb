@@ -643,7 +643,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def withdraw!(withdrawal_date)
-    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_date)
+    close!(status: :withdrawn, closed_at_value: safe_date_conversion(withdrawal_date))
   end
 
   def save_edited_contention_text!(new_description)
@@ -1172,6 +1172,23 @@ class RequestIssue < CaseflowRecord
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
     save!
+  end
+
+  def safe_date_conversion(input)
+    case input
+    when Date, DateTime
+      input
+    when ActiveSupport::TimeWithZone
+      input.to_datetime
+    when String
+      if input.include?(":")
+        DateTime.parse(input)
+      else
+        Date.parse(input)
+      end
+    else
+      fail ArgumentError, "Input must be a String, Date, DateTime, or ActiveSupport::TimeWithZone. Got #{input.class}"
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength
