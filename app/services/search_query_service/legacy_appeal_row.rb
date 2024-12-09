@@ -172,17 +172,17 @@ class SearchQueryService::LegacyAppealRow
 
   def appellant_full_name
     FullName.new(
-      vacols_row["sspare2"],
-      vacols_row["sspare3"],
-      vacols_row["sspare1"]
-    ).formatted(:readable_full_nonformatted).upcase
+      vacols_row["sspare2"].to_s.capitalize,
+      vacols_row["sspare3"].to_s,
+      vacols_row["sspare1"].to_s.capitalize
+    ).formatted(:readable_full_nonformatted)
   end
 
   def veteran_full_name
     FullName.new(
-      vacols_row["snamef"],
-      vacols_row["snamemi"],
-      vacols_row["snamel"]
+      vacols_row["snamef"].to_s.capitalize,
+      vacols_row["snamemi"].to_s,
+      vacols_row["snamel"].to_s.capitalize
     ).formatted(:readable_full_nonformatted)
   end
 
