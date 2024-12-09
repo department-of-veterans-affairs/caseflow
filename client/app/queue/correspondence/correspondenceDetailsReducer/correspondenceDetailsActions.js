@@ -503,3 +503,12 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
     });
   }
 };
+
+export const updateVeteranInformation = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.VETERAN_INFORMATION,
+    payload: {
+      veteranInformation: payload
+    }
+  });
+};
