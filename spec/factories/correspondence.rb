@@ -94,12 +94,4 @@ FactoryBot.define do
       end
     end
   end
-
-  factory :correspondence_document do
-    uuid { SecureRandom.uuid }
-    document_type { 1250 }
-    pages { 30 }
-    vbms_document_type_id { 1250 }
-    association :correspondence
-  end
 end

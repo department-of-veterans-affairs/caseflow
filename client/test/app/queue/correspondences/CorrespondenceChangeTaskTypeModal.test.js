@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
@@ -70,7 +70,7 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
     renderComponent();
 
     expect(screen.getByText('Select an action type...')).toBeInTheDocument();
-    expect(screen.getByLabelText(COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL)).toBeInTheDocument();
+    expect(screen.getByLabelText(COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL)).toBeInTheDocument();
   });
 
   it('disables the submit button if the form is not valid', () => {
@@ -86,7 +86,7 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
     renderComponent();
 
     userEvent.type(screen.getByRole('combobox'), 'CAVC{enter}');
-    userEvent.type(screen.getByLabelText(COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL), 'test instructions');
+    userEvent.type(screen.getByLabelText(COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL), 'test instructions');
 
     const submitButton = screen.getByRole('button', { name: COPY.CHANGE_TASK_TYPE_SUBHEAD });
 
@@ -96,9 +96,10 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
   it('renders dropdown with correct options', () => {
     renderComponent();
 
-    const dropdown = screen.getByRole('combobox');
+    const dropdown = screen.getByRole('combobox',
+      { name: 'Select another task type from the list of available options:' });
 
-    fireEvent.mouseDown(dropdown);
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
     // Ensure each option is rendered
     INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.forEach((option) => {

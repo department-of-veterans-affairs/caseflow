@@ -67,7 +67,7 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
         </div>
         <div {...marginTop(4)}>
           <TextareaField
-            name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
+            name={COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
             onChange={setInstructions}
             value={instructions}
           />

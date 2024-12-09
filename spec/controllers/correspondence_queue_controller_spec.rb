@@ -81,7 +81,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
                                           correspondence_uuid: correspondence.uuid }
       expect(controller.view_assigns["response_header"]).to eq("You have successfully cancelled the intake form")
       expect(controller.view_assigns["response_message"]).to eq("#{veteran.name}'s "\
-        "correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment.")
+        "correspondence has been returned to the supervisor's queue for assignment.")
     end
 
     it "returns intake continue later response" do
@@ -90,7 +90,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
                                           correspondence_uuid: correspondence.uuid }
       expect(controller.view_assigns["response_header"]).to eq("You have successfully saved the intake form")
       expect(controller.view_assigns["response_message"]).to eq("You can continue from step three of the "\
-        "intake form for #{veteran.name}'s correspondence (ID: #{correspondence.id}) at a later date.")
+        "intake form for #{veteran.name}'s correspondence at a later date.")
     end
   end
 end

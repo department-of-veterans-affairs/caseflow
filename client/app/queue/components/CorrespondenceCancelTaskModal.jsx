@@ -95,7 +95,7 @@ const CorrespondenceCancelTaskModal = (props) => {
     >
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          name={taskData?.instructions_label ?? COPY.PLEASE_PROVIDE_CONTEXT_AND_INSTRUCTIONS_LABEL}
           id="cancelTaskInstructions"
           onChange={setInstructions}
           value={instructions}

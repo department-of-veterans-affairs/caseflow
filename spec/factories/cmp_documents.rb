@@ -7,7 +7,7 @@ FactoryBot.define do
     cmp_document_uuid { Faker::Internet.uuid }
     vbms_doctype_id { Faker::Number.within(range: 1..100) }
     doctype_name { Faker::Internet.username(specifier: 8) }
-    date_of_receipt { Time.current }
+    date_of_receipt { Time.current.strftime(Date::DATE_FORMATS[:csv_date]) }
 
     cmp_mail_packet
   end
