@@ -17,7 +17,7 @@ class Remediations::DuplicatePersonRemediationService
 
   def remediate!
     if find_and_update_records
-      @dup_persons.each(&:destroy!)
+      duplicate_persons.each(&:destroy!)
     end
   end
 
