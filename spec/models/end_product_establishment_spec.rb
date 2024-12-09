@@ -36,6 +36,7 @@ describe EndProductEstablishment, :postgres do
   let(:limited_poa_access) { true }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
   let(:last_synced_at) { nil }
+  let(:benefit_type) { "compensation" }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -807,10 +808,16 @@ describe EndProductEstablishment, :postgres do
       subject { end_product_establishment.status_active?(sync: true) }
 
       context "when the EP is cleared" do
+        before do
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
+        after do
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
         let(:synced_status) { "PEND" }
         let(:ep_status_code) { "CLR" }
 
-        it { is_expected.to eq(false) }
+        it { is_expected.to eq(true) }
       end
 
       context "when the EP is pending" do
@@ -879,7 +886,7 @@ describe EndProductEstablishment, :postgres do
 
     context "when a matching end product has been established" do
       let(:reference_id) { matching_ep.claim_id }
-      let(:status_type_code) { "CLR" }
+      let(:status_type_code) { "PEND" }
       let(:claim_type_code) { "030HLRR" }
       let!(:matching_ep) do
         Generators::EndProduct.build(
@@ -892,6 +899,26 @@ describe EndProductEstablishment, :postgres do
         let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
 
         it { is_expected.to eq(true) }
+      end
+
+      context "returns true if cleared and a disabled benefit type" do
+        before do
+          FeatureToggle.enable!(:benefit_type_syncing_disabled)
+        end
+        let(:status_type_code) { "CLR" }
+        let(:source) { create(:request_issue, benefit_type: benefit_type) }
+
+        it { is_expected.to eq(true) }
+      end
+
+      context "returns nil if benefit_type_syncing_disabled" do
+        before do
+          FeatureToggle.disable!(:benefit_type_syncing_disabled)
+        end
+        let(:status_type_code) { "CLR" }
+        let(:source) { create(:request_issue, benefit_type: benefit_type) }
+
+        it { is_expected.to eq(nil) }
       end
 
       context "when BGS throws an error" do
@@ -957,6 +984,7 @@ describe EndProductEstablishment, :postgres do
       context "when the end product has been cleared and no decision issues are expected" do
         let(:status_type_code) { "CLR" }
         let(:claim_type_code) { "400RA" }
+        let(:source) { create(:ramp_election) }
 
         it "closes request issues with no_decision" do
           subject
@@ -985,7 +1013,7 @@ describe EndProductEstablishment, :postgres do
       it "updates last_synced_at and synced_status" do
         subject
         expect(end_product_establishment.reload.last_synced_at).to eq(Time.zone.now)
-        expect(end_product_establishment.reload.synced_status).to eq("CLR")
+        expect(end_product_establishment.reload.synced_status).to eq("PEND")
       end
     end
   end
