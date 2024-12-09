@@ -54,7 +54,6 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
     @issue.dig(:contested_decision_issue_id)
   end
 
-  # probably we have the wrong type of passed decision_date in json eample, needs to be clarified
   def ri_decision_date
     decision_date_int = @issue.dig(:decision_date)
     logical_date_converter(decision_date_int)
@@ -131,5 +130,62 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedIssueParser
 
   def ri_veteran_participant_id
     @issue.dig(:veteran_participant_id).presence
+  end
+
+  def decision_issue
+    @issue[:decision_issue]
+  end
+
+  # decision_issue'sattributes
+  def di_benefit_type
+    @issue.dig(:decision_issue, :benefit_type).presence
+  end
+
+  def di_contention_reference_id
+    @issue.dig(:decision_issue, :contention_reference_id)
+  end
+
+  def di_decision_text
+    @issue.dig(:decision_issue, :decision_text).presence
+  end
+
+  def di_description
+    @issue.dig(:decision_issue, :description).presence
+  end
+
+  def di_diagnostic_code
+    @issue.dig(:decision_issue, :diagnostic_code)
+  end
+
+  def di_disposition
+    @issue.dig(:decision_issue, :disposition).presence
+  end
+
+  def di_end_product_last_action_date
+    @issue.dig(:decision_issue, :end_product_last_action_date)
+  end
+
+  def di_participant_id
+    @issue.dig(:decision_issue, :participant_id).presence
+  end
+
+  def di_percent_number
+    @issue.dig(:decision_issue, :percent_number).presence
+  end
+
+  def di_rating_issue_reference_id
+    @issue.dig(:decision_issue, :rating_issue_reference_id)
+  end
+
+  def di_rating_profile_date
+    @issue.dig(:decision_issue, :rating_profile_date)
+  end
+
+  def di_rating_promulgation_date
+    @issue.dig(:decision_issue, :rating_promulgation_date)
+  end
+
+  def di_subject_text
+    @issue.dig(:decision_issue, :subject_text).presence
   end
 end
