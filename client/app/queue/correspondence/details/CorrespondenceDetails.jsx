@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
-  updateExpandedLinkedAppeals, updateVeteranInformation } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { fetchCorrespondencesAppealsTasks, fetchVeteranInformation, updateCorrespondenceInfo,
+  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -470,14 +470,8 @@ const CorrespondenceDetails = (props) => {
     });
 
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
-
+    dispatch(fetchVeteranInformation);
   }, []);
-
-  // NEW REFACTOR WORK HERE
-
-  useEffect(() => {
-    dispatch(updateVeteranInformation);
-  }, [])
 
   const correspondenceTasks = () => {
     return (
@@ -1079,7 +1073,7 @@ CorrespondenceDetails.propTypes = {
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   appealsFromStore: PropTypes.object,
   deleteAppeal: PropTypes.func,
-  updateVeteranInformation: PropTypes.func
+  fetchVeteranInformation: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -1094,7 +1088,7 @@ const mapDispatchToProps = (dispatch) => (
     updateCorrespondenceInfo,
     deleteAppeal,
     updateExpandedLinkedAppeals,
-    updateVeteranInformation
+    fetchVeteranInformation
   }, dispatch)
 );
 

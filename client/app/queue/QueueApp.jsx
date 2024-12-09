@@ -126,6 +126,7 @@ import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
 import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
 import CorrespondenceEditGeneralInformationModal from './components/CorrespondenceEditGeneralInformationModal';
+import CorrespondenceDetailsLoadingScreen from './correspondence/details/CorrespondenceDetailsLoadingScreen';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -752,12 +753,15 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceDetails = (props) => (
-    <CorrespondenceDetails {...props.match.params}
-      {...this.props}
-      autoTexts={this.props.autoTexts}
-      correspondenceResponseLetters={this.props.correspondenceResponseLetters}
-      correspondenceTypes={this.props.correspondenceTypes}
-    />
+    <CorrespondenceDetailsLoadingScreen {...props.match.params}>
+      <CorrespondenceDetails {...props.match.params}
+        {...this.props}
+        autoTexts={this.props.autoTexts}
+        correspondenceResponseLetters={this.props.correspondenceResponseLetters}
+        correspondenceTypes={this.props.correspondenceTypes}
+      />
+    </CorrespondenceDetailsLoadingScreen>
+
   );
 
   routedCorrespondenceAssignTeamModal = (props) => (
