@@ -29,25 +29,26 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
   const legacyAppealAssignmentTrackingTasks = useSelector((
     state) => caseTimelineLegacyTrackingTasksForAppeal(state, { appealId: appeal.externalId }));
+  const legacyTaskAlert = legacyAppealAssignmentTrackingTasks.length > 0 && <Alert
+    type="info"
+    message="This appeal has been moved. Please check the case timeline for additional details."
+    lowerMargin
+  />;
 
   const sectionBody = tasks.length ? (
-    <div>{legacyAppealAssignmentTrackingTasks.length > 0 && <Alert
-      type="info"
-      message="This appeal has been moved. Please check the case timeline for additional details."
-      lowerMargin
-    />
-    }
-    <table {...tableStyling} summary="layout table">
-      <tbody>
-        <TaskRows
-          appeal={appeal}
-          taskList={tasks}
-          timeline={false}
-          editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
-          hideDropdown={hideDropdown}
-        />
-      </tbody>
-    </table>
+    <div>
+      {legacyTaskAlert}
+      <table {...tableStyling} summary="layout table">
+        <tbody>
+          <TaskRows
+            appeal={appeal}
+            taskList={tasks}
+            timeline={false}
+            editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
+            hideDropdown={hideDropdown}
+          />
+        </tbody>
+      </table>
     </div>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
@@ -66,18 +67,24 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
-      <div {...alertStyling} {...sectionSegmentStyling}>
-        { docketSwitchDisposition === 'partially_granted' &&
+      {docketSwitchDisposition === 'partially_granted' && (
+        <div {...alertStyling} {...sectionSegmentStyling}>
           <DocketSwitchAlertBanner appeal={appeal} />
-        }
-      </div>
-      <div {...alertStyling} {...sectionSegmentStyling}>
-        { appeal.switchedDockets ? appeal.switchedDockets.map((docketSwitch) =>
-          docketSwitch.disposition === 'denied' ? '' :
-            <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch} />) :
-          ''
-        }
-      </div>
+        </div>
+      )}
+      {appeal.switchedDockets?.some((docketSwitch) => docketSwitch.disposition !== 'denied') && (
+        <div {...alertStyling} {...sectionSegmentStyling}>
+          {appeal.switchedDockets?.map((docketSwitch) =>
+            docketSwitch.disposition === 'denied' ? '' : (
+              <DocketSwitchAlertBanner
+                key={docketSwitch.id}
+                appeal={appeal}
+                docketSwitch={docketSwitch}
+              />
+            )
+    )}
+        </div>
+      )}
       <div {...sectionSegmentStyling}>
         {sectionBody}
       </div>
