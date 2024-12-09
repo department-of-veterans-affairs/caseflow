@@ -129,4 +129,61 @@ describe Api::V1::CmpController, type: :request do
       end
     end
   end
+
+  describe "#packet" do
+    let!(:cmp_document_id) { SecureRandom.uuid }
+    let!(:cmp_document_uuid) { SecureRandom.uuid }
+    let!(:date_of_receipt) { 1.day.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
+    let!(:packet_uuid) { SecureRandom.uuid }
+    let!(:doctype_name) { Faker::Internet.username(specifier: 8) }
+    let!(:vbms_doctype_id) { Faker::Number.within(range: 1..10) }
+
+    let!(:packed_uuid) { SecureRandom.uuid }
+    let!(:cmp_packet_number) { 1 }
+    let!(:packet_source) { Faker::Internet.username(specifier: 8) }
+    let!(:va_dor) { 1.hour.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
+    let!(:veteran) { create(:veteran, middle_name: 'M') }
+
+    let(:post_data2) do
+      {
+        packetUUID: cmp_document_uuid,
+        cmpPacketNumber: cmp_document_uuid,
+        packetSource: packet_source,
+        vaDor: va_dor,
+        veteranId: veteran.id,
+        veteranFirstName: veteran.first_name,
+        veteranMiddleName: veteran.middle_name,
+        veteranLastName: veteran.last_name
+      }
+    end
+
+      let(:cmp_data) do
+      {
+            date_of_receipt: date_of_receipt,
+            cmp_document_id: cmp_document_id,
+            cmp_document_uuid: cmp_document_uuid,
+            doctype_name: doctype_name,
+            packet_uuid: packet_uuid,
+            vbms_doctype_id: vbms_doctype_id
+       }
+      end
+
+    context "with valid params" do
+      it "returns 200" do
+        CmpDocument.create!(cmp_data)
+        expect do
+          post(
+            api_v1_cmp_packet_path,
+            params: post_data2,
+            as: :json,
+            headers: authorization_header
+          )
+        end.not_to change(CmpDocument, :count)
+        expect(response.status == 200)
+      end
+
+    end
+
+
+  end
 end
