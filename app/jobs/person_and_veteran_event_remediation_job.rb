@@ -5,10 +5,10 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   class PersonAndVeteranRemediationJobError < StandardError; end
 
-  # retry_on(PersonAndVeteranRemediationJobError, attempts: 3, wait: :exponentially_longer) do |job, exception|
-  #   Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception.message}")
-  # end
-  retry_on PersonAndVeteranEventRemediationJob::PersonAndVeteranRemediationJobError, wait: 5.seconds, attempts: 3
+  retry_on(PersonAndVeteranRemediationJobError, attempts: 3, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception.message}")
+  end
+  # retry_on PersonAndVeteranEventRemediationJob::PersonAndVeteranRemediationJobError, wait: 5.seconds, attempts: 3
 
   def setup_job
     RequestStore.store[:current_user] = User.system_user
@@ -73,17 +73,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           event_record
         ).remediate!
       end
-    begin
-      find_events("Person").select do |event_record|
-        original_id = event_record.evented_record_id
-        dup_ids = Person.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
-        if dup_ids.size >= 1
-          Remediations::DuplicatePersonRemediationService
-            .new(updated_person_id: original_id, duplicate_person_ids: dup_ids, event_record: event_record).remediate!
-        end
-      end
-    rescue StandardError => error
-      raise PersonAndVeteranEventRemediationJob::PersonAndVeteranRemediationJobError, "Error occurred: #{error.message}"
     end
 
     private
@@ -114,18 +103,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   def run_veteran_remediation
     find_events("Veteran").select do |event_record|
       VeteranRemediation.new(event_record).call
-    begin
-      find_events("Veteran").select do |event_record|
-        before_fn = event_record.info["before_data"]["file_number"]
-        after_fn = event_record.info["record_data"]["file_number"]
-        original_id = event_record.evented_record_id
-        dup_ids = Veteran.where(ssn: event_record.evented_record.ssn).map(&:id).reject { |id| id == original_id }
-        if before_fn != after_fn || dup_ids.size >= 1
-          Remediations::VeteranRecordRemediationService.new(before_fn, after_fn, event_record).remediate!
-        end
-      end
-    rescue StandardError => error
-      raise PersonAndVeteranEventRemediationJob::PersonAndVeteranRemediationJobError, "Error occurred: #{error.message}"
     end
   end
 
