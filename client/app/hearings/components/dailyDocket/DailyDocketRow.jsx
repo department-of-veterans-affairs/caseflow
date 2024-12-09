@@ -374,6 +374,7 @@ class DailyDocketRow extends React.Component {
   getLeftColumn = () => {
     const { hearing, user, openDispositionModal, readOnly } = this.props;
     const inputProps = this.getInputProps();
+    const userIsNonBoardEmployee = user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule;
 
     return (
       <div {...inputSpacing}>
@@ -400,7 +401,9 @@ class DailyDocketRow extends React.Component {
         {user.userHasHearingPrepRole && this.isAmaHearing() && <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
         {user.userCanAssignHearingSchedule && !user.userHasHearingPrepRole && <HearingDetailsLink hearing={hearing} />}
-        <NotesField {...inputProps} readOnly={user.userCanVsoHearingSchedule} />
+        { // I opted not to use readOnly here since for previously held hearings it's always true,
+          // and I don't want the notes not to show for Board employees also.
+          !(userIsNonBoardEmployee) && <NotesField {...inputProps} />}
       </div>
     );
   };
