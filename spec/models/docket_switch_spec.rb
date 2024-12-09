@@ -129,6 +129,40 @@ RSpec.describe DocketSwitch, type: :model do
             end
           end
         end
+
+        context "when ihp task present" do
+          let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+
+          let(:vva) do
+            Vso.create(
+              name: "Vietnam Veterans Of America",
+              role: "VSO",
+              url: "vietnam-veterans-of-america",
+              participant_id: "2452415"
+            )
+          end
+
+          let(:ihp_task) do
+            create(
+              :informal_hearing_presentation_task,
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: vva
+            )
+          end
+
+          it "successfully switches and creates new ihp task" do
+            docket_switch.selected_task_ids = [ihp_task.id.to_s]
+            docket_switch.process!
+
+            expect(docket_switch_task).to be_completed
+            new_tasks = docket_switch.new_docket_stream.tasks
+            new_ihp = new_tasks.find_by(type: :InformalHearingPresentationTask)
+
+            expect(new_ihp).to_not be_nil
+            expect(new_ihp.id.to_s).not_to be(ihp_task.id.to_s)
+          end
+        end
       end
 
       context "when disposition is partially_granted" do
