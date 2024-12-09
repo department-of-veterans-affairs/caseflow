@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selectors';
+import {
+  appealWithDetailSelector,
+  taskSnapshotTasksForAppeal,
+  caseTimelineLegacyTrackingTasksForAppeal } from './selectors';
 import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -9,6 +12,7 @@ import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
 import DocketSwitchAlertBanner from './docketSwitch/DocketSwitchAlertBanner';
+import Alert from '../components/Alert';
 
 const tableStyling = css({
   width: '100%',
@@ -23,11 +27,20 @@ const alertStyling = css({
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
+  const legacyAppealAssignmentTrackingTasks = useSelector((
+    state) => caseTimelineLegacyTrackingTasksForAppeal(state, { appealId: appeal.externalId }));
 
   const sectionBody = tasks.length ? (
+    <div>{legacyAppealAssignmentTrackingTasks.length > 0 && <Alert
+      type="info"
+      message="This appeal has been moved. Please check the case timeline for additional details."
+      lowerMargin
+    />
+    }
     <table {...tableStyling} summary="layout table">
       <tbody>
-        <TaskRows appeal={appeal}
+        <TaskRows
+          appeal={appeal}
           taskList={tasks}
           timeline={false}
           editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
@@ -35,6 +48,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
         />
       </tbody>
     </table>
+    </div>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
@@ -64,7 +78,9 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           ''
         }
       </div>
-      <div {...sectionSegmentStyling}>{sectionBody}</div>
+      <div {...sectionSegmentStyling}>
+        {sectionBody}
+      </div>
     </div>
   );
 };
