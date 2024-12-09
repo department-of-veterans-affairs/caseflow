@@ -25,6 +25,7 @@
 
 class HearingDay < CaseflowRecord
   include UpdatedByUserConcern
+  include RedactedAttributesConcern
 
   acts_as_paranoid
 
@@ -84,6 +85,17 @@ class HearingDay < CaseflowRecord
       .or(where(id: vacols_ids))
       .includes(:hearings, :judge).distinct
   }
+
+  ATTRS_TO_REDACT = [
+    { name: :notes, alias: false},
+    { name: :judge_id, alias: false},
+    { name: :judge, alias: true, class_method: true},
+    { name: :judge_first_name, alias: true, class_method: false},
+    { name: :judge_last_name, alias: true, class_method: false},
+    { name: :judge_css_id, alias: true, class_method: false}
+  ].freeze
+
+  redact_attributes
 
   def central_office?
     request_type == REQUEST_TYPES[:central]

@@ -11,7 +11,7 @@ module RedactedAttributesConcern
         attr_name = attr[:name]
 
         if attr[:alias] && attr[:class_method]
-          alias_method "original_#{attr_name}".to_sym, attr_name
+          alias_method "unredacted_#{attr_name}".to_sym, attr_name
         end
 
         override_method_for_redaction(attr_name, attr[:alias])
@@ -28,7 +28,7 @@ module RedactedAttributesConcern
       define_method name do
         return nil if RequestStore[:current_user]&.non_board_employee?
 
-        aliased_method ? send("original_#{name}".to_sym) : attributes[name.to_s]
+        aliased_method ? send("unredacted_#{name}".to_sym) : attributes[name.to_s]
       end
     end
   end
@@ -39,7 +39,7 @@ module RedactedAttributesConcern
       attr_name = attr[:name]
 
       if attr[:alias] && respond_to?(attr_name)
-        original_method_name = "original_#{attr_name}".to_sym
+        original_method_name = "unredacted_#{attr_name}".to_sym
 
         unless respond_to?(original_method_name)
           self.class.alias_method original_method_name, attr_name
