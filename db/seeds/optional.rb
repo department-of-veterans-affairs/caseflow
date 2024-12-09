@@ -49,6 +49,8 @@ module Seeds
       call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
       call_and_log_seed_step Seeds::RemandedAmaAppeals
       call_and_log_seed_step Seeds::RemandedLegacyAppeals
+      call_and_log_seed_step Seeds::Correspondence
+      call_and_log_seed_step Seeds::UpdateCorrespondenceNod
     end
   end
 end
