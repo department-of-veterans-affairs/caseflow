@@ -53,14 +53,13 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
   const conditionsLength = useWatch({ name: 'conditions' }).length;
   const shouldShowAnd = (conditionsLength > 1) && (index !== (conditionsLength - 1));
   const selectedConditionValue = useWatch({ control, name: `${name}.condition` });
-  const selectedVariableOption = variableOptions.find((opt) => opt.value === selectedConditionValue);
-
   const hasMiddleContent = selectedConditionValue && selectedConditionValue !== 'daysWaiting';
   const middleContentClassName = hasMiddleContent ?
     'report-page-variable-content' :
     'report-page-variable-content-wider';
 
   const conditionContent = useMemo(() => {
+    const selectedVariableOption = variableOptions.find((opt) => opt.value === selectedConditionValue);
 
     if (!selectedConditionValue || !selectedVariableOption) {
       return <div></div>;
