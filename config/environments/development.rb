@@ -170,6 +170,9 @@ Rails.application.configure do
   # Dynatrace variables
   ENV["STATSD_ENV"] = "development"
 
+  # BIP VEFS variables
+  ENV["VEFS_API_BASE_URL"] ||= "http://localhost:8080"
+
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
