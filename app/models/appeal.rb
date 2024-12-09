@@ -19,6 +19,7 @@ class Appeal < DecisionReview
   include AppealNotificationReportConcern
   include SpecialtyCaseTeamMethodsMixin
   prepend AppealDocketed
+  include RedactedAttributesConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -114,6 +115,12 @@ class Appeal < DecisionReview
     joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
       .where("veterans.date_of_death is not null AND veteran_is_not_claimant = true")
   }
+
+  ATTRS_TO_REDACT = [
+    { name: :assigned_judge, alias: true, class_method: true }
+  ].freeze
+
+  redact_attributes
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
