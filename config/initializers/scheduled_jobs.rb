@@ -50,6 +50,8 @@ Rails.application.config.to_prepare do
       "stuck_job_scheduler_job" => StuckJobSchedulerJob,
       "fetch_webex_rooms_list_job" => Hearings::FetchWebexRoomsListJob,
       "refresh_webex_access_token_job" => Hearings::RefreshWebexAccessTokenJob,
-      "ineligible_judges_job" => IneligibleJudgesJob
+      "ineligible_judges_job" => IneligibleJudgesJob,
+      "national_hearing_queue_entry_refresh_job" => NationalHearingQueueEntryRefreshJob,
+      "check_veteran_residence_location" => CheckVeteranResidenceLocationJob
   }.freeze
 end
