@@ -700,11 +700,8 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
 
     context "Whenever there are a variety of items in the queue" do
-      let(:one_day_ago) { 1.day.ago }
-      let(:two_weeks_ago) { 2.weeks.ago }
-
       let!(:legacy_cavc_aod_appeal_one) do
-        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")
+        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")
 
         create(
           :diary,
@@ -721,7 +718,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       let!(:legacy_cavc_aod_appeal_two) do
-        vacols_case = create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "7")
+        vacols_case = create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "7")
 
         create(
           :diary,
@@ -738,7 +735,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       let!(:legacy_cavc_aod_appeal_three) do
-        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")
+        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")
 
         create(
           :diary,
@@ -760,7 +757,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
           stream_type: "court_remand",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -770,7 +767,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
           stream_type: "court_remand",
-          receipt_date: one_day_ago
+          receipt_date: 1.day.ago
         )
       end
 
@@ -780,7 +777,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
           stream_type: "court_remand",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -788,7 +785,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")).tap do |appeal|
                  appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
                end
       end
@@ -797,7 +794,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "7")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "7")).tap do |appeal|
                  appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
                end
       end
@@ -806,7 +803,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "7")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "7")).tap do |appeal|
                  appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
                end
       end
@@ -816,7 +813,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "court_remand",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -825,7 +822,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "court_remand",
-          receipt_date: one_day_ago
+          receipt_date: 1.day.ago
         )
       end
 
@@ -834,7 +831,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "court_remand",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -843,7 +840,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -852,7 +849,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
-          receipt_date: one_day_ago
+          receipt_date: 1.day.ago
         )
       end
 
@@ -861,12 +858,12 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           aod_based_on_age: true,
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
       let!(:legacy_aod_appeal_one) do
-        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")
+        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")
 
         create(
           :diary,
@@ -883,7 +880,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       let!(:legacy_aod_appeal_two) do
-        vacols_case = create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "1")
+        vacols_case = create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1")
 
         create(
           :diary,
@@ -900,7 +897,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
 
       let!(:legacy_aod_appeal_three) do
-        vacols_case = create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")
+        vacols_case = create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")
 
         create(
           :diary,
@@ -921,7 +918,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "original",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -930,7 +927,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "original",
-          receipt_date: one_day_ago
+          receipt_date: 1.day.ago
         )
       end
 
@@ -939,7 +936,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
           :appeal,
           :with_schedule_hearing_tasks,
           stream_type: "original",
-          receipt_date: two_weeks_ago
+          receipt_date: 2.weeks.ago
         )
       end
 
@@ -947,7 +944,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")).tap do |appeal|
           appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
         end
       end
@@ -956,7 +953,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: one_day_ago, bfac: "1")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1")).tap do |appeal|
           appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
         end
       end
@@ -965,7 +962,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         create(:legacy_appeal,
                :with_schedule_hearing_tasks,
                :with_veteran,
-               vacols_case: create(:case, bfhr: "1", bfd19: two_weeks_ago, bfac: "1")).tap do |appeal|
+               vacols_case: create(:case, bfhr: "1", bfd19: 2.weeks.ago, bfac: "1")).tap do |appeal|
           appeal.case_record.correspondent.update!(ssn: appeal.veteran.ssn)
         end
       end
