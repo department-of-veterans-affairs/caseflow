@@ -15,14 +15,13 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   #   fail BoxUploadError
   # end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def perform(file_info, box_folder_id)
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
 
     box_service = VaBoxService.new
 
-    file_info[:hearings].each_with_index do |hearing, index|
+    file_info[:hearings].each do |hearing|
       begin
         transcription_package = find_transcription_package(hearing)
         unless transcription_package
@@ -37,9 +36,16 @@ class Hearings::VaBoxUploadJob < CaseflowJob
           mark_email_sent(:transcription_package)
           next
         end
+
         s3_file_path = transcription_package.aws_link_zip
         contractor_name = file_info[:contractor_name]
-        child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor_name)
+        contractor = TranscriptionContractor.find_by_name(file_info[:contractor_name])
+
+        child_folder_id = false
+        if contractor
+          child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor.directory)
+        end
+
         unless child_folder_id
           error_details = {
             error: {
@@ -56,14 +62,10 @@ class Hearings::VaBoxUploadJob < CaseflowJob
         # Download file from S3
         local_file_path = download_file_from_s3(s3_file_path)
 
-        if index == 0
-          upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-        else
-          create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-        end
+        upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
 
         # Update transcription files after successful upload
-        update_transcription_files(hearing, file_info, transcription_package)
+        update_transcription_files(hearing)
       rescue StandardError => error
         log_error(error, extra: { transcription_package_id: transcription_package&.id })
         error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
@@ -73,16 +75,14 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
   def find_transcription_package(hearing)
-    if hearing[:hearing_type] == "LegacyHearing"
-      TranscriptionPackageLegacyHearing.find_by(legacy_hearing_id: hearing[:hearing_id])&.transcription_package
-    else
-      TranscriptionPackageHearing.find_by(hearing_id: hearing[:hearing_id])&.transcription_package
-    end
+    TranscriptionPackageHearing.find_by(
+      hearing_type: hearing[:hearing_type],
+      hearing_id: hearing[:hearing_id]
+    )&.transcription_package
   end
 
   def download_file_from_s3(s3_path)
@@ -95,6 +95,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   # rubocop:disable Metrics/ParameterLists
   def upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
+    expected_return_date = format_return_date(file_info[:return_date])
     ActiveRecord::Base.transaction do
       box_service.upload_file(local_file_path, child_folder_id)
       Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
@@ -102,61 +103,37 @@ class Hearings::VaBoxUploadJob < CaseflowJob
         date_upload_box: Time.current,
         status: "Successful Upload (BOX)",
         task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
+        expected_return_date: expected_return_date,
         updated_by_id: RequestStore[:current_user].id
       )
-      transcription = ::Transcription.find_or_initialize_by(task_number: file_info[:work_order_name])
-      transcription.update!(
-        expected_return_date: file_info[:return_date],
-        hearing_id: hearing[:hearing_id],
-        sent_to_transcriber_date: Time.current,
-        transcriber: file_info[:contractor_name],
-        transcription_contractor_id: transcription_package.contractor_id,
-        updated_by_id: RequestStore[:current_user].id
-      )
+
+      transcription_package.transcription_package_hearings.each do |transcription_package_hearing|
+        transcription_package_hearing.hearing.transcriptions.each do |transcription|
+          transcription.update!(
+            expected_return_date: expected_return_date,
+            sent_to_transcriber_date: Time.current,
+            task_number: file_info[:work_order_name],
+            transcriber: file_info[:contractor_name],
+            transcription_contractor_id: transcription_package.contractor_id,
+            updated_by_id: RequestStore[:current_user].id
+          )
+        end
+      end
     end
   end
-  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:enable Metrics/ParameterLists
 
-  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
-  def create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
-    ActiveRecord::Base.transaction do
-      box_service.upload_file(local_file_path, child_folder_id)
-      Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
-      transcription_package.update!(
-        date_upload_box: Time.current,
-        status: "Successful Upload (BOX)",
-        task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
-        updated_by_id: RequestStore[:current_user].id
-      )
-      transcription = ::Transcription.new(
-        task_number: file_info[:work_order_name],
-        expected_return_date: file_info[:return_date],
-        hearing_id: hearing[:hearing_id],
-        hearing_type: hearing[:hearing_type],
-        sent_to_transcriber_date: Time.current,
-        transcriber: file_info[:contractor_name],
-        transcription_contractor_id: transcription_package.contractor_id,
-        updated_by_id: RequestStore[:current_user].id
-      )
-      transcription.save!
-    end
+  def format_return_date(return_date)
+    parts = return_date.split('/')
+    "#{parts[2]}-#{parts[0]}-#{parts[1]}".to_date
   end
-  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
-  def update_transcription_files(hearing, file_info, transcription_package)
+  def update_transcription_files(hearing)
     TranscriptionFile.where(
       hearing_id: hearing[:hearing_id], hearing_type: hearing[:hearing_type]
     ).update_all(
       date_upload_box: Time.current,
-      updated_by_id: RequestStore[:current_user].id,
-      expected_return_date: file_info[:return_date],
-      sent_to_transcriber_date: Time.current,
-      task_number: file_info[:work_order_name],
-      transcriber: file_info[:contractor_name],
-      transcription_contractor_id: transcription_package.contractor_id,
-      transcription_status: "sent"
+      updated_by_id: RequestStore[:current_user].id
     )
   end
 

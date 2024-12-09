@@ -61,7 +61,7 @@ class ExternalApi::VaBoxService
   end
 
   def get_child_folder_id(parent_folder_id, child_folder_name)
-    folders = get_folder_items(parent_folder_id)
+    folders = get_folder_items(folder_id: parent_folder_id)
     matching_folder = folders.find { |folder| folder[:name] == child_folder_name }
     if matching_folder
       matching_folder[:id]

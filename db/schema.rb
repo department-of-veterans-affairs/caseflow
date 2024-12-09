@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_18_075353) do
+ActiveRecord::Schema.define(version: 2024_12_09_104403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2031,13 +2031,10 @@ ActiveRecord::Schema.define(version: 2024_11_18_075353) do
   end
 
   create_table "transcription_package_hearings", force: :cascade do |t|
-    t.bigint "hearing_id"
+    t.string "hearing_id"
+    t.string "hearing_type"
     t.bigint "transcription_package_id"
-  end
-
-  create_table "transcription_package_legacy_hearings", force: :cascade do |t|
-    t.bigint "legacy_hearing_id"
-    t.bigint "transcription_package_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_transcription_package_hearings"
   end
 
   create_table "transcription_packages", force: :cascade do |t|
@@ -2539,10 +2536,6 @@ ActiveRecord::Schema.define(version: 2024_11_18_075353) do
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcription_files", "users", column: "locked_by_id"
-  add_foreign_key "transcription_package_hearings", "hearings"
-  add_foreign_key "transcription_package_hearings", "transcription_packages"
-  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
-  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
   add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "transcription_contractors"
   add_foreign_key "transcriptions", "users", column: "created_by_id"

@@ -57,6 +57,7 @@ module Hearings
 
     def create_zip_file(file_paths, hearing)
       zip_file_name = generate_zip_file_name(hearing)
+      FileUtils.mkdir_p(File.dirname(zip_file_name))
       Zip::File.open(zip_file_name, create: true) do |zip_file|
         file_paths.each { |path| zip_file.add(File.basename(path), path) }
       end
