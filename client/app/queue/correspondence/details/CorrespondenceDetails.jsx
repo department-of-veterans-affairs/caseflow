@@ -9,7 +9,7 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
-  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+  updateExpandedLinkedAppeals, updateVeteranInformation } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -472,6 +472,12 @@ const CorrespondenceDetails = (props) => {
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
 
   }, []);
+
+  // NEW REFACTOR WORK HERE
+
+  useEffect(() => {
+    dispatch(updateVeteranInformation);
+  }, [])
 
   const correspondenceTasks = () => {
     return (
@@ -1072,7 +1078,8 @@ CorrespondenceDetails.propTypes = {
   correspondence_uuid: PropTypes.string,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
   appealsFromStore: PropTypes.object,
-  deleteAppeal: PropTypes.func
+  deleteAppeal: PropTypes.func,
+  updateVeteranInformation: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -1087,6 +1094,7 @@ const mapDispatchToProps = (dispatch) => (
     updateCorrespondenceInfo,
     deleteAppeal,
     updateExpandedLinkedAppeals,
+    updateVeteranInformation
   }, dispatch)
 );
 
