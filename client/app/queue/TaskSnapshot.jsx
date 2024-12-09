@@ -29,11 +29,12 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
   const legacyAppealAssignmentTrackingTasks = useSelector((
     state) => caseTimelineLegacyTrackingTasksForAppeal(state, { appealId: appeal.externalId }));
-  const legacyTaskAlert = legacyAppealAssignmentTrackingTasks.length > 0 && <Alert
-    type="info"
-    message="This appeal has been moved. Please check the case timeline for additional details."
-    lowerMargin
-  />;
+  const legacyTaskAlert = legacyAppealAssignmentTrackingTasks.length > 0 &&
+    <Alert
+      type="info"
+      message="This appeal has been moved. Please check the case timeline for additional details."
+      lowerMargin
+    />;
 
   const sectionBody = tasks.length ? (
     <div>
