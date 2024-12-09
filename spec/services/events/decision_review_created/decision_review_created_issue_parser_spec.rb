@@ -28,6 +28,7 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
       closed_status: "withdrawn",
       contested_rating_issue_diagnostic_code: "7890",
       ramp_claim_id: "RAMP123",
+      remand_source_id: 1234,
       rating_issue_associated_at: 1_683_072_000_000, # Example timestamp
       nonrating_issue_bgs_id: "BGS987",
       nonrating_issue_bgs_source: "source"
@@ -174,6 +175,12 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
   describe "#ri_ramp_claim_id" do
     it "returns the ramp claim id" do
       expect(parser.ri_ramp_claim_id).to eq("RAMP123")
+    end
+  end
+
+  describe "#ri_remand_source_id" do
+    it "returns the remand_source_id" do
+      expect(parser.ri_remand_source_id).to eq(1234)
     end
   end
 

@@ -102,6 +102,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
     @issue.dig(:ramp_claim_id).presence
   end
 
+  def ri_remand_source_id
+    @issue.dig(:remand_source_id)
+  end
+
   def ri_rating_issue_associated_at
     ri_rating_issue_associated_at_in_ms = @issue.dig(:rating_issue_associated_at)
     convert_milliseconds_to_datetime(ri_rating_issue_associated_at_in_ms)
