@@ -159,9 +159,11 @@ class Document < CaseflowRecord
   def file_size
     begin
       size = File.size(default_path)
-    rescue StandardError
+    rescue StandardError => error
+      Rails.logger.warn "File size not present: #{error}"
+    ensure
+      size.presence || 0
     end
-    size.present? ? size : 0
   end
 
   def default_path
