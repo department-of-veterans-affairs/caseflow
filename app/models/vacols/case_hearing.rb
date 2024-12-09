@@ -31,7 +31,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   scope :by_dispositions, ->(dispositions) { where(hearing_disp: dispositions) }
 
-  ATTRS_TO_REDACT = [
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
     { name: :notes1, alias: false }
   ].freeze
 

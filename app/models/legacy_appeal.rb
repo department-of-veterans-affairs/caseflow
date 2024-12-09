@@ -113,7 +113,7 @@ class LegacyAppeal < CaseflowRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
-  ATTRS_TO_REDACT = [
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
     { name: :assigned_judge, alias: true, class_method: true }
   ].freeze
 

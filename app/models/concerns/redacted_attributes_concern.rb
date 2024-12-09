@@ -19,7 +19,7 @@ module RedactedAttributesConcern
     end
 
     def attrs_to_redact
-      return self.name.constantize::ATTRS_TO_REDACT if const_defined?(:ATTRS_TO_REDACT)
+      return self.name.constantize::ATTRS_TO_REDACT_FROM_NON_BOARD_USERS if const_defined?(:ATTRS_TO_REDACT_FROM_NON_BOARD_USERS)
 
       []
     end

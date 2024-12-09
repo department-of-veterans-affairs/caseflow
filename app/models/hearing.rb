@@ -98,7 +98,7 @@ class Hearing < CaseflowRecord
           )
         }
 
-  ATTRS_TO_REDACT = [
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
     { name: :notes, alias: false},
     { name: :judge_id, alias: false},
     { name: :judge, alias: true, class_method: true}

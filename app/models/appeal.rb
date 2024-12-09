@@ -116,7 +116,7 @@ class Appeal < DecisionReview
       .where("veterans.date_of_death is not null AND veteran_is_not_claimant = true")
   }
 
-  ATTRS_TO_REDACT = [
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
     { name: :assigned_judge, alias: true, class_method: true }
   ].freeze
 

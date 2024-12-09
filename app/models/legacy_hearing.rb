@@ -103,7 +103,7 @@ class LegacyHearing < CaseflowRecord
   after_create :update_appeal_states_on_hearing_create
   after_update :update_appeal_states_on_hearing_update
 
-  ATTRS_TO_REDACT = [
+  ATTRS_TO_REDACT_FROM_NON_BOARD_USERS = [
     { name: :notes, alias: true, class_method: true },
     { name: :judge_id, alias: true, class_method: true },
     { name: :user_id, alias: false },
