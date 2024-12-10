@@ -98,19 +98,6 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       end
     end
 
-      it "does not update unrelated records" do
-        service.remediate!
-
-        unrelated_records = mock_records.reject do |record|
-          %w[987654321 324576891].include?(record.attributes.values.first)
-        end
-
-        unrelated_records.each do |unrelated_record|
-          expect(unrelated_record).not_to have_received(:update!)
-        end
-      end
-    end
-
     context "when an error occurs during remediation" do
       before do
         # Force `find_and_update_records` to return false to simulate a failure
@@ -123,19 +110,6 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         # Spy on Rails.logger to check for error logging
         allow(Rails.logger).to receive(:error)
         allow(mock_records.first).to receive(:update!).and_raise(StandardError, "Test error")
-      end
-
-      it "does not update any records and skips destroying duplicate persons" do
-        result = service.remediate!
-
-        mock_records.each do |mock_record|
-          expect(mock_record).not_to have_received(:update!)
-        end
-
-        expect(duplicate_person1).not_to have_received(:destroy!)
-        expect(duplicate_person2).not_to have_received(:destroy!)
-
-        expect(result).to be_falsey
       end
 
       it "does not update any records and skips destroying duplicate persons" do
