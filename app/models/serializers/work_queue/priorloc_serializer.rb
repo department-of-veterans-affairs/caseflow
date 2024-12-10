@@ -8,6 +8,7 @@ class WorkQueue::PriorlocSerializer
   attribute :location_label
   attribute :sub_location
   attribute :location_staff
+  attribute :location_user
   attribute :created_at
   attribute :closed_at
   attribute :vacols_id

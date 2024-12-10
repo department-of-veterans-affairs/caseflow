@@ -128,6 +128,7 @@
     "poa_change": "POA Change",
     "substitution": "Substitution"
   },
+  "TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL": "This appeal has been moved. Please check the case timeline for additional details.",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
