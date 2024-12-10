@@ -261,6 +261,10 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
+  scope module: 'hearings/national_hearing_queue', path: '/national_hearing_queue' do
+    get "/(*params)", action: "index"
+  end
+
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]

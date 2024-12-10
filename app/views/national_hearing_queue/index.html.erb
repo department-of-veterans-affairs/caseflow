@@ -1,0 +1,14 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Queue", props: {
+    userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    userRole: (current_user.vacols_roles.first || "").capitalize,
+    userCssId: current_user.css_id,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    flash: flash,
+    buildDate: build_date,
+    featureToggles: {}
+  }) %>
+<% end %>

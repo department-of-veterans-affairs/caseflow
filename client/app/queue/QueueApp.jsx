@@ -111,6 +111,8 @@ import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 
+import NationalHearingQueueContainer from './nationalHearingQueue/NationalHearingQueueContainer';
+
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
@@ -683,6 +685,8 @@ class QueueApp extends React.PureComponent {
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
+
+  routedNationalHearingQueue = () => <NationalHearingQueueContainer />;
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -1404,6 +1408,13 @@ class QueueApp extends React.PureComponent {
                   hearingType: 'Central',
                 })
               }
+            />
+
+            <PageRoute
+              exact
+              path="/national_hearing_queue"
+              title="National Hearing Scheduling Queue | Caseflow"
+              render={this.routedNationalHearingQueue}
             />
 
             <Route
