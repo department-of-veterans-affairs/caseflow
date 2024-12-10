@@ -8,6 +8,8 @@ import COPY from '../../COPY';
 import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
+import DateSelector from './DateSelector';
+import DatePicker from './DatePicker';
 
 const iconStyle = css(
   {
@@ -154,8 +156,12 @@ class TableFilter extends React.PureComponent {
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
-    if (filtersForColumn) {
-      if (filtersForColumn.includes(value)) {
+    if (filtersForColumn || resetValue) {
+      if (resetValue) {
+        if (value !== '') {
+          newFilters = [value];
+        }
+      } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
         newFilters = this.putIntofilter(filtersForColumn, columnName, value);
@@ -202,7 +208,9 @@ class TableFilter extends React.PureComponent {
       columnName,
       anyFiltersAreSet,
       valueName,
-      getFilterValues
+      getFilterValues,
+      dateFilter,
+      filterType,
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -266,6 +274,9 @@ TableFilter.propTypes = {
   updateFilters: PropTypes.func,
   filterOptionsFromApi: PropTypes.array,
   multiValueDelimiter: PropTypes.string,
+  dateFilter: PropTypes.bool,
+  filterType: PropTypes.string,
+  filterSettings: PropTypes.object,
 };
 
 export default TableFilter;

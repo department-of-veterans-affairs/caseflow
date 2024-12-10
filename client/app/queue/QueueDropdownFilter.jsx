@@ -206,27 +206,21 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   render() {
-    const { children, name } = this.props;
-
-    // Some of the filter names are camelCase, which would be displayed to the user.
-    // To make this more readable, convert the camelCase text to title case.
-    const displayName = startCase(name);
+    const { children } = this.props;
 
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row" onClick={this.clearAllFilters}>
             <button className="cf-text-button"
               disabled={!this.props.isClearEnabled}>
-              <div className="cf-clear-filter-button-wrapper">
-                Clear {displayName} filter
-              </div>
+              Clear filter
             </button>
           </div>
         }

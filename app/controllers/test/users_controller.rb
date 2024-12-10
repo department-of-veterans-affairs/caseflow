@@ -57,7 +57,8 @@ class Test::UsersController < ApplicationController
     {
       name: "Hearings",
       links: {
-        current_schedule: "/hearings/schedule"
+        current_schedule: "/hearings/schedule",
+        transcription_file_dispatch_queue: "/hearings/transcription_files"
       }
     },
     {
