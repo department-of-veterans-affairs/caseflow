@@ -103,4 +103,22 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "correspondence_details_access" do
+    let!(:current_user) { create(:inbound_ops_team_supervisor) }
+    let(:veteran) { create(:veteran) }
+    let!(:correspondence) { create(:correspondence, :inbound_ops_task, veteran: veteran) }
+
+    before do
+      allow(controller).to receive(:correspondence).and_return(correspondence)
+      allow(controller).to receive(:access_redirect)
+    end
+
+    context "when correspondence has a ReturnToInboundOps task" do
+      it "does not redirect" do
+        controller.send(:correspondence_details_access)
+        expect(controller).not_to have_received(:access_redirect)
+      end
+    end
+  end
 end
