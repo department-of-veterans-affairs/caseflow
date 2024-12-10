@@ -49,6 +49,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri1.decision_review_type).to eq("HigherLevelReview")
         expect(ri1.veteran_participant_id).to eq(parser.veteran_participant_id)
         expect(ri1.rating_issue_associated_at).to eq(nil)
+        expect(ri1.remand_source_id).to eq(nil)
 
         expect(ri2.benefit_type).to eq("pension")
         expect(ri2.contested_issue_description).to eq("PTSD")
@@ -62,6 +63,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri2.decision_review_type).to eq("HigherLevelReview")
         expect(ri2.veteran_participant_id).to eq(parser.veteran_participant_id)
         expect(ri2.rating_issue_associated_at).to eq("2024-05-22 13:13:30.000000000 -0400".to_datetime)
+        expect(ri2.remand_source_id).to eq(nil)
       end
     end
 
@@ -142,6 +144,24 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
+    context "when there is a remanded RI" do
+      it "populates remand_source_id" do
+        remand_payload = retrieve_payload
+        remand_payload[:request_issues][0][:remand_source_id] = 1
+        remand_payload[:request_issues][1][:remand_source_id] = 1
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, remand_payload)
+
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe,
+                                             decision_review: higher_level_review)
+
+        expect(backfilled_issues.count).to eq(2)
+        expect(RequestIssue.count).to eq(2)
+        expect(EventRecord.count).to eq(2)
+        expect(RequestIssue.first.remand_source_id).to eq(1)
+        expect(RequestIssue.last.remand_source_id).to eq(1)
+      end
+    end
+
     def retrieve_payload
       {
         "request_issues": [
@@ -171,7 +191,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "ramp_claim_id": nil,
             "rating_issue_associated_at": nil,
             "nonrating_issue_bgs_id": "12",
-            "nonrating_issue_bgs_source": "Test Source"
+            "nonrating_issue_bgs_source": "Test Source",
+            "remand_source_id": nil
           },
           {
             "decision_review_issue_id": "2",
@@ -198,7 +219,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "contested_rating_issue_diagnostic_code": nil,
             "ramp_claim_id": nil,
             "rating_issue_associated_at": 1_716_398_010_000,
-            "nonrating_issue_bgs_id": nil
+            "nonrating_issue_bgs_id": nil,
+            "remand_source_id": nil
           }
         ]
       }
