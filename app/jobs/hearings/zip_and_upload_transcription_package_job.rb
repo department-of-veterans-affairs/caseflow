@@ -6,13 +6,13 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   S3_BUCKET = "vaec-appeals-caseflow"
   class ZipTranscriptionPackageUploadError < StandardError; end
 
-  # retry_on TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer do |job, _exception|
-  #   job.cleanup_tmp_files
-  #   details_hash = { error: { type: "upload" }, provider: "S3" }
-  #   error_details = job.build_error_details(exception, details_hash)
-  #   job.send_transcription_issues_email(error_details)
-  #   fail ZipTranscriptionPackageUploadError
-  # end
+  retry_on TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer do |job, _exception|
+    job.cleanup_tmp_files
+    details_hash = { error: { type: "upload" }, provider: "S3" }
+    error_details = job.build_error_details(exception, details_hash)
+    job.send_transcription_issues_email(error_details)
+    fail ZipTranscriptionPackageUploadError
+  end
 
   def perform(work_order)
     @work_order = work_order
@@ -100,18 +100,24 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
       created_by_id: RequestStore[:current_user].id,
       status: "Successful upload (AWS)",
       task_number: @work_order[:work_order_name],
-      expected_return_date: @work_order[:return_date],
+      expected_return_date: format_return_date(@work_order[:return_date]),
       contractor_id: ::TranscriptionContractor.find_by(name: @work_order[:contractor_name])&.id
     )
     @work_order[:hearings].each do |hearing|
       TranscriptionPackageHearing.create!(
-        hearing_id: hearing[:hearing_id],
-        hearing_type: hearing[:hearing_type],
+        hearingable_id: hearing[:hearing_id],
+        hearingable_type: hearing[:hearing_type],
         transcription_package_id: transcription_package.id
       )
     end
+    transcription_package
   rescue ActiveRecord::RecordInvalid => error
     Rails.logger.error "Failed to create transcription package: #{error.message}"
+  end
+
+  def format_return_date(return_date)
+    parts = return_date.split('/')
+    "#{parts[2]}-#{parts[0]}-#{parts[1]}".to_date
   end
 
   def cleanup_tmp_files
