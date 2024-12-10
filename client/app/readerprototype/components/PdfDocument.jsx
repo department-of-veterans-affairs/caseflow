@@ -209,7 +209,7 @@ const PdfDocument = memo(({
         setPdfPages(pages);
         for (let i = 0; i < pages.length; i++) {
           pages[i].getTextContent().then((text) => {
-            textContentContainer[i] = text;
+            textContentContainer.push(text);
           });
         }
         if (isFileVisible) {
