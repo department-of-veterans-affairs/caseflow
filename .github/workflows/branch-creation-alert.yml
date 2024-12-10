@@ -1,0 +1,50 @@
+name: Branch Creation Alert
+on:
+  workflow_dispatch:
+  create:
+
+jobs:
+  send_branch_alert:
+    name: Send Branch Creation Alert
+    runs-on: ubuntu-2-cores-latest
+
+    # Only alert the TL group if a UAT, prodtest, or release branch has been cut.
+    if: ${{ (github.event.ref_type == 'branch') && (
+        contains(github.ref, 'refs/heads/uat') ||
+        contains(github.ref, 'refs/heads/prodtest') ||
+        contains(github.ref, 'refs/heads/release')
+      ) }}
+
+    steps:
+      - name: Determine if Release Branch
+        id: determine-release-branch
+        if: ${{ !contains(github.ref, 'refs/heads/uat') }}
+        run: |
+          if [[ "${{github.ref}}" =~ "refs/heads/release" ]]; then
+            echo "is_release_branch=Yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release_branch=No" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send UAT Alert
+        if: ${{ contains(github.ref, 'refs/heads/uat') }}
+        run: |
+         curl --request POST \
+            --url ${{ secrets.UAT_BRANCH_CREATION_WEBHOOK_URL }} \
+            --data '{
+              "app_name": "Caseflow",
+              "branch_name" : "${{ github.ref_name	}}",
+              "branch_url": "https://github.com/department-of-veterans-affairs/caseflow/tree/${{ github.ref_name	}}"
+            }'
+
+      - name: Send ProdTest Alert
+        if: ${{ !contains(github.ref, 'refs/heads/uat') }}
+        run: |
+         curl --request POST \
+            --url ${{ secrets.PRODTEST_BRANCH_CREATION_WEBHOOK_URL }} \
+            --data '{
+                  "app_name": "Caseflow",
+                  "branch_name" : "${{ github.ref_name	}}",
+                  "branch_url": "https://github.com/department-of-veterans-affairs/caseflow/tree/${{ github.ref_name	}}",
+                  "is_release_branch": "${{ steps.determine-release-branch.outputs.is_release_branch }}"
+                }'
