@@ -12,7 +12,6 @@ class WorkQueue::CorrespondenceSerializer
   attribute :nod
   attribute :status
   attribute :type
-  # attribute :veteran_id
   attribute :correspondence_documents do |object|
     object.correspondence_documents.map do |document|
       WorkQueue::CorrespondenceDocumentSerializer.new(document).serializable_hash[:data][:attributes]
@@ -78,14 +77,6 @@ class WorkQueue::CorrespondenceSerializer
     end
     appeals
   end
-
-  # attribute :veteran_full_name do |object|
-  #   [object.veteran_full_name&.first_name, object.veteran_full_name&.last_name].join(" ")
-  # end
-
-  # attribute :veteran_file_number do |object|
-  #   object.veteran&.file_number
-  # end
 
   attribute :correspondence_appeal_ids, &:appeal_ids
 
