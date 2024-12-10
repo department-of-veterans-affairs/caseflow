@@ -99,6 +99,7 @@ module Seeds
       create_and_add_cda_control_group_users
       add_users_to_bva_dispatch
       create_qa_test_users
+      create_hearings_supervisors_users
 
       # Below originated in the VeteransHealthAdministration seed file
       setup_camo_org
@@ -479,6 +480,22 @@ module Seeds
       CDAControlGroup.singleton.add_user(User.find_by(css_id: "BVAEBECKER"))
       CDAControlGroup.singleton.add_user(User.find_by(css_id: "BVAKKEELING"))
       OrganizationsUser.make_user_admin(User.find_by(css_id: "BVADWISE"), CDAControlGroup.singleton)
+    end
+
+    def create_hearings_supervisors_users
+      admin_user = create(:user,
+                          css_id: "HSADMINJON",
+                          full_name: "Jon HearingsSupervisorAdmin Snow",
+                          roles: ["Hearings Supervisors"])
+
+      OrganizationsUser.make_user_admin(admin_user, HearingsSupervisors.singleton)
+
+      non_admin_user = create(:user,
+                          css_id: "HSNONADMINJON",
+                          full_name: "Jon HearingsSupervisorNonAdmin Snow",
+                          roles: ["Hearings Supervisors"])
+
+      HearingsSupervisors.singleton.add_user(non_admin_user)
     end
 
     def add_users_to_bva_dispatch

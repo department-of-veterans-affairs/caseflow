@@ -22,8 +22,10 @@ services:
     volumes:
       - "postgresdata:/var/lib/postgresql/data"
     environment:
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   appeals-localstack-aws:
     container_name: localstack
