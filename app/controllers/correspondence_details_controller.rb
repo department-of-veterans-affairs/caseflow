@@ -181,6 +181,10 @@ class CorrespondenceDetailsController < CorrespondenceController
     render json: { tasks: json_appeal_tasks(tasks.flatten!) }
   end
 
+  def correspondence_status
+    render json: { status: @correspondence.status }
+  end
+
   def create_correspondence_appeal_task
     correspondence_intake_processor.create_appeal_related_tasks(params, current_user, @correspondence)
 
