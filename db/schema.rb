@@ -1132,11 +1132,6 @@ ActiveRecord::Schema.define(version: 2024_12_10_095300) do
     t.index ["uuid"], name: "index_hearings_on_uuid"
   end
 
-  create_table "hearings_supervisors", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "higher_level_reviews", comment: "Intake data for Higher Level Reviews.", force: :cascade do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "created_at"

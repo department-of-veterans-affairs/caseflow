@@ -4,7 +4,6 @@ class Hearings::NationalHearingQueueController < ApplicationController
   def index
     respond_to do |format|
       format.html { render "national_hearing_queue/index" }
-      format.json { queue_entries }
     end
   end
 
