@@ -5,6 +5,13 @@ class Event < CaseflowRecord
   has_many :event_records
   store_accessor :info, :errored_claim_id
 
+  enum status: {
+    completed: 0,
+    processing: 1,
+    pending: 2,
+    failed: 3
+  }
+
   scope :with_errored_claim_id, -> { where.not("info -> 'errored_claim_id' IS NULL") }
   scope :with_errored_participant_id, -> { where.not("info -> 'errored_participant_id' IS NULL") }
 
