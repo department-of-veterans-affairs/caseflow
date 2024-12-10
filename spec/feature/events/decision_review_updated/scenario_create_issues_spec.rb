@@ -10,14 +10,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:review) { epe.source }
     let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
 
-    def logical_date_converter(logical_date_int)
-      return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
-
-      base_date = Date.new(1970, 1, 1)
-      converted_date = base_date + logical_date_int.to_i.days
-      converted_date
-    end
-
     def json_test_payload
       {
         "event_id": 214_786,
@@ -145,7 +137,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.nonrating_issue_description).to eq(nil)
         expect(new_request_issue.decision_date).to be_a(Date)
-        # expect(new_request_issue.rating_issue_associated_at).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.is_unidentified).to eq(true)
         expect(new_request_issue.nonrating_issue_bgs_id).to eq("some_bgs_id")
