@@ -50,6 +50,17 @@ FactoryBot.define do
       end
     end
 
+    trait :inbound_ops_task do
+      after(:create) do |correspondence|
+        ReturnToInboundOpsTask.create!(
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          parent: correspondence.review_package_task,
+          assigned_to: InboundOpsTeam.singleton
+        )
+      end
+    end
+
     trait :pending do
       after(:create) do |correspondence|
         create(
