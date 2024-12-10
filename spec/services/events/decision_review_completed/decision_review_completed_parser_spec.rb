@@ -20,108 +20,50 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
     JSON.parse(File.read(file_path))
   end
 
-  let(:completed_issues_payload) do
-    [{
-      benefit_type: "compensation",
-      closed_at: nil,
-      closed_status: nil,
-      contention_reference_id: 123_456,
-      contested_decision_issue_id: nil,
-      contested_issue_description: nil,
-      contested_rating_decision_reference_id: nil,
-      contested_rating_issue_diagnostic_code: nil,
-      contested_rating_issue_profile_date: nil,
-      contested_rating_issue_reference_id: nil,
-      edited_description: "DIC: Service connection denied (UPDATED)",
-      decision_date: nil,
-      decision_review_issue_id: 772_37,
-      ineligible_due_to_id: nil,
-      ineligible_reason: nil,
-      is_unidentified: true,
-      nonrating_issue_bgs_id: nil,
-      nonrating_issue_bgs_source: nil,
-      nonrating_issue_category: nil,
-      nonrating_issue_description: nil,
-      original_caseflow_request_issue_id: 123_45,
-      ramp_claim_id: nil,
-      rating_issue_associated_at: nil,
-      type: "RequestIssue",
-      unidentified_issue_text: "An unidentified issue added during the edit",
-      untimely_exemption: false,
-      untimely_exemption_notes: nil,
-      vacols_id: nil,
-      vacols_sequence_id: nil,
-      veteran_participant_id: "1826209"
-    }]
-  end
-
   let(:completed_issues) do
     [{
+      id: 12,
       benefit_type: "compensation",
-      closed_at: nil,
-      closed_status: nil,
-      contention_reference_id: 123_456,
-      contested_decision_issue_id: nil,
+      closed_at: 1_702_067_145_000,
+      closed_status: "closed",
+      contention_reference_id: 790_575_2,
+      contested_decision_issue_id: 123_45,
       contested_issue_description: nil,
-      contested_rating_decision_reference_id: nil,
       contested_rating_issue_diagnostic_code: nil,
       contested_rating_issue_profile_date: nil,
       contested_rating_issue_reference_id: nil,
-      edited_description: "DIC: Service connection denied (UPDATED)",
-      decision_date: nil,
+      decision_date: 18_475,
       decision_review_issue_id: 908,
-      ineligible_due_to_id: nil,
-      ineligible_reason: nil,
-      is_unidentified: true,
-      nonrating_issue_bgs_id: nil,
-      nonrating_issue_bgs_source: nil,
-      nonrating_issue_category: nil,
-      nonrating_issue_description: nil,
+      is_unidentified: nil,
+      nonrating_issue_bgs_id: "13",
+      nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
+      nonrating_issue_category: "Accrued Benefits",
+      nonrating_issue_description: "The user entered description if the issue is a nonrating issue",
       original_caseflow_request_issue_id: 123_45,
       ramp_claim_id: nil,
       rating_issue_associated_at: nil,
       type: "RequestIssue",
-      unidentified_issue_text: "An unidentified issue added during the edit",
-      untimely_exemption: false,
+      unidentified_issue_text: "unidentified text",
+      untimely_exemption: nil,
       untimely_exemption_notes: nil,
       vacols_id: nil,
       vacols_sequence_id: nil,
-      veteran_participant_id: "1826209"
-    }]
-  end
-
-  let(:removed_issues) do
-    [{
-      benefit_type: "compensation",
-      closed_at: nil,
-      closed_status: nil,
-      contention_reference_id: 123_456,
-      contested_decision_issue_id: nil,
-      contested_issue_description: nil,
-      contested_rating_decision_reference_id: nil,
-      contested_rating_issue_diagnostic_code: nil,
-      contested_rating_issue_profile_date: nil,
-      contested_rating_issue_reference_id: nil,
-      edited_description: "DIC: Service connection denied (UPDATED)",
-      decision_date: nil,
-      decision_review_issue_id: 8755,
-      ineligible_due_to_id: nil,
-      ineligible_reason: nil,
-      is_unidentified: true,
-      nonrating_issue_bgs_id: nil,
-      nonrating_issue_bgs_source: nil,
-      nonrating_issue_category: nil,
-      nonrating_issue_description: nil,
-      original_caseflow_request_issue_id: 123_45,
-      ramp_claim_id: nil,
-      rating_issue_associated_at: nil,
-      type: "RequestIssue",
-      unidentified_issue_text: "An unidentified issue added during the edit",
-      untimely_exemption: false,
-      untimely_exemption_notes: nil,
-      vacols_id: nil,
-      vacols_sequence_id: nil,
-      veteran_participant_id: "1826209"
+      veteran_participant_id: "210002659",
+      decision_issue: {
+        benefit_type: "compensation",
+        contention_reference_id: 7_905_752,
+        decision_text: "service connected",
+        description: nil,
+        diagnostic_code: nil,
+        disposition: "Granted",
+        end_product_last_action_date: 19_594,
+        participant_id: "1826209",
+        percent_number: "50",
+        rating_issue_reference_id: nil,
+        rating_profile_date: nil,
+        rating_promulgation_date: nil,
+        subject_text: "This broadcast may not be reproduced"
+      }
     }]
   end
 
@@ -135,16 +77,16 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
       expect(subject.css_id).to eq("BVADWISE101")
     end
 
-    it "returns the correct claim_id" do
-      expect(subject.claim_id).to eq(123_456_7)
+    it "returns the correct station" do
+      expect(subject.station_id).to eq("101")
     end
 
     it "returns the correct detail_type" do
       expect(subject.detail_type).to eq("HigherLevelReview")
     end
 
-    it "returns the correct station" do
-      expect(subject.station_id).to eq("101")
+    it "returns the correct claim_id" do
+      expect(subject.claim_id).to eq("1234566")
     end
 
     describe "claim_review" do
@@ -173,7 +115,7 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
 
     # We are testing that each attribute returns the correct value
     describe "completed_issues" do
-      it "returns an empty array if no completed issues" do
+      it "returns parsed array of completed issues" do
         expect(subject.completed_issues).to eq(completed_issues)
       end
     end
@@ -197,115 +139,13 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
           .to eq(convert_milliseconds_to_datetime(payload["end_product_establishment"]["last_synced_at"]))
       end
     end
-
-    describe "original_source" do
-      it "returns the correct original_source" do
-        expect(subject.original_source).to eq(payload["original_source"])
-      end
-    end
-
-    describe "decision_review_type" do
-      it "returns the correct decision_review_type" do
-        expect(subject.decision_review_type).to eq(payload["decision_review_type"])
-      end
-    end
-
-    describe "file_number" do
-      it "returns the correct file_number" do
-        expect(subject.file_number).to eq(payload["file_number"])
-      end
-    end
-
-    describe "claimant_participant_id" do
-      it "returns the correct claimant_participant_id" do
-        expect(subject.claimant_participant_id).to eq(payload["claimant_participant_id"])
-      end
-    end
-
-    describe "claim_category" do
-      it "returns the correct claim_category" do
-        expect(subject.claim_category).to eq(payload["claim_category"])
-      end
-    end
-
-    describe "claim_received_date" do
-      it "returns the correct claim_received_date" do
-        expect(subject.claim_received_date).to eq(payload["claim_received_date"])
-      end
-    end
-
-    describe "claim_lifecycle_status" do
-      it "returns the correct claim_lifecycle_status" do
-        expect(subject.claim_lifecycle_status).to eq(payload["claim_lifecycle_status"])
-      end
-    end
-
-    describe "payee_code" do
-      it "returns the correct payee_code" do
-        expect(subject.payee_code).to eq(payload["payee_code"])
-      end
-    end
-
-    describe "ols_issue" do
-      it "returns the correct ols_issue" do
-        expect(subject.ols_issue).to eq(payload["ols_issue"])
-      end
-    end
-
-    describe "originated_from_vacols_issue" do
-      it "returns the correct originated_from_vacols_issue" do
-        expect(subject.originated_from_vacols_issue).to eq(payload["originated_from_vacols_issue"])
-      end
-    end
-
-    describe "limited_poa_code" do
-      it "returns the correct limited_poa_code" do
-        expect(subject.limited_poa_code).to eq(payload["limited_poa_code"])
-      end
-    end
-
-    describe "tracked_item_action" do
-      it "returns the correct tracked_item_action" do
-        expect(subject.tracked_item_action).to eq(payload["tracked_item_action"])
-      end
-    end
-
-    describe "tracked_item_id" do
-      it "returns the correct tracked_item_id" do
-        expect(subject.tracked_item_id).to eq(payload["tracked_item_id"])
-      end
-    end
-
-    describe "informal_conference_requested" do
-      it "returns the correct informal_conference_requested" do
-        expect(subject.informal_conference_requested).to eq(payload["informal_conference_requested"])
-      end
-    end
-
-    describe "same_station_review_requested" do
-      it "returns the correct same_station_review_requested" do
-        expect(subject.same_station_review_requested).to eq(payload["same_station_review_requested"])
-      end
-    end
-
-    describe "claim_time" do
-      it "returns the correct claim_time" do
-        expect(subject.claim_time).to eq(payload["claim_time"])
-      end
-    end
-
-    describe "auto_remand" do
-      it "returns the correct auto_remand" do
-        expect(subject.auto_remand).to eq(payload["auto_remand"])
-      end
-    end
   end
 
   context "when attributes use .presence and values are empty strings" do
     let(:empty_payload) do
       payload.merge(
         css_id: "",
-        detail_type: "",
+        claim_id: "",
         end_product_establishment: {
           development_item_reference_id: "",
           reference_id: ""
@@ -319,8 +159,8 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
       expect(subject.css_id).to be_nil
     end
 
-    it "returns nil for detail_type if the value is an empty string" do
-      expect(subject.detail_type).to be_nil
+    it "returns nil for claim_id if the value is an empty string" do
+      expect(subject.claim_id).to be_nil
     end
 
     it "returns not nil for development_item_reference_id if the value is not an empty string" do
