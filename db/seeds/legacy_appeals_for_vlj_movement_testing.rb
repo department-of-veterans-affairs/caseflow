@@ -41,88 +41,108 @@ module Seeds
       wqjudge_six = create_scenario_6_veteran(first_name: "Wqjudge", last_name: "Six")
       wqjudge_control = create_scenario_6_veteran(first_name: "Wqjudge", last_name: "Control")
 
+      def set_decass_atty(atty, sc)
+        VACOLS::Decass.find_by(defolder: sc.vacols_id).update(deatty: atty.vacols_attorney_id)
+      end
+
       # Case 1: Wqjudge One (Priority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVALSHIELDS")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_cavc_remand,
         :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
-        assigner: User.find_by_css_id("BVALSHIELDS"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_one.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
+      set_decass_atty(attorney, scenario_case)
+
 
       # Case 2: Wqjudge Two (Nonpriority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVACOTBJUDGE")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
-        assigner: User.find_by_css_id("BVACOTBJUDGE"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_two.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      set_decass_atty(attorney, scenario_case)
 
       # Case 3: Wqjudge Three (Nonpriority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVALSHIELDS")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
-        assigner: User.find_by_css_id("BVALSHIELDS"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_three.file_number}S",
-        case_issues: create_list(:case_issue, 2, :compensation)))
+        case_issues: create_list(:case_issue, 2, :compensation)
+      ))
+      set_decass_atty(attorney, scenario_case)
 
       # Case 4: Wqjudge Four (Priority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVAJWEHNER1")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case:
+      create(
         :case_with_form_9,
         :type_cavc_remand,
         :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
-        assigner: User.find_by_css_id("BVAJWEHNER1"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_four.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      set_decass_atty(attorney, scenario_case)
 
       # Case 5: Wqjudge Five (Priority, 2 issues)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVAOTRANTOW")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case:
+      create(
         :case_with_form_9,
         :type_original,
         :status_active,
         :aod,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
-        assigner: User.find_by_css_id("BVAOTRANTOW"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_five.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
+      set_decass_atty(attorney, scenario_case)
 
       # Case 6: Wqjudge Six (Nonpriority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      attorney = User.find_by_css_id("BVAGSPORER")
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
-        assigner: User.find_by_css_id("BVAGSPORER"),
-        as_judge_assign_task: false,
+        assigner: attorney,
+        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_six.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
+      set_decass_atty(attorney, scenario_case)
 
       # Case 7: Wqjudge Control (priority, 1 issue)
-      create(:legacy_appeal, :with_veteran, vacols_case: create(
+      scenario_case = create(:legacy_appeal, :with_veteran, vacols_case: create(
         :case_with_form_9,
         :type_original,
         :status_active,
