@@ -32,7 +32,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
   const legacyTaskAlert = legacyAppealAssignmentTrackingTasks.length > 0 &&
     <Alert
       type="info"
-      message="This appeal has been moved. Please check the case timeline for additional details."
+      message={COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL}
       lowerMargin
     />;
 
