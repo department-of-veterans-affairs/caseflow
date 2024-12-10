@@ -8,6 +8,7 @@ jobs:
     name: Send Branch Creation Alert
     runs-on: ubuntu-2-cores-latest
 
+    # Only alert the TL group if a UAT, prodtest, or release branch has been cut.
     if: ${{ (github.event.ref_type == 'branch') && (
         contains(github.ref, 'refs/heads/uat') ||
         contains(github.ref, 'refs/heads/prodtest') ||
@@ -15,5 +16,14 @@ jobs:
       ) }}
 
     steps:
-      - name: Testing
-        run: echo ${{ github.ref }}
+      - name: Determine URL
+        id: webhook-url
+        shell: bash
+        run: |
+          if [[ "${{github.ref}}" =~ "refs/heads/uat" ]]; then
+            echo "${{ secrets.UAT_BRANCH_CREATION_WEBHOOK_URL }}"
+          else
+            echo "${{ secrets.PRODTEST_BRANCH_CREATION_WEBHOOK_URL }}"
+          fi
+
+
