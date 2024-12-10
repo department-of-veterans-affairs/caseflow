@@ -178,8 +178,11 @@ module CorrespondenceControllerConcern
   end
 
   def general_information
+    vet = veteran_by_correspondence
     {
       notes: correspondence.notes,
+      file_number: vet.file_number,
+      veteran_name: vet.name,
       correspondence_type_id: correspondence.correspondence_type_id,
       correspondence_tasks: correspondence.tasks.map do |task|
         WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
