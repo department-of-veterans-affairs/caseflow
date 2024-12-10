@@ -21,16 +21,14 @@ class CmpDocument < ApplicationRecord
       return
     end
 
-    # For yyyy-mm-dd format:
-    # Require non-zero first digit; require the exact number of digits for each.
-    if !before_val.is_a?(String) && !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val.strftime("%Y-%m-%d"))
-      errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
-      return
+    unless before_val.is_a?(String)
+      before_val = before_val.strftime("%Y-%m-%d")
     end
 
+    # For yyyy-mm-dd format:
+    # Require non-zero first digit; require the exact number of digits for each.
     if before_val.is_a?(String) && !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
       errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
-      return
     end
 
   rescue Date::Error
