@@ -63,7 +63,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def serialized_correspondence
-    WorkQueue::CorrespondenceSerializer
+    Correspondence::CorrespondenceDetails::CorrespondenceSerializer
       .new(correspondence)
       .serializable_hash[:data][:attributes]
       .merge(general_information)
