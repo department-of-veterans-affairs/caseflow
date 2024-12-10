@@ -158,15 +158,15 @@ export const correspondenceDetailsData = {
 
 export const correspondenceInfoData = {
   correspondenceInfo: {
-    tasksUnrelatedToAppeal : [
+    tasksUnrelatedToAppeal: [
       {
-          label: 'Other motion',
-          assignedOn: '11/13/2024',
-          assignedTo: 'Litigation Support',
+        label: 'Other motion',
+        assignedOn: '11/13/2024',
+        assignedTo: 'Litigation Support',
       }
-  ]
+    ]
   }
-}
+};
 
 export const appeals = {
   appellantFullName: 'John Doe',
@@ -176,4 +176,14 @@ export const packageDocumentTypeData = {
   id: 15,
   active: true,
   name: 'NOD',
+};
+
+export const veteranInformationData = {
+  veteranInformation: {
+    id: 1928,
+    firstName: 'John',
+    lastName: 'Doe',
+    fileNumber: '998877665',
+    fullName: 'John Doe'
+  },
 };
