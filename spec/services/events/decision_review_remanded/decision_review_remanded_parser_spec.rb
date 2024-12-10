@@ -12,10 +12,11 @@ describe Events::DecisionReviewRemanded::DecisionReviewRemandedParser do
     # mimic when we recieve an example_response
     parser = described_class.load_example
 
-    it "has css_id, detail_type and station_id" do
+    it "has css_id, detail_type, claim_id and station_id" do
       expect(parser.css_id).to eq(response_hash.css_id)
       expect(parser.detail_type).to eq(response_hash.detail_type)
       expect(parser.station_id).to eq(response_hash.station)
+      expect(parser.claim_id).to eq(response_hash.claim_id)
     end
 
     it "has Intake attributes" do
@@ -210,6 +211,7 @@ describe Events::DecisionReviewRemanded::DecisionReviewRemandedParser do
         css_id: "",
         detail_type: "",
         station: "",
+        claim_id: "",
         veteran: { participant_id: "" },
         claimant: { payee_code: "", name_suffix: "" },
         claim_review: { benefit_type: "", receipt_date: "", establishment_submitted_at: "" },
@@ -223,6 +225,10 @@ describe Events::DecisionReviewRemanded::DecisionReviewRemandedParser do
 
     it "parses css_id as nil when empty string" do
       expect(subject.css_id).to be_nil
+    end
+
+    it "parses claim_id as nil when empty string" do
+      expect(subject.claim_id).to be_nil
     end
 
     it "parses detail_type as nil when empty string" do

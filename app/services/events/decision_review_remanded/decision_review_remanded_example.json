@@ -3,6 +3,7 @@
   "css_id": "BVADWISE",
   "detail_type": "SupplementalClaim",
   "station": "101",
+  "claim_id": "1234566",
   "intake": {
     "started_at": 1702067143435,
     "completion_started_at": 1702067145000,

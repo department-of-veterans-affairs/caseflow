@@ -52,6 +52,10 @@ class Events::DecisionReviewRemanded::DecisionReviewRemandedParser
     @payload.dig(:station).presence
   end
 
+  def claim_id
+    @payload.dig(:claim_id).presence
+  end
+
   def event_id
     @payload.dig(:event_id).presence
   end
