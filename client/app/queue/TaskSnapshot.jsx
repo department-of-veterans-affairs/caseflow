@@ -27,14 +27,10 @@ const alertStyling = css({
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTask, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
+  const { css_id: locationUserCssId } = appeal?.locationHistory?.at(-1)?.locationUser || {};
   const showBanner = (
-  latestCaseTimeLineTask?.type === 'LegacyAppealAssignmentTrackingTask' &&
-    (() => {
-      const [{ locationUser }] = appeal?.locationHistory?.slice(-1) || [{}];
-      const { css_id: locationUserCssId } = locationUser || {};
-
-      return latestCaseTimeLineTask?.assignedTo.cssId === locationUserCssId;
-    })()
+    latestCaseTimeLineTask?.type === 'LegacyAppealAssignmentTrackingTask' &&
+    latestCaseTimeLineTask?.assignedTo.cssId === locationUserCssId
   );
   const legacyTaskAlert = showBanner && <Alert
     type="info"
