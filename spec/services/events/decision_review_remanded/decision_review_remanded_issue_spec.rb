@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, type: :service do
+RSpec.describe Events::DecisionReviewRemanded::DecisionReviewRemandedIssueParser, type: :service do
   let(:issue_data) do
     {
       decision_review_issue_id: "123",
@@ -20,6 +20,7 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
       unidentified_issue_text: "",
       nonrating_issue_category: "Category A",
       nonrating_issue_description: "Non-rating issue description",
+      remand_source_id: 1234,
       untimely_exemption: true,
       untimely_exemption_notes: "Some notes",
       vacols_id: "VAC123",
@@ -28,7 +29,6 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
       closed_status: "withdrawn",
       contested_rating_issue_diagnostic_code: "7890",
       ramp_claim_id: "RAMP123",
-      remand_source_id: 1234,
       rating_issue_associated_at: 1_683_072_000_000, # Example timestamp
       nonrating_issue_bgs_id: "BGS987",
       nonrating_issue_bgs_source: "source"
@@ -128,6 +128,12 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
     end
   end
 
+  describe "#ri_remand_source_id" do
+    it "returns the remand_source_id" do
+      expect(parser.ri_remand_source_id).to eq(1234)
+    end
+  end
+
   describe "#ri_untimely_exemption" do
     it "returns the untimely exemption status" do
       expect(parser.ri_untimely_exemption).to eq(true)
@@ -178,12 +184,6 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
     end
   end
 
-  describe "#ri_remand_source_id" do
-    it "returns the remand_source_id" do
-      expect(parser.ri_remand_source_id).to eq(1234)
-    end
-  end
-
   describe "#ri_rating_issue_associated_at" do
     it "returns the rating issue associated datetime converted from milliseconds" do
       allow(parser).to receive(:convert_milliseconds_to_datetime)
@@ -221,6 +221,7 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
         unidentified_issue_text: nil,
         nonrating_issue_category: "Accrued Benefits",
         nonrating_issue_description: "The user entered description if the issue is a nonrating issue",
+        remand_source_id: nil,
         untimely_exemption: nil,
         untimely_exemption_notes: nil,
         vacols_id: nil,
@@ -292,6 +293,10 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
     it "parses nonrating_issue_description correctly" do
       expect(subject.ri_nonrating_issue_description)
         .to eq("The user entered description if the issue is a nonrating issue")
+    end
+
+    it "parses remand_source_id correctly" do
+      expect(subject.ri_remand_source_id).to be_nil
     end
 
     it "parses untimely_exemption correctly" do

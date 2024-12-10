@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
+class Events::DecisionReviewRemanded::DecisionReviewRemandedIssueParser
   include ParserHelper
   attr_reader :issue
 
@@ -21,7 +21,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_contention_reference_id
-    @issue.dig(:contention_reference_id)
+    @issue.dig(:contention_reference_id).presence
   end
 
   def ri_contested_rating_decision_reference_id
@@ -37,7 +37,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_contested_decision_issue_id
-    @issue.dig(:contested_decision_issue_id)
+    @issue.dig(:contested_decision_issue_id).presence
   end
 
   def ri_decision_date
@@ -67,6 +67,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
 
   def ri_nonrating_issue_description
     @issue.dig(:nonrating_issue_description).presence
+  end
+
+  def ri_remand_source_id
+    @issue.dig(:remand_source_id)
   end
 
   def ri_untimely_exemption
@@ -100,10 +104,6 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
 
   def ri_ramp_claim_id
     @issue.dig(:ramp_claim_id).presence
-  end
-
-  def ri_remand_source_id
-    @issue.dig(:remand_source_id)
   end
 
   def ri_rating_issue_associated_at
