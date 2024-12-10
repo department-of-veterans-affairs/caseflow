@@ -113,68 +113,6 @@ RSpec.feature "Postpone hearing" do
     end
   end
 
-  context "with schedule direct to video/virtual feature disabled", skip: "This functionality is no longer in use." do
-    # Ensure the feature flag is disabled before testing
-    before do
-      FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
-    end
-
-    # Test the reschedule scenario
-    context "for AMA appeals" do
-      include_context "ama_appeal"
-
-      # Run the AMA scenarios
-      it_behaves_like "an AMA appeal"
-      scenario "when rescheduling" do
-        visit "/queue/appeals/#{appeal.external_id}"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
-        find("label", text: "Reschedule immediately").click
-        expect(page).to_not have_content("Schedule Veteran for a Hearing")
-        click_dropdown(name: "regionalOffice", text: "Denver, CO")
-        expect(page).to_not have_content("Finding hearing locations", wait: 30)
-        click_dropdown(name: "appealHearingLocation", index: 0)
-        click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 AM").click
-        click_button("Submit")
-
-        expect(page).to have_content("You have successfully assigned")
-        expect(Hearing.where(hearing_day: hearing_day_earlier).count).to eq 1
-        expect(Hearing.find_by(hearing_day: hearing_day_earlier).hearing_location.facility_id).to eq "vba_339"
-        expect(Hearing.first.disposition).to eq "postponed"
-        expect(Hearing.second.disposition).to be_nil
-        expect(Hearing.second.uuid).to_not eq Hearing.first.uuid
-        expect(HearingTask.count).to eq 2
-      end
-    end
-
-    context "for a Legacy appeal", skip: "This functionality is no longer in use." do
-      include_context "legacy_appeal"
-
-      scenario "when rescheduling on the same day" do
-        visit "/queue/appeals/#{legacy_hearing.appeal.external_id}"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
-        find("label", text: "Reschedule immediately").click
-        expect(page).to_not have_content("Schedule Veteran for a Hearing")
-        click_dropdown(name: "regionalOffice", text: "Denver, CO")
-        expect(page).to_not have_content("Finding hearing locations", wait: 30)
-        click_dropdown(name: "appealHearingLocation", index: 0)
-        click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 AM").click
-        click_button("Submit")
-
-        expect(page).to have_content("You have successfully assigned")
-        expect(LegacyHearing.second.hearing_day.id).to eq hearing_day_earlier.id
-        expect(LegacyHearing.first.disposition).to eq "postponed"
-        expect(LegacyHearing.second.disposition).to be_nil
-        expect(LegacyHearing.second.vacols_id).to_not eq LegacyHearing.first.vacols_id
-        expect(HearingTask.first.hearing.id).to eq legacy_hearing.id
-        expect(HearingTask.second.hearing.id).to eq LegacyHearing.second.id
-      end
-    end
-  end
-
   context "with schedule direct to video/virtual feature enabled" do
     # Ensure the feature flag is enabled before testing
     before do
