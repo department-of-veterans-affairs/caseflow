@@ -55,11 +55,10 @@ class Events::PersonUpdatedError
   end
 
   def event_exists?
-    @event ||= PersonUpdatedErrorEvent.where(reference_id: event_id).first
-    @event.present?
+    event.persisted?
   end
 
   def event
-    @event ||= PersonUpdatedErrorEvent.find_or_create_by(reference_id: event_id)
+    @event ||= PersonUpdatedErrorEvent.find_or_initialize_by(reference_id: event_id)
   end
 end

@@ -25,7 +25,7 @@ describe Events::PersonUpdated do
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name,
       middle_name: Faker::Name.first_name,
-      name_suffix: Faker::Name.suffix,
+      name_suffix: "Jr.",
       email_address: Faker::Internet.email,
       ssn: "777889999",
       participant_id: participant_id

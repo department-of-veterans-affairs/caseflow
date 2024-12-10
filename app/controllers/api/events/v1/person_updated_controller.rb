@@ -63,7 +63,7 @@ class Api::Events::V1::PersonUpdatedController < Api::ApplicationController
   private
 
   def person_updated_attributes
-    map = Events::PersonUpdated::PersonUpdatedEvent.header_attribute_map
+    map = Events::PersonUpdated::PersonUpdatedAttributes.header_attribute_map
 
     map.reduce({}) do |attributes, (header, attribute)|
       attributes[attribute] = request.headers[header]
