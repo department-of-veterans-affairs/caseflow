@@ -85,6 +85,10 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
       expect(subject.detail_type).to eq("HigherLevelReview")
     end
 
+    it "returns the correct claim_id" do
+      expect(subject.claim_id).to eq("1234566")
+    end
+
     describe "claim_review" do
       it "returns the correct informal_conference" do
         expect(subject.claim_review_informal_conference).to eq(false)
@@ -141,6 +145,7 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
     let(:empty_payload) do
       payload.merge(
         css_id: "",
+        claim_id: "",
         end_product_establishment: {
           development_item_reference_id: "",
           reference_id: ""
@@ -152,6 +157,10 @@ RSpec.describe Events::DecisionReviewCompleted::DecisionReviewCompletedParser do
 
     it "returns nil for css_id if the value is an empty string" do
       expect(subject.css_id).to be_nil
+    end
+
+    it "returns nil for claim_id if the value is an empty string" do
+      expect(subject.claim_id).to be_nil
     end
 
     it "returns not nil for development_item_reference_id if the value is not an empty string" do

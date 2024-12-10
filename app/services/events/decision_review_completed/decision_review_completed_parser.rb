@@ -57,6 +57,10 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
     @payload[:detail_type].presence
   end
 
+  def claim_id
+    @payload[:claim_id].presence
+  end
+
   def claim_review_informal_conference
     @payload.dig(:claim_review, :informal_conference)
   end

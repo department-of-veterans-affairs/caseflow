@@ -3,6 +3,7 @@
   "detail_type": "HigherLevelReview",
   "station": "101",
   "event_id" : 214706,
+  "claim_id" : "1234566",
   "end_product_establishment": {
     "synced_status": "CLR",
     "last_synced_at": 1702067145000,
