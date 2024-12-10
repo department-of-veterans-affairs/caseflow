@@ -126,7 +126,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCompletedController, type: :contro
         expect(completed_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(completed_request_issue.vacols_id).to eq(nil)
         expect(completed_request_issue.vacols_sequence_id).to eq(nil)
-        # decision_issue = DecisionIssue.joins(:request_issues).find_by(request_issues: { reference_id: "1234" })
         decision_issue = completed_request_issue.decision_issues.last
         expect(decision_issue.benefit_type).to eq("compensation")
         expect(decision_issue.decision_text).to eq("service connected")
