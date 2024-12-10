@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_09_104403) do
+ActiveRecord::Schema.define(version: 2024_12_09_104406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2031,10 +2031,10 @@ ActiveRecord::Schema.define(version: 2024_12_09_104403) do
   end
 
   create_table "transcription_package_hearings", force: :cascade do |t|
-    t.string "hearing_id"
-    t.string "hearing_type"
+    t.bigint "hearingable_id"
+    t.string "hearingable_type"
     t.bigint "transcription_package_id"
-    t.index ["hearing_type", "hearing_id"], name: "index_transcription_package_hearings"
+    t.index ["hearingable_type", "hearingable_id"], name: "index_transcription_package_hearings"
   end
 
   create_table "transcription_packages", force: :cascade do |t|

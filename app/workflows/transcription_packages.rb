@@ -22,7 +22,7 @@ class TranscriptionPackages
   end
 
   def create_bom_file
-    Hearings::CreateBomFileJob.perform_now(work_order_params) ? zip_and_upload_transcription_package : return
+    Hearings::CreateBillOfMaterialsJob.perform_now(work_order_params) ? zip_and_upload_transcription_package : return
   end
 
   def zip_and_upload_transcription_package

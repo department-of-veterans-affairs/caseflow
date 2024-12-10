@@ -3,8 +3,9 @@
 class TranscriptionPackage < CaseflowRecord
   belongs_to :contractor, class_name: "TranscriptionContractor"
   has_many :transcription_package_hearings
-  has_many :hearings, through: :transcription_package_hearings, source: :hearing, source_type: "Hearing"
-  has_many :legacy_hearings, through: :transcription_package_hearings, source: :hearing, source_type: "LegacyHearing"
+  has_many :hearings, through: :transcription_package_hearings, source: :hearingable, source_type: "Hearing"
+  has_many :legacy_hearings,
+           through: :transcription_package_hearings, source: :hearingable, source_type: "LegacyHearing"
   has_many :transcriptions, foreign_key: :task_number, primary_key: :task_number
 
   scope :filter_by_date, lambda { |values, field_name|
@@ -56,8 +57,12 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def all_hearings
-    transcription_package_hearings.map do |transcription_package_hearing|
-      serialize_hearing(transcription_package_hearing.hearing)
+    hearings + legacy_hearings
+  end
+
+  def all_hearings_serialized
+    all_hearings.map do |hearing|
+      serialize_hearing(hearing)
     end
   end
 

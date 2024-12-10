@@ -63,7 +63,7 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
     it "returns the contents from a transcription package" do
       result = TranscriptionWorkOrder.display_wo_contents(task_number)
 
-      expect(result).to eq(transcription_package.all_hearings)
+      expect(result).to eq(transcription_package.all_hearings_serialized)
     end
   end
 

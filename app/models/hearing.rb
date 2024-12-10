@@ -52,6 +52,8 @@ class Hearing < CaseflowRecord
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :transcription_files, class_name: "TranscriptionFile", as: :hearing
+  has_many :transcription_package_hearings, as: :hearingable
+  has_many :transcription_packages, through: :transcription_package_hearings
 
   class HearingDayFull < StandardError; end
 

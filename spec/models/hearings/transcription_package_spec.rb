@@ -128,7 +128,7 @@ RSpec.describe TranscriptionPackage, type: :model do
 
   it "can display all hearings serialized" do
     transcription_package = TranscriptionPackage.first
-    expect(transcription_package.all_hearings).to eq(
+    expect(transcription_package.all_hearings_serialized).to eq(
       [
         {
           caseDetails: h_1.appeal.appellant_or_veteran_name + " (" + h_1.appeal.veteran_file_number + ")",
