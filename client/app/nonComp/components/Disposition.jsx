@@ -23,6 +23,7 @@ import {
 } from '../util';
 import Link from 'app/components/Link';
 import Alert from '../../components/Alert';
+import { sprintf } from 'sprintf-js';
 
 const messageStyling = css({
   fontSize: '17px !important',
@@ -109,7 +110,8 @@ class NonCompDispositions extends React.PureComponent {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeOrDecidedRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: '',
-      isFilledOut: false
+      isFilledOut: false,
+      errorMessage: ''
     };
   }
 
@@ -124,12 +126,40 @@ class NonCompDispositions extends React.PureComponent {
     this.props.handleSave(dispositionData);
   }
 
+  validateDecisionDate = () => {
+    const decisionDate = formatDateStr(this.state.decisionDate);
+    const receiptDate = formatDateStr(this.props.appeal.receiptDate);
+
+    const dateIsValid = Boolean((new Date(decisionDate)) >= new Date(receiptDate)) &&
+      Boolean(Date.parse(decisionDate) < new Date());
+
+    if (dateIsValid) {
+      this.setState({ errorMessage: '' });
+    } else {
+      this.setState({
+        errorMessage: sprintf(
+          COPY.DATE_SELECTOR_DATE_RANGE_ERROR,
+          formatDateStr(this.props.appeal.receiptDate),
+          formatDateStr(new Date())),
+        isFilledOut: false
+      });
+    }
+
+    return dateIsValid;
+  }
+
   checkFormFilledOut = () => {
     // check if all dispositions have values & date is set
     const allDispositionsSet = this.state.requestIssues.every(
       (requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
 
-    this.setState({ isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate) });
+    let validDate = null;
+
+    if (this.state.decisionDate) {
+      validDate = this.validateDecisionDate();
+    }
+
+    this.setState({ isFilledOut: (allDispositionsSet && validDate) });
   }
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
@@ -183,6 +213,7 @@ class NonCompDispositions extends React.PureComponent {
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
+    const receiptDate = formatDateStrUtc(appeal.receiptDate, 'YYYY-MM-DD');
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -282,6 +313,9 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
+              minDate={receiptDate}
+              errorMessage={this.state.errorMessage}
+              noFutureDates
               type="date"
             />
           </InlineForm>
