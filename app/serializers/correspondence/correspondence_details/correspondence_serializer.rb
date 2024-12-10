@@ -5,13 +5,8 @@ class Correspondence::CorrespondenceDetails::CorrespondenceSerializer
 
   set_key_transform :camel_lower
 
-  attribute :uuid
-  attribute :id
-  attribute :notes
-  attribute :va_date_of_receipt
-  attribute :nod
-  attribute :status
-  attribute :type
+  attributes :uuid, :id, :notes, :va_date_of_receipt, :nod, :status, :type
+
   attribute :correspondence_documents do |object|
     object.correspondence_documents.map do |document|
       WorkQueue::CorrespondenceDocumentSerializer.new(document).serializable_hash[:data][:attributes]
