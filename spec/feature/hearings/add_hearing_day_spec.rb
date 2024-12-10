@@ -190,13 +190,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
           # Verify db values
           expect(HearingDay.last.reload.total_slots).to eq(total_slots)
           expect(HearingDay.last.first_slot_time).to eq(first_slot_time)
-          expect(HearingDay.last.begins_at)
-            .to eq(
-              HearingDay.last.send(:combine_time_and_date,
-                                   first_slot_time || "8:30",
-                                   Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"],
-                                   HearingDay.last.scheduled_for)
-            )
+          expect(HearingDay.last.begins_at).to eq(result)
         end
       end
 
@@ -205,6 +199,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:total_slots) { HearingDay::SLOTS_BY_REQUEST_TYPE["V"][:default] }
         let(:first_slot_time) { nil }
         let(:begins_at) { nil }
+        let(:result) { "2019-04-15T08:30:00-04:00" }
         include_examples "adding full or half day dockets"
       end
 
@@ -213,6 +208,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:total_slots) { 5 }
         let(:first_slot_time) { "11:30" }
         let(:begins_at) { "2019-04-15T11:30:00-07:00" }
+        let(:result) { "2019-04-15T11:30:00-04:00" }
         include_examples "adding full or half day dockets"
       end
 
@@ -221,6 +217,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:total_slots) { 5 }
         let(:first_slot_time) { "15:30" }
         let(:begins_at) { "2019-04-15T15:30:00-07:00" }
+        let(:result) { "2019-04-15T15:30:00-04:00" }
         include_examples "adding full or half day dockets"
       end
     end
@@ -316,13 +313,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
           # Verify db values
           expect(HearingDay.last.reload.total_slots).to eq(total_slots)
           expect(HearingDay.last.first_slot_time).to eq(first_slot_time)
-          expect(HearingDay.last.begins_at)
-            .to eq(
-              HearingDay.last.send(:combine_time_and_date,
-                                   first_slot_time || "8:30",
-                                   Constants::REGIONAL_OFFICE_INFORMATION[HearingDay.last.regional_office]["timezone"],
-                                   HearingDay.last.scheduled_for)
-            )
+          expect(HearingDay.last.begins_at).to eq(result)
         end
       end
 
@@ -330,7 +321,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:choice) { 0 }
         let(:total_slots) { HearingDay::SLOTS_BY_REQUEST_TYPE["V"][:default] } # T
         let(:first_slot_time) { nil }
-        let(:begins_at) { nil }
+        let(:result) { "2019-04-15T08:30:00-04:00" }
         include_examples "adding full or half day dockets"
       end
 
@@ -339,6 +330,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:total_slots) { 5 }
         let(:first_slot_time) { "12:00" }
         let(:begins_at) { "2019-04-15T12:00:00-07:00" }
+        let(:result) { "2019-04-15T12:00:00-04:00" }
         include_examples "adding full or half day dockets"
       end
 
@@ -347,6 +339,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:total_slots) { 5 }
         let(:first_slot_time) { "16:00" }
         let(:begins_at) { "2019-04-15T16:00:00-07:00" }
+        let(:result) { "2019-04-15T16:00:00-04:00" }
         include_examples "adding full or half day dockets"
       end
     end

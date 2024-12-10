@@ -831,6 +831,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
+
         select_custom_hearing_time(time) unless slots
         slots_select_hearing_time(time, date) if slots == "slot"
         slots_select_custom_hearing_time(time) if slots == "custom"
@@ -1114,9 +1115,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       it_behaves_like "an appeal where there is an open hearing"
 
-      it_behaves_like "change from Central hearing", "11:00 AM", "slot"
+      it_behaves_like "change from Central hearing", "8:30 AM", "slot"
 
-      it_behaves_like "change from Video hearing", "10:30 AM", "slot"
+      it_behaves_like "change from Video hearing", "8:30 AM", "slot"
 
       it_behaves_like "withdraw a hearing"
     end
