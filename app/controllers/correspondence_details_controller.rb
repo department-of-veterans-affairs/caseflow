@@ -190,13 +190,13 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def linked_appeals
-    appeals = Appeal.where(veteran_file_number: correspondence.veteran.file_number)
+    correspondence_appeals = correspondence.correspondence_appeals
 
-    serialized_appeals = appeals.map do |appeal|
-      WorkQueue::CorrespondenceDetailsAppealSerializer.new(appeal).serializable_hash[:data][:attributes]
+    serialized_appeals = correspondence_appeals.map do |appeal|
+      WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
 
-    render json: { appeals_information: serialized_appeals }
+    render json: serialized_appeals
   end
 
   private
