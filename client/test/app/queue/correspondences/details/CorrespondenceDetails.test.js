@@ -85,7 +85,6 @@ jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve(
 ));
 
 let initialState = {
-  // correspondence: correspondenceDetailsData,
   correspondenceDetails: { ...correspondenceInfoData, ...veteranInformationData },
   prepareAppealForStoreData,
 };
