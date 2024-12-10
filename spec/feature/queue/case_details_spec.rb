@@ -703,14 +703,17 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "with reader role" do
-      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
+      before do
+        attorney_user.update!(roles: attorney_user.roles + ["Reader"])
+        allow(Fakes::VBMSService).to receive(:fetch_documents_for).and_call_original
+      end
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
       scenario "reader link appears on page and sends us to reader" do
         visit "/queue"
+
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         click_on "View #{appeal.documents.count} docs"
-
         expect(page).to have_content("CaseflowQueue")
         expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
       end
