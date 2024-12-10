@@ -18,6 +18,7 @@ class Test::UsersController < ApplicationController
       links: {
         your_queue: "/queue",
         assignment_queue: "/queue/USER_CSS_ID/assign", # USER_CSS_ID is then updated in TestUsers file
+        correspondence_admin: "/test/correspondence",
         case_distribution_dashboard: "/acd-controls/test"
       }
     },
@@ -120,6 +121,13 @@ class Test::UsersController < ApplicationController
 
     system "bundle exec rake db:seed:optional"
     head :ok
+  end
+
+  def generate_api_key
+    return unless Rails.deploy_env?(:demo)
+
+    key = ApiKey.create!(consumer_name: "Demo-#{SecureRandom.uuid}")
+    render json: { api_key_string: key.key_string }
   end
 
   def toggle_feature
