@@ -552,6 +552,7 @@ const ReportPage = ({ history }) => {
               handleRedirect={() => {
                 history.push(`/${businessLineUrl}/searches`);
                 setShowSaveSearchModal(false);
+                handleViewSavedSearch();
               }}
             /> : null
           }
