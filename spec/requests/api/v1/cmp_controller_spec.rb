@@ -136,8 +136,9 @@ describe Api::V1::CmpController, type: :request do
     let!(:doctype_name) { Faker::Internet.username(specifier: 8) }
     let!(:vbms_doctype_id) { Faker::Number.within(range: 1..10) }
 
-    let!(:packed_uuid) { SecureRandom.uuid }
-    let!(:cmp_packet_number) { 1 }
+    let!(:packet_uuid) { SecureRandom.uuid }
+    let(:cmp_packet_number_val) { Faker::Number.within(range: 1..10) }
+    let!(:cmp_packet_number) { cmp_packet_number_val }
     let!(:packet_source) { Faker::Internet.username(specifier: 8) }
     let!(:va_dor) { 1.hour.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
     let!(:veteran) { create(:veteran, middle_name: 'M') }
@@ -155,36 +156,32 @@ describe Api::V1::CmpController, type: :request do
       }
     end
 
-    let(:cmp_doc_data) do
-      {
-        date_of_receipt: date_of_receipt,
-        cmp_document_id: cmp_document_id,
-        cmp_document_uuid: cmp_document_uuid,
-        doctype_name: doctype_name,
-        packet_uuid: packet_uuid,
-        vbms_doctype_id: vbms_doctype_id
-      }
-    end
-
     context "returns expected result codes" do
       it "returns 200" do
-        CmpDocument.create!(cmp_doc_data)
+        create(:cmp_document, cmp_document_uuid: cmp_document_uuid)
         post(
           api_v1_cmp_packet_path,
           params: packet_post_data,
           as: :json,
           headers: authorization_header
         )
-        expect(response.status == 200)
+        expect(response).to have_http_status(:ok)
+        new_packet = CmpMailPacket.find_by(packet_uuid: cmp_document_uuid)
+        expect(new_packet.packet_source).to eq(packet_post_data[:packetSource])
+        expect(new_packet.cmp_packet_number).to eq packet_post_data[:cmpPacketNumber]
+        expect(new_packet.veteran_first_name).to eq packet_post_data[:veteranFirstName]
+        expect(new_packet.veteran_middle_initial).to eq packet_post_data[:veteranMiddleName]
+        expect(new_packet.veteran_last_name).to eq packet_post_data[:veteranLastName]
+        expect(new_packet.veteran_id.to_i).to eq packet_post_data[:veteranId]
       end
-      it "returns 500" do
+      it "returns 422" do
         post(
           api_v1_cmp_packet_path,
           params: packet_post_data,
           as: :json,
           headers: authorization_header
         )
-        expect(response.status == 500)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
