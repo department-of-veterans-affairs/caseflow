@@ -827,7 +827,7 @@ feature "Appeal Edit issues", :all_dbs do
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
 
         expect(withdrawn_issue).to_not be_nil
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago)
         expect(page).to have_content("You have successfully withdrawn 1 issue.")
       end
 
