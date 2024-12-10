@@ -515,8 +515,7 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
 
 export const fetchVeteranInformation = (uuid) => async (dispatch) => {
   const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
-  const data = response.body.data.attributes;
-  console.log(data)
+  const data = response.body;
 
   dispatch(updateVeteranInformation(data));
 };
