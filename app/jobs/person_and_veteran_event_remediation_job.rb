@@ -9,8 +9,11 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   def perform
     setup_job
-    run_person_remediation
-    run_veteran_remediation
+
+    [:person, :veteran].each do |subject|
+      run_remediation(subject, :active)
+      run_remediation(subject, :pending)
+    end
   end
 
   private
@@ -44,12 +47,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
     def original_id
       @original_id ||= event_record.evented_record_id
-    end
-  end
-
-  def run_person_remediation
-    find_events("Person").select do |event_record|
-      PersonRemediation.new(event_record).call
     end
   end
 
@@ -93,13 +90,28 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
     end
   end
 
-  def run_veteran_remediation
-    find_events("Veteran").select do |event_record|
-      VeteranRemediation.new(event_record).call
+  def run_person_remediation
+    find_active_events(:person).each do |event_record|
+      PersonRemediation.new(event_record).call
     end
   end
 
-  def find_events(event_type)
-    EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
+  def run_remediation(subject, status = :active)
+    find_events(subject, status).each do |event_record|
+      [subject, "remediation"].join("_").classify.new(event_record).call
+    end
+  end
+
+  def find_events(event_type, status = :active)
+    scope = case status
+            when :active
+              EventRecord.active
+            when :pending
+              EventRecord.pending
+            else
+              EventRecord.scoped
+            end
+
+    scope.where(evented_record_type: event_type.to_s.classify)
   end
 end
