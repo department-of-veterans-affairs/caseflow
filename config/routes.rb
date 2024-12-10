@@ -402,6 +402,7 @@ Rails.application.routes.draw do
       post :reschedule
       post :request_hearing_disposition_change
       patch :change_type, to: 'tasks/change_type#update'
+      get :uploaded_transcription_file
       patch :upload_transcription_to_vbms
       patch :error_found_upload_transcription_to_vbms
       patch :cancel_review_transcript_task

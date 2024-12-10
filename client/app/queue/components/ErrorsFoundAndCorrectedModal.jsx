@@ -17,6 +17,33 @@ import {
   appealWithDetailSelector,
   taskById
 } from '../selectors';
+import ApiUtil from '../../util/ApiUtil';
+
+const SelectedFileSection = (props) => {
+  const { fileInputContainerClassName, handleFileChange, selectedFile } = props;
+
+  return (
+    <div className="cf-file-container-selected-container" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+      <div className={fileInputContainerClassName} style={{ borderBottom: '1px solid white' }}>
+        <div className="cf-file-input-row-element">
+          <strong style={{ color: 'black' }}>Selected file</strong>
+        </div>
+        <div className="cf-file-input-row-element">
+          <u><FileUpload
+            preUploadText="Change file"
+            postUploadText="Change file"
+            id="usa-file-input"
+            fileType=".pdf"
+            onChange={handleFileChange}
+          /></u>
+        </div>
+      </div>
+      <div className={fileInputContainerClassName} style={{ borderTop: '1px solid white' }}>
+        { selectedFile.fileName }
+      </div>
+    </div>
+  );
+};
 
 export const ErrorsFoundAndCorrectedModal = (props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -25,16 +52,24 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
   const [selectedFile, setSelectedFile] = useState({});
   const [fileInputContainerClassName, setFileInputContainerClassName] = useState('cf-file-input-container');
   const [notes, setNotes] = useState('');
+  const [transcriptFileName, setTranscriptFileName] = useState('');
+  const [fileNameError, setFileNameError] = useState(false);
+
+  useEffect(() => {
+    ApiUtil.get(`/tasks/${props.task.taskId}/uploaded_transcription_file`).then((response) => {
+      setTranscriptFileName(response.body.file_name);
+    });
+  }, []);
 
   useEffect(() => {
     if (loading) {
       setIsSubmitDisabled(true);
+    } else if (fileNameError || notes === '') {
+      setIsSubmitDisabled(true);
     } else if (isAnyFileSelected && notes.trim() !== '') {
       setIsSubmitDisabled(false);
-    } else if (notes === '') {
-      setIsSubmitDisabled(true);
     }
-  }, [loading, isAnyFileSelected, notes]);
+  }, [loading, isAnyFileSelected, notes, fileNameError]);
 
   const cancel = () => {
     props.closeModal();
@@ -84,9 +119,15 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
   };
 
   const handleFileChange = (file) => {
+    if (file.fileName === transcriptFileName) {
+      setFileInputContainerClassName('cf-file-input-container-selected');
+      setFileNameError(false);
+    } else {
+      setFileInputContainerClassName('cf-file-input-container-selected cf-file-error-container');
+      setFileNameError(true);
+    }
     setIsAnyFileSelected(true);
     setSelectedFile(file);
-    setFileInputContainerClassName('cf-file-input-container-selected');
   };
 
   const handleTextareaFieldChange = (event) => {
@@ -101,6 +142,10 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
       cancelButton={<Button disabled={loading} linkStyling onClick={cancel}>Cancel</Button>}
     >
       <p>Please upload the revised transcript file for upload to VBMS.</p>
+      <p>
+        <strong style={{ color: 'black' }}>Transcript file name</strong>
+        <div>{transcriptFileName}</div>
+      </p>
       <strong style={{ color: 'black' }}>Please select PDF</strong>
       {!isAnyFileSelected &&
         <div className={fileInputContainerClassName}>
@@ -112,26 +157,24 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
           />
         </div>
       }
-      {isAnyFileSelected &&
-        <div className="cf-file-container-selected-container">
-          <div className={fileInputContainerClassName} style={{ borderBottom: '1px solid white' }}>
-            <div className="cf-file-input-row-element">
-              <strong style={{ color: 'black' }}>Selected file</strong>
-            </div>
-            <div className="cf-file-input-row-element">
-              <u><FileUpload
-                preUploadText="Change file"
-                postUploadText="Change file"
-                id="usa-file-input"
-                fileType=".pdf"
-                onChange={handleFileChange}
-              /></u>
-            </div>
-          </div>
-          <div className={fileInputContainerClassName} style={{ borderTop: '1px solid white' }}>
-            { selectedFile.fileName }
-          </div>
+      {fileNameError &&
+        <div className="usa-input-error" style={{ right: 0 }}>
+          <strong style={{ color: '#cd2026'}}>
+            File name must exactly match the transcript file name. Ensure there are no spaces or extra characters.
+          </strong>
+          <SelectedFileSection
+            handleFileChange={handleFileChange}
+            fileInputContainerClassName={fileInputContainerClassName}
+            selectedFile={selectedFile}
+          />
         </div>
+      }
+      {!fileNameError && isAnyFileSelected &&
+        <SelectedFileSection
+          handleFileChange={handleFileChange}
+          fileInputContainerClassName={fileInputContainerClassName}
+          selectedFile={selectedFile}
+        />
       }
       <div className="comment-size-container">
         <TextareaField
@@ -160,6 +203,12 @@ ErrorsFoundAndCorrectedModal.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
+};
+
+SelectedFileSection.propTypes = {
+  handleFileChange: PropTypes.func,
+  fileInputContainerClassName: PropTypes.string,
+  selectedFile: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({

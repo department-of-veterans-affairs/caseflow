@@ -186,6 +186,15 @@ class TasksController < ApplicationController
     }
   end
 
+  def uploaded_transcription_file
+    file = task.appeal.hearings.first.transcription_files
+      .where(file_type: "pdf")
+      .where.not(date_upload_aws: nil)
+      .order(date_upload_aws: :desc)
+      .first
+    render json: file
+  end
+
   def upload_transcription_to_vbms
     file_paths = task.appeal.hearings.first.transcription_files
       .where(file_type: "pdf").map(&:fetch_file_from_s3!)
