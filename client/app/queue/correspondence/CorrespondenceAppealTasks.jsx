@@ -19,11 +19,11 @@ const CorrespondenceAppealTasks = (props) => {
   const {
     waiveEvidenceAlertBanner,
     taskRelatedToAppealBanner,
-    expandedLinkedAppeals
+    expandedLinkedAppeals,
+    veteranFullName
   } = { ...props };
 
   const dispatch = useDispatch();
-  const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appealUuid;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -266,7 +266,8 @@ CorrespondenceAppealTasks.propTypes = {
   waivableUser: PropTypes.bool,
   correspondenceInfo: PropTypes.object,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expandedLinkedAppeals: PropTypes.array
+  expandedLinkedAppeals: PropTypes.array,
+  veteranFullName: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({

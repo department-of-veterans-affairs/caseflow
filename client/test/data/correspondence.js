@@ -428,4 +428,13 @@ export const packageDocumentTypeData = {
   name: 'NOD',
 };
 
+export const veteranInformationData = {
+  veteranInformation: {
+    id: 1928,
+    firstName: 'John',
+    lastName: 'Doe',
+    fileNumber: '998877665',
+    fullName: 'John Doe'
+  },
+};
 /* eslint-enable max-lines */
