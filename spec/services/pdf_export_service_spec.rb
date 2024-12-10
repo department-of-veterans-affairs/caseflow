@@ -16,8 +16,8 @@ describe PdfExportService do
   context "template is rendered successfully with appeal" do
     let!(:template_name) { "notification_report_pdf_template" }
     subject { PdfExportService.create_and_save_pdf(template_name, appeal) }
-    it "creates file" do
-      expect(subject).to_not eq(nil)
+    it "creates PDF file" do
+      expect(subject[0..3]).to eq("%PDF")
     end
   end
 end

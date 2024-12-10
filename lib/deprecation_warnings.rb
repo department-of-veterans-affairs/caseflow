@@ -18,7 +18,8 @@ module DeprecationWarnings
     /ActiveModel\:\:Errors#values is deprecated/,
     /ActiveModel\:\:Errors#slice\! is deprecated/,
     /ActiveModel\:\:Errors#to_h is deprecated/,
-    /Enumerating ActiveModel\:\:Errors as a hash has been deprecated/
+    /Enumerating ActiveModel\:\:Errors as a hash has been deprecated/,
+    /Rendering actions with '\.' in the name is deprecated/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
