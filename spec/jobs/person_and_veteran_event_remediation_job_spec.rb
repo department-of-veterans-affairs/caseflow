@@ -27,8 +27,7 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
     allow(User).to receive(:system_user).and_return(User.new) # Assuming there's a system_user
 
     # Mocking find_events to return an array with our event_record_person and event_record_veteran
-    allow(job).to receive(:find_events).with("Person").and_return([event_record_person])
-    allow(job).to receive(:find_events).with("Veteran").and_return([event_record_veteran])
+    allow(job).to receive(:find_events).with(:active).and_return([event_record_person])
 
     # Mock Person.where to return duplicates
     allow(Person).to receive(:where).with(ssn: "123456789").and_return([person, person_duplicate])

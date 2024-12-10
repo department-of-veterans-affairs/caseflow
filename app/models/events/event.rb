@@ -14,12 +14,12 @@ class Event < CaseflowRecord
 
   scope :with_errored_claim_id, -> { where.not("info -> 'errored_claim_id' IS NULL") }
   scope :with_errored_participant_id, -> { where.not("info -> 'errored_participant_id' IS NULL") }
-  scope :active, -> { where(status: [processing, pending]) }
-  scope :completed, -> { where(status: completed) }
+  scope :active, -> { where(status: [in_progress, pending]) }
+  scope :processed, -> { where(status: processed) }
   scope :failed, -> { where(status: failed) }
 
   def completed?
-    completed_at?
+    processed? || completed_at?
   end
 
   def self.find_errors_by_claim_id(claim_id)

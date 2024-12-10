@@ -18,6 +18,24 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
 
   private
 
+  def run_remediation(subject, status = :active)
+    find_events(status).each do |event_record|
+      klass = "#{subject}Remediation".classify.constantize
+      klass.new(event_record).call
+    end
+  end
+
+  def find_events(status)
+    case status
+    when :active
+      PersonUpdatedEvent.active
+    when :pending
+      PersonUpdatedEvent.pending
+    else
+      PersonUpdatedEvent.scoped
+    end
+  end
+
   class PersonRemediation
     def initialize(event_record)
       @event_record = event_record
@@ -88,30 +106,5 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
     def original_id
       @original_id ||= event_record.evented_record_id
     end
-  end
-
-  def run_person_remediation
-    find_active_events(:person).each do |event_record|
-      PersonRemediation.new(event_record).call
-    end
-  end
-
-  def run_remediation(subject, status = :active)
-    find_events(subject, status).each do |event_record|
-      [subject, "remediation"].join("_").classify.new(event_record).call
-    end
-  end
-
-  def find_events(event_type, status = :active)
-    scope = case status
-            when :active
-              EventRecord.active
-            when :pending
-              EventRecord.pending
-            else
-              EventRecord.scoped
-            end
-
-    scope.where(evented_record_type: event_type.to_s.classify)
   end
 end
