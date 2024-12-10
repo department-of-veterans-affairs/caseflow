@@ -59,13 +59,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           nonrating_issue_bgs_source: parser_issues.ri_nonrating_issue_bgs_source,
           end_product_establishment_id: epe.id,
           veteran_participant_id: parser.veteran_participant_id,
-          decision_review: decision_review
+          decision_review: decision_review,
+          remand_source_id: parser_issues.ri_remand_source_id
         )
         create_event_record(event, ri)
         newly_created_issues.push(ri)
 
-        # LegacyIssue
-        if vacols_ids_exist?(ri)
+        # LegacyIssue (only for non Remands)
+        if vacols_ids_exist?(ri) && ri.remand_source_id.empty?
           legacy_issue = create_legacy_issue_backfill(event, ri)
 
           # LegacyIssueOptin
