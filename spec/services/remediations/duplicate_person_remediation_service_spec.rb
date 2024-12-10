@@ -103,6 +103,13 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
         # Force `find_and_update_records` to return false to simulate a failure
         allow(service).to receive(:find_and_update_records).and_return(false)
         allow(mock_records.first).to receive(:update!).and_raise(StandardError, "Test error")
+
+        # Mock SlackService notification
+        allow(SlackService).to receive_message_chain(:new, :send_notification)
+
+        # Spy on Rails.logger to check for error logging
+        allow(Rails.logger).to receive(:error)
+        allow(mock_records.first).to receive(:update!).and_raise(StandardError, "Test error")
       end
 
       it "does not update any records and skips destroying duplicate persons" do

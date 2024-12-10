@@ -76,10 +76,11 @@ class Remediations::DuplicatePersonRemediationService
           AssociationRemediation.new(event_record, duplicate_persons, og_person, klass).call
         end
       end
-      true
     rescue StandardError => error
-      Rails.logger.error "an error occurred #{error}"
-      false
+      # Log the error specific to find_and_update_records and return false
+      Rails.logger.error "Error in find_and_update_records: #{error.message}"
+      SlackService.new.send_notification("Error in find_and_update_records: #{error.message}",
+                                         "Error in #{self.class.name}")
     end
   end
 

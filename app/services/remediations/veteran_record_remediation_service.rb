@@ -35,13 +35,14 @@ class Remediations::VeteranRecordRemediationService
 
   def dup_fix(file_number)
     begin
-      # should we run the base transaction nested like this or is that bad practice?
       duplicate_veterans_collections = dups.flat_map { |dup| grab_collections(dup.file_number) }
       update_records!(duplicate_veterans_collections, file_number)
-      true
     rescue StandardError => error
-      Rails.logger.error "an error occured #{error}"
-      false
+      Rails.logger.error "dup_fix failed: #{error.message}"
+      SlackService.new.send_notification(
+        "Job failed during record update: #{error.message}",
+        "Error in #{self.class.name}"
+      )
       # sentry log / metabase dashboard
     end
   end
@@ -61,7 +62,8 @@ class Remediations::VeteranRecordRemediationService
 
     def call
       before_data = collection.attributes
-      collection.update!(file_number)
+      column_name = infer_column_name(collection.class) # Dynamically determine the column name based on the model class
+      collection.update!(column_name => file_number)
       add_remediation_audit(
         class_name: collection.class.name,
         record_id: collection.id,
@@ -73,6 +75,20 @@ class Remediations::VeteranRecordRemediationService
     private
 
     attr_reader :collection, :file_number, :event_record
+
+    def infer_column_name(klass)
+      case klass.name
+      when "Appeal", "AvailableHearingLocations", "EndProductEstablishment", "HigherLevelReview", "RampElection",
+           "RampRefiling", "SupplementalClaim", "Intake"
+        "veteran_file_number"
+      when "BgsPowerOfAttorney", "Form8", "Document"
+        "file_number"
+      when "LegacyAppeal"
+        "vbms_id"
+      else
+        fail "Unknown class: #{klass.name}, cannot determine column."
+      end
+    end
 
     def add_remediation_audit(class_name:, record_id:, before_data:, after_data:)
       EventRemediationAudit.create!(
