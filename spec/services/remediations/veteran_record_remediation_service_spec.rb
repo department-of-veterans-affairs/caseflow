@@ -43,26 +43,25 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     allow(Veteran).to receive(:find_by_file_number).with(after_fn).and_return(mock_veteran)
     # Stub Veteran.where to return mock_veteran and duplicate_veteran for the same SSN
     allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran, duplicate_veteran])
-    # Stub destroy! on duplicate_veteran to prevent failure
+    # Spy on `destroy!` for both mock_veteran and duplicate_veteran
+    # allow(mock_veteran).to receive(:destroy!).and_return(nil)
     allow(duplicate_veteran).to receive(:destroy!).and_return(nil)
     # Allow grab_collections to return mock classes
     allow(vet_record_service).to receive(:grab_collections).with(before_fn).and_return(mock_classes)
   end
 
   describe "#remediate!" do
-    before do
-      mock_classes.each do |mock_instance|
-        column = column_mapping[mock_instance.class]
-        expect(mock_instance).to receive(:update!).with(after_fn).and_wrap_original do
-          mock_instance.send("#{column}=", after_fn)
-        end
-      end
-    end
-
     context "when there are duplicate veterans" do
       it "runs dup_fix and updates the file_number for duplicates and destroys the duplicate veterans" do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
+
+        mock_classes.each do |mock_instance|
+          column = column_mapping[mock_instance.class]
+          allow(mock_instance).to receive(:update!).with(column => after_fn).and_wrap_original do
+            mock_instance.send("#{column}=", after_fn)
+          end
+        end
 
         expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
@@ -86,6 +85,13 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         # Expect that `dup_fix` should not be called in this scenario.
         expect(vet_record_service).not_to receive(:dup_fix)
 
+        mock_classes.each do |mock_instance|
+          column = column_mapping[mock_instance.class]
+          allow(mock_instance).to receive(:update!).with(column => after_fn).and_wrap_original do
+            mock_instance.send("#{column}=", after_fn)
+          end
+        end
+
         vet_record_service.remediate!
 
         # Verify that all mock instances' file numbers are updated
@@ -97,42 +103,32 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     end
 
     context "when an error occurs in dup_fix" do
-      let(:error_message) { "Something went wrong" }
-
       before do
         # Force `dup_fix` to raise an error
-        allow(vet_record_service).to receive(:dup_fix).and_return(false)
+        allow(vet_record_service).to receive(:dup_fix).and_call_original
 
+        slack_service = instance_double(SlackService)
+        allow(SlackService).to receive(:new).and_return(slack_service)
+        allow(slack_service).to receive(:send_notification)
         # Spy on Rails.logger to check for logging behavior
         allow(Rails.logger).to receive(:error)
-
-        # Mock SlackService to expect failure notification
-        allow(SlackService).to receive_message_chain(:new, :send_notification)
       end
 
       it "logs the error" do
-        # Call remediate! and expect it to return false
-        result = vet_record_service.remediate!
-
-        # Expect the method to return false (indicating failure)
-        expect(result).to be_falsey
+        vet_record_service.remediate!
+        # Ensure that the logger received the expected error message
+        expect(Rails.logger).to have_received(:error).with(/^dup_fix failed:/)
       end
 
       it "sends a failure notification via Slack" do
-        # Call remediate! and expect it to return false
-        result = vet_record_service.remediate!
-
-        # Expect the method to return false (indicating failure)
-        expect(result).to be_falsey
+        vet_record_service.remediate!
+        # Verify SlackService sends the failure notification
+        expect(SlackService.new).to have_received(:send_notification)
+          .with(/^Job failed during record update:/, "Error in Remediations::VeteranRecordRemediationService")
       end
 
       it "does not destroy the duplicate veterans" do
-        # Call remediate! and expect it to return false
-        result = vet_record_service.remediate!
-
-        # Expect the method to return false (indicating failure)
-        expect(result).to be_falsey
-
+        vet_record_service.remediate!
         # Ensure that destroy! is not called on the duplicate veterans due to the failure
         expect(duplicate_veteran).not_to have_received(:destroy!)
       end
