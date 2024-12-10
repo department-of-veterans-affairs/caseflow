@@ -5,11 +5,21 @@ class Event < CaseflowRecord
   has_many :event_records
   store_accessor :info, :errored_claim_id
 
+  enum status: {
+    processed: 0,
+    in_progress: 1,
+    pending: 2,
+    failed: 3
+  }
+
   scope :with_errored_claim_id, -> { where.not("info -> 'errored_claim_id' IS NULL") }
   scope :with_errored_participant_id, -> { where.not("info -> 'errored_participant_id' IS NULL") }
+  scope :active, -> { where(status: [in_progress, pending]) }
+  scope :processed, -> { where(status: processed) }
+  scope :failed, -> { where(status: failed) }
 
   def completed?
-    completed_at?
+    processed? || completed_at?
   end
 
   def self.find_errors_by_claim_id(claim_id)

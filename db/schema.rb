@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_21_143932) do
+ActiveRecord::Schema.define(version: 2024_12_10_143938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -918,6 +918,7 @@ ActiveRecord::Schema.define(version: 2024_11_21_143932) do
     t.string "error", comment: "Error message captured during a failed event"
     t.jsonb "info", default: {}
     t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.integer "status"
     t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["info"], name: "index_events_on_info", using: :gin

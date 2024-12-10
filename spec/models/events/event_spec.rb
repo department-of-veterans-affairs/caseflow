@@ -16,6 +16,30 @@ RSpec.describe Event, type: :model do
     end
   end
 
+  describe "statuses" do
+    subject { PersonUpdatedEvent.create!(reference_id: 1, completed_at: nil) }
+
+    it "set to processed" do
+      subject.processed!
+      expect(subject.processed?).to be_truthy
+    end
+
+    it "set to in_progress" do
+      subject.in_progress!
+      expect(subject.in_progress?).to be_truthy
+    end
+
+    it "set to pending" do
+      subject.pending!
+      expect(subject.pending?).to be_truthy
+    end
+
+    it "set to failed" do
+      subject.failed!
+      expect(subject.failed?).to be_truthy
+    end
+  end
+
   describe "scopes" do
     describe ".with_errored_claim_id" do
       it "includes events with non-null errored_claim_id" do
