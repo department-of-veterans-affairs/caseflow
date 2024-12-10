@@ -23,7 +23,8 @@ class ActionsDropdown extends React.PureComponent {
     const {
       appealId,
       task,
-      history
+      history,
+      type
     } = this.props;
 
     if (!option) {
@@ -40,7 +41,13 @@ class ActionsDropdown extends React.PureComponent {
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    // If correspondence type, routing is separate
+    // routing for correspondence
+    if (type === 'Correspondence') {
+      history.push(`/queue/correspondence/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    } else {
+      history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    }
   };
 
   render = () => {
@@ -61,6 +68,7 @@ class ActionsDropdown extends React.PureComponent {
 
 ActionsDropdown.propTypes = {
   appealId: PropTypes.string,
+  type: PropTypes.string,
   task: PropTypes.object,
   history: PropTypes.object,
   resetDecisionOptions: PropTypes.func,

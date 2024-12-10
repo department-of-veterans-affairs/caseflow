@@ -1,0 +1,1578 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`does render transcription settings information 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        style="padding-top: 3rem;"
+      >
+        <span>
+          <a
+            href="/transcription_files"
+          >
+            &lt; 
+            Back to Transcription queue
+          </a>
+           
+        </span>
+      </div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <div>
+            <h1
+              class="cf-margin-bottom-0"
+            >
+              Transcription settings
+            </h1>
+            <div
+              style="padding: 4rem 0px 2.5rem;"
+            >
+              <h2
+                style="display: inline-block; vertical-align: middle; padding-top: 0.5rem;"
+              >
+                Edit current contractors
+              </h2>
+              <span
+                class="cf-push-right"
+              >
+                <div
+                  style="float: left; padding-left: 2rem;"
+                >
+                  <span>
+                    <button
+                      class="usa-button-secondary usa-button"
+                      id="Remove-contractor"
+                      type="button"
+                    >
+                      Remove contractor
+                    </button>
+                  </span>
+                </div>
+                <div
+                  style="float: left; padding-left: 2rem;"
+                >
+                  <span>
+                    <button
+                      class="usa-button-primary usa-button"
+                      id="Add-contractor"
+                      type="button"
+                    >
+                      Add contractor
+                    </button>
+                  </span>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div>
+            <div>
+              <div
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+              >
+                <div
+                  style="flex: 1;"
+                >
+                  <ul
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                  >
+                    <h2
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      Genesis Government Solutions, Inc.
+                      <div
+                        style="position: relative; left: 10px; top: -2px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Information
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </h2>
+                    <li>
+                      <strong>
+                        Contractor folder name in box.com: 
+                      </strong>
+                      BVA Hearing Transcripts/Genesis Government Solutions, Inc.
+                    </li>
+                    <li>
+                      <strong>
+                        POC: 
+                      </strong>
+                      John Doe
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      888-888-8888
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      genesisgovernmentsolutions@test.com
+                    </li>
+                    <span>
+                      <li
+                        style="display: flex; flex-wrap: wrap;"
+                      >
+                        <strong>
+                          Hearings sent to Genesis Government Solutions, Inc. this week: 
+                        </strong>
+                         
+                        7 of 
+                        150
+                        <div
+                          style="position: relative; left: 10px; top: -4px;"
+                        >
+                          <span>
+                            <button
+                              class="cf-submit cf-btn-link usa-button"
+                              type="button"
+                            >
+                              <span>
+                                Edit Total
+                              </span>
+                              <span
+                                style="position: absolute;"
+                              >
+                                <svg
+                                  class=""
+                                  height="25"
+                                  version="1.1"
+                                  viewBox="0 0 25 25"
+                                >
+                                  <g
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                    stroke="none"
+                                    stroke-width="1"
+                                  >
+                                    <g
+                                      fill="#0071bc"
+                                      fill-rule="nonzero"
+                                      transform="translate(-729.000000, -307.000000)"
+                                    >
+                                      <g
+                                        transform="translate(6.000000, 253.000000)"
+                                      >
+                                        <g
+                                          transform="translate(0.000000, 29.000000)"
+                                        >
+                                          <path
+                                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                            id="Shape"
+                                          />
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </li>
+                    </span>
+                  </ul>
+                </div>
+                <span
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
+                >
+                  <h3>
+                    Temporarily stop
+                    <br />
+                     work assignment
+                  </h3>
+                  <button
+                    class="toggleButton"
+                  >
+                    <span
+                      class="toggleButtonSpace"
+                    />
+                    <h5
+                      class="toggleButtonText switchOn"
+                    >
+                      On
+                    </h5>
+                  </button>
+                </span>
+              </div>
+              <div
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+              >
+                <div
+                  style="flex: 1;"
+                >
+                  <ul
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                  >
+                    <h2
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      Jamison Professional Services
+                      <div
+                        style="position: relative; left: 10px; top: -2px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Information
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </h2>
+                    <li>
+                      <strong>
+                        Contractor folder name in box.com: 
+                      </strong>
+                      BVA Hearing Transcripts/Jamison Professional Services
+                    </li>
+                    <li>
+                      <strong>
+                        POC: 
+                      </strong>
+                      Jane Doe
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      888-888-8888
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      jamisonprofessionalservices@test.com
+                    </li>
+                    <span>
+                      <li
+                        style="display: flex; flex-wrap: wrap;"
+                      >
+                        <strong>
+                          Hearings sent to Jamison Professional Services this week: 
+                        </strong>
+                         
+                        0 of 
+                        0
+                        <div
+                          style="position: relative; left: 10px; top: -4px;"
+                        >
+                          <span>
+                            <button
+                              class="cf-submit cf-btn-link usa-button"
+                              type="button"
+                            >
+                              <span>
+                                Edit Total
+                              </span>
+                              <span
+                                style="position: absolute;"
+                              >
+                                <svg
+                                  class=""
+                                  height="25"
+                                  version="1.1"
+                                  viewBox="0 0 25 25"
+                                >
+                                  <g
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                    stroke="none"
+                                    stroke-width="1"
+                                  >
+                                    <g
+                                      fill="#0071bc"
+                                      fill-rule="nonzero"
+                                      transform="translate(-729.000000, -307.000000)"
+                                    >
+                                      <g
+                                        transform="translate(6.000000, 253.000000)"
+                                      >
+                                        <g
+                                          transform="translate(0.000000, 29.000000)"
+                                        >
+                                          <path
+                                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                            id="Shape"
+                                          />
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </li>
+                    </span>
+                  </ul>
+                </div>
+                <span
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
+                >
+                  <h3>
+                    Temporarily stop
+                    <br />
+                     work assignment
+                  </h3>
+                  <button
+                    class="toggleButton"
+                  >
+                    <span
+                      class="toggleButtonSpace"
+                    />
+                    <h5
+                      class="toggleButtonText switchOff"
+                    >
+                      Off
+                    </h5>
+                  </button>
+                </span>
+              </div>
+              <div
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+              >
+                <div
+                  style="flex: 1;"
+                >
+                  <ul
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                  >
+                    <h2
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      The Ravens Group, Inc.
+                      <div
+                        style="position: relative; left: 10px; top: -2px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Information
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </h2>
+                    <li>
+                      <strong>
+                        Contractor folder name in box.com: 
+                      </strong>
+                      BVA Hearing Transcripts/The Ravens Group, Inc.
+                    </li>
+                    <li>
+                      <strong>
+                        POC: 
+                      </strong>
+                      Johnny Bravo
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      888-888-8888
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      theravensgroup@test.com
+                    </li>
+                    <span>
+                      <li
+                        style="display: flex; flex-wrap: wrap;"
+                      >
+                        <strong>
+                          Hearings sent to The Ravens Group, Inc. this week: 
+                        </strong>
+                         
+                        2 of 
+                        120
+                        <div
+                          style="position: relative; left: 10px; top: -4px;"
+                        >
+                          <span>
+                            <button
+                              class="cf-submit cf-btn-link usa-button"
+                              type="button"
+                            >
+                              <span>
+                                Edit Total
+                              </span>
+                              <span
+                                style="position: absolute;"
+                              >
+                                <svg
+                                  class=""
+                                  height="25"
+                                  version="1.1"
+                                  viewBox="0 0 25 25"
+                                >
+                                  <g
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                    stroke="none"
+                                    stroke-width="1"
+                                  >
+                                    <g
+                                      fill="#0071bc"
+                                      fill-rule="nonzero"
+                                      transform="translate(-729.000000, -307.000000)"
+                                    >
+                                      <g
+                                        transform="translate(6.000000, 253.000000)"
+                                      >
+                                        <g
+                                          transform="translate(0.000000, 29.000000)"
+                                        >
+                                          <path
+                                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                            id="Shape"
+                                          />
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </li>
+                    </span>
+                  </ul>
+                </div>
+                <span
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
+                >
+                  <h3>
+                    Temporarily stop
+                    <br />
+                     work assignment
+                  </h3>
+                  <button
+                    class="toggleButton"
+                  >
+                    <span
+                      class="toggleButtonSpace"
+                    />
+                    <h5
+                      class="toggleButtonText switchOff"
+                    >
+                      Off
+                    </h5>
+                  </button>
+                </span>
+              </div>
+              <div
+                style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+              >
+                <div
+                  style="flex: 1;"
+                >
+                  <ul
+                    style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                  >
+                    <h2
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      Vet Reporting
+                      <div
+                        style="position: relative; left: 10px; top: -2px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Information
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </h2>
+                    <li>
+                      <strong>
+                        Contractor folder name in box.com: 
+                      </strong>
+                      BVA Hearing Transcripts/Vet Reporting
+                    </li>
+                    <li>
+                      <strong>
+                        POC: 
+                      </strong>
+                      Sam Smith
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      888-888-8888
+                    </li>
+                    <li
+                      style="padding-left: 4.5rem;"
+                    >
+                      vetreporting@test.com
+                    </li>
+                    <span>
+                      <li
+                        style="display: flex; flex-wrap: wrap;"
+                      >
+                        <strong>
+                          Hearings sent to Vet Reporting this week: 
+                        </strong>
+                         
+                        5 of 
+                        100
+                        <div
+                          style="position: relative; left: 10px; top: -4px;"
+                        >
+                          <span>
+                            <button
+                              class="cf-submit cf-btn-link usa-button"
+                              type="button"
+                            >
+                              <span>
+                                Edit Total
+                              </span>
+                              <span
+                                style="position: absolute;"
+                              >
+                                <svg
+                                  class=""
+                                  height="25"
+                                  version="1.1"
+                                  viewBox="0 0 25 25"
+                                >
+                                  <g
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                    stroke="none"
+                                    stroke-width="1"
+                                  >
+                                    <g
+                                      fill="#0071bc"
+                                      fill-rule="nonzero"
+                                      transform="translate(-729.000000, -307.000000)"
+                                    >
+                                      <g
+                                        transform="translate(6.000000, 253.000000)"
+                                      >
+                                        <g
+                                          transform="translate(0.000000, 29.000000)"
+                                        >
+                                          <path
+                                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                            id="Shape"
+                                          />
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </li>
+                    </span>
+                  </ul>
+                </div>
+                <span
+                  style="padding: 1.5rem 6rem 2rem 2rem;"
+                >
+                  <h3>
+                    Temporarily stop
+                    <br />
+                     work assignment
+                  </h3>
+                  <button
+                    class="toggleButton"
+                  >
+                    <span
+                      class="toggleButtonSpace"
+                    />
+                    <h5
+                      class="toggleButtonText switchOff"
+                    >
+                      Off
+                    </h5>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      style="padding-top: 3rem;"
+    >
+      <span>
+        <a
+          href="/transcription_files"
+        >
+          &lt; 
+          Back to Transcription queue
+        </a>
+         
+      </span>
+    </div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+    >
+      <div>
+        <div>
+          <h1
+            class="cf-margin-bottom-0"
+          >
+            Transcription settings
+          </h1>
+          <div
+            style="padding: 4rem 0px 2.5rem;"
+          >
+            <h2
+              style="display: inline-block; vertical-align: middle; padding-top: 0.5rem;"
+            >
+              Edit current contractors
+            </h2>
+            <span
+              class="cf-push-right"
+            >
+              <div
+                style="float: left; padding-left: 2rem;"
+              >
+                <span>
+                  <button
+                    class="usa-button-secondary usa-button"
+                    id="Remove-contractor"
+                    type="button"
+                  >
+                    Remove contractor
+                  </button>
+                </span>
+              </div>
+              <div
+                style="float: left; padding-left: 2rem;"
+              >
+                <span>
+                  <button
+                    class="usa-button-primary usa-button"
+                    id="Add-contractor"
+                    type="button"
+                  >
+                    Add contractor
+                  </button>
+                </span>
+              </div>
+            </span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <div
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+            >
+              <div
+                style="flex: 1;"
+              >
+                <ul
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                >
+                  <h2
+                    style="display: flex; flex-wrap: wrap;"
+                  >
+                    Genesis Government Solutions, Inc.
+                    <div
+                      style="position: relative; left: 10px; top: -2px;"
+                    >
+                      <span>
+                        <button
+                          class="cf-submit cf-btn-link usa-button"
+                          type="button"
+                        >
+                          <span>
+                            Edit Information
+                          </span>
+                          <span
+                            style="position: absolute;"
+                          >
+                            <svg
+                              class=""
+                              height="25"
+                              version="1.1"
+                              viewBox="0 0 25 25"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill="#0071bc"
+                                  fill-rule="nonzero"
+                                  transform="translate(-729.000000, -307.000000)"
+                                >
+                                  <g
+                                    transform="translate(6.000000, 253.000000)"
+                                  >
+                                    <g
+                                      transform="translate(0.000000, 29.000000)"
+                                    >
+                                      <path
+                                        d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                        id="Shape"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </button>
+                      </span>
+                    </div>
+                  </h2>
+                  <li>
+                    <strong>
+                      Contractor folder name in box.com: 
+                    </strong>
+                    BVA Hearing Transcripts/Genesis Government Solutions, Inc.
+                  </li>
+                  <li>
+                    <strong>
+                      POC: 
+                    </strong>
+                    John Doe
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    888-888-8888
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    genesisgovernmentsolutions@test.com
+                  </li>
+                  <span>
+                    <li
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      <strong>
+                        Hearings sent to Genesis Government Solutions, Inc. this week: 
+                      </strong>
+                       
+                      7 of 
+                      150
+                      <div
+                        style="position: relative; left: 10px; top: -4px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Total
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </li>
+                  </span>
+                </ul>
+              </div>
+              <span
+                style="padding: 1.5rem 6rem 2rem 2rem;"
+              >
+                <h3>
+                  Temporarily stop
+                  <br />
+                   work assignment
+                </h3>
+                <button
+                  class="toggleButton"
+                >
+                  <span
+                    class="toggleButtonSpace"
+                  />
+                  <h5
+                    class="toggleButtonText switchOn"
+                  >
+                    On
+                  </h5>
+                </button>
+              </span>
+            </div>
+            <div
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+            >
+              <div
+                style="flex: 1;"
+              >
+                <ul
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                >
+                  <h2
+                    style="display: flex; flex-wrap: wrap;"
+                  >
+                    Jamison Professional Services
+                    <div
+                      style="position: relative; left: 10px; top: -2px;"
+                    >
+                      <span>
+                        <button
+                          class="cf-submit cf-btn-link usa-button"
+                          type="button"
+                        >
+                          <span>
+                            Edit Information
+                          </span>
+                          <span
+                            style="position: absolute;"
+                          >
+                            <svg
+                              class=""
+                              height="25"
+                              version="1.1"
+                              viewBox="0 0 25 25"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill="#0071bc"
+                                  fill-rule="nonzero"
+                                  transform="translate(-729.000000, -307.000000)"
+                                >
+                                  <g
+                                    transform="translate(6.000000, 253.000000)"
+                                  >
+                                    <g
+                                      transform="translate(0.000000, 29.000000)"
+                                    >
+                                      <path
+                                        d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                        id="Shape"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </button>
+                      </span>
+                    </div>
+                  </h2>
+                  <li>
+                    <strong>
+                      Contractor folder name in box.com: 
+                    </strong>
+                    BVA Hearing Transcripts/Jamison Professional Services
+                  </li>
+                  <li>
+                    <strong>
+                      POC: 
+                    </strong>
+                    Jane Doe
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    888-888-8888
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    jamisonprofessionalservices@test.com
+                  </li>
+                  <span>
+                    <li
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      <strong>
+                        Hearings sent to Jamison Professional Services this week: 
+                      </strong>
+                       
+                      0 of 
+                      0
+                      <div
+                        style="position: relative; left: 10px; top: -4px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Total
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </li>
+                  </span>
+                </ul>
+              </div>
+              <span
+                style="padding: 1.5rem 6rem 2rem 2rem;"
+              >
+                <h3>
+                  Temporarily stop
+                  <br />
+                   work assignment
+                </h3>
+                <button
+                  class="toggleButton"
+                >
+                  <span
+                    class="toggleButtonSpace"
+                  />
+                  <h5
+                    class="toggleButtonText switchOff"
+                  >
+                    Off
+                  </h5>
+                </button>
+              </span>
+            </div>
+            <div
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+            >
+              <div
+                style="flex: 1;"
+              >
+                <ul
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                >
+                  <h2
+                    style="display: flex; flex-wrap: wrap;"
+                  >
+                    The Ravens Group, Inc.
+                    <div
+                      style="position: relative; left: 10px; top: -2px;"
+                    >
+                      <span>
+                        <button
+                          class="cf-submit cf-btn-link usa-button"
+                          type="button"
+                        >
+                          <span>
+                            Edit Information
+                          </span>
+                          <span
+                            style="position: absolute;"
+                          >
+                            <svg
+                              class=""
+                              height="25"
+                              version="1.1"
+                              viewBox="0 0 25 25"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill="#0071bc"
+                                  fill-rule="nonzero"
+                                  transform="translate(-729.000000, -307.000000)"
+                                >
+                                  <g
+                                    transform="translate(6.000000, 253.000000)"
+                                  >
+                                    <g
+                                      transform="translate(0.000000, 29.000000)"
+                                    >
+                                      <path
+                                        d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                        id="Shape"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </button>
+                      </span>
+                    </div>
+                  </h2>
+                  <li>
+                    <strong>
+                      Contractor folder name in box.com: 
+                    </strong>
+                    BVA Hearing Transcripts/The Ravens Group, Inc.
+                  </li>
+                  <li>
+                    <strong>
+                      POC: 
+                    </strong>
+                    Johnny Bravo
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    888-888-8888
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    theravensgroup@test.com
+                  </li>
+                  <span>
+                    <li
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      <strong>
+                        Hearings sent to The Ravens Group, Inc. this week: 
+                      </strong>
+                       
+                      2 of 
+                      120
+                      <div
+                        style="position: relative; left: 10px; top: -4px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Total
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </li>
+                  </span>
+                </ul>
+              </div>
+              <span
+                style="padding: 1.5rem 6rem 2rem 2rem;"
+              >
+                <h3>
+                  Temporarily stop
+                  <br />
+                   work assignment
+                </h3>
+                <button
+                  class="toggleButton"
+                >
+                  <span
+                    class="toggleButtonSpace"
+                  />
+                  <h5
+                    class="toggleButtonText switchOff"
+                  >
+                    Off
+                  </h5>
+                </button>
+              </span>
+            </div>
+            <div
+              style="display: flex; flex-wrap: wrap; border-top: .1rem solid #d6d7d9; padding: 4rem 0px 2rem; clear: both;"
+            >
+              <div
+                style="flex: 1;"
+              >
+                <ul
+                  style="list-style: none; margin: 0px; padding: 1.5rem 0px 2rem 0px; font-size: 19px;"
+                >
+                  <h2
+                    style="display: flex; flex-wrap: wrap;"
+                  >
+                    Vet Reporting
+                    <div
+                      style="position: relative; left: 10px; top: -2px;"
+                    >
+                      <span>
+                        <button
+                          class="cf-submit cf-btn-link usa-button"
+                          type="button"
+                        >
+                          <span>
+                            Edit Information
+                          </span>
+                          <span
+                            style="position: absolute;"
+                          >
+                            <svg
+                              class=""
+                              height="25"
+                              version="1.1"
+                              viewBox="0 0 25 25"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill="#0071bc"
+                                  fill-rule="nonzero"
+                                  transform="translate(-729.000000, -307.000000)"
+                                >
+                                  <g
+                                    transform="translate(6.000000, 253.000000)"
+                                  >
+                                    <g
+                                      transform="translate(0.000000, 29.000000)"
+                                    >
+                                      <path
+                                        d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                        id="Shape"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </button>
+                      </span>
+                    </div>
+                  </h2>
+                  <li>
+                    <strong>
+                      Contractor folder name in box.com: 
+                    </strong>
+                    BVA Hearing Transcripts/Vet Reporting
+                  </li>
+                  <li>
+                    <strong>
+                      POC: 
+                    </strong>
+                    Sam Smith
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    888-888-8888
+                  </li>
+                  <li
+                    style="padding-left: 4.5rem;"
+                  >
+                    vetreporting@test.com
+                  </li>
+                  <span>
+                    <li
+                      style="display: flex; flex-wrap: wrap;"
+                    >
+                      <strong>
+                        Hearings sent to Vet Reporting this week: 
+                      </strong>
+                       
+                      5 of 
+                      100
+                      <div
+                        style="position: relative; left: 10px; top: -4px;"
+                      >
+                        <span>
+                          <button
+                            class="cf-submit cf-btn-link usa-button"
+                            type="button"
+                          >
+                            <span>
+                              Edit Total
+                            </span>
+                            <span
+                              style="position: absolute;"
+                            >
+                              <svg
+                                class=""
+                                height="25"
+                                version="1.1"
+                                viewBox="0 0 25 25"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  stroke="none"
+                                  stroke-width="1"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    fill-rule="nonzero"
+                                    transform="translate(-729.000000, -307.000000)"
+                                  >
+                                    <g
+                                      transform="translate(6.000000, 253.000000)"
+                                    >
+                                      <g
+                                        transform="translate(0.000000, 29.000000)"
+                                      >
+                                        <path
+                                          d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                                          id="Shape"
+                                        />
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </li>
+                  </span>
+                </ul>
+              </div>
+              <span
+                style="padding: 1.5rem 6rem 2rem 2rem;"
+              >
+                <h3>
+                  Temporarily stop
+                  <br />
+                   work assignment
+                </h3>
+                <button
+                  class="toggleButton"
+                >
+                  <span
+                    class="toggleButtonSpace"
+                  />
+                  <h5
+                    class="toggleButtonText switchOff"
+                  >
+                    Off
+                  </h5>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

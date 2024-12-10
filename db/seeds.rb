@@ -33,6 +33,7 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def seed
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
@@ -40,6 +41,7 @@ class SeedDB
     call_and_log_seed_step Seeds::ApiKeys
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
+
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
@@ -54,8 +56,34 @@ class SeedDB
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    Judge.list_all
+    Attorney.list_all
     call_and_log_seed_step Seeds::IssueModificationRequest
+    call_and_log_seed_step Seeds::TranscriptionContractors
+    call_and_log_seed_step Seeds::VeteransHealthAdministration
+    call_and_log_seed_step Seeds::MTV
+    call_and_log_seed_step Seeds::Education
+    # Case Distribution Seed Data
+    # Creates 300+ priority cases ready for distribution
+    # Warning a number are not setup correctly so cannot be used beyond
+    # just distributing
+    call_and_log_seed_step Seeds::PriorityDistributions
+    call_and_log_seed_step Seeds::TestCaseData
+    call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
+    # End of Case Distribution Seed Data
+    call_and_log_seed_step Seeds::Notifications
+    call_and_log_seed_step Seeds::CavcDashboardData
+    call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
+    call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::AmaAffinityCases
+    call_and_log_seed_step Seeds::BgsServiceRecordMaker
+    call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    call_and_log_seed_step Seeds::Transcriptions
+    call_and_log_seed_step Seeds::TranscriptionFiles
+    call_and_log_seed_step Seeds::TranscriptionPackages
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 SeedDB.new.seed

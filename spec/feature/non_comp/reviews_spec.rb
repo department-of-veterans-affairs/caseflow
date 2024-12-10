@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
+  include DownloadHelpers
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:intake_user) }
 
@@ -88,7 +89,7 @@ feature "NonComp Reviews Queue", :postgres do
              :completed,
              appeal: hlr_c,
              assigned_to: non_comp_org,
-             closed_at: 2.days.ago)
+             closed_at: 3.days.ago)
     ]
   end
 
@@ -428,11 +429,23 @@ feature "NonComp Reviews Queue", :postgres do
       click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
-      earlier_date = 2.days.ago.strftime("%m/%d/%y")
+      earlier_date = 3.days.ago.strftime("%m/%d/%y")
+
+      last_seven_days_date_string = 7.days.ago.strftime("%Y-%m-%d")
+
+      params = {
+        tab: "completed",
+        page: 1,
+        sort_by: "completedDateColumn",
+        order: "desc",
+        "filter[]" => "col=completedDateColumn&val=last7,#{last_seven_days_date_string},"
+      }
+
+      query_string = URI.encode_www_form(params)
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+        "#{BASE_URL}?#{query_string}"
       )
 
       table_rows = current_table_rows
@@ -440,10 +453,12 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(earlier_date)).to eq true
       expect(table_rows.first.include?(later_date)).to eq true
 
+      params[:order] = "asc"
+      query_string = URI.encode_www_form(params)
       # Date Completed desc
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
+        "#{BASE_URL}?#{query_string}"
       )
 
       table_rows = current_table_rows
@@ -581,7 +596,9 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Verify the filter counts for the completed tab
       click_on "Completed Tasks"
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      # Turn this back on after last 7 days prefilter is added
+      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Apportionment (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
@@ -985,6 +1002,90 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  context "Completed Date filtering" do
+    it "is filterable by the completed date column" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+      click_on "Completed Tasks"
+
+      expect(page).to have_content("Cases completed (Last 7 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
+      date_string = 7.days.ago.strftime("%Y-%m-%d")
+      find("[aria-label='Filter by completed date. Filtering by last7,#{date_string},']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
+
+      expect(submit_button[:disabled]).to eq "false"
+
+      click_on "Clear all filters"
+
+      expect(page).to have_content("Cases completed")
+      expect(page).to_not have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
+
+      find("[aria-label='Filter by completed date']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
+
+      expect(submit_button[:disabled]).to eq "true"
+
+      page.find(".cf-select__control", match: :first).click
+      page.all("cf-select__option")
+      # Verify that all the date picker options are available
+      all_date_filter_options = [
+        "Between these dates",
+        "Before this date",
+        "After this date",
+        "On this date",
+        "Last 7 days",
+        "Last 30 days",
+        "Last 365 days",
+        "View All"
+      ]
+      all_date_filter_options.each do |date_filter_option|
+        expect(page).to have_content(date_filter_option)
+      end
+      find("div", class: "cf-select__option", text: "Before this date", exact_text: true).click
+
+      one_day_ago_date_string = 1.day.ago.strftime("%m/%d/%Y")
+      fill_in "Date", with: one_day_ago_date_string
+      expect(submit_button[:disabled]).to eq "false"
+      submit_button.click
+
+      expect(page).to have_content("Cases completed (Before #{one_day_ago_date_string})")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
+      find("[aria-label='Filter by completed date. Filtering by before,#{1.day.ago.strftime('%Y-%m-%d')},']").click
+      page.find(".cf-select__control", match: :first).click
+      find("div", class: "cf-select__option", text: "After this date", exact_text: true).click
+      find("button", text: "Apply Filter").click
+
+      expect(page).to have_content("Cases completed (After #{one_day_ago_date_string})")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-1 of 1 total")
+
+      click_on "Clear all filters"
+
+      expect(page).to have_content(COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      expect(page).to_not have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
+
+      find("[aria-label='Filter by completed date']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
+
+      expect(submit_button[:disabled]).to eq "true"
+      page.find(".cf-select__control", match: :first).click
+      find("div", class: "cf-select__option", text: "Last 30 days", exact_text: true).click
+      submit_button.click
+
+      expect(page).to have_content("Cases completed (Last 30 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
+    end
+  end
+
   context "get params should not get appended to URL when QueueTable is loading and user navigates to Generate report pages." do # rubocop:disable Layout/LineLength
     before do
       create_list(:higher_level_review_vha_task, 30, assigned_to: non_comp_org)
@@ -1007,17 +1108,45 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  context "Download Completed Tasks csv" do
+    scenario "it should use the filters from the page for the csv response" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+      click_on "Completed Tasks"
+      expect(page).to have_content("2 total")
+      expect(page).to have_content("Cases completed (Last 7 Days)")
+      click_button "Download completed tasks"
+
+      # Check the csv to make sure it returns the two task rows within the last week and the header row
+      completed_tasks_csv_file(3)
+
+      # Filter by Camp Lejune Family Member
+      find("[aria-label='Filter by issue type']").click
+      find("label", text: "Camp Lejune Family Member").click
+      expect(page).to have_content("Camp Lejune Family Member")
+
+      # The completed tasks csv should be filtered by the issue type now
+      click_button "Download completed tasks"
+      completed_tasks_csv_file(2)
+
+      # Clear the filters and the csv should contain all completed tasks
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("3 total")
+      click_button "Download completed tasks"
+      completed_tasks_csv_file(4)
+    end
+  end
+
   context "For a non comp org that is not VHA" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
 
-    scenario "the Generate task report button does not display for non-vha users" do
-      visit "/decision_reviews/nco"
-      expect(page).to_not have_content("Generate task report")
-    end
-
     scenario "displays tasks page for non VHA" do
-      visit "/decision_reviews/nco"
+      visit "/decision_reviews/#{non_comp_org.url}"
+
+      # The generate task report button does not display for non-vha users
+      expect(page).to_not have_content("Generate task report")
+
       expect(page).to have_content("Non-Comp Org")
       expect(page).to_not have_content("Incomplete Tasks")
       expect(page).to_not have_content("Pending Tasks")
@@ -1068,5 +1197,50 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Page not found")
       end
     end
+
+    context "Download Completed Tasks csv" do
+      scenario "it should not use the filters from the page for the csv response" do
+        visit "/decision_reviews/#{non_comp_org.url}"
+        expect(page).to have_content("Non-Comp Org")
+        click_on "Completed Tasks"
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+        expect(page).to have_content("2 total")
+        click_button "Download completed tasks"
+
+        # Check the csv to make sure return all completed task rows and the header row
+        completed_tasks_csv_file(4)
+
+        # Filter by Camp Lejune Family Member
+        find("[aria-label='Filter by issue type']").click
+        find("label", text: "Camp Lejune Family Member").click
+        expect(page).to have_content("Camp Lejune Family Member")
+
+        # The completed tasks csv should be still have all completed tasks
+        click_button "Download completed tasks"
+        completed_tasks_csv_file(4)
+
+        # Clear the filters and the csv should still contain all completed tasks
+        find(".cf-clear-filters-link").click
+        expect(page).to have_content("2 total")
+        click_button "Download completed tasks"
+        completed_tasks_csv_file(4)
+      end
+    end
+  end
+
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
+
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
+  end
+
+  def completed_tasks_csv_file(rows)
+    csv_file = download_csv
+    expect(csv_file).to_not eq(nil)
+    expect(csv_file.length).to eq(rows)
+    clear_downloads
   end
 end

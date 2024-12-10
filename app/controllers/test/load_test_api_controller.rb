@@ -161,7 +161,6 @@ class Test::LoadTestApiController < Api::ApplicationController
   # Response: None
   def add_user_to_org(organizations, user)
     remove_user_from_all_organizations
-
     organizations.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)

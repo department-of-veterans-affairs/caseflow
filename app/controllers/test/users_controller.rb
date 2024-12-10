@@ -18,6 +18,7 @@ class Test::UsersController < ApplicationController
       links: {
         your_queue: "/queue",
         assignment_queue: "/queue/USER_CSS_ID/assign", # USER_CSS_ID is then updated in TestUsers file
+        correspondence_admin: "/test/correspondence",
         case_distribution_dashboard: "/acd-controls/test"
       }
     },
@@ -56,7 +57,8 @@ class Test::UsersController < ApplicationController
     {
       name: "Hearings",
       links: {
-        current_schedule: "/hearings/schedule"
+        current_schedule: "/hearings/schedule",
+        transcription_file_dispatch_queue: "/hearings/transcription_files"
       }
     },
     {

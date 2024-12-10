@@ -8,6 +8,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     let(:hearing) { create(:hearing) }
     let(:docket_number) { hearing.docket_number }
     let(:appeal_id) { hearing.appeal.uuid }
+    let(:file_type) { "mp3" }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
     let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
     let(:transcription_file) { TranscriptionFile.find_by(file_name: file_name) }
@@ -28,6 +29,20 @@ describe Hearings::DownloadTranscriptionFileJob do
     subject { described_class.new.perform(download_link: link, file_name: file_name) }
 
     after { File.delete(tmp_location) if File.exist?(tmp_location) }
+
+    context "when hearing is not held" do
+      before do
+        allow(hearing).to receive(:held?).and_return(false)
+      end
+
+      it "calls send_error_email" do
+        job = described_class.new
+        allow(job).to receive(:send_error_email)
+        allow(job).to receive(:hearing).and_return(hearing) # Mock the hearing method to return the hearing object
+        job.perform(download_link: link, file_name: file_name)
+        expect(job).to have_received(:send_error_email)
+      end
+    end
 
     shared_examples "all file types" do
       it "saves downloaded file to correct tmp sub-directory" do
@@ -62,9 +77,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           .and change(TranscriptionFile, :count).by(1)
       end
 
-      it "updates file_status of TranscriptionFile record, leaves date_receipt_webex nil" do
+      it "updates file_status of TranscriptionFile record, leaves date_receipt_recording nil" do
         expect { subject }.to raise_error(download_error)
-        expect(transcription_file.date_receipt_webex).to be_nil
+        expect(transcription_file.date_receipt_recording).to be_nil
         expect(transcription_file.file_status).to eq(file_status)
       end
 
@@ -87,9 +102,9 @@ describe Hearings::DownloadTranscriptionFileJob do
             expect(transcription_file.file_type).to eq(file_type)
           end
 
-          it "updates date_receipt_webex of TranscriptionFile record" do
+          it "updates date_receipt_recording of TranscriptionFile record" do
             subject
-            expect(transcription_file.date_receipt_webex).to_not be_nil
+            expect(transcription_file.date_receipt_recording).to_not be_nil
           end
 
           include_examples "all file types"
@@ -132,9 +147,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
 
-        it "updates date_receipt_webex of TranscriptionFile record" do
+        it "updates date_receipt_recording of TranscriptionFile record" do
           subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
+          expect(transcription_file.date_receipt_recording).to_not be_nil
         end
 
         include_examples "all file types"
@@ -170,9 +185,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
 
-        it "updates date_receipt_webex of TranscriptionFile record" do
+        it "updates date_receipt_recording of TranscriptionFile record" do
           subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
+          expect(transcription_file.date_receipt_recording).to_not be_nil
         end
 
         include_examples "all file types"
