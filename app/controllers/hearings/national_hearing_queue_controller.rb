@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Hearings::NationalHearingQueueController < ApplicationController
-
   def index
     respond_to do |format|
       format.html { render "national_hearing_queue/index" }
