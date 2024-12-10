@@ -79,7 +79,8 @@
       "ramp_claim_id": null,
       "rating_issue_associated_at": null,
       "nonrating_issue_bgs_id": "13",
-      "nonrating_issue_bgs_source": "Test Source"
+      "nonrating_issue_bgs_source": "Test Source",
+      "remand_source_id": null
     }
   ]
 }
