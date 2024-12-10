@@ -37,7 +37,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
     />;
 
   const sectionBody = tasks.length ? (
-    <div>
+    <>
       {legacyTaskAlert}
       <table {...tableStyling} summary="layout table">
         <tbody>
@@ -50,7 +50,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           />
         </tbody>
       </table>
-    </div>
+    </>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
