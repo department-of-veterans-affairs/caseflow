@@ -6,7 +6,6 @@ Caseflow is a suite of web-based tools to manage VA appeals. It's currently in d
 The Appeals Modernization team's mission is to empower employees with technology to increase timely, accurate appeals decisions and improve the Veteran experience. Most of the team's products live here, in the main Caseflow repository.
 
 # Table of Contents
-
    * [Caseflow](#caseflow)
       * [Caseflow products in heavy development](#caseflow-products-in-heavy-development)
          * [Intake](#intake)

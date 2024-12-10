@@ -1,3 +1,5 @@
+$letter-table-bg-color: #f9f9f9;
+
 .usa-table-borderless {
   width: 100%;
 
@@ -17,6 +19,7 @@
   overflow-x: auto;
 }
 
+
 .cf-table-wrapper:focus {
   outline: none;
 }
@@ -25,29 +28,90 @@
   margin-bottom: 1em;
 }
 
-.cf-filter-option-row {
-  margin: 0;
-
-  button {
-    background-color: $color-white;
-    border-bottom: 1px solid $color-gray-lighter;
-    border-radius: 0;
-    color: $color-gray-dark;
-    font-weight: inherit;
-    margin: 0;
-    padding: 15px 10px;
-    text-align: left;
+.correspondence-document-table {
+  table {
     width: 100%;
+  }
 
-    &:hover {
-      background-color: $color-gray;
-      color: $color-white;
+  th {
+    width: 100%;
+    font-weight: bold;
+
+    &:first-child {
+      padding-left: 1.5%;
     }
   }
+
+  tr,
+  th,
+  td {
+    position: relative;
+    border: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+    }
+  }
+
+  td:first-child {
+    padding-left: 1.5%;
+  }
+}
+
+.correspondence-response-letters-table {
+  width: 100%;
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    text-align: left;
+    width: auto;
+    font-weight: bold;
+  }
+
+  tr,
+  th,
+  td {
+    position: relative;
+    border: none;
+    background-color: $letter-table-bg-color;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+
+    }
+  }
+}
+
+.cf-filter-option-row {
+  margin: 0;
 
   label {
     padding: 10px;
     margin: 0;
+  }
+
+  &.clear-wrapper {
+    border-bottom: 1px solid $color-gray-lighter;
+    text-align: center;
+    padding: 1rem;
+
+    .cf-btn-link {
+      margin: 0 auto;
+      display: block;
+    }
   }
 }
 

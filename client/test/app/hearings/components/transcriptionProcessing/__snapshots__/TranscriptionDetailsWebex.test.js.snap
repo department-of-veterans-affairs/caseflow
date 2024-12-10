@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TranscriptionDetailsWebex matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="transcription-details-webex"
+  >
+    <h2>
+      Transcription
+    </h2>
+    <div
+      data-css-1fmltfu=""
+    >
+      <div>
+        <label
+          style="font-weight: bold;"
+        >
+          Task #
+        </label>
+        <p
+          style="margin-top: 2rem;"
+        >
+          1001
+        </p>
+      </div>
+      <div>
+        <label
+          style="font-weight: bold;"
+        >
+          Contractor
+        </label>
+        <p
+          style="margin-top: 2rem;"
+        >
+          Real Contractor
+        </p>
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="uploadedToVbmsDate"
+        >
+          <strong>
+            <span>
+              Uploaded to VBMS
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            aria-readonly="true"
+            class="cf-form-textinput"
+            id="uploadedToVbmsDate"
+            max="9999-12-31"
+            min="0000-01-01"
+            name="uploadedToVbmsDate"
+            placeholder="mm/dd/yyyy"
+            readonly=""
+            type="date"
+            value="2024-09-15"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      data-css-1fmltfu=""
+    >
+      <div>
+        <label
+          style="font-weight: bold;"
+        >
+          Sent to Contractor
+        </label>
+        <p
+          style="margin-top: 2rem;"
+        >
+          09/14/2024
+        </p>
+      </div>
+      <div>
+        <label
+          style="font-weight: bold;"
+        >
+          Expected Return Date
+        </label>
+        <p
+          style="margin-top: 2rem;"
+        >
+          09/17/2024
+        </p>
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="returnDate"
+        >
+          <strong>
+            <span>
+              Return Date
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            aria-readonly="true"
+            class="cf-form-textinput"
+            id="returnDate"
+            max="9999-12-31"
+            min="0000-01-01"
+            name="returnDate"
+            placeholder="mm/dd/yyyy"
+            readonly=""
+            type="date"
+            value="2024-09-18"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

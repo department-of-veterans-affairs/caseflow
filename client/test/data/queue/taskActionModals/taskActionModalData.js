@@ -2845,6 +2845,1806 @@ const hearingWithdrawalRequestMailTaskData = {
   }
 };
 
+export const UploadTranscriptionVBMSNoErrorData = {
+  caseList: {
+    caseListCriteria: {
+      searchQuery: ''
+    },
+    isRequestingAppealsUsingVeteranId: false,
+    search: {
+      errorType: null,
+      queryResultingInError: null,
+      errorMessage: null
+    },
+    fetchedAllCasesFor: {}
+  },
+  caseSelect: {
+    selectedAppealVacolsId: null,
+    isRequestingAppealsUsingVeteranId: false,
+    selectedAppeal: {},
+    receivedAppeals: [],
+    search: {
+      showErrorMessage: false,
+      noAppealsFoundSearchQueryValue: null
+    },
+    caseSelectCriteria: {
+      searchQuery: ''
+    },
+    assignments: [],
+    assignmentsLoaded: false
+  },
+  queue: {
+    judges: {},
+    tasks: {},
+    amaTasks: {
+      7176: {
+        uniqueId: '7176',
+        isLegacy: false,
+        type: 'RootTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-08-11T13:00:04.369-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:04.375-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 7,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7176',
+        parentId: null,
+        label: 'Root Task',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: '2024-09-10T13:00:04.421-04:00',
+        status: 'on_hold',
+        onHoldDuration: null,
+        instructions: [],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'RootTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: true,
+        hideFromCaseTimeline: true,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Board of Veterans\' Appeals',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7176',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7177: {
+        uniqueId: '7177',
+        isLegacy: false,
+        type: 'DistributionTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-09-10T13:00:04.804-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:04.403-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 7,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7177',
+        parentId: 7176,
+        label: 'Distribution Task',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: '2024-09-10T13:00:05.039-04:00',
+        status: 'on_hold',
+        onHoldDuration: null,
+        instructions: [],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'DistributionTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Board of Veterans\' Appeals',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7177',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7178: {
+        uniqueId: '7178',
+        isLegacy: false,
+        type: 'HearingWithdrawalRequestMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-08-06T13:00:04.324-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:04.496-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Mail',
+        assignedTo: {
+          cssId: null,
+          name: 'Mail',
+          id: 16,
+          isOrganization: true,
+          type: 'MailTeam'
+        },
+        assignedBy: {
+          firstName: 'Lauren',
+          lastName: 'Roth',
+          cssId: 'CSSID7604680',
+          pgId: 1874
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7178',
+        parentId: 7176,
+        label: 'Hearing withdrawal request',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: '2024-09-10T13:00:05.148-04:00',
+        status: 'on_hold',
+        onHoldDuration: null,
+        instructions: [
+          '**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'HearingWithdrawalRequestMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: true,
+        hideFromCaseTimeline: true,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Mail',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7178',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7179: {
+        uniqueId: '7179',
+        isLegacy: false,
+        type: 'HearingTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-09-10T13:00:04.574-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:04.574-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 7,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7179',
+        parentId: 7177,
+        label: 'All hearing-related tasks',
+        documentId: null,
+        externalHearingId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: '2024-09-10T13:00:05.104-04:00',
+        status: 'on_hold',
+        onHoldDuration: null,
+        instructions: [
+          'This task will be auto-completed when all hearing-related tasks have been completed.'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'HearingTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {
+          updatedAt: null,
+          updatedByCssId: null,
+          notes: null
+        },
+        ownedBy: 'Board of Veterans\' Appeals',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7179',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7180: {
+        uniqueId: '7180',
+        isLegacy: false,
+        type: 'ScheduleHearingTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-09-10T13:00:04.544-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:04.544-04:00',
+        closedAt: '2024-09-10T13:00:04.646-04:00',
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 7,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7180',
+        parentId: 7179,
+        label: 'Schedule hearing',
+        documentId: null,
+        externalHearingId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'completed',
+        onHoldDuration: null,
+        instructions: [
+          'Schedule Veteran and/or appellant for Board hearing.'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'ScheduleHearingTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Board of Veterans\' Appeals',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7180',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7181: {
+        uniqueId: '7181',
+        isLegacy: false,
+        type: 'AssignHearingDispositionTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-09-10T13:00:05.073-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:05.073-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 7,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7181',
+        parentId: 7179,
+        label: 'Select hearing disposition',
+        documentId: null,
+        externalHearingId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing\'s scheduled date.'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [
+          {
+            func: 'add_schedule_hearing_task_admin_actions_data',
+            label: 'Postpone hearing',
+            value: 'modal/postpone_hearing',
+            data: {
+              redirect_after: '/queue/appeals/8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+              schedule_hearing_action_path: 'schedule_veteran',
+              message_detail: 'The task has been placed in your teams queue.',
+              selected: null,
+              options: [
+                {
+                  value: 'HearingAdminActionContestedClaimantTask',
+                  label: 'Contested claimant issue'
+                },
+                {
+                  value: 'HearingAdminActionFoiaPrivacyRequestTask',
+                  label: 'FOIA/Privacy request'
+                },
+                {
+                  value: 'HearingAdminActionForeignVeteranCaseTask',
+                  label: 'Foreign Veteran case'
+                },
+                {
+                  value: 'HearingAdminActionMissingFormsTask',
+                  label: 'Missing forms'
+                },
+                {
+                  value: 'HearingAdminActionOtherTask',
+                  label: 'Other'
+                },
+                {
+                  value: 'HearingAdminActionVerifyAddressTask',
+                  label: 'Verify Address'
+                },
+                {
+                  value: 'HearingAdminActionVerifyPoaTask',
+                  label: 'Verify power of attorney'
+                },
+                {
+                  value: 'HearingAdminActionIncarceratedVeteranTask',
+                  label: 'Veteran is incarcerated'
+                }
+              ]
+            }
+          },
+          {
+            func: 'withdraw_hearing_data',
+            label: 'Withdraw hearing',
+            value: 'modal/cancel_task',
+            data: {
+              redirect_after: '/queue/appeals/8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+              modal_title: 'Withdraw hearing',
+              modal_body: 'The appeal will be held open for a 90-day evidence submission period before distribution to a judge.',
+              message_title: 'You have successfully withdrawn Bob Smithklocko\'s hearing request',
+              message_detail: 'The appeal will be held open for a 90-day evidence submission period before distribution to a judge.',
+              business_payloads: {
+                values: {
+                  disposition: 'cancelled'
+                }
+              },
+              back_to_hearing_schedule: false
+            }
+          },
+          {
+            label: 'Remove hearing to correct a scheduling error',
+            value: 'modal/hearing_scheduled_in_error'
+          },
+          {
+            label: 'Send for hearing disposition change',
+            value: 'modal/create_change_hearing_disposition_task'
+          }
+        ],
+        timelineTitle: 'AssignHearingDispositionTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Board of Veterans\' Appeals',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7181',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      7182: {
+        uniqueId: '7182',
+        isLegacy: false,
+        type: 'HearingWithdrawalRequestMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-09-10T13:00:05.128-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-10T13:00:05.128-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Hearing Admin',
+        assignedTo: {
+          cssId: null,
+          name: 'Hearing Admin',
+          id: 38,
+          isOrganization: true,
+          type: 'HearingAdmin'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7182',
+        parentId: 7178,
+        label: 'Hearing withdrawal request',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          '**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [
+          {
+            func: 'change_task_type_data',
+            label: 'Change task type',
+            value: 'modal/change_task_type',
+            data: {
+              options: [
+                {
+                  value: 'CavcCorrespondenceMailTask',
+                  label: 'CAVC Correspondence'
+                },
+                {
+                  value: 'ClearAndUnmistakeableErrorMailTask',
+                  label: 'CUE-related'
+                },
+                {
+                  value: 'AddressChangeMailTask',
+                  label: 'Change of address'
+                },
+                {
+                  value: 'CongressionalInterestMailTask',
+                  label: 'Congressional interest'
+                },
+                {
+                  value: 'ControlledCorrespondenceMailTask',
+                  label: 'Controlled correspondence'
+                },
+                {
+                  value: 'DeathCertificateMailTask',
+                  label: 'Death certificate'
+                },
+                {
+                  value: 'EvidenceOrArgumentMailTask',
+                  label: 'Evidence or argument'
+                },
+                {
+                  value: 'ExtensionRequestMailTask',
+                  label: 'Extension request'
+                },
+                {
+                  value: 'FoiaRequestMailTask',
+                  label: 'FOIA request'
+                },
+                {
+                  value: 'HearingPostponementRequestMailTask',
+                  label: 'Hearing postponement request'
+                },
+                {
+                  value: 'HearingRelatedMailTask',
+                  label: 'Hearing-related'
+                },
+                {
+                  value: 'ReconsiderationMotionMailTask',
+                  label: 'Motion for reconsideration'
+                },
+                {
+                  value: 'AodMotionMailTask',
+                  label: 'Motion to Advance on Docket'
+                },
+                {
+                  value: 'OtherMotionMailTask',
+                  label: 'Other motion'
+                },
+                {
+                  value: 'PowerOfAttorneyRelatedMailTask',
+                  label: 'Power of attorney-related'
+                },
+                {
+                  value: 'PrivacyActRequestMailTask',
+                  label: 'Privacy act request'
+                },
+                {
+                  value: 'PrivacyComplaintMailTask',
+                  label: 'Privacy complaint'
+                },
+                {
+                  value: 'ReturnedUndeliverableCorrespondenceMailTask',
+                  label: 'Returned or undeliverable mail'
+                },
+                {
+                  value: 'StatusInquiryMailTask',
+                  label: 'Status inquiry'
+                },
+                {
+                  value: 'AppealWithdrawalMailTask',
+                  label: 'Withdrawal of appeal'
+                }
+              ]
+            }
+          },
+          {
+            func: 'cancel_task_data',
+            label: 'Cancel task',
+            value: 'modal/cancel_task',
+            data: {
+              modal_title: 'Cancel task',
+              modal_body: '',
+              message_title: 'Task for Bob Smithklocko\'s case has been cancelled',
+              message_detail: 'If you have made a mistake, please email the assigner to manage any changes.'
+            }
+          }
+        ],
+        timelineTitle: 'HearingWithdrawalRequestMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Hearing Admin',
+        daysSinceLastStatusChange: 44,
+        daysSinceBoardIntake: 44,
+        id: '7182',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      36370: {
+        uniqueId: '36370',
+        isLegacy: false,
+        type: 'ReviewTranscriptTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-10-15T13:36:45.429-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-10-15T13:36:45.429-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Transcription',
+        assignedTo: {
+          cssId: null,
+          name: 'Transcription',
+          id: 9,
+          isOrganization: true,
+          type: 'TranscriptionTeam'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '36370',
+        parentId: 7176,
+        label: 'Review Transcript task',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: 'Review the hearing transcript and upload the final to VBMS once it has been reviewed for errors or corrected.',
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'ReviewTranscriptTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Transcription',
+        daysSinceLastStatusChange: 9,
+        daysSinceBoardIntake: 9,
+        id: '36370',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      },
+      36371: {
+        uniqueId: '36371',
+        isLegacy: false,
+        type: 'ReviewTranscriptTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1720,
+        externalAppealId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        assignedOn: '2024-10-16T13:28:59.487-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-10-16T13:28:59.487-04:00',
+        closedAt: null,
+        startedAt: '2024-10-24T11:52:57.371-04:00',
+        assigneeName: 'BVASORANGE',
+        assignedTo: {
+          cssId: 'BVASORANGE',
+          name: 'BVASORANGE',
+          id: 122,
+          isOrganization: false,
+          type: 'User'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '36371',
+        parentId: 7176,
+        label: 'Review Transcript task',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'in_progress',
+        onHoldDuration: null,
+        instructions: [
+          'maite test'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [
+          {
+            func: 'change_task_type_data',
+            label: 'No errors found: Upload transcript to VBMS',
+            value: 'modal/upload_transcription_vbms',
+            data: {
+              redirect_after: '/queue',
+              selected: null,
+              options: [
+                {
+                  label: 'IHP',
+                  value: 'IhpColocatedTask'
+                },
+                {
+                  label: 'POA clarification',
+                  value: 'PoaClarificationColocatedTask'
+                },
+                {
+                  label: 'Hearing clarification',
+                  value: 'HearingClarificationColocatedTask'
+                },
+                {
+                  label: 'AOJ',
+                  value: 'AojColocatedTask'
+                },
+                {
+                  label: 'Extension',
+                  value: 'ExtensionColocatedTask'
+                },
+                {
+                  label: 'Missing hearing transcripts',
+                  value: 'MissingHearingTranscriptsColocatedTask'
+                },
+                {
+                  label: 'Unaccredited rep',
+                  value: 'UnaccreditedRepColocatedTask'
+                },
+                {
+                  label: 'FOIA',
+                  value: 'FoiaColocatedTask'
+                },
+                {
+                  label: 'Retired VLJ',
+                  value: 'RetiredVljColocatedTask'
+                },
+                {
+                  label: 'Arneson',
+                  value: 'ArnesonColocatedTask'
+                },
+                {
+                  label: 'New rep arguments',
+                  value: 'NewRepArgumentsColocatedTask'
+                },
+                {
+                  label: 'Pending scanning (VBMS)',
+                  value: 'PendingScanningVbmsColocatedTask'
+                },
+                {
+                  label: 'Address verification',
+                  value: 'AddressVerificationColocatedTask'
+                },
+                {
+                  label: 'Confirm schedule hearing',
+                  value: 'ScheduleHearingColocatedTask'
+                },
+                {
+                  label: 'Missing records',
+                  value: 'MissingRecordsColocatedTask'
+                },
+                {
+                  label: 'Translation',
+                  value: 'TranslationColocatedTask'
+                },
+                {
+                  label: 'Stayed appeal',
+                  value: 'StayedAppealColocatedTask'
+                },
+                {
+                  label: 'Other',
+                  value: 'OtherColocatedTask'
+                }
+              ]
+            }
+          },
+          {
+            label: 'Errors found and corrected: Upload transcript to VBMS'
+          },
+          {
+            label: 'Cancel task'
+          }
+        ],
+        timelineTitle: 'ReviewTranscriptTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'BVASORANGE',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 8,
+        id: '36371',
+        claimant: {},
+        appeal_receipt_date: '2024-09-09'
+      }
+    },
+    appeals: {
+      '8025c5b4-76e7-4a56-a760-8a7cbc565e06': {
+        id: '1720',
+        appellant_hearing_email_recipient: null,
+        representative_hearing_email_recipient: null,
+        externalId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        docketName: 'hearing',
+        withdrawn: false,
+        removed: false,
+        overtime: false,
+        contestedClaim: true,
+        veteranAppellantDeceased: false,
+        isLegacyAppeal: false,
+        caseType: 'Original',
+        isAdvancedOnDocket: false,
+        issueCount: 3,
+        docketNumber: '240909-1720',
+        assignedAttorney: null,
+        assignedJudge: null,
+        distributedToJudge: false,
+        veteranFullName: 'Bob Smithklocko',
+        veteranFileNumber: '598752192',
+        isPaperCase: false,
+        readableHearingRequestType: null,
+        readableOriginalHearingRequestType: null,
+        vacateType: null,
+        cavcRemandsWithDashboard: 0,
+        mst: null,
+        pact: false,
+        hearings: [
+          {
+            heldBy: null,
+            viewedByJudge: false,
+            date: '2024-10-10T19:00:00.000-04:00',
+            type: 'Virtual',
+            externalId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+            disposition: 'held',
+            isVirtual: false,
+            notes: null,
+            createdAt: '2024-09-10T13:00:04.947-04:00'
+          }
+        ],
+        currentUserEmail: null,
+        currentUserTimezone: 'America/Los_Angeles',
+        completedHearingOnPreviousAppeal: false,
+        issues: [
+          {
+            id: 2292,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          },
+          {
+            id: 2293,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          },
+          {
+            id: 2294,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          }
+        ],
+        decisionIssues: [],
+        substituteAppellantClaimantOptions: [
+          {
+            displayText: 'BOB VANCE, Spouse',
+            value: 'CLAIMANT_WITH_PVA_AS_VSO'
+          },
+          {
+            displayText: 'CATHY SMITH, Child',
+            value: '1129318238'
+          },
+          {
+            displayText: 'TOM BRADY, Child',
+            value: 'no-such-pid'
+          }
+        ],
+        canEditRequestIssues: false,
+        unrecognizedAppellantId: null,
+        appellantIsNotVeteran: false,
+        appellantFullName: 'Tom Brady',
+        appellantFirstName: 'Tom',
+        appellantMiddleName: 'Edward',
+        appellantLastName: 'Brady',
+        appellantSuffix: null,
+        appellantDateOfBirth: '1998-09-05',
+        appellantAddress: {
+          address_line_1: '9999 MISSION ST',
+          address_line_2: 'UBER',
+          address_line_3: 'APT 2',
+          city: 'SAN FRANCISCO',
+          zip: '94103',
+          country: 'USA',
+          state: 'CA'
+        },
+        appellantEmailAddress: 'tom.brady@caseflow.gov',
+        appellantPhoneNumber: null,
+        appellantType: 'VeteranClaimant',
+        appellantPartyType: null,
+        appellantTz: 'America/Los_Angeles',
+        appellantRelationship: 'Spouse',
+        hasPOA: {
+          id: 867,
+          authzn_change_clmant_addrs_ind: null,
+          authzn_poa_access_ind: null,
+          claimant_participant_id: '598751541',
+          created_at: '2024-09-10T13:00:04.704-04:00',
+          file_number: '00001234',
+          last_synced_at: '2024-09-10T13:00:04.704-04:00',
+          legacy_poa_cd: '100',
+          poa_participant_id: '600153863',
+          representative_name: 'Clarence Darrow',
+          representative_type: 'Attorney',
+          updated_at: '2024-09-10T13:00:04.704-04:00'
+        },
+        assignedToLocation: 'BVASORANGE',
+        veteranDateOfDeath: null,
+        veteranParticipantId: '598751540',
+        closestRegionalOffice: null,
+        closestRegionalOfficeLabel: null,
+        availableHearingLocations: [],
+        efolderLink: 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov',
+        status: 'not_distributed',
+        decisionDate: null,
+        nodDate: '2024-09-09',
+        nodDateUpdates: [],
+        certificationDate: null,
+        powerOfAttorney: {
+          representative_type: 'Attorney',
+          representative_name: 'Clarence Darrow',
+          representative_address: {
+            address_line_1: '9999 MISSION ST',
+            address_line_2: 'UBER',
+            address_line_3: 'APT 2',
+            city: 'SAN FRANCISCO',
+            zip: '94103',
+            country: 'USA',
+            state: 'CA'
+          },
+          representative_email_address: 'jamie.fakerton@caseflowdemo.com',
+          representative_tz: 'America/Los_Angeles',
+          poa_last_synced_at: '2024-09-10T13:00:04.704-04:00'
+        },
+        cavcRemand: null,
+        regionalOffice: null,
+        caseflowVeteranId: 2143,
+        documentID: null,
+        caseReviewId: null,
+        canEditDocumentId: false,
+        attorneyCaseRewriteDetails: {
+          note_from_attorney: null,
+          untimely_evidence: null
+        },
+        docketSwitch: null,
+        switchedDockets: [],
+        appellantSubstitution: null,
+        substitutions: [],
+        hasSameAppealSubstitution: true,
+        remandSourceAppealId: null,
+        showPostCavcStreamMsg: false,
+        remandJudgeName: null,
+        hasNotifications: false,
+        locationHistory: [],
+        hasCompletedSctAssignTask: false,
+        veteranInfo: {
+          veteran: {
+            full_name: 'Bob Smithklocko',
+            gender: 'M',
+            date_of_birth: '09/10/1994',
+            date_of_death: null,
+            email_address: 'Bob.Smithklocko@test.com',
+            address: {
+              address_line_1: '1234 Main Street',
+              address_line_2: null,
+              address_line_3: null,
+              city: 'Orlando',
+              state: 'FL',
+              zip: '12345',
+              country: 'USA'
+            },
+            relationships: null
+          }
+        }
+      }
+    },
+    appealDetails: {
+      '8025c5b4-76e7-4a56-a760-8a7cbc565e06': {
+        hearings: [
+          {
+            heldBy: null,
+            viewedByJudge: false,
+            date: '2024-10-10T19:00:00.000-04:00',
+            type: 'Virtual',
+            externalId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+            disposition: 'held',
+            isVirtual: false,
+            notes: null,
+            createdAt: '2024-09-10T13:00:04.947-04:00'
+          }
+        ],
+        currentUserEmail: null,
+        currentUserTimezone: 'America/Los_Angeles',
+        completedHearingOnPreviousAppeal: false,
+        issues: [
+          {
+            id: 2292,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          },
+          {
+            id: 2293,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          },
+          {
+            id: 2294,
+            program: 'compensation',
+            description: 'Apportionment - nonrating issue description',
+            notes: null,
+            diagnostic_code: '5008',
+            remand_reasons: [],
+            closed_status: null,
+            decision_date: '2024-07-10',
+            mst_status: false,
+            pact_status: false,
+            mst_justification: null,
+            pact_justification: null
+          }
+        ],
+        decisionIssues: [],
+        substituteAppellantClaimantOptions: [
+          {
+            displayText: 'BOB VANCE, Spouse',
+            value: 'CLAIMANT_WITH_PVA_AS_VSO'
+          },
+          {
+            displayText: 'CATHY SMITH, Child',
+            value: '1129318238'
+          },
+          {
+            displayText: 'TOM BRADY, Child',
+            value: 'no-such-pid'
+          }
+        ],
+        canEditRequestIssues: false,
+        unrecognizedAppellantId: null,
+        appellantIsNotVeteran: false,
+        appellantFullName: 'Tom Brady',
+        appellantFirstName: 'Tom',
+        appellantMiddleName: 'Edward',
+        appellantLastName: 'Brady',
+        appellantSuffix: null,
+        appellantDateOfBirth: '1998-09-05',
+        appellantAddress: {
+          address_line_1: '9999 MISSION ST',
+          address_line_2: 'UBER',
+          address_line_3: 'APT 2',
+          city: 'SAN FRANCISCO',
+          zip: '94103',
+          country: 'USA',
+          state: 'CA'
+        },
+        appellantEmailAddress: 'tom.brady@caseflow.gov',
+        appellantPhoneNumber: null,
+        appellantType: 'VeteranClaimant',
+        appellantPartyType: null,
+        appellantTz: 'America/Los_Angeles',
+        appellantRelationship: 'Spouse',
+        contestedClaim: true,
+        hasPOA: {
+          id: 867,
+          authzn_change_clmant_addrs_ind: null,
+          authzn_poa_access_ind: null,
+          claimant_participant_id: '598751541',
+          created_at: '2024-09-10T13:00:04.704-04:00',
+          file_number: '00001234',
+          last_synced_at: '2024-09-10T13:00:04.704-04:00',
+          legacy_poa_cd: '100',
+          poa_participant_id: '600153863',
+          representative_name: 'Clarence Darrow',
+          representative_type: 'Attorney',
+          updated_at: '2024-09-10T13:00:04.704-04:00'
+        },
+        assignedToLocation: 'BVASORANGE',
+        veteranDateOfDeath: null,
+        veteranParticipantId: '598751540',
+        closestRegionalOffice: null,
+        closestRegionalOfficeLabel: null,
+        availableHearingLocations: [],
+        externalId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+        efolderLink: 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov',
+        status: 'not_distributed',
+        decisionDate: null,
+        nodDate: '2024-09-09',
+        nodDateUpdates: [],
+        certificationDate: null,
+        powerOfAttorney: {
+          representative_type: 'Attorney',
+          representative_name: 'Clarence Darrow',
+          representative_address: {
+            address_line_1: '9999 MISSION ST',
+            address_line_2: 'UBER',
+            address_line_3: 'APT 2',
+            city: 'SAN FRANCISCO',
+            zip: '94103',
+            country: 'USA',
+            state: 'CA'
+          },
+          representative_email_address: 'jamie.fakerton@caseflowdemo.com',
+          representative_tz: 'America/Los_Angeles',
+          poa_last_synced_at: '2024-09-10T13:00:04.704-04:00'
+        },
+        cavcRemand: null,
+        regionalOffice: null,
+        caseflowVeteranId: 2143,
+        documentID: null,
+        caseReviewId: null,
+        canEditDocumentId: false,
+        attorneyCaseRewriteDetails: {
+          note_from_attorney: null,
+          untimely_evidence: null
+        },
+        docketSwitch: null,
+        switchedDockets: [],
+        appellantSubstitution: null,
+        substitutions: [],
+        hasSameAppealSubstitution: true,
+        remandSourceAppealId: null,
+        showPostCavcStreamMsg: false,
+        remandJudgeName: null,
+        hasNotifications: false,
+        locationHistory: [],
+        hasCompletedSctAssignTask: false,
+        mst: null,
+        pact: false,
+        veteranInfo: {
+          veteran: {
+            full_name: 'Bob Smithklocko',
+            gender: 'M',
+            date_of_birth: '09/10/1994',
+            date_of_death: null,
+            email_address: 'Bob.Smithklocko@test.com',
+            address: {
+              address_line_1: '1234 Main Street',
+              address_line_2: null,
+              address_line_3: null,
+              city: 'Orlando',
+              state: 'FL',
+              zip: '12345',
+              country: 'USA'
+            },
+            relationships: null
+          }
+        }
+      }
+    },
+    claimReviews: {},
+    editingIssue: {},
+    docCountForAppeal: {
+      '8025c5b4-76e7-4a56-a760-8a7cbc565e06': {
+        docCountText: 0,
+        loading: false
+      }
+    },
+    mostRecentlyHeldHearingForAppeal: {},
+    newDocsForAppeal: {},
+    newDocsForTask: {},
+    specialIssues: {},
+    stagedChanges: {
+      appeals: {
+        '8025c5b4-76e7-4a56-a760-8a7cbc565e06': {
+          id: '1720',
+          appellant_hearing_email_recipient: null,
+          representative_hearing_email_recipient: null,
+          externalId: '8025c5b4-76e7-4a56-a760-8a7cbc565e06',
+          docketName: 'hearing',
+          withdrawn: false,
+          removed: false,
+          overtime: false,
+          contestedClaim: true,
+          veteranAppellantDeceased: false,
+          isLegacyAppeal: false,
+          caseType: 'Original',
+          isAdvancedOnDocket: false,
+          issueCount: 3,
+          docketNumber: '240909-1720',
+          assignedAttorney: null,
+          assignedJudge: null,
+          distributedToJudge: false,
+          veteranFullName: 'Bob Smithklocko',
+          veteranFileNumber: '598752192',
+          isPaperCase: false,
+          readableHearingRequestType: null,
+          readableOriginalHearingRequestType: null,
+          vacateType: null,
+          cavcRemandsWithDashboard: 0,
+          mst: null,
+          pact: false,
+          hearings: [
+            {
+              heldBy: null,
+              viewedByJudge: false,
+              date: '2024-10-10T19:00:00.000-04:00',
+              type: 'Virtual',
+              externalId: '86ba7d80-277e-429b-98e6-55e67ea06f84',
+              disposition: 'held',
+              isVirtual: false,
+              notes: null,
+              createdAt: '2024-09-10T13:00:04.947-04:00'
+            }
+          ],
+          currentUserEmail: null,
+          currentUserTimezone: 'America/Los_Angeles',
+          completedHearingOnPreviousAppeal: false,
+          issues: [
+            {
+              id: 2292,
+              program: 'compensation',
+              description: 'Apportionment - nonrating issue description',
+              notes: null,
+              diagnostic_code: '5008',
+              remand_reasons: [],
+              closed_status: null,
+              decision_date: '2024-07-10',
+              mst_status: false,
+              pact_status: false,
+              mst_justification: null,
+              pact_justification: null
+            },
+            {
+              id: 2293,
+              program: 'compensation',
+              description: 'Apportionment - nonrating issue description',
+              notes: null,
+              diagnostic_code: '5008',
+              remand_reasons: [],
+              closed_status: null,
+              decision_date: '2024-07-10',
+              mst_status: false,
+              pact_status: false,
+              mst_justification: null,
+              pact_justification: null
+            },
+            {
+              id: 2294,
+              program: 'compensation',
+              description: 'Apportionment - nonrating issue description',
+              notes: null,
+              diagnostic_code: '5008',
+              remand_reasons: [],
+              closed_status: null,
+              decision_date: '2024-07-10',
+              mst_status: false,
+              pact_status: false,
+              mst_justification: null,
+              pact_justification: null
+            }
+          ],
+          decisionIssues: [],
+          substituteAppellantClaimantOptions: [
+            {
+              displayText: 'BOB VANCE, Spouse',
+              value: 'CLAIMANT_WITH_PVA_AS_VSO'
+            },
+            {
+              displayText: 'CATHY SMITH, Child',
+              value: '1129318238'
+            },
+            {
+              displayText: 'TOM BRADY, Child',
+              value: 'no-such-pid'
+            }
+          ],
+          canEditRequestIssues: false,
+          unrecognizedAppellantId: null,
+          appellantIsNotVeteran: false,
+          appellantFullName: 'Tom Brady',
+          appellantFirstName: 'Tom',
+          appellantMiddleName: 'Edward',
+          appellantLastName: 'Brady',
+          appellantSuffix: null,
+          appellantDateOfBirth: '1998-09-05',
+          appellantAddress: {
+            address_line_1: '9999 MISSION ST',
+            address_line_2: 'UBER',
+            address_line_3: 'APT 2',
+            city: 'SAN FRANCISCO',
+            zip: '94103',
+            country: 'USA',
+            state: 'CA'
+          },
+          appellantEmailAddress: 'tom.brady@caseflow.gov',
+          appellantPhoneNumber: null,
+          appellantType: 'VeteranClaimant',
+          appellantPartyType: null,
+          appellantTz: 'America/Los_Angeles',
+          appellantRelationship: 'Spouse',
+          hasPOA: {
+            id: 867,
+            authzn_change_clmant_addrs_ind: null,
+            authzn_poa_access_ind: null,
+            claimant_participant_id: '598751541',
+            created_at: '2024-09-10T13:00:04.704-04:00',
+            file_number: '00001234',
+            last_synced_at: '2024-09-10T13:00:04.704-04:00',
+            legacy_poa_cd: '100',
+            poa_participant_id: '600153863',
+            representative_name: 'Clarence Darrow',
+            representative_type: 'Attorney',
+            updated_at: '2024-09-10T13:00:04.704-04:00'
+          },
+          assignedToLocation: 'BVASORANGE',
+          veteranDateOfDeath: null,
+          veteranParticipantId: '598751540',
+          closestRegionalOffice: null,
+          closestRegionalOfficeLabel: null,
+          availableHearingLocations: [],
+          efolderLink: 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov',
+          status: 'not_distributed',
+          decisionDate: null,
+          nodDate: '2024-09-09',
+          nodDateUpdates: [],
+          certificationDate: null,
+          powerOfAttorney: {
+            representative_type: 'Attorney',
+            representative_name: 'Clarence Darrow',
+            representative_address: {
+              address_line_1: '9999 MISSION ST',
+              address_line_2: 'UBER',
+              address_line_3: 'APT 2',
+              city: 'SAN FRANCISCO',
+              zip: '94103',
+              country: 'USA',
+              state: 'CA'
+            },
+            representative_email_address: 'jamie.fakerton@caseflowdemo.com',
+            representative_tz: 'America/Los_Angeles',
+            poa_last_synced_at: '2024-09-10T13:00:04.704-04:00'
+          },
+          cavcRemand: null,
+          regionalOffice: null,
+          caseflowVeteranId: 2143,
+          documentID: null,
+          caseReviewId: null,
+          canEditDocumentId: false,
+          attorneyCaseRewriteDetails: {
+            note_from_attorney: null,
+            untimely_evidence: null
+          },
+          docketSwitch: null,
+          switchedDockets: [],
+          appellantSubstitution: null,
+          substitutions: [],
+          hasSameAppealSubstitution: true,
+          remandSourceAppealId: null,
+          showPostCavcStreamMsg: false,
+          remandJudgeName: null,
+          hasNotifications: false,
+          locationHistory: [],
+          hasCompletedSctAssignTask: false,
+          veteranInfo: {
+            veteran: {
+              full_name: 'Bob Smithklocko',
+              gender: 'M',
+              date_of_birth: '09/10/1994',
+              date_of_death: null,
+              email_address: 'Bob.Smithklocko@test.com',
+              address: {
+                address_line_1: '1234 Main Street',
+                address_line_2: null,
+                address_line_3: null,
+                city: 'Orlando',
+                state: 'FL',
+                zip: '12345',
+                country: 'USA'
+              },
+              relationships: null
+            }
+          }
+        }
+      },
+      taskDecision: {
+        type: '',
+        opts: {}
+      }
+    },
+    attorneysOfJudge: [],
+    attorneyAppealsLoadingState: {},
+    isTaskAssignedToUserSelected: {},
+    pendingDistribution: null,
+    attorneys: {},
+    organizationId: null,
+    organizations: [],
+    loadingAppealDetail: {
+      '8025c5b4-76e7-4a56-a760-8a7cbc565e06': {
+        powerOfAttorney: {
+          loading: false
+        },
+        veteranInfo: {
+          loading: false
+        }
+      }
+    },
+    queueConfig: {}
+  },
+  teamManagement: {
+    data: {
+      dvcTeams: [],
+      judgeTeams: [],
+      vsos: [],
+      privateBars: [],
+      vhaProgramOffices: [],
+      vhaRegionalOffices: [],
+      otherOrgs: []
+    },
+    loading: false,
+    statuses: {}
+  },
+  ui: {
+    selectingJudge: false,
+    highlightFormItems: false,
+    messages: {
+      success: null,
+      error: null
+    },
+    saveState: {
+      savePending: false,
+      saveSuccessful: null
+    },
+    modals: {},
+    featureToggles: {
+      collect_video_and_central_emails: true,
+      enable_hearing_time_slots: true,
+      schedule_veteran_virtual_hearing: true,
+      overtime_revamp: true,
+      overtime_persistence: true,
+      mdr_cavc_remand: true,
+      reversal_cavc_remand: true,
+      dismissal_cavc_remand: true,
+      editNodDate: true,
+      fnod_badge: true,
+      fnod_banner: true,
+      view_nod_date_updates: true,
+      poa_button_refresh: true,
+      poa_auto_refresh: false,
+      poa_auto_ihp_update: true,
+      edit_unrecognized_appellant: true,
+      edit_unrecognized_appellant_poa: true,
+      listed_granted_substitution_before_dismissal: true,
+      restrict_poa_visibility: true,
+      vha_predocket_workflow: true,
+      vha_irregular_appeals: true,
+      vso_virtual_opt_in: true,
+      das_case_timeliness: true,
+      das_case_timeline: true,
+      split_appeal_workflow: true,
+      cavc_remand_granted_substitute_appellant: true,
+      cavc_dashboard_workflow: false,
+      mstIdentification: true,
+      pactIdentification: true,
+      legacyMstPactIdentification: true,
+      justificationReason: false,
+      cc_appeal_workflow: true,
+      metricsBrowserError: true,
+      cc_vacatur_visibility: false,
+      conference_selection_visibility: true,
+      additional_remand_reasons: true,
+      acd_cases_tied_to_judges_no_longer_with_board: true,
+      admin_case_distribution: true,
+      acd_exclude_from_affinity: true,
+      disable_ama_eventing: true
+    },
+    userRole: '',
+    userCssId: 'BVASORANGE',
+    userInfo: null,
+    organizations: [
+      {
+        name: 'Transcription',
+        url: 'transcription'
+      },
+      {
+        name: 'Hearings Management',
+        url: 'hearings-management'
+      },
+      {
+        name: 'Hearing Admin',
+        url: 'hearing-admin'
+      },
+      {
+        name: 'Transcription Dispatch',
+        url: '/hearings/transcription_files'
+      }
+    ],
+    activeOrganization: {
+      id: null,
+      name: null,
+      isVso: false
+    },
+    userIsVsoEmployee: false,
+    userIsCamoEmployee: false,
+    userIsSCTCoordinator: false,
+    feedbackUrl: '/feedback',
+    loadedUserId: 122,
+    selectedAssignee: null,
+    selectedAssigneeSecondary: null,
+    veteranCaseListIsVisible: false,
+    canEditAod: false,
+    canEditNodDate: false,
+    userIsCobAdmin: false,
+    canEditCavcRemands: false,
+    canEditCavcDashboards: false,
+    canViewCavcDashboards: false,
+    hearingDay: {
+      hearingDate: null,
+      regionalOffice: null
+    },
+    targetUser: {},
+    poaAlert: {},
+    conferenceProvider: 'pexip',
+    canViewOvertimeStatus: false
+  },
+  components: {
+    scheduledHearingsList: [],
+    fetchingHearings: false,
+    dropdowns: {
+      judges: {},
+      hearingCoordinators: {},
+      regionalOffices: {}
+    },
+    forms: {},
+    alerts: [],
+    transitioningAlerts: {},
+    scheduledHearing: {
+      taskId: null,
+      action: null,
+      disposition: null,
+      externalId: null,
+      polling: false,
+      notes: null
+    }
+  },
+  docketSwitch: {
+    step: 0,
+    formData: {
+      disposition: null,
+      receiptDate: null,
+      docketType: null,
+      issueIds: [],
+      newTasks: []
+    }
+  },
+  mtv: {
+    attorneyView: {
+      submitting: false,
+      error: null
+    },
+    judgeView: {
+      submitting: false,
+      error: null
+    }
+  },
+  substituteAppellant: {
+    step: 0,
+    formData: {
+      substitutionDate: null,
+      participantId: null,
+      closedTaskIds: [],
+      openTaskIds: [],
+      cancelledTaskIds: []
+    },
+    relationships: null,
+    loadingRelationships: false,
+    poa: null
+  },
+  cavcRemand: {
+    step: 0,
+    formData: {
+      substitutionDate: null,
+      participantId: null,
+      decisionType: null,
+      docketNumber: null,
+      judge: null,
+      decisionDate: null,
+      issueIds: null,
+      federalCircuit: null,
+      instructions: null,
+      judgementDate: null,
+      mandateDate: null,
+      remandType: null,
+      attorney: null,
+      remandDatesProvided: null,
+      remandAppealId: null,
+      isAppellantSubstituted: null,
+      reActivateTaskIds: [],
+      cancelTaskIds: []
+    },
+    relationships: null,
+    loadingRelationships: false,
+    poa: null
+  },
+  editClaimantReducer: {
+    claimant: {}
+  },
+  cavcDashboard: {
+    decision_reasons: [],
+    selection_bases: [],
+    initial_state: {
+      cavc_dashboards: [],
+      checked_boxes: {}
+    },
+    cavc_dashboards: [],
+    checked_boxes: {},
+    dashboard_issues: [],
+    error: {}
+  },
+  caching: {
+    queueTable: {
+      cachedResponses: {}
+    }
+  }
+};
+
 export const completeHearingWithdrawalRequestData = {
   queue: {
     amaTasks: {
@@ -2874,5 +4674,68 @@ export const cancelHearingPostponementRequestData = {
   },
   ...uiData
 };
+
+const correspondenceAvailableActionsList = [
+  { label: 'Change task type' },
+  { label: 'Assign to team' },
+  { label: 'Assign to person' },
+  { label: 'Mark task complete' },
+  { label: 'Cancel task' }
+];
+const correspondenceTasksCommonData = {
+  assignedTo: 'Litigation Support',
+  assignedOn: '09/03/2024',
+  type: 'Organization',
+  availableActions: correspondenceAvailableActionsList,
+  status: 'assigned'
+};
+
+export const tasksUnrelatedToAnAppeal = [
+  {
+    label: 'Other motion',
+    instructions: ['test OM'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'FOIA request',
+    instructions: ['test OM', 'test cavc2'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Privacy act request',
+    instructions: ['test PAR', 'test par2'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Congressional interest',
+    instructions: ['CI'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Privacy complaint',
+    instructions: ['PC'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Death certificate',
+    instructions: ['DC'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Power of attorney-related',
+    instructions: ['PoAR'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Status inquiry',
+    instructions: ['SI'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'CAVC Correspondence',
+    instructions: ['CAVC C'],
+    ...correspondenceTasksCommonData
+  }
+];
 
 /* eslint-enable max-lines */

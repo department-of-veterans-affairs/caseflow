@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 const listStyling = css({
-  paddingBottom: 0,
+  paddingBottom: '1px',
   margin: 0,
   maxHeight: '345px',
   wordBreak: 'break-word',
-  width: '218px',
+  width: '250px',
   overflowY: 'auto',
   listStyleType: 'none',
   paddingLeft: 0
@@ -36,7 +36,6 @@ const FilterOption = ({ options, setSelectedValue,
         <label htmlFor={`${index}-${option.value}`}>
           {option.displayText}
         </label>
-
       </li>;
     })}
   </ul>;

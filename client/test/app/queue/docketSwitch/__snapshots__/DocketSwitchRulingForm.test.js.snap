@@ -213,7 +213,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="attorney-label"
                           aria-owns="attorney-listbox"
                           autocapitalize="none"
                           autocomplete="off"
