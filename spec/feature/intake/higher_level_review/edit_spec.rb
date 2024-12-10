@@ -1361,7 +1361,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
 
         expect(withdrawn_issue).to_not be_nil
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago)
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
@@ -1403,7 +1403,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
         expect(withdrawn_issue).to_not be_nil
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago)
 
         sleep 1
 
@@ -1413,7 +1413,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(
           /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
         )
-        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago)
       end
     end
   end
