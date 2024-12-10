@@ -76,7 +76,6 @@ class ExternalApi::VBMSService
     update_document(appeal, uploadable_document)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms(appeal, uploadable_document)
     if use_ce_api?
       begin
@@ -105,9 +104,7 @@ class ExternalApi::VBMSService
       upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
     if use_ce_api?
       begin
