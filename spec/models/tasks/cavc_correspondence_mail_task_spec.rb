@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
 describe CavcCorrespondenceMailTask do
-  let(:mail_user) { create(:user) }
+  let(:inbound_ops_team_user) { create(:user) }
   let(:cavc_lit_user) { create(:user) }
   let(:cavc_task) { create(:cavc_task) }
 
   before do
-    MailTeam.singleton.add_user(mail_user)
+    InboundOpsTeam.singleton.add_user(inbound_ops_team_user)
+    MailTeam.singleton.add_user(inbound_ops_team_user)
+    User.authenticate!(user: inbound_ops_team_user)
     CavcLitigationSupport.singleton.add_user(cavc_lit_user)
   end
 
   describe ".available_actions" do
     let(:appeal) { create(:appeal, :type_cavc_remand) }
     let(:mail_task) do
-      described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, mail_user)
+      described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, inbound_ops_team_user)
     end
 
     # organization-level-tasks
@@ -42,7 +44,7 @@ describe CavcCorrespondenceMailTask do
       end
 
       context "a mail team user" do
-        let(:user) { mail_user }
+        let(:user) { inbound_ops_team_user }
         let(:expected_actions) { [] }
 
         it "has no actions" do
@@ -74,7 +76,7 @@ describe CavcCorrespondenceMailTask do
     end
 
     context "when assigned to a User" do
-      let(:mail_user_task) do
+      let(:inbound_ops_team_user_task) do
         described_class.create_from_params({ appeal: appeal,
                                              parent_id: mail_task.id,
                                              assigned_to: cavc_lit_user2 },
@@ -88,10 +90,10 @@ describe CavcCorrespondenceMailTask do
         OrganizationsUser.make_user_admin(cavc_lit_user, CavcLitigationSupport.singleton)
       end
 
-      subject { expect(mail_user_task.available_actions(user)).to eq(expected_actions) }
+      subject { expect(inbound_ops_team_user_task.available_actions(user)).to eq(expected_actions) }
 
       context "a mail team user" do
-        let(:user) { mail_user }
+        let(:user) { inbound_ops_team_user }
         let(:expected_actions) { [] }
 
         it "has no actions" do
@@ -138,15 +140,16 @@ describe CavcCorrespondenceMailTask do
   describe ".create_from_params" do
     let(:params) { { parent_id: root_task.id, instructions: "foo bar" } }
 
-    subject { CavcCorrespondenceMailTask.create_from_params(params, mail_user) }
+    subject { CavcCorrespondenceMailTask.create_from_params(params, inbound_ops_team_user) }
 
-    before { RequestStore[:current_user] = mail_user }
+    before { RequestStore[:current_user] = inbound_ops_team_user }
 
     context "on a non-CAVC Appeal Stream" do
       let(:root_task) { create(:root_task) }
 
-      it "fails to create the task" do
-        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      it "create the task" do
+        subject
+        expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
       end
     end
 
@@ -157,16 +160,18 @@ describe CavcCorrespondenceMailTask do
       context "without a CAVC task" do
         before { CavcTask.find_by(appeal: appeal).destroy }
 
-        it "fails to create the task" do
-          expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        it "create the task" do
+          subject
+          expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
         end
       end
 
       context "after the CAVC Lit Support work is complete" do
         before { CavcTask.find_by(appeal: appeal).completed! }
 
-        it "fails to create the task" do
-          expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        it "create the task" do
+          subject
+          expect(CavcCorrespondenceMailTask.last.assigned_to).to eq(CavcLitigationSupport.singleton)
         end
       end
 

@@ -139,7 +139,19 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
-  updateSelectedFilter = (value, columnName, resetValue) => {
+  putIntofilter = (filtersForColumn, columnName, value) => {
+    let newValue = [];
+
+    if ((columnName === 'Receipt Date') || (columnName === 'Date Completed')) {
+      newValue = [value];
+    } else {
+      newValue = filtersForColumn.concat([value]);
+    }
+
+    return newValue;
+  }
+
+  updateSelectedFilter = (value, columnName) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
@@ -152,7 +164,7 @@ class TableFilter extends React.PureComponent {
       } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = this.putIntofilter(filtersForColumn, columnName, value);
       }
     } else {
       newFilters = newFilters.concat([value]);
@@ -163,6 +175,7 @@ class TableFilter extends React.PureComponent {
     let newFilteredByList = _.clone(filteredByList);
 
     newFilteredByList[columnName] = newFilters;
+
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
   }
@@ -209,64 +222,33 @@ class TableFilter extends React.PureComponent {
       // not display correctly when they are checked.
       getFilterValues;
 
-    const renderFilterIcon = () => {
-      return (
-        <span {...iconStyle} data-testid="table-filter-testid">
-          <FilterIcon
-            aria-label={this.filterIconAriaLabel()}
-            label={this.filterIconAriaLabel()}
-            getRef={this.props.getFilterIconRef}
-            selected={this.isFilterOpen()}
-            handleActivate={this.toggleDropdown} />
+    return (
+      <span {...iconStyle} data-testid="table-filter-testid">
+        <FilterIcon
+          aria-label={this.filterIconAriaLabel()}
+          label={this.filterIconAriaLabel()}
+          getRef={this.props.getFilterIconRef}
+          selected={this.isFilterOpen()}
+          handleActivate={this.toggleDropdown} />
 
-          {this.state.open &&
-            <QueueDropdownFilter
-              clearFilters={this.clearFilteredByList}
-              name={valueName || columnName}
-              isClearEnabled={anyFiltersAreSet}
-              handleClose={this.toggleDropdown}
-              addClearFiltersRow>
-              <FilterOption
-                options={filterOptions}
-                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName, false)} />
-            </QueueDropdownFilter>
-          }
-        </span>
-      );
-    };
+        {this.state.open &&
+          <QueueDropdownFilter
+            clearFilters={this.clearFilteredByList}
+            isReceiptDateFilter={this.props.isReceiptDateFilter}
+            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
+            name={valueName || columnName}
+            isClearEnabled={anyFiltersAreSet}
+            handleClose={this.toggleDropdown}
+            setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)}
+            addClearFiltersRow>
 
-    const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
-
-    let filter = '';
-
-    if (dateFilter) {
-      filter = (
-        <span>
-          <DateSelector
-            type="date"
-            value=""
-            ariaLabelText="date-selector"
-            onChange={(value, reset) => this.updateSelectedFilter(formatDate(value), columnName, reset)} />
-        </span>
-      );
-    } else if (filterType === 'date-picker') {
-
-      const dates = _.get(this.props.filteredByList, String(columnName));
-      const filterSettings = this.props.filterSettings || {};
-
-      filter = (<DatePicker
-        values={dates}
-        getRef={this.props.getFilterIconRef}
-        label={this.filterIconAriaLabel()}
-        onChange={(value) => this.updateSelectedFilter(value, columnName, true)}
-        settings={filterSettings}
-        selected={this.isFilterOpen()} />
-      );
-    } else {
-      filter = renderFilterIcon();
-    }
-
-    return filter;
+            <FilterOption
+              options={filterOptions}
+              setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
+          </QueueDropdownFilter>
+        }
+      </span>
+    );
   }
 }
 
@@ -275,6 +257,8 @@ TableFilter.defaultProps = {
 };
 
 TableFilter.propTypes = {
+  isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,
