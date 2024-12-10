@@ -196,6 +196,10 @@ const PdfDocument = memo(({
     let promises = [];
     let textContentContainer = [];
 
+    // since the promises resolve out of page order, we need to insert text content at the correct position in the
+    // array.
+    textContentContainer.length = pdfDocument.numPages;
+
     for (let i = 0; i < pdfDocument?.numPages; i++) {
       promises.push(pdfDocument.getPage(i + 1));
     }
