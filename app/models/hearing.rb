@@ -130,6 +130,14 @@ class Hearing < CaseflowRecord
     update!(judge: hearing_day.judge, room: hearing_day.room, bva_poc: hearing_day.bva_poc)
   end
 
+  def recording_transcriber
+    transcription_files.first&.recording_transcriber
+  end
+
+  def date_receipt_recording
+    transcription_files.first&.date_receipt_recording
+  end
+
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
