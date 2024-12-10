@@ -703,8 +703,10 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "with reader role" do
-      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
-      after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
+      # before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
+      before { attorney_user.update!(roles: attorney_user.roles << "Reader") }
+      before { attorney_user.update!(roles: attorney_user.roles.pop) }
+      # after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
       scenario "reader link appears on page and sends us to reader" do
         visit "/queue"
