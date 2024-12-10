@@ -526,16 +526,18 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
 export const fetchVeteranInformation = (uuid) => async (dispatch) => {
   const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
   const data = response.body;
-  dispatch(updateVeteranInformation(data))
-  console.log(data)
+
+  dispatch(updateVeteranInformation(data));
+
   return data;
 };
 
 export const fetchLinkedAppeals = (uuid) => async (dispatch) => {
   const response = await ApiUtil.get(`/queue/correspondence/${uuid}/linked_appeals`);
   const data = response.body;
-  dispatch(updateLinkedAppeals(data))
-  console.log(data)
+
+  dispatch(updateLinkedAppeals(data));
+
   return data;
 };
 
@@ -544,6 +546,7 @@ export const fetchCorrespondenceDetailsInitialPayload = (uuid) => async (dispatc
     dispatch(fetchVeteranInformation(uuid)),
     dispatch(fetchLinkedAppeals(uuid))
   ]);
-  console.log(responses)
+
+  return responses;
 }
 
