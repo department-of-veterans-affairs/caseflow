@@ -35,7 +35,7 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
     @details = details
     build_mailer_params
 
-    mail(subject: build_subject, **mailer_config[:emails])
+    mail(subject: @details[:subject] || build_subject, **mailer_config[:emails])
   end
 
   private

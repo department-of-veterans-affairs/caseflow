@@ -8,6 +8,8 @@ import COPY from '../../COPY';
 import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
+import DateSelector from './DateSelector';
+import DatePicker from './DatePicker';
 
 const iconStyle = css(
   {
@@ -137,16 +139,32 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
+  putIntofilter = (filtersForColumn, columnName, value) => {
+    let newValue = [];
+
+    if ((columnName === 'Receipt Date') || (columnName === 'Date Completed')) {
+      newValue = [value];
+    } else {
+      newValue = filtersForColumn.concat([value]);
+    }
+
+    return newValue;
+  }
+
   updateSelectedFilter = (value, columnName) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
-    if (filtersForColumn) {
-      if (filtersForColumn.includes(value)) {
+    if (filtersForColumn || resetValue) {
+      if (resetValue) {
+        if (value !== '') {
+          newFilters = [value];
+        }
+      } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = this.putIntofilter(filtersForColumn, columnName, value);
       }
     } else {
       newFilters = newFilters.concat([value]);
@@ -157,6 +175,7 @@ class TableFilter extends React.PureComponent {
     let newFilteredByList = _.clone(filteredByList);
 
     newFilteredByList[columnName] = newFilters;
+
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
   }
@@ -189,7 +208,9 @@ class TableFilter extends React.PureComponent {
       columnName,
       anyFiltersAreSet,
       valueName,
-      getFilterValues
+      getFilterValues,
+      dateFilter,
+      filterType,
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -213,10 +234,14 @@ class TableFilter extends React.PureComponent {
         {this.state.open &&
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
+            isReceiptDateFilter={this.props.isReceiptDateFilter}
+            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
+            setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)}
             addClearFiltersRow>
+
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
@@ -232,6 +257,8 @@ TableFilter.defaultProps = {
 };
 
 TableFilter.propTypes = {
+  isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,
@@ -247,6 +274,9 @@ TableFilter.propTypes = {
   updateFilters: PropTypes.func,
   filterOptionsFromApi: PropTypes.array,
   multiValueDelimiter: PropTypes.string,
+  dateFilter: PropTypes.bool,
+  filterType: PropTypes.string,
+  filterSettings: PropTypes.object,
 };
 
 export default TableFilter;

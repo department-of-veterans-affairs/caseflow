@@ -78,6 +78,10 @@ const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
 };
 
+const reviewTranscriptTask = (task) => {
+  return task.type === 'ReviewTranscriptTask';
+};
+
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
@@ -280,7 +284,7 @@ class TaskRows extends React.PureComponent {
   };
 
   taskLabelListItem = (task) => {
-    if (task.closedAt) {
+    if (task.closedAt && !task?.waivable) {
       return null;
     }
 
@@ -290,6 +294,29 @@ class TaskRows extends React.PureComponent {
         <dd>{task.label}</dd>
       </div>
     ) : null;
+  };
+
+  taskInstructionDetailsItem = () => {
+    const divStyle = { marginTop: '1rem' };
+
+    return (
+      <div style={divStyle}>
+        <b>DETAILS:</b>
+        <div style={divStyle}>
+          <div style={{ whiteSpace: 'pre-line' }}>
+            Review the hearing transcript and upload the final to VBMS once
+            it has been reviewed for errors or corrected.
+          </div>
+        </div>
+        <hr></hr>
+        <div style={{ ...divStyle, marginBottom: '1rem' }}>
+          <b>No errors found: Upload transcript to VBMS</b>
+        </div>
+        <div style={divStyle}>
+          <b>DETAILS</b>
+        </div>
+      </div>
+    );
   };
 
   taskInstructionsWithLineBreaks = (task) => {
@@ -314,10 +341,12 @@ class TaskRows extends React.PureComponent {
 
     const renderMstLabel = (mstText, style) => {
       if (mstText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (MST):</h5>
-          <small>{mstText}</small>
-        </React.Fragment>;
+        return (
+          <React.Fragment>
+            <h5 style={style}>Reason for Change (MST):</h5>
+            <small>{mstText}</small>
+          </React.Fragment>
+        );
       }
     };
 
@@ -486,10 +515,10 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
-            {!establishmentTask(task) &&
-            <dt style={{ width: '100%' }}>
-              {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
-            </dt>
+            {reviewTranscriptTask(task) ? this.taskInstructionDetailsItem() : (!establishmentTask(task) &&
+              <dt style={{ width: '100%' }}>
+                {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+              </dt>)
             }
             <dd style={{ width: '100%' }}>
               {this.taskInstructionsWithLineBreaks(task)}
@@ -516,13 +545,15 @@ class TaskRows extends React.PureComponent {
       return null;
     }
 
-    return this.showActionsSection(task) ? (
+    return this.showActionsSection(task) || this.taskIsWaivable(task) ? (
       <div>
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <ActionsDropdown task={task} appealId={appeal.externalId} />
       </div>
     ) : null;
   };
+
+  taskIsWaivable = (task) => task?.waivable && this.props.waivableUser;
 
   showActionsSection = (task) => task && !this.props.hideDropdown;
 
@@ -772,6 +803,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  waivableUser: PropTypes.bool
 };
 
 export default TaskRows;

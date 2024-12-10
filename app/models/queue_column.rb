@@ -41,7 +41,8 @@ class QueueColumn
   }.freeze
 
   def filter_options(tasks)
-    filter_option_func = FILTER_OPTIONS[name]
+    filter_option_func = self.class::FILTER_OPTIONS[name]
+
     if filter_option_func
       send(filter_option_func, tasks)
     else
@@ -67,6 +68,14 @@ class QueueColumn
   end
 
   private
+
+  def va_dor_options
+    nil
+  end
+
+  def date_completed_options
+    nil
+  end
 
   def case_type_options(tasks)
     options = tasks.with_cached_appeals.group(:case_type).count.each_pair.map do |option, count|

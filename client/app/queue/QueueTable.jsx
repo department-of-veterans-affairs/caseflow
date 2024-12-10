@@ -13,7 +13,7 @@ import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
-import { tasksWithAppealsFromRawTasks } from './utils';
+import { tasksWithAppealsFromRawTasks, tasksWithCorrespondenceFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
 
@@ -51,7 +51,7 @@ import COPY from '../../COPY';
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
-
+ *   - @customFilterMethod {function(string, array)} custom method for handling complex front end filtering
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -161,9 +161,10 @@ export const HeaderRow = (props) => {
                 valueTransform={column.filterValueTransform}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                dateFilter={column.enableFilter === 'date'}
               />
             );
-          } else if (props.useTaskPagesApi && column.filterOptions) {
+          } else if (props.useTaskPagesApi && (column.filterOptions || column.filterType)) {
             filterIcon = (
               <TableFilter
                 {...column}
@@ -171,6 +172,8 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
+                isTaskCompletedDateFilter={column.name === QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name}
               />
             );
           }
@@ -347,7 +350,7 @@ export default class QueueTable extends React.PureComponent {
     const firstResponse = {
       task_page_count: this.props.numberOfPages,
       tasks_per_page: this.props.casesPerPage,
-      total_task_count: this.props.rowObjects.length,
+      total_task_count: this.props.totalTaskCount,
       tasks: this.props.rowObjects
     };
 
@@ -421,7 +424,7 @@ export default class QueueTable extends React.PureComponent {
       });
     }
 
-    return filters;
+    return _.omit(filters, 'undefined');
   };
 
   defaultRowClassNames = () => '';
@@ -480,6 +483,11 @@ export default class QueueTable extends React.PureComponent {
 
           if (_.isNil(cellValue)) {
             return filteredByList[columnName].includes('null');
+          }
+
+          // Use custom filtering method for complex front end filtering such as a date picker
+          if (columnConfig && columnConfig.customFilterMethod) {
+            return columnConfig.customFilterMethod(cellValue, filteredByList[columnName]);
           }
 
           // This is needed if a column contains multiple values instead of a single value
@@ -579,14 +587,23 @@ export default class QueueTable extends React.PureComponent {
 
     // Remove paramsToClear from currentParams if they are not in tableParams
     paramsToClear.forEach((param) => {
-      if (!tableParams.has(param)) {
-        currentParams.delete(param);
-      }
+      currentParams.delete(param);
     });
 
     // Merge tableParams and tabParams into currentParams, overwriting any duplicate keys
     for (const [key, value] of [...tabParams.entries(), ...tableParams.entries()]) {
-      currentParams.set(key, value);
+      if (key.includes('[]')) {
+        // Get all current values for the key
+        const existingValues = currentParams.getAll(key);
+
+        // If the new value doesn't already exist, append it
+        if (!existingValues.includes(value)) {
+          currentParams.append(key, value);
+        }
+      } else {
+        // Set for all other keys (overrides existing values)
+        currentParams.set(key, value);
+      }
     }
 
     return `${base}?${currentParams.toString()}`;
@@ -656,7 +673,7 @@ export default class QueueTable extends React.PureComponent {
     const responseFromCache = this.props.useReduxCache ? this.props.reduxCache[endpointUrl] :
       this.state.cachedResponses[endpointUrl];
 
-    if (responseFromCache) {
+    if (responseFromCache && !this.props.skipCache) {
       this.setState({ tasksFromApi: responseFromCache.tasks });
 
       return Promise.resolve(true);
@@ -670,12 +687,13 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        const preparedTasks = this.props.isCorrespondenceTable ?
+          tasksWithCorrespondenceFromRawTasks(tasks) :
+          tasksWithAppealsFromRawTasks(tasks);
 
-        const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
+        const preparedResponse = Object.assign({ ...response.body }, { tasks: preparedTasks });
 
         this.setState({
-          // cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
           ...(!this.props.useReduxCache && {
             cachedResponses: {
               ...this.state.cachedResponses,
@@ -686,6 +704,10 @@ export default class QueueTable extends React.PureComponent {
           loadingComponent: null
         });
 
+        if (this.props.onTableDataUpdated) {
+          this.props.onTableDataUpdated(preparedTasks);
+        }
+
         if (this.props.useReduxCache) {
           this.props.updateReduxCache({ key: endpointUrl, value: preparedResponse });
         }
@@ -693,6 +715,10 @@ export default class QueueTable extends React.PureComponent {
         this.updateAddressBar();
       }).
       catch(() => this.setState({ loadingComponent: null }));
+  };
+
+  filterTasksFromSearchbar = (tasks, searchValue) => {
+    return tasks.filter((task) => this.props.taskMatchesSearch(task, searchValue));
   };
 
   render() {
@@ -712,6 +738,7 @@ export default class QueueTable extends React.PureComponent {
       bodyStyling,
       enablePagination,
       useTaskPagesApi,
+      searchValue,
       reduxCache,
       useReduxCache
     } = this.props;
@@ -771,16 +798,23 @@ export default class QueueTable extends React.PureComponent {
     }
 
     let paginationElements = null;
+    let currentCases;
 
     if (enablePagination && !this.state.loadingComponent) {
+      if (searchValue) {
+        currentCases = totalTaskCount = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length;
+      } else {
+        currentCases = rowObjects ? rowObjects.length : 0;
+      }
       paginationElements = (
         <Pagination
           pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
           currentPage={this.state.currentPage + 1}
-          currentCases={rowObjects ? rowObjects.length : 0}
+          currentCases={currentCases}
           totalPages={numberOfPages}
           totalCases={totalTaskCount}
           updatePage={(newPage) => this.updateCurrentPage(newPage)}
+          searchValue={searchValue}
         />
       );
     }
@@ -818,7 +852,7 @@ export default class QueueTable extends React.PureComponent {
           tbodyRef={tbodyRef}
           columns={columns}
           getKeyForRow={keyGetter}
-          rowObjects={rowObjects}
+          rowObjects={searchValue ? this.filterTasksFromSearchbar(rowObjects, searchValue) : rowObjects}
           bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
@@ -888,6 +922,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  isCorrespondenceTable: PropTypes.bool,
+  searchValue: PropTypes.string,
+  taskMatchesSearch: PropTypes.func,
   useReduxCache: PropTypes.bool,
   reduxCache: PropTypes.object,
   updateReduxCache: PropTypes.func

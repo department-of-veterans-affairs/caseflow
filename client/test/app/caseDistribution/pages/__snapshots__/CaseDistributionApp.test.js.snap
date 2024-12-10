@@ -270,6 +270,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             class="input-container"
                           >
                             <input
+                              aria-label="Test Title Lever2*"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -324,6 +325,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             class="input-container"
                           >
                             <input
+                              aria-label="Test Text Title Lever3"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -699,6 +701,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             class="input-container"
                           >
                             <input
+                              aria-label="AMA Hearings Docket Time Goals"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -751,6 +754,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               class="input-container"
                             >
                               <input
+                                aria-label="AMA Hearings Start Distribution Prior to Goals"
                                 aria-readonly="true"
                                 class="cf-form-textinput"
                                 disabled=""
@@ -800,6 +804,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             class="input-container"
                           >
                             <input
+                              aria-label="AMA Direct Review Docket Time Goals"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -852,6 +857,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               class="input-container"
                             >
                               <input
+                                aria-label="AMA Direct Review Start Distribution Prior to Goals"
                                 aria-readonly="true"
                                 class="cf-form-textinput"
                                 disabled=""
