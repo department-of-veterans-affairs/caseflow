@@ -16,8 +16,7 @@ class PdfExportService
       begin
         # render template
         ac = ActionController::Base.new
-        template = ac.render_to_string template: "templates/" + template_name + ".html.erb", layout: false,
-                                       locals: { appeal: object }
+        template = ac.render_to_string template: "templates/" + template_name, layout: false, locals: { appeal: object }
       # error handling if template doesn't exist
       rescue ActionView::MissingTemplate => error
         Rails.logger.error("PdfExportService::Error - Template does not exist for "\
