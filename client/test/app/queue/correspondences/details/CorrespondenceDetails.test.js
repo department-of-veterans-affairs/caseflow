@@ -4,7 +4,11 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceDetailsData, correspondenceInfoData, prepareAppealForStoreData } from 'test/data/correspondence';
+import {
+  correspondenceDetailsData,
+  correspondenceInfoData,
+  prepareAppealForStoreData,
+  veteranInformationData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import COPY from '../../../../../COPY';
@@ -81,9 +85,9 @@ jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve(
 ));
 
 let initialState = {
-  correspondence: correspondenceDetailsData,
-  correspondenceDetails: correspondenceInfoData,
-  prepareAppealForStoreData
+  // correspondence: correspondenceDetailsData,
+  correspondenceDetails: { ...correspondenceInfoData, ...veteranInformationData },
+  prepareAppealForStoreData,
 };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -506,6 +510,8 @@ describe('CorrespondenceDetails', () => {
     sortCaseTimelineEvents.mockReturnValue(
       tasksUnrelatedToAnAppeal
     );
+
+    console.log(store.getState());
 
     render(
       <Provider store={store}>
