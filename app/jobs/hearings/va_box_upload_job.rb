@@ -118,7 +118,8 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       hearingable.transcription_files&.update_all(
         date_upload_box: Time.current,
         updated_by_id: RequestStore.store[:current_user].id,
-        file_status: "Successful Upload (BOX)"
+        file_status: "Successful Upload (BOX)",
+        locked_at: nil
       )
     end
   end
