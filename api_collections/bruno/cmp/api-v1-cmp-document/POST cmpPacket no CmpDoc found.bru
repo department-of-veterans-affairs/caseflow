@@ -1,0 +1,33 @@
+meta {
+  name: POST cmpPacket no CmpDoc found
+  type: http
+  seq: 10
+}
+
+post {
+  url: 127.0.0.1:3000/api/v1/cmp/packet
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: 811d15706f474bc199546fdc74e7c6a6
+}
+
+body:json {
+   {
+    "documentId": "test",
+     "documentUUID": "test"
+  }
+}
+
+body:multipart-form {
+  packetUUID: 123
+  cmpPacketNumber: 1
+  packetSource: test
+  vaDor: 20-10-10
+  veteranId: 1
+  veteranFirstName: fname
+  veteranMiddleName: m
+  veteranLastName: lname
+}
