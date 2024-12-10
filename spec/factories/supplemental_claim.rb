@@ -13,6 +13,10 @@ FactoryBot.define do
     end
 
     transient do
+      custom_benefit_type { nil }
+    end
+
+    transient do
       claimant_type { :none }
     end
 
@@ -52,6 +56,8 @@ FactoryBot.define do
     end
 
     after(:build) do |sc, evaluator|
+      sc.benefit_type = evaluator.custom_benefit_type if evaluator.custom_benefit_type.present?
+
       if evaluator.veteran
         sc.veteran_file_number = evaluator.veteran.file_number
       end
@@ -148,7 +154,7 @@ FactoryBot.define do
     trait :with_request_issue do
       after(:create) do |sc, evaluator|
         create(:request_issue,
-               benefit_type: sc.benefit_type,
+               benefit_type: sc.benefit_type || "compensation",
                nonrating_issue_category: Constants::ISSUE_CATEGORIES[sc.benefit_type].sample,
                nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
                decision_review: sc,
@@ -205,6 +211,13 @@ FactoryBot.define do
       establishment_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
+    end
+
+    trait :create_business_line do
+      after(:create) do |hlr, _evaluator|
+        hlr.submit_for_processing!
+        hlr.create_business_line_tasks!
+      end
     end
 
     trait :with_disposition do

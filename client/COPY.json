@@ -639,6 +639,7 @@
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES": "All changes made to this page will be lost, except for the selection of special issues and the adding, editing, and deleting of issues.",
+  "MODAL_CANCEL_ATTORNEY_CHECKOUT_AMA": "All changes made to this page will be lost.",
   "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. If none, please select 'No Special Issues.' Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
   "SPECIAL_ISSUES_ABOUT_SECTION": "About the appellant: ",

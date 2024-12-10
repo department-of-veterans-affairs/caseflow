@@ -874,7 +874,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         decision_review: higher_level_review,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        decision_date: rating.promulgation_date
       )
     end
 
@@ -1306,9 +1307,14 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     context "when EPs have cleared very recently" do
       before do
+        higher_level_review.update!(benefit_type: "education")
         ep = higher_level_review.reload.end_product_establishments.first.result
         ep_store = Fakes::EndProductStore.new
         ep_store.update_ep_status(veteran.file_number, ep.claim_id, "CLR")
+      end
+
+      after do
+        higher_level_review.update!(benefit_type: benefit_type)
       end
 
       it "syncs on initial GET" do
