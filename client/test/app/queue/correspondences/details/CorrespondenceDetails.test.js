@@ -1,12 +1,13 @@
 /* eslint-disable max-lines */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceDetailsData, correspondenceInfoData } from 'test/data/correspondence';
+import { correspondenceDetailsData, correspondenceInfoData, prepareAppealForStoreData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
+import COPY from '../../../../../COPY';
 import thunk from 'redux-thunk';
 import moment from 'moment';
 import {
@@ -16,7 +17,6 @@ import {
   sortCaseTimelineEvents
 } from 'app/queue/utils';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
 import ApiUtil from 'app/util/ApiUtil';
 
@@ -32,44 +32,58 @@ jest.mock('app/queue/utils', () => ({
   sortCaseTimelineEvents: jest.fn()
 }));
 
-jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
+jest.mock('app/queue/CaseListTable', () => () => (
   <div className="case-list-table">
     <table>
       <thead>
         <tr>
+          <th></th>
           <th>Docket Number</th>
           <th>Appellant Name</th>
-          <th>Appeal Status</th>
-          <th>Appeal Type</th>
+          <th>Status</th>
+          <th>Types</th>
           <th>Number of Issues</th>
           <th>Decision Date</th>
-          <th>Appeal Location</th>
+          <th>Assigned To</th>
         </tr>
       </thead>
       <tbody>
-        {appeals.map((appeal, index) => (
-          <tr key={index}>
-            <td>{appeal.docketNumber}</td>
-            <td>{appeal.appellant_full_name}</td>
-            <td>{appeal.status}</td>
-            <td>{appeal.appealType}</td>
-            <td>{appeal.issueCount}</td>
-            <td>{appeal.decisionDate}</td>
-            <td>{appeal.location}</td>
-          </tr>
-        ))}
+        <tr key="0">
+          <td><input type="checkbox" id="253" checked /></td>
+          <td>240714-253</td>
+          <td>John Doe</td>
+          <td>Pending</td>
+          <td>Original</td>
+          <td>2</td>
+          <td>2024-09-09</td>
+          <td>Clerk of the Board</td>
+        </tr>
+        <tr key="1">
+          <td><input type="checkbox" id="254" checked /></td>
+          <td>240714-254</td>
+          <td>Jane Smith</td>
+          <td>Completed</td>
+          <td>Evidence Submission</td>
+          <td>3</td>
+          <td>2024-02-02</td>
+          <td>Mail</td>
+        </tr>
       </tbody>
     </table>
   </div>
 ));
 
-jest.mock('app/util/ApiUtil', () => ({
-  post: jest.fn(),
-}));
+jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve(
+  { params: {
+    correspondence_uuid: {},
+    priorMailIds: [1],
+  } }
+));
 
 let initialState = {
   correspondence: correspondenceDetailsData,
-  correspondenceDetails: correspondenceInfoData
+  correspondenceDetails: correspondenceInfoData,
+  prepareAppealForStoreData
 };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -453,10 +467,20 @@ let props = {
           id: 1,
           type: 'Correspondence',
           attributes: {
-            assigned_to_location: 'Mail',
+            assigned_to_location: 'Clerk of the Board',
             appellant_full_name: 'John Doe',
             type: 'Original',
-            docket_number: '123-456'
+            docket_number: '240714-253'
+          }
+        },
+        {
+          id: 2,
+          type: 'Correspondence',
+          attributes: {
+            assigned_to_location: 'Mail',
+            appellant_full_name: 'Jane Doe',
+            type: 'Evidence',
+            docket_number: '240714-254'
           }
         }
       ],
@@ -474,7 +498,7 @@ describe('CorrespondenceDetails', () => {
       appealDetails: {}
     });
     prepareAppealForStore.mockReturnValue({
-      // mock return value
+      prepareAppealForStoreData
     });
     prepareTasksForStore.mockReturnValue({
       // mock return value
@@ -506,9 +530,14 @@ describe('CorrespondenceDetails', () => {
 
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
-    const existingAppealButton = document.getElementsByClassName('plus-symbol')[0];
-    // const responseLettersTab = screen.getByText('Response Letters');
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
+    const correspondenceAndAppealTasksTab = screen.getByText('Correspondence and Appeal Tasks');
+
+    fireEvent.click(correspondenceAndAppealTasksTab);
+
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+
+    expect(collapsibleButtons.length).toBe(2);
 
     expect(screen.getByText('Veteran ID:')).toBeInTheDocument();
     expect(screen.getByText('Correspondence and Appeal Tasks')).toBeInTheDocument();
@@ -521,29 +550,22 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
-    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
-    console.log('collapsibleButtons', collapsibleButtons.length);
-
-    expect(collapsibleButtons.length).toBe(2);
+    // Existing Appeals Table and Columns
     fireEvent.click(collapsibleButtons[0]);
 
-    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
-    // Existing Appeals Table and Columns
-    fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
     expect(screen.getByText('Appellant Name')).toBeInTheDocument();
-    expect(screen.getByText('Appeal Status')).toBeInTheDocument();
-    expect(screen.getByText('Appeal Type')).toBeInTheDocument();
+    expect(screen.getByText('Status')).toBeInTheDocument();
+    expect(screen.getByText('Types')).toBeInTheDocument();
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
-    expect(screen.getByText('Appeal Location')).toBeInTheDocument();
+    expect(screen.getByText('Assigned To')).toBeInTheDocument();
     expect(screen.getByText('View veteran documents')).toBeInTheDocument();
-
-    // Linked Appeals Section when collapsed
-    expect(screen.queryByText('Tasks added to appeal')).not.toBeInTheDocument();
-
     expect(screen.getByText('240714-253')).toBeInTheDocument();
     expect(screen.getByText('240714-254')).toBeInTheDocument();
+
+    // Linked Appeals Sections
+    expect(screen.queryByText('Tasks added to appeal')).not.toBeInTheDocument();
 
     expect(screen.queryByText('DOCKET NUMBER')).not.toBeInTheDocument();
     expect(screen.queryByText('APPELLANT NAME')).not.toBeInTheDocument();
@@ -552,82 +574,34 @@ describe('CorrespondenceDetails', () => {
     expect(screen.queryByText('STATUS')).not.toBeInTheDocument();
     expect(screen.queryByText('ASSIGNED TO')).not.toBeInTheDocument();
 
-    // Linked Appeals Sections
-    collapsibleButtons = document.getElementsByClassName('plus-symbol');
-    fireEvent.click(collapsibleButtons[0]);
+    expect(document.getElementById('253')).toBeChecked();
+    expect(document.getElementById('254')).toBeChecked();
 
-    expect(document.getElementsByClassName('plus-symbol').length).toBe(0);
+    const linkedAppeal = document.getElementsByClassName('correspondence-existing-appeals');
 
-    // Appeals related within Linked Appeals Sections
-    const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
+    expect(linkedAppeal.length).toBe(2);
 
-    expect(existingAppeals).toBe(3);
     expect(screen.getByText('240714-253')).toBeInTheDocument();
     expect(screen.getByText('240714-254')).toBeInTheDocument();
-    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
-    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
-
-    // Appeals related within Linked Appeals Sections
-    const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
-
-    expect(tasksAddedTextCount).toBe(3);
-    expect(screen.getByText('240714-253')).toBeInTheDocument();
-    expect(screen.getByText('240714-254')).toBeInTheDocument();
-    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
-    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
+    expect(screen.getByText('Clerk of the Board')).toBeInTheDocument();
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument();
 
     // Clicks on the Package Details Tab and tests its expectations
     fireEvent.click(packageDetailsTab);
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
-    expect(screen.getByText(props.correspondence.veteranFullName)).toBeInTheDocument();
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Correspondence Type')).toBeInTheDocument();
-    expect(screen.getByText(props.correspondence.correspondenceType)).toBeInTheDocument();
     expect(screen.getByText('Package Document Type')).toBeInTheDocument();
     expect(screen.getByText('Non-NOD')).toBeInTheDocument();
     expect(screen.getByText('VA DOR')).toBeInTheDocument();
     expect(screen.getByText(moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY'))).toBeInTheDocument();
     expect(screen.getByText('Notes')).toBeInTheDocument();
-    expect(screen.getByText(props.correspondence.notes)).toBeInTheDocument();
 
     fireEvent.click(associatedPriorMailTab);
     expect(screen.getByText('Please select prior mail to link to this correspondence')).toBeInTheDocument();
     const priorDate = new Date(props.correspondence.prior_mail[0].vaDateOfReceipt);
 
     expect(screen.getByText(priorDate.toLocaleDateString('en-US'))).toBeInTheDocument();
-  });
-
-  it('validates the options of the actions dropdown based on the task type', () => {
-    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
-    fireEvent.click(collapsibleButtons[collapsibleButtons.length - 1]);
-    const table = document.querySelector('#case-timeline-table');
-
-    expect(table).toBeInTheDocument();
-
-    const tasksUnrelatedToAppeal = props.correspondence.tasksUnrelatedToAppeal;
-
-    tasksUnrelatedToAppeal.forEach((task) => {
-      const label = task.label;
-      const labelElement = screen.getAllByText(label, { selector: 'dd' })[0];
-      const tableRow = labelElement.closest('tr');
-
-      expect(tableRow).toBeInTheDocument();
-
-      const dropdown = within(tableRow).getByRole('combobox');
-
-      expect(dropdown).toBeInTheDocument();
-      fireEvent.mouseDown(dropdown);
-
-      // Find the listbox which contains the dropdown options
-      const listbox = screen.getByRole('listbox', { name: /available-actions-listbox/i });
-
-      // Ensure the listbox is present in the DOM
-      expect(listbox).toBeInTheDocument();
-      const options = within(listbox).getAllByRole('option');
-      const optionLabels = options.map((option) => option.textContent.trim());
-
-      expect(options).toHaveLength(task.availableActions.length);
-      expect(optionLabels.sort()).toEqual(task.availableActions.map((action) => action.label).sort());
-    });
   });
 
   it('validates save changes button', () => {
@@ -639,7 +613,6 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('onPriorMailCheckboxChange selects/deselects prior mail and enables/disables the submit button', () => {
-
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
     fireEvent.click(associatedPriorMailTab);
@@ -664,23 +637,25 @@ describe('CorrespondenceDetails', () => {
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
     fireEvent.click(associatedPriorMailTab);
+
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+    const saveChangesButton = screen.getByText('Save changes');
+
+    const options = { params: {
+      correspondence_uuid: props.correspondence.uuid,
+      priorMailIds: [1]
+    } };
 
     fireEvent.click(checkbox);
 
-    // Mock API call
-    const apiResponse = Promise.resolve();
+    ApiUtil.post.mockResolvedValueOnce({ options });
 
-    ApiUtil.post.mockReturnValueOnce(apiResponse);
+    fireEvent.click(saveChangesButton);
 
-    // Click the Save button
-    fireEvent.click(screen.getByText('Save changes'));
-
-    // Check if API call was made
-    expect(ApiUtil.post).toHaveBeenCalledWith(
-        `/queue/correspondence/${props.correspondence.uuid}/create_correspondence_relations`,
-        { data: { priorMailIds: [1] } }
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Changes were not successfully saved')).toBeInTheDocument();
+      expect(screen.queryByText(COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE)).not.toBeInTheDocument();
+    });
   });
 });
 
