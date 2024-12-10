@@ -115,7 +115,6 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
     end
 
     context "when correspondence has a ReturnToInboundOps task" do
-
       it "does not redirect" do
         controller.send(:correspondence_details_access)
         expect(controller).not_to have_received(:access_redirect)
