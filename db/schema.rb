@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_04_205006) do
+ActiveRecord::Schema.define(version: 2024_12_10_095300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -1130,6 +1130,11 @@ ActiveRecord::Schema.define(version: 2024_12_04_205006) do
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
     t.index ["uuid"], name: "index_hearings_on_uuid"
+  end
+
+  create_table "hearings_supervisors", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "higher_level_reviews", comment: "Intake data for Higher Level Reviews.", force: :cascade do |t|
@@ -2674,6 +2679,29 @@ ActiveRecord::Schema.define(version: 2024_12_04_205006) do
       END $function$
   SQL
 
+
+  create_trigger :appeal_states_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER appeal_states_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.appeal_states FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_appeal_states_audit()
+  SQL
+  create_trigger :priority_end_product_sync_queue_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER priority_end_product_sync_queue_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.priority_end_product_sync_queue FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_priority_end_product_sync_queue_audit()
+  SQL
+  create_trigger :vbms_communication_packages_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_communication_packages_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_communication_packages FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_communication_packages_audit()
+  SQL
+  create_trigger :vbms_distribution_destinations_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distribution_destinations_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distribution_destinations FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distribution_destinations_audit()
+  SQL
+  create_trigger :vbms_distributions_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_distributions_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_distributions FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_distributions_audit()
+  SQL
+  create_trigger :vbms_uploaded_documents_audit_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER vbms_uploaded_documents_audit_trigger AFTER INSERT OR DELETE OR UPDATE ON public.vbms_uploaded_documents FOR EACH ROW EXECUTE FUNCTION caseflow_audit.add_row_to_vbms_uploaded_documents_audit()
+  SQL
+  create_trigger :update_claim_status_trigger, sql_definition: <<-SQL
+      CREATE TRIGGER update_claim_status_trigger AFTER INSERT OR UPDATE ON public.vbms_ext_claim FOR EACH ROW EXECUTE FUNCTION update_claim_status_trigger_function()
+  SQL
+
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
       WITH latest_cutoff_date AS (
            SELECT schedulable_cutoff_dates.cutoff_date
@@ -2686,7 +2714,7 @@ ActiveRecord::Schema.define(version: 2024_12_04_205006) do
               COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
               replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
               (appeals.uuid)::text AS external_id,
-              (appeals.stream_type)::text AS appeal_stream,
+              initcap(replace((appeals.stream_type)::text, '_'::text, ' '::text)) AS appeal_stream,
               (appeals.stream_docket_number)::text AS docket_number,
                   CASE
                       WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
