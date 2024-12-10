@@ -444,6 +444,7 @@ const ReportPage = ({ history }) => {
 
   const handleClearFilters = () => {
     dispatch(selectSavedSearch({}));
+    dispatch(clearStatus(null));
     reset(RESET_REPORT_PAGE_FORM_VALUES);
   };
 
