@@ -205,7 +205,7 @@ const PdfDocument = memo(({
         setPdfPages(pages);
         for (let i = 0; i < pages.length; i++) {
           pages[i].getTextContent().then((text) => {
-            textContentContainer.push(text);
+            textContentContainer[i] = text;
           });
         }
         if (isFileVisible) {
