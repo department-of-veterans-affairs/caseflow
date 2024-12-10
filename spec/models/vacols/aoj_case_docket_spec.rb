@@ -354,7 +354,8 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         let(:another_nonpriority_ready_case_docket_number) { "9901002" }
         it "correctly orders the docket" do
           expect(subject.count).to eq(1)
-          expect(subject.first["bfkey"]).to eq another_nonpriority_ready_case.bfkey
+          puts subject
+          expect(subject.first["bfkey"]).to eq another_nonpriority_ready_case.reload.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -438,7 +439,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
           it "only distributes the one case to get back down to 30" do
             expect(subject.count).to eq(number_of_cases_over_backlog)
-            expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
+            expect(subject.first["bfkey"]).to eq nonpriority_ready_case.reload.bfkey
             expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           end
