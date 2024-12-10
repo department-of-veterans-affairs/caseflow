@@ -503,3 +503,27 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
     });
   }
 };
+
+export const updateCorrespondenceStatus = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_STATUS,
+    payload: {
+      correspondenceStatus: payload
+    }
+  });
+};
+export const fetchCorrespondenceStatus = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/status`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).status;
+
+      dispatch(updateCorrespondenceStatus(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
