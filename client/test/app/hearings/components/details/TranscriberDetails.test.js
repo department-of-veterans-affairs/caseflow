@@ -10,7 +10,7 @@ jest.mock('app/util/StringUtil', () => ({
 
 describe('TranscriberDetails', () => {
   const hearing = {
-    determineServiceName: 'recording service',
+    conferenceProvider: 'recording service',
     scheduledTime: '2024-09-24T10:00:00Z',
     dateReceiptRecording: '2024-09-25T10:00:00Z',
   };
@@ -18,15 +18,18 @@ describe('TranscriberDetails', () => {
   test('renders all details correctly', () => {
     const { getByText } = render(<TranscriberDetails hearing={hearing} />);
 
-    expect(getByText(/recording service/i)).toBeInTheDocument();
+    expect(getByText(/Recorder/i)).toBeInTheDocument();
+    expect(getByText(/Recording service/i)).toBeInTheDocument();
+    expect(getByText(/Recording date/i)).toBeInTheDocument();
     expect(getByText(/2024-09-24T10:00:00Z/i)).toBeInTheDocument();
+    expect(getByText(/Retrieval date/i)).toBeInTheDocument();
     expect(getByText(/2024-09-25T10:00:00Z/i)).toBeInTheDocument();
   });
 
   test('renders N/A when hearing is missing', () => {
     const { getAllByText } = render(<TranscriberDetails hearing={{}} />);
-    
     const naElements = getAllByText(/N\/A/i);
+
     expect(naElements.length).toBe(3);
   });
 
@@ -35,6 +38,7 @@ describe('TranscriberDetails', () => {
       return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     });
     const { getByText } = render(<TranscriberDetails hearing={hearing} />);
+
     expect(getByText(/Recording service/i)).toBeInTheDocument();
   });
 });
