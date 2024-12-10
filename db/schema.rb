@@ -2307,7 +2307,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
