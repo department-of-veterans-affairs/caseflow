@@ -564,6 +564,7 @@
   },
   "CANCEL_REVIEW_TRANSCRIPT_TASK": {
     "label": "Cancel task"
+  },
   "ASSIGN_CORR_TASK_TO_TEAM": {
     "label": "Assign to team",
     "value": "assign_to_team",
