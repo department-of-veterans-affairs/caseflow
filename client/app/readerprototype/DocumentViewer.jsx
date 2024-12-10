@@ -10,7 +10,6 @@ import { getFilteredDocuments } from '../reader/selectors';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import PdfDocument from './components/PdfDocument';
-import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
@@ -18,6 +17,7 @@ import { hideSideBarSelector, showSideBarSelector } from './selectors';
 import { getRotationDeg } from './utils/documentUtil';
 import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './utils/readerConstants';
 import { pdfUiClass, pdfWrapper } from './utils/styles';
+import ReaderFooter from './components/ReaderFooter';
 
 const DocumentViewer = memo((props) => {
   const [currentPage, setCurrentPage] = useState(1);
