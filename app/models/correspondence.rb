@@ -76,4 +76,11 @@ class Correspondence < CaseflowRecord
     includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
+
+
+  def status_allows_access?
+    status == Constants.CORRESPONDENCE_STATUSES.pending ||
+      status == Constants.CORRESPONDENCE_STATUSES.completed ||
+      tasks.action_required_tasks.any? { |task| task.type == ReturnToInboundOps.name }
+  end
 end
