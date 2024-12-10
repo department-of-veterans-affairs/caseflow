@@ -13,7 +13,7 @@ module Seeds
         },{
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
           hearingType: 'Hearing',
-          fileType: 'rtf',
+          fileType: 'csv',
           fileName: 'transcript.csv'
         },{
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
