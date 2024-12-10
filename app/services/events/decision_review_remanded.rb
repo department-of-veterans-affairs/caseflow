@@ -51,7 +51,6 @@ class Events::DecisionReviewRemanded
                                                                               claim_review: supplemental_claim,
                                                                               user: user)
 
-          # TODO: create sub class for remand RI?
           Events::DecisionReviewCreated::CreateRequestIssues.process!(
             { event: event, parser: parser, epe: epe,
               decision_review: supplemental_claim }

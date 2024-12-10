@@ -66,7 +66,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
         newly_created_issues.push(ri)
 
         # LegacyIssue (only for non Remands)
-        if vacols_ids_exist?(ri) && ri.remand_source_id.empty?
+        if vacols_ids_exist?(ri) && ri.remand_source_id.blank?
           legacy_issue = create_legacy_issue_backfill(event, ri)
 
           # LegacyIssueOptin

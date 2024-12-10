@@ -30,7 +30,8 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
       ramp_claim_id: "RAMP123",
       rating_issue_associated_at: 1_683_072_000_000, # Example timestamp
       nonrating_issue_bgs_id: "BGS987",
-      nonrating_issue_bgs_source: "source"
+      nonrating_issue_bgs_source: "source",
+      remand_source_id: "1"
     }
   end
 
@@ -197,6 +198,12 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
     end
   end
 
+  describe "#ri_remance_source_id" do
+    it "returns the remance_source_id" do
+      expect(parser.ri_remand_source_id).to eq("1")
+    end
+  end
+
   describe "peresence logic check" do
     let(:payload) do
       {
@@ -224,7 +231,8 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
         ramp_claim_id: nil,
         rating_issue_associated_at: nil,
         nonrating_issue_bgs_id: "13",
-        nonrating_issue_bgs_source: "Test Source"
+        nonrating_issue_bgs_source: "Test Source",
+        remand_source_id: nil
       }
     end
 
@@ -329,6 +337,10 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
 
     it "parses nonrating_issue_bgs_source correctly" do
       expect(subject.ri_nonrating_issue_bgs_source).to eq("Test Source")
+    end
+
+    it "parses remand_source_id as nil when absent" do
+      expect(subject.ri_remand_source_id).to be_nil
     end
   end
 end
