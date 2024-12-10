@@ -42,7 +42,7 @@ module Seeds
       wqjudge_control = create_scenario_6_veteran(first_name: "Wqjudge", last_name: "Control")
 
       def set_decass_atty(atty, sc)
-        VACOLS::Decass.find_by(defolder: sc.vacols_id).update(deatty: atty.vacols_attorney_id)
+        QueueRepository.send(:update_decass_record, VACOLS::Decass.find_by(defolder: sc.vacols_id), attorney_id: atty.vacols_attorney_id)
       end
 
       # Case 1: Wqjudge One (Priority, 2 issues)
@@ -55,7 +55,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_one.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
@@ -71,7 +70,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_two.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
@@ -86,7 +84,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVACOTBJUDGE"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_three.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
@@ -103,7 +100,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_four.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
@@ -120,7 +116,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_five.file_number}S",
         case_issues: create_list(:case_issue, 2, :compensation)
       ))
@@ -135,7 +130,6 @@ module Seeds
         :assigned,
         user: User.find_by_css_id("BVAGSPORER"),
         assigner: attorney,
-        as_judge_assign_task: true,
         bfcorlid: "#{wqjudge_six.file_number}S",
         case_issues: create_list(:case_issue, 1, :compensation)
       ))
