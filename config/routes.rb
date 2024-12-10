@@ -1,24 +1,26 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
-    get 'pdf', on: :member
-    get 'form9_pdf', on: :member
-    post 'confirm', on: :member
-    put 'update_v2', on: :member
-    post 'certify_v2', on: :member
+    get "pdf", on: :member
+    get "form9_pdf", on: :member
+    post "confirm", on: :member
+    put "update_v2", on: :member
+    post "certify_v2", on: :member
   end
 
   # These routes are here so Certification v2 SPA can be launched if the
   # user reloads the page.
-  get 'certifications(/:vacols_id)/check_documents' => 'certifications#new'
-  get 'certifications(/:vacols_id)/confirm_case_details' => 'certifications#new'
-  get 'certifications(/:vacols_id)/confirm_hearing' => 'certifications#new'
-  get 'certifications(/:vacols_id)/sign_and_certify' => 'certifications#new'
-  get 'certifications(/:vacols_id)/success' => 'certifications#new'
+  get "certifications(/:vacols_id)/check_documents" => "certifications#new"
+  get "certifications(/:vacols_id)/confirm_case_details" => "certifications#new"
+  get "certifications(/:vacols_id)/confirm_hearing" => "certifications#new"
+  get "certifications(/:vacols_id)/sign_and_certify" => "certifications#new"
+  get "certifications(/:vacols_id)/success" => "certifications#new"
 
   resources :certification_cancellations, only: [:show, :create]
 
@@ -43,7 +45,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
+  get "case-distribution-controls", to: "case_distribution_levers#acd_lever_index"
 
   resources :case_distribution_levers, only: [] do
     collection do
@@ -56,9 +58,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :appeals, only: :index
       resources :jobs, only: :create
-      post 'mpi', to: 'mpi#veteran_updates'
-      post 'va_notify_update', to: 'va_notify#notifications_update'
-      post 'cmp', to: 'cmp#upload'
+      post "mpi", to: "mpi#veteran_updates"
+      post "va_notify_update", to: "va_notify#notifications_update"
+      post "cmp", to: "cmp#upload"
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -75,11 +77,11 @@ Rails.application.routes.draw do
         end
         resources :supplemental_claims, only: [:create, :show]
         namespace :appeals do
-          get 'contestable_issues', to: "contestable_issues#index"
+          get "contestable_issues", to: "contestable_issues#index"
         end
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
-        get 'legacy_appeals', to: "legacy_appeals#index"
+        get "legacy_appeals", to: "legacy_appeals#index"
       end
       namespace :issues do
         namespace :ama do
@@ -89,10 +91,10 @@ Rails.application.routes.draw do
       end
     end
     namespace :docs do
-      namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
-        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
-        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
+      namespace :v3, defaults: { format: "json" } do
+        get "decision_reviews", to: redirect("api-docs/v3/decision_reviews.yaml")
+        get "ama_issues", to: redirect("api-docs/v3/ama_issues.yaml")
+        get "vacols_issues", to: redirect("api-docs/v3/vacols_issues.yaml")
       end
     end
 
@@ -109,28 +111,28 @@ Rails.application.routes.draw do
   end
 
   namespace :idt do
-    get 'auth', to: 'authentications#index'
+    get "auth", to: "authentications#index"
     namespace :api do
       namespace :v1 do
-        get 'token', to: 'tokens#generate_token'
-        get 'appeals', to: 'appeals#list'
-        get 'appeals/:appeal_id', to: 'appeals#details'
-        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
-        post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
-        get 'judges', to: 'judges#index'
-        post 'upload_document', to: 'upload_vbms_document#create'
-        get 'user', to: 'users#index'
-        get 'veterans', to: 'veterans#details'
-        post 'addresses/validate', to: 'appeals#validate'
+        get "token", to: "tokens#generate_token"
+        get "appeals", to: "appeals#list"
+        get "appeals/:appeal_id", to: "appeals#details"
+        post "appeals/:appeal_id/outcode", to: "appeals#outcode"
+        post "appeals/:appeal_id/upload_document", to: "upload_vbms_document#create"
+        get "judges", to: "judges#index"
+        post "upload_document", to: "upload_vbms_document#create"
+        get "user", to: "users#index"
+        get "veterans", to: "veterans#details"
+        post "addresses/validate", to: "appeals#validate"
       end
 
       namespace :v2 do
-        get 'appeals', to: 'appeals#details'
-        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
-        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
-        get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
-        get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
-        get 'distributions/:distribution_id', to: 'distributions#distribution'
+        get "appeals", to: "appeals#details"
+        get "appeals/:appeal_id", to: "appeals#reader_appeal"
+        post "appeals/:appeal_id/outcode", to: "appeals#outcode"
+        get "appeals/:appeal_id/documents", to: "appeals#appeal_documents"
+        get "appeals/:appeal_id/documents/:document_id", to: "appeals#appeals_single_document"
+        get "distributions/:distribution_id", to: "distributions#distribution"
       end
     end
   end
@@ -142,17 +144,16 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :logs, only: :create
     end
-    get 'dashboard' => 'dashboard#show'
+    get "dashboard" => "dashboard#show"
   end
-
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
-    get 'missing-decision', to: 'establish_claims#unprepared_tasks'
-    get 'admin', to: 'establish_claims#admin'
-    get 'canceled', to: 'establish_claims#canceled_tasks'
-    get 'work-assignments', to: 'establish_claims#work_assignments'
-    patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
+    get "missing-decision", to: "establish_claims#unprepared_tasks"
+    get "admin", to: "establish_claims#admin"
+    get "canceled", to: "establish_claims#canceled_tasks"
+    get "work-assignments", to: "establish_claims#work_assignments"
+    patch "employee-count/:count", to: "establish_claims#update_employee_count"
 
     resources :user_quotas, path: "/user-quotas", only: :update
     resources :tasks, only: [:index]
@@ -161,36 +162,35 @@ Rails.application.routes.draw do
               path: "/establish-claim",
               task_type: :EstablishClaim,
               only: [:index, :show] do
-
-      patch 'assign', on: :collection
-      post 'perform', on: :member
-      post 'assign-existing-end-product', on: :member
-      post 'review-complete', on: :member
-      post 'email-complete', on: :member
-      post 'no-email-complete', on: :member
-      get 'pdf', on: :member
-      patch 'cancel', on: :member
-      put 'update-appeal', on: :member
+      patch "assign", on: :collection
+      post "perform", on: :member
+      post "assign-existing-end-product", on: :member
+      post "review-complete", on: :member
+      post "email-complete", on: :member
+      post "no-email-complete", on: :member
+      get "pdf", on: :member
+      patch "cancel", on: :member
+      put "update-appeal", on: :member
     end
   end
 
   resources :document, only: [:update] do
     get :pdf, on: :member
-    patch 'mark-as-read', on: :member
+    patch "mark-as-read", on: :member
     resources :annotation, only: [:create, :destroy, :update]
     resources :tag, only: [:create, :destroy]
   end
 
   namespace :reader do
-    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
-      constraints: lambda{ |req| req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
+    get "appeal/veteran-id", to: "appeal#find_appeals_by_veteran_id",
+                             constraints: ->(req) { req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
     end
   end
 
-  put '/claimants/:participant_id/poa', to: 'claimants#refresh_claimant_poa'
+  put "/claimants/:participant_id/poa", to: "claimants#refresh_claimant_poa"
 
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
@@ -198,31 +198,33 @@ Rails.application.routes.draw do
       get :veteran
       get :power_of_attorney
       patch :update_power_of_attorney
-      get 'hearings', to: "appeals#most_recent_hearing"
+      get "hearings", to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
-      get 'tasks', to: "tasks#for_appeal"
-      patch 'update'
-      post 'work_mode', to: "work_modes#create"
-      patch 'cavc_remand', to: "cavc_remands#update"
-      post 'cavc_remand', to: "cavc_remands#create"
-      post 'appellant_substitution', to: "appellant_substitutions#create"
-      patch 'nod_date_update', to: "nod_date_updates#update"
+      get "tasks", to: "tasks#for_appeal"
+      patch "update"
+      post "work_mode", to: "work_modes#create"
+      patch "cavc_remand", to: "cavc_remands#update"
+      post "cavc_remand", to: "cavc_remands#create"
+      post "appellant_substitution", to: "appellant_substitutions#create"
+      patch "nod_date_update", to: "nod_date_updates#update"
     end
   end
-  match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+  match "/appeals/:appeal_id/edit/:any" => "appeals#edit", via: [:get]
 
-  get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
+  get "/appeals/:appeals_id/notifications" => "appeals#fetch_notification_list"
 
-  get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
+  get "/task_tree/:appeal_type/:appeal_id" => "task_tree#show"
 
-  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
+  post "/appeals/:appeal_id/split" => "split_appeal#split_appeal"
 
-  get '/explain/appeals/:appeal_id' => 'explain#show'
+  get "/explain/appeals/:appeal_id" => "explain#show"
+
+  get "/appeals/:appeal_id/active_evidence_submissions" => "appeals#active_evidence_submissions"
 
   resources :regional_offices, only: [:index]
-  get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
+  get "/regional_offices/:regional_office/hearing_dates", to: "regional_offices#hearing_dates"
 
   resources :hearing_days, only: [:show] do
     resources :hearings, only: [:index]
@@ -237,7 +239,7 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
     namespace :hearing_day do
-      get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
+      get "/:hearing_day_id/filled_hearing_slots", to: "filled_hearing_slots#index"
     end
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
@@ -267,40 +269,40 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  get 'help' => 'help#index'
-  get 'dispatch/help' => 'help#dispatch'
-  get 'certification/help' => 'help#certification'
-  get 'reader/help' => 'help#reader'
-  get 'hearing_prep/help' => 'help#hearings'
-  get 'intake/help' => 'help#intake'
-  get 'queue/help' => 'help#queue'
-  get 'vha/help' => 'help#vha'
+  get "help" => "help#index"
+  get "dispatch/help" => "help#dispatch"
+  get "certification/help" => "help#certification"
+  get "reader/help" => "help#reader"
+  get "hearing_prep/help" => "help#hearings"
+  get "intake/help" => "help#intake"
+  get "queue/help" => "help#queue"
+  get "vha/help" => "help#vha"
 
-  root 'home#index'
+  root "home#index"
 
-  scope path: '/intake' do
-    get "/", to: 'intakes#index'
-    get "/attorneys", to: 'intakes#attorneys'
-    get "/manager", to: 'intake_manager#index'
-    get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
-    get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
+  scope path: "/intake" do
+    get "/", to: "intakes#index"
+    get "/attorneys", to: "intakes#attorneys"
+    get "/manager", to: "intake_manager#index"
+    get "/manager/flagged_for_review", to: "intake_manager#flagged_for_review"
+    get "/manager/users/:user_css_id", to: "intake_manager#user_stats"
   end
 
   resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
-    patch 'review', on: :member
-    patch 'complete', on: :member
-    patch 'error', on: :member
+    patch "review", on: :member
+    patch "complete", on: :member
+    patch "error", on: :member
   end
 
   resources :higher_level_reviews, param: :claim_id, only: [:edit] do
-    patch 'update', on: :member
-    post 'edit_ep', on: :member
+    patch "update", on: :member
+    post "edit_ep", on: :member
   end
-  match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
+  match "/higher_level_reviews/:claim_id/edit/:any" => "higher_level_reviews#edit", via: [:get]
 
   resources :supplemental_claims, param: :claim_id, only: [:edit] do
-    patch 'update', on: :member
-    post 'edit_ep', on: :member
+    patch "update", on: :member
+    post "edit_ep", on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
   get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
@@ -326,7 +328,7 @@ Rails.application.routes.draw do
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
 
-  match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  match "/jobs" => "asyncable_jobs#index", via: [:get]
   post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
@@ -335,24 +337,69 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [:index, :update] do
-    resources :task_pages, only: [:index], controller: 'users/task_pages'
-    get 'represented_organizations', on: :member
+    resources :task_pages, only: [:index], controller: "users/task_pages"
+    get "represented_organizations", on: :member
   end
 
-  get 'user', to: 'users#search'
-  get 'user_info/represented_organizations'
+  get "user", to: "users#search"
+  get "user_info/represented_organizations"
 
-  get 'cases/:veteran_ids', to: 'appeals#show_case_list'
+  get "cases/:veteran_ids", to: "appeals#show_case_list"
 
-  scope path: '/queue' do
-    get '/', to: 'queue#index'
-    get '/appeals/:vacols_id', to: 'queue#index'
-    get '/appeals/:appealId/notifications', to: 'queue#index'
-    get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
-    get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
-    get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id(*rest)', to: 'legacy_tasks#index'
+  scope path: "/queue" do
+    get "/", to: "queue#index"
+    get "/correspondence", to: "correspondence_queue#correspondence_cases"
+    get "/correspondence/auto_assign_correspondences", to: "correspondence#auto_assign_correspondences"
+    get "/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status", to: "correspondence#auto_assign_status"
+    get "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#intake", as: :queue_correspondence_intake
+    post "/correspondence/:correspondence_uuid/current_step", to: "correspondence_intake#current_step", as: :queue_correspondence_intake_current_step
+    post "/correspondence/:correspondence_uuid/correspondence_intake_task", to: "correspondence_tasks#create_correspondence_intake_task"
+    patch "/correspondence/tasks/:task_id/update", to: "correspondence_tasks#update"
+    patch "/correspondence/tasks/:task_id/assign_to_person", to: "correspondence_tasks#assign_to_person"
+    patch "/correspondence/tasks/:task_id/cancel", to: "correspondence_tasks#cancel"
+    patch "/correspondence/tasks/:task_id/change_task_type", to: "correspondence_tasks#change_task_type"
+    patch "/correspondence/tasks/:task_id/complete", to: "correspondence_tasks#complete"
+    get "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#review_package"
+    get "/correspondence/edit_document_type_correspondence", to: "correspondence_review_package#document_type_correspondence"
+    patch "/correspondence/:correspondence_uuid/intake_update", to: "correspondence_intake#intake_update"
+    get "/correspondence/team", to: "correspondence_queue#correspondence_team"
+    put "/correspondence/:correspondence_uuid/update_cmp", to: "correspondence_review_package#update_cmp"
+    get "/correspondence/packages", to: "correspondence_review_package#package_documents"
+    get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
+    patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
+    get "/correspondence/:correspondence_uuid/correspondences_appeals_tasks",
+          to: "correspondence_details#correspondences_appeals_tasks"
+    patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
+    patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
+    post "/correspondence/:correspondence_uuid/waive_evidence_submission_window_task",
+          to: "correspondence_details#waive_evidence_submission_window_task"
+    post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
+    patch "/correspondence/:correspondence_uuid/update_correspondence", to: "correspondence_details#update_correspondence"
+    post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post "/correspondence_response_letters", to: "correspondence_response_letters#create"
+    post "/correspondence/:correspondence_uuid/correspondence_response_letter",
+         to: "correspondence_details#create_response_letter_for_correspondence"
+    get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
+    patch "/correspondence/:correspondence_uuid/edit_general_information", to: "correspondence_details#edit_general_information"
+    post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
+         to: "correspondence_details#save_correspondence_appeals"
+    patch "/correspondence/:correspondence_uuid/create_correspondence_appeal_task",
+         to: "correspondence_details#create_correspondence_appeal_task"
+
+    resources :correspondence, param: :correspondence_uuid do
+      post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
+    end
+    get "/appeals/:vacols_id", to: "queue#index"
+    get "/appeals/:appealId/notifications", to: "queue#index"
+    get "/appeals/:appeal_id/cavc_dashboard", to: "cavc_dashboard#index"
+    get "/appeals/:vacols_id/tasks/:task_id/schedule_veteran", to: "queue#index" # Allow direct navigation from the Hearings App
+    get "/appeals/:vacols_id/*all", to: redirect("/queue/appeals/%{vacols_id}")
+    get "correspondence/users/:user_id(*rest)", to: "correspondence_task_pages#index"
+    get "correspondence/organizations/:organization_id(*rest)", to: "correspondence_task_pages#index"
+    get "/:user_id(*rest)", to: "legacy_tasks#index"
   end
+  match "/explain/correspondence/:correspondence_uuid" => "explain#show", via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -370,28 +417,28 @@ Rails.application.routes.draw do
   end
 
   resources :team_management, only: [:index, :update]
-  get '/team_management(*rest)', to: 'team_management#index'
-  post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
-  post '/team_management/dvc_team/:user_id', to: 'team_management#create_dvc_team'
-  post '/team_management/private_bar', to: 'team_management#create_private_bar'
-  post '/team_management/national_vso', to: 'team_management#create_national_vso'
-  post '/team_management/field_vso', to: 'team_management#create_field_vso'
+  get "/team_management(*rest)", to: "team_management#index"
+  post "/team_management/judge_team/:user_id", to: "team_management#create_judge_team"
+  post "/team_management/dvc_team/:user_id", to: "team_management#create_dvc_team"
+  post "/team_management/private_bar", to: "team_management#create_private_bar"
+  post "/team_management/national_vso", to: "team_management#create_national_vso"
+  post "/team_management/field_vso", to: "team_management#create_field_vso"
 
   resources :user_management, only: [:index]
 
-  get '/search', to: 'appeals#show_case_list'
+  get "/search", to: "appeals#show_case_list"
 
   resources :legacy_tasks, only: [:create, :update]
-  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
+  post "/legacy_tasks/assign_to_judge", to: "legacy_tasks#assign_to_judge"
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
       post :request_hearing_disposition_change
-      patch :change_type, to: 'tasks/change_type#update'
+      patch :change_type, to: "tasks/change_type#update"
     end
-    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
-    resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
-    resources(:extension_request, only: [:create], controller: 'extension_request')
+    resources(:place_hold, only: [:create], controller: "tasks/place_hold")
+    resources(:end_hold, only: [:create], controller: "tasks/end_hold")
+    resources(:extension_request, only: [:create], controller: "extension_request")
   end
 
   resources :judge_assign_tasks, only: [:create]
@@ -402,39 +449,43 @@ Rails.application.routes.draw do
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
-    resources :tasks, only: [:index], controller: 'organizations/tasks'
-    resources :task_pages, only: [:index], controller: 'organizations/task_pages'
-    resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
+    patch "/organizations/users/update_permission", to: "organizations/users#modify_user_permission"
+    resources :tasks, only: [:index], controller: "organizations/tasks"
+    resources :task_pages, only: [:index], controller: "organizations/task_pages"
+    resources :users, only: [:index, :create, :update, :destroy], controller: "organizations/users"
+    patch "/update_permissions", to: "organizations/users#modify_user_permission"
     # Maintain /organizations/members for backwards compatability for a few days.
-    resources :members, only: [:index], controller: 'organizations/task_summary'
-    resources :task_summary, only: [:index], controller: 'organizations/task_summary'
+    resources :members, only: [:index], controller: "organizations/task_summary"
+    resources :task_summary, only: [:index], controller: "organizations/task_summary"
   end
-  get '/organizations/:url/modal(*rest)', to: 'organizations#show'
-  get '/organizations(*rest)', to: 'organizations#org_index'
+  get "/organizations/:url/modal(*rest)", to: "organizations#show"
+  get "/organizations(*rest)", to: "organizations#org_index"
 
   resources :membership_requests, only: [:create, :update]
 
-  post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
-  patch '/case_reviews/:id', to: 'case_reviews#update'
+  post "/case_reviews/:task_id/complete", to: "case_reviews#complete"
+  patch "/case_reviews/:id", to: "case_reviews#update"
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
 
-  get 'whats-new' => 'whats_new#show'
+  get "whats-new" => "whats_new#show"
 
-  match '/intake/:any' => 'intakes#index', via: [:get]
+  match "/intake/:any" => "intakes#index", via: [:get]
 
   get "styleguide", to: "styleguide#show"
 
   get "tableau-login", to: "tableau_logins#login"
 
-  mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
+  mount PdfjsViewer::Rails::Engine => "/pdfjs", as: "pdfjs"
 
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
+
+  get "under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code
@@ -467,9 +518,11 @@ Rails.application.routes.draw do
     resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
+    resources :correspondence, only: [:index]
+    post "/correspondence/generate_correspondence", to: "correspondence#generate_correspondence"
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
-      post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
+      post "/set_end_products", to: "users#set_end_products", as: "set_end_products"
       post "/reseed", to: "users#reseed", as: "reseed"
       post "/optional_seed", to: "users#optional_seed", as: "optional_seed"
       get "/data", to: "users#data"
