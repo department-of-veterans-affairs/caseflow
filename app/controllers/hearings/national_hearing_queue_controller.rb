@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class Hearings::NationalHearingQueueController < ApplicationController
+
+  def index
+    respond_to do |format|
+      format.html { render "national_hearing_queue/index" }
+      format.json { queue_entries }
+    end
+  end
+
   # Returns the current active cutoff date that is used to determine if AMA appeals are eligible to
   # have their hearings scheduled as well as if the current_user is authorized to provide new
   # cutoff dates.
