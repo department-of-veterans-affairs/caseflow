@@ -89,9 +89,9 @@ const PdfDocument = memo(({
   const [textContent, setTextContent] = useState([]);
 
   const metricsLoggedRef = useRef(metricsLogged);
-  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
   const pdfDocumentRef = useRef(null);
   const pdfLoadingTaskRef = useRef(null);
+  const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
 
   const handleRenderingMetrics = (renderingTime) => {
     if (renderingTime) {
@@ -196,6 +196,10 @@ const PdfDocument = memo(({
     let promises = [];
     let textContentContainer = [];
 
+    // since the promises resolve out of page order, we need to insert text content at the correct position in the
+    // array.
+    textContentContainer.length = pdfDocument.numPages;
+
     for (let i = 0; i < pdfDocument?.numPages; i++) {
       promises.push(pdfDocument.getPage(i + 1));
     }
@@ -205,7 +209,7 @@ const PdfDocument = memo(({
         setPdfPages(pages);
         for (let i = 0; i < pages.length; i++) {
           pages[i].getTextContent().then((text) => {
-            textContentContainer.push(text);
+            textContentContainer[i] = text;
           });
         }
         if (isFileVisible) {
