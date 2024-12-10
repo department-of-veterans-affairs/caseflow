@@ -4,7 +4,7 @@ import { connect, useSelector } from 'react-redux';
 import {
   appealWithDetailSelector,
   taskSnapshotTasksForAppeal,
-  caseTimelineLegacyTrackingTasksForAppeal } from './selectors';
+  latestCaseTimelineTaskForAppeal } from './selectors';
 import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -24,17 +24,17 @@ const alertStyling = css({
   marginBottom: 0
 });
 
-export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
+export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTask, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
-  const legacyAppealAssignmentTrackingTasks = useSelector((
-    state) => caseTimelineLegacyTrackingTasksForAppeal(state, { appealId: appeal.externalId }));
-  const legacyTaskAlert = legacyAppealAssignmentTrackingTasks.length > 0 &&
-    <Alert
-      type="info"
-      message={COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL}
-      lowerMargin
-    />;
+  const showBanner = (latestCaseTimeLineTask?.type === 'LegacyAppealAssignmentTrackingTask') &&
+  // eslint-disable-next-line camelcase
+  (latestCaseTimeLineTask?.assignedTo.cssId === appeal?.locationHistory?.splice(-1)[0]?.locationUser?.css_id);
+  const legacyTaskAlert = showBanner && <Alert
+    type="info"
+    message={COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL}
+    lowerMargin
+  />;
 
   const sectionBody = tasks.length ? (
     <>
@@ -95,6 +95,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
 
 TaskSnapshot.propTypes = {
   tasks: PropTypes.array,
+  latestCaseTimeLineTask: PropTypes.object,
   appeal: PropTypes.object,
   hideDropdown: PropTypes.bool,
   showPulacCerulloAlert: PropTypes.bool
@@ -103,7 +104,8 @@ TaskSnapshot.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId }),
+    latestCaseTimeLineTask: latestCaseTimelineTaskForAppeal(state, { appealId: ownProps.appealId }),
   };
 };
 

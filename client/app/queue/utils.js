@@ -391,6 +391,7 @@ const prepareLocationHistoryForStore = (appeal) => {
         location: location.location_label,
         subLocation: location.sub_location,
         locationStaff: location.location_staff,
+        locationUser: location.location_user,
         createdAt: location.created_at,
         closedAt: location.closed_at,
         vacolsId: location.vacols_id,

@@ -192,12 +192,10 @@ export const caseTimelineTasksForAppeal = createSelector(
     (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
-export const caseTimelineLegacyTrackingTasksForAppeal = createSelector(
+export const latestCaseTimelineTaskForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => orderBy(filter(completeTasksSelector(tasks),
-    (task) => {
-      return !task.hideFromCaseTimeline && task.type === 'LegacyAppealAssignmentTrackingTask';
-    }), ['completedAt'], ['desc'])
+    (task) => !task.hideFromCaseTimeline), ['closedAt'], ['desc'])[0]
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
