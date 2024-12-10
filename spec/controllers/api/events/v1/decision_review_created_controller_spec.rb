@@ -8,6 +8,35 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
 
+    # that test is temporary, because ::Events::DecisionReviewRemanded.create! is empty for now
+    describe "POST #decision_review_created" do
+      before do
+        # Make sure the endpoint is not disabled
+        FeatureToggle.disable!(:disable_ama_eventing)
+        # Provide authorization and headers as in the working tests
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
+        # Stub Event to prevent early return
+        allow(Event).to receive(:exists_and_is_completed?).and_return(false)
+      end
+
+      context "when auto_remand is truthy" do
+        it "calls ::Events::DecisionReviewRemanded.create!" do
+          # Convert existing payload into a hash and add auto_remand
+          payload_hash = JSON.parse(payload)
+          payload_hash["claim_review"] ||= {}
+          payload_hash["claim_review"]["auto_remand"] = true
+
+          # Expect the service to be called
+          expect(::Events::DecisionReviewRemanded).to receive(:create!)
+
+          post :decision_review_created, params: payload_hash
+
+          expect(response).to have_http_status(:created)
+        end
+      end
+    end
+
     context "with a valid token" do
       it "returns success response" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
