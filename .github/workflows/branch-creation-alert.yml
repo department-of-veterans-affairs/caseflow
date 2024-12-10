@@ -8,7 +8,11 @@ jobs:
     name: Send Branch Creation Alert
     runs-on: ubuntu-2-cores-latest
 
-    if: ${{ (github.event.ref_type == 'branch') && contains(github.ref, fromJson('["refs/heads/uat", "refs/heads/release", "refs/heads/prodtest"]')) }}
+    if: ${{ (github.event.ref_type == 'branch') && (
+        contains('refs/heads/uat', github.ref) ||
+        contains('refs/heads/prodtest', github.ref) ||
+        contains('refs/heads/release', github.ref)
+      ) }}
 
     steps:
       - name: Testing
