@@ -30,7 +30,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
             data-event-off="mouseleave keydown"
             data-for="tooltip-200000161"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >

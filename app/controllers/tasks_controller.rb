@@ -229,6 +229,10 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
+
+    render json: { success: true }, status: :ok
+  rescue StandardError => error
+    render_update_errors(error)
   end
 
   def cancel_review_transcript_task

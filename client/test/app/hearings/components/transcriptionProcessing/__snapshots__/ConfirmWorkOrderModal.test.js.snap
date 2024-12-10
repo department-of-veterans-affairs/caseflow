@@ -65,7 +65,6 @@ exports[`ConfirmWorkOrderModal matches snapshot 1`] = `
               class="loadingContainer-table-cell"
             >
               <div>
-                
                 <div
                   class="cf-loading-button-symbol cf-small-loader-symbol"
                 >
