@@ -57,6 +57,14 @@ exports[`ErrorsFoundAndCorrectedModal renders correctly 1`] = `
           <p>
             Please upload the revised transcript file for upload to VBMS.
           </p>
+          <p>
+            <strong
+              style="color: black;"
+            >
+              Transcript file name
+            </strong>
+            <div />
+          </p>
           <strong
             style="color: black;"
           >

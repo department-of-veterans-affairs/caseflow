@@ -1720,4 +1720,50 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       expect(response.status).to eq 200
     end
   end
+
+  describe "GET tasks/:id/uploaded_transcription_file" do
+    let(:file_type) { "pdf" }
+    let(:hearing) { create(:hearing) }
+    let(:docket_number) { hearing.docket_number }
+    let(:appeal_id) { hearing.appeal.uuid }
+    let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
+    let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
+    let!(:create_transcription_task) do
+      Hearings::TranscriptionFile.create!(
+        hearing_id: hearing.id,
+        hearing_type: "Hearing",
+        file_name: file_name,
+        file_type: file_type.to_s,
+        docket_number: hearing.docket_number,
+        file_status: "Successful upload (AWS)",
+        date_upload_aws: Time.zone.today,
+        aws_link: "vaec-appeals-caseflow-test/transcript_pdf/#{file_name}"
+      )
+    end
+    let(:transcription_file) { Hearings::TranscriptionFile.find_by(file_name: file_name) }
+    let(:user) { create(:default_user) }
+    let(:root_task) { create(:root_task, appeal: hearing.appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
+    let!(:review_transcript_task) do
+      ReviewTranscriptTask.create!(
+        appeal: hearing.appeal,
+        parent: root_task,
+        assigned_to: user
+      )
+    end
+    let(:params) do
+      {
+        id: review_transcript_task.id.to_s
+      }
+    end
+
+    it "gets transcription_file" do
+      review_transcript_task.update!(status: Constants.TASK_STATUSES.in_progress)
+      get :uploaded_transcription_file, params: params
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["file_name"]).to eq file_name
+    end
+  end
 end
