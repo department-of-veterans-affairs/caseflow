@@ -280,7 +280,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
   post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
   get 'hearings/transcription_files/fetch_file', to: 'hearings/transcription_files#fetch_file'
-  
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
@@ -524,13 +524,6 @@ Rails.application.routes.draw do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
     get "/generate_api_key", to: "users#generate_api_key", as: "generate_api_key"
-
-    resources :load_tests, only: [:index]
-    get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
-    post "/load_tests/run_load_tests", to: "load_tests#run_load_tests", as: "run_load_tests"
-
-    post "/load_test_api/user", to: "load_test_api#user", as: "user"
-    get "/load_test_api/target", to: "load_test_api#target", as: "target"
 
     resources :load_tests, only: [:index]
     get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
