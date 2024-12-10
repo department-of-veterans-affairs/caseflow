@@ -1187,8 +1187,8 @@ class RequestIssue < CaseflowRecord
     end
   end
 
-  def parse_string_date(input)
-    input.include?(":") ? DateTime.parse(input) : Date.parse(input)
+  def parse_string_date(date_string)
+    date_string.include?(":") ? DateTime.parse(date_string) : Date.parse(date_string)
   end
 end
 # rubocop:enable Metrics/ClassLength
