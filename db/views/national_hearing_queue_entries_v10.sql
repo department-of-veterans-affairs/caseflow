@@ -94,29 +94,29 @@ UNION
 SELECT
   legacy_appeals.id AS appeal_id,
   'LegacyAppeal' AS appeal_type,
-  f_vacols_brieff.bfhr AS hearing_request_type,
-  REPLACE (CAST(f_vacols_brieff.bfd19 AS TEXT), '-', '') AS receipt_date,
-  f_vacols_brieff.bfkey AS external_id,
+  brieff.bfhr AS hearing_request_type,
+  REPLACE (CAST(brieff.bfd19 AS TEXT), '-', '') AS receipt_date,
+  brieff.bfkey AS external_id,
   CASE
-    WHEN f_vacols_brieff.bfac = '1' THEN 'Original'
-    WHEN f_vacols_brieff.bfac = '2' THEN 'Supplemental'
-    WHEN f_vacols_brieff.bfac = '3' THEN 'Post Remand'
-    WHEN f_vacols_brieff.bfac = '4' THEN 'Reconsideration'
-    WHEN f_vacols_brieff.bfac = '5' THEN 'Vacate'
-    WHEN f_vacols_brieff.bfac = '6' THEN 'De Novo'
-    WHEN f_vacols_brieff.bfac = '7' THEN 'Court Remand'
-    WHEN f_vacols_brieff.bfac = '8' THEN 'Designation of Record'
-    WHEN f_vacols_brieff.bfac = '9' THEN 'Clear and Unmistakable Error'
+    WHEN brieff.bfac = '1' THEN 'Original'
+    WHEN brieff.bfac = '2' THEN 'Supplemental'
+    WHEN brieff.bfac = '3' THEN 'Post Remand'
+    WHEN brieff.bfac = '4' THEN 'Reconsideration'
+    WHEN brieff.bfac = '5' THEN 'Vacate'
+    WHEN brieff.bfac = '6' THEN 'De Novo'
+    WHEN brieff.bfac = '7' THEN 'Court Remand'
+    WHEN brieff.bfac = '8' THEN 'Designation of Record'
+    WHEN brieff.bfac = '9' THEN 'Clear and Unmistakable Error'
   END AS appeal_stream,
-  f_vacols_folder.tinum AS docket_number,
+  folder.tinum AS docket_number,
   CASE
     WHEN (
-      f_vacols_corres.sspare2 IS NULL
-      AND f_vacols_corres.sdob <= (CURRENT_DATE - INTERVAL '75 years')
+      correspondent.sspare2 IS NULL
+      AND correspondent.sdob <= (CURRENT_DATE - INTERVAL '75 years')
     )
       -- This could be either the Veteran or a non-Veteran claimant
       OR people.date_of_birth <= (CURRENT_DATE - INTERVAL '75 years') THEN TRUE
-    WHEN f_vacols_assign.tskactcd IN ('B', 'B1', 'B2') THEN TRUE
+    WHEN assign.tskactcd IN ('B', 'B1', 'B2') THEN TRUE
     ELSE FALSE
   END AS aod_indicator,
   tasks.id AS task_id,
@@ -142,27 +142,27 @@ SELECT
     WHEN fvi.pact = 'Y' then true
     ELSE false
   END AS pact_indicator,
-  f_vacols_corres.sfnod IS NOT NULL AS veteran_deceased_indicator
+  correspondent.sfnod IS NOT NULL AS veteran_deceased_indicator
 FROM
   legacy_appeals
   JOIN tasks ON tasks.appeal_type = 'LegacyAppeal'
   AND tasks.appeal_id = legacy_appeals.id
-  JOIN f_vacols_brieff ON (legacy_appeals.vacols_id = f_vacols_brieff.bfkey)
-  JOIN f_vacols_folder ON (f_vacols_brieff.bfkey = f_vacols_folder.ticknum)
-  LEFT JOIN f_vacols_assign ON (f_vacols_assign.tsktknm = f_vacols_brieff.bfkey)
-  LEFT JOIN f_vacols_corres ON (
-    f_vacols_brieff.bfcorkey = f_vacols_corres.stafkey
+  JOIN brieffs_awaiting_hearing_scheduling() brieff ON (legacy_appeals.vacols_id = brieff.bfkey)
+  JOIN folders_awaiting_hearing_scheduling() folder ON (brieff.bfkey = folder.ticknum)
+  LEFT JOIN assign_awaiting_hearing_scheduling() assign ON (assign.tsktknm = brieff.bfkey)
+  LEFT JOIN corres_awaiting_hearing_scheduling() correspondent ON (
+    brieff.bfcorkey = correspondent.stafkey
   )
-  LEFT JOIN people ON (f_vacols_corres.ssn = people.ssn)
-  JOIN veterans ON veterans.ssn = f_vacols_corres.ssn
+  LEFT JOIN people ON (correspondent.ssn = people.ssn)
+  JOIN veterans ON veterans.ssn = correspondent.ssn
   LEFT JOIN cached_appeal_attributes ON (
     cached_appeal_attributes.appeal_id = legacy_appeals.id AND cached_appeal_attributes.appeal_type = 'LegacyAppeal'
   )
   LEFT JOIN (SELECT isskey,
     MAX(issmst) AS mst,
     MAX(isspact) AS pact
-    FROM f_vacols_issues
-    GROUP BY isskey) AS fvi ON (fvi.isskey = f_vacols_brieff.bfkey)
+    FROM issues_awaiting_hearing_scheduling()
+    GROUP BY isskey) AS fvi ON (fvi.isskey = brieff.bfkey)
 WHERE
   tasks.type = 'ScheduleHearingTask'
   AND tasks.status IN ('assigned', 'in_progress', 'on_hold')

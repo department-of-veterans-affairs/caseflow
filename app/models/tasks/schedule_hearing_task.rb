@@ -155,6 +155,14 @@ class ScheduleHearingTask < Task
     parent_admin_actions
   end
 
+  # Returns the associated record from the national_hearing_queue_entries view if this
+  # ScheduleHearingTask's appeal is represented there. The task's status must be open for this to occur.
+  #
+  # @return [NationalHearingQueueEntry, nil]
+  def national_hearing_queue_entry
+    NationalHearingQueueEntry.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
+  end
+
   private
 
   # Method to return the user actions for changing the hearing request type
