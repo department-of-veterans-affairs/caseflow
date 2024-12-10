@@ -10,11 +10,12 @@ describe IssueSerializer, :all_dbs do
 
     let(:request_issue1) do
       create(:request_issue,
-             benefit_type: "compensation", contested_rating_issue_diagnostic_code: "5002")
+             benefit_type: "compensation", contested_rating_issue_diagnostic_code: "5002",
+             contested_issue_description: "Contested issue description")
     end
 
     let(:request_issue2) do
-      create(:request_issue,
+      create(:request_issue, :nonrating,
              benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
     end
 
@@ -44,6 +45,22 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Pension issue")
+      end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full request issue description" do
+          issue_statuses = issues_hash(appeal.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
+          expect(issue[:description]).to eq(request_issue1.contested_issue_description)
+
+          issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
+          expect(issue2[:description])
+            .to eq("#{request_issue2.nonrating_issue_category} - #{request_issue2.nonrating_issue_description}")
+        end
       end
     end
 
@@ -85,6 +102,21 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:lastAction]).to eq("allowed")
         expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
+      end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full decision issue description" do
+          issue_statuses = issues_hash(appeal.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
+          expect(issue[:description]).to eq(remanded_issue_with_ep.description)
+
+          issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
+          expect(issue2[:description]).to eq(not_remanded_decision_issue.description)
+        end
       end
     end
 
@@ -150,14 +182,16 @@ describe IssueSerializer, :all_dbs do
       create(:request_issue,
              decision_review: hlr,
              benefit_type: benefit_type,
-             contested_rating_issue_diagnostic_code: "9999")
+             contested_rating_issue_diagnostic_code: "9999",
+             contested_issue_description: "Contested issue description 1")
     end
 
     let!(:request_issue2) do
       create(:request_issue,
              decision_review: hlr,
              benefit_type: benefit_type,
-             contested_rating_issue_diagnostic_code: "8877")
+             contested_rating_issue_diagnostic_code: "8877",
+             contested_issue_description: "Contested issue description 2")
     end
 
     let!(:hlr) do
@@ -185,6 +219,21 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
+      end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full request issue description" do
+          issue_statuses = issues_hash(hlr.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
+          expect(issue[:description]).to eq(request_issue1.contested_issue_description)
+
+          issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
+          expect(issue2[:description]).to eq(request_issue2.contested_issue_description)
+        end
       end
     end
 
@@ -245,6 +294,21 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full request issue description" do
+          issue_statuses = issues_hash(hlr.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
+          expect(issue[:description]).to eq(request_issue1.contested_issue_description)
+
+          issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
+          expect(issue2[:description]).to eq(request_issue2.contested_issue_description)
+        end
+      end
     end
 
     context "dta sc decision" do
@@ -263,6 +327,7 @@ describe IssueSerializer, :all_dbs do
       let!(:hlr_decision_issue) do
         create(:decision_issue,
                decision_review: hlr,
+               description: "HLR decision issue description",
                disposition: "denied",
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_decision_date,
@@ -291,6 +356,7 @@ describe IssueSerializer, :all_dbs do
       let!(:dta_sc_decision_issue) do
         create(:decision_issue,
                decision_review: dta_sc,
+               description: "DTA SC decision issue description",
                disposition: "allowed",
                benefit_type: benefit_type,
                end_product_last_action_date: dta_sc_decision_date,
@@ -315,6 +381,21 @@ describe IssueSerializer, :all_dbs do
         expect(issue2[:date]).to eq(hlr_decision_date.to_date)
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full decision issue description" do
+          issue_statuses = issues_hash(hlr.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
+          expect(issue[:description]).to eq(dta_sc_decision_issue.description)
+
+          issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
+          expect(issue2[:description]).to eq(hlr_decision_issue.description)
+        end
+      end
     end
   end
 
@@ -335,6 +416,7 @@ describe IssueSerializer, :all_dbs do
     end
     let!(:request_issue) do
       create(:request_issue,
+             :nonrating,
              decision_review: sc,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
@@ -349,6 +431,19 @@ describe IssueSerializer, :all_dbs do
         expect(issue_statuses.first[:date]).to be_nil
         expect(issue_statuses.first[:description]).to eq("Compensation issue")
         expect(issue_statuses.first[:diagnosticCode]).to be_nil
+      end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full request issue description" do
+          issue_statuses = issues_hash(sc.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.first
+          expect(issue[:description])
+            .to eq("#{request_issue.nonrating_issue_category} - #{request_issue.nonrating_issue_description}")
+        end
       end
     end
 
@@ -368,6 +463,18 @@ describe IssueSerializer, :all_dbs do
         expect(issue_statuses.first[:date]).to eq((receipt_date + 100.days).to_date)
         expect(issue_statuses.first[:description]).to eq("Compensation issue")
         expect(issue_statuses.first[:diagnosticCode]).to be_nil
+      end
+
+      context "with appeal_status_api_full_issue_description enabled" do
+        before { FeatureToggle.enable!(:appeals_status_api_full_issue_description) }
+        after { FeatureToggle.disable!(:appeals_status_api_full_issue_description) }
+
+        it "gives the full decision issue description" do
+          issue_statuses = issues_hash(sc.active_request_issues_or_decision_issues)
+
+          issue = issue_statuses.first
+          expect(issue[:description]).to eq(decision_issue.description)
+        end
       end
     end
   end

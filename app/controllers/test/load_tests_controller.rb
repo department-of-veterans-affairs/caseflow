@@ -2,6 +2,7 @@
 
 class Test::LoadTestsController < ApplicationController
   include ProdtestOnlyConcern
+  skip_before_action :verify_authentication, only: [:build_cookie]
 
   LOAD_TESTING_USER = "LOAD_TESTER"
 
@@ -11,7 +12,7 @@ class Test::LoadTestsController < ApplicationController
 
   def build_cookie
     save_session(load_test_user)
-    render json: { message: "logged in" }
+    render template: "test/index"
   end
 
   # Desciption: Method to generate request to Jenkins to run the load tests
@@ -22,8 +23,6 @@ class Test::LoadTestsController < ApplicationController
   # Returns: Renders a JSON object with a "201" if the request successfully
   #          kicks off the Jenkins pipeline
   def run_load_tests
-    params.require(:data)
-
     # Set up Jenkins crumbIssuer URI
     crumb_issuer_uri = URI(ENV["JENKINS_CRUMB_ISSUER_URI"])
     crumb_issuer_uri.query = URI.encode_www_form({ token: ENV["LOAD_TESTING_PIPELINE_TOKEN"] })
@@ -36,7 +35,7 @@ class Test::LoadTestsController < ApplicationController
     # If the crumbIssuer response is successful, send the Jenkins request to kick off the pipeline
     if crumb_response.is_a?(Net::HTTPOK)
       request_headers = generate_request_headers(crumb_response)
-      encoded_test_recipe = encode_test_recipe(params[:data].to_s)
+      encoded_test_recipe = encode_test_recipe(request.body.string)
 
       jenkins_response = send_jenkins_run_request(request_headers, encoded_test_recipe)
     else
@@ -47,9 +46,8 @@ class Test::LoadTestsController < ApplicationController
       load_test_run: "#{jenkins_response.code} #{jenkins_response.body}"
     }
   rescue StandardError => error
-    render json: {
-      error: error
-    }
+    Rails.logger.error error.message
+    render json: { error: error.message }, status: :internal_server_error
   end
 
   private
@@ -95,7 +93,8 @@ class Test::LoadTestsController < ApplicationController
 
     # Create POST request to Jenkins pipeline
     jenkins_run_request = Net::HTTP::Post.new(jenkins_pipeline_uri, request_headers)
-    jenkins_run_request.body = encoded_test_recipe
+    encoded_form = URI.encode_www_form({ testRecipe: encoded_test_recipe })
+    jenkins_run_request.body = encoded_form
     jenkins_response = http.request(jenkins_run_request)
 
     # Raise error if the pipeline run is not created

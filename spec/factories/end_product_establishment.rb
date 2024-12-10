@@ -33,13 +33,31 @@ FactoryBot.define do
     trait :active_hlr do
       synced_status { "PEND" }
       established_at { 5.days.ago }
-      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      source do
+        create(
+          :higher_level_review,
+          veteran_file_number: veteran_file_number,
+          custom_benefit_type: "compensation"
+        )
+      end
+    end
+
+    trait :active_hlr_with_education do
+      synced_status { "PEND" }
+      established_at { 5.days.ago }
+      source do
+        create(
+          :higher_level_review,
+          veteran_file_number: veteran_file_number,
+          custom_benefit_type: "education"
+        )
+      end
     end
 
     trait :active_supp do
       synced_status { "PEND" }
       established_at { 5.days.ago }
-      source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+      source { create(:supplemental_claim, veteran_file_number: veteran_file_number, custom_benefit_type: "education") }
     end
 
     trait :cleared_hlr_with_veteran_claimant do
@@ -65,7 +83,7 @@ FactoryBot.define do
     end
 
     trait :active_hlr_with_canceled_vbms_ext_claim do
-      active_hlr
+      active_hlr_with_education
       modifier { "030" }
       code { "030HLRR" }
       after(:create) do |end_product_establishment, _evaluator|
@@ -78,7 +96,7 @@ FactoryBot.define do
     end
 
     trait :active_hlr_with_active_vbms_ext_claim do
-      active_hlr
+      active_hlr_with_education
       modifier { "030" }
       code { "030HLRR" }
       after(:create) do |end_product_establishment, _evaluator|
@@ -91,7 +109,7 @@ FactoryBot.define do
     end
 
     trait :active_hlr_with_cleared_vbms_ext_claim do
-      active_hlr
+      active_hlr_with_education
       modifier { "030" }
       code { "030HLRR" }
       after(:create) do |end_product_establishment, _evaluator|

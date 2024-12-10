@@ -49,7 +49,7 @@ module Test::TestControllerHelper
     end
 
     def find_orgs
-      Organization.pluck(:name).sort
+      Organization.pluck(:name).compact.sort
     end
   end
 end

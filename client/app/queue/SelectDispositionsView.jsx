@@ -493,6 +493,7 @@ class SelectDispositionsView extends React.PureComponent {
       validateForm={this.validateForm}
       getNextStepUrl={this.getNextStepUrl}
       getPrevStepUrl={this.getPrevStepUrl}
+      isLegacyAppeal={this.props.appeal.isLegacyAppeal}
       {...otherProps}
     >
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
