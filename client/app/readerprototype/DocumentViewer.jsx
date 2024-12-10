@@ -43,10 +43,6 @@ const DocumentViewer = memo((props) => {
   const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
   const files = [...prefetchFiles, doc.content_url].filter((file) => file);
 
-  if (!doc) {
-    return;
-  }
-
   useEffect(() => {
     setShowSearchBar(false);
   }, [currentDocumentId]);
