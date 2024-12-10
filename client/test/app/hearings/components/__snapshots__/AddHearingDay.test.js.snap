@@ -809,14 +809,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_Invalid date"
+                  id="docketStartTimes_8:30"
                   name="docketStartTimes"
                   type="radio"
-                  value="Invalid date"
+                  value="8:30"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_Invalid date"
+                  for="docketStartTimes_8:30"
                 >
                   Half-Day AM (5 slots at 8:30 AM Eastern)
                 </label>
@@ -825,14 +825,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_Invalid date"
+                  id="docketStartTimes_12:30"
                   name="docketStartTimes"
                   type="radio"
-                  value="Invalid date"
+                  value="12:30"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_Invalid date"
+                  for="docketStartTimes_12:30"
                 >
                   Half-Day PM (5 slots at 12:30 PM Eastern)
                 </label>
@@ -1420,14 +1420,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_Invalid date"
+                id="docketStartTimes_8:30"
                 name="docketStartTimes"
                 type="radio"
-                value="Invalid date"
+                value="8:30"
               />
               <label
                 class=""
-                for="docketStartTimes_Invalid date"
+                for="docketStartTimes_8:30"
               >
                 Half-Day AM (5 slots at 8:30 AM Eastern)
               </label>
@@ -1436,14 +1436,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_Invalid date"
+                id="docketStartTimes_12:30"
                 name="docketStartTimes"
                 type="radio"
-                value="Invalid date"
+                value="12:30"
               />
               <label
                 class=""
-                for="docketStartTimes_Invalid date"
+                for="docketStartTimes_12:30"
               >
                 Half-Day PM (5 slots at 12:30 PM Eastern)
               </label>
@@ -2088,14 +2088,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_Invalid date"
+                  id="docketStartTimes_9:00"
                   name="docketStartTimes"
                   type="radio"
-                  value="Invalid date"
+                  value="9:00"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_Invalid date"
+                  for="docketStartTimes_9:00"
                 >
                   Half-Day AM (5 slots at 9:00 AM Eastern)
                 </label>
@@ -2104,14 +2104,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_Invalid date"
+                  id="docketStartTimes_13:00"
                   name="docketStartTimes"
                   type="radio"
-                  value="Invalid date"
+                  value="13:00"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_Invalid date"
+                  for="docketStartTimes_13:00"
                 >
                   Half-Day PM (5 slots at 1:00 PM Eastern)
                 </label>
@@ -2699,14 +2699,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_Invalid date"
+                id="docketStartTimes_9:00"
                 name="docketStartTimes"
                 type="radio"
-                value="Invalid date"
+                value="9:00"
               />
               <label
                 class=""
-                for="docketStartTimes_Invalid date"
+                for="docketStartTimes_9:00"
               >
                 Half-Day AM (5 slots at 9:00 AM Eastern)
               </label>
@@ -2715,14 +2715,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_Invalid date"
+                id="docketStartTimes_13:00"
                 name="docketStartTimes"
                 type="radio"
-                value="Invalid date"
+                value="13:00"
               />
               <label
                 class=""
-                for="docketStartTimes_Invalid date"
+                for="docketStartTimes_13:00"
               >
                 Half-Day PM (5 slots at 1:00 PM Eastern)
               </label>
