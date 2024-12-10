@@ -20,6 +20,25 @@ class Api::V1::CmpController < Api::ApplicationController
     end
   end
 
+  def packet
+    new_packet = CmpMailPacket.new(packet_params)
+    cmp_doc = CmpDocument.find_by(cmp_document_uuid: packet_params[:packet_uuid])
+    if cmp_doc.nil?
+      render json: {
+        message: "CmpDocument does not exist.",
+        errors: new_packet.errors
+      }, status: :unprocessable_entity
+    elsif new_packet.save
+      cmp_doc.update!(cmp_mail_packet: new_packet)
+      render json: { message: "CMP packet successfully created" }, status: :ok
+    else
+      render json: {
+        message: "CMP document could not be created",
+        errors: new_packet.errors
+      }, status: :error
+    end
+  end
+
   private
 
   def cmp_document_params
@@ -30,6 +49,19 @@ class Api::V1::CmpController < Api::ApplicationController
       doctype_name: params[:nonVbmsDocTypeName],
       packet_uuid: params[:packetUuid],
       vbms_doctype_id: params[:vbmsDocTypeId]
+    }
+  end
+
+  def packet_params
+    {
+      packet_uuid: params[:packetUUID],
+      cmp_packet_number: params[:cmpPacketNumber],
+      packet_source: params[:packetSource],
+      va_dor: params[:vaDor],
+      veteran_id: params[:veteranId],
+      veteran_first_name: params[:veteranFirstName],
+      veteran_middle_initial: params[:veteranMiddleName],
+      veteran_last_name: params[:veteranLastName]
     }
   end
 
