@@ -703,9 +703,7 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "with reader role" do
-      before do
-        attorney_user.update!(roles: attorney_user.roles + ["Reader"])
-      end
+      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
       scenario "reader link appears on page and sends us to reader" do
@@ -713,10 +711,9 @@ RSpec.feature "Case details", :all_dbs do
 
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         click_on "View #{appeal.documents.count} docs"
-        using_wait_time(5) do
-          expect(page).to have_content("CaseflowQueue")
-          expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
-        end
+        find("h1", text: "#{appeal.veteran_full_name}")
+        expect(page).to have_content("CaseflowQueue")
+        expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
       end
     end
 
