@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkQueue::CorrespondenceDetailsSerializer
+class WorkQueue::RelatedCorrespondencesSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
