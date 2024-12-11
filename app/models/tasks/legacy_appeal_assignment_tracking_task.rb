@@ -37,5 +37,8 @@ class LegacyAppealAssignmentTrackingTask < Task
   def cancel_blocking_tasks
     HearingTask.find_by(appeal_id: appeal.id, status: Constants.TASK_STATUSES.on_hold)
       .cancel_descendants(instructions: instructions[1])
+
+    # Ensures the LegacyAppealAssignmentTrackingTask appears after the cancelled blocking tasks on the case timeline.
+    self.closed_at = Time.zone.now
   end
 end
