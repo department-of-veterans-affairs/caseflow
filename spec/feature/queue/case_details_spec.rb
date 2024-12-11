@@ -702,15 +702,19 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "with reader role", skip: "Flaky test" do
-      before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
+    context "with reader role" do
+      before do
+        attorney_user.update!(roles: attorney_user.roles + ["Reader"])
+      end
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
       scenario "reader link appears on page and sends us to reader" do
         visit "/queue"
+
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         click_on "View #{appeal.documents.count} docs"
-
+        find("h1", text: "#{appeal.veteran_full_name}")
+        # wait_for_page_render
         expect(page).to have_content("CaseflowQueue")
         expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
       end
