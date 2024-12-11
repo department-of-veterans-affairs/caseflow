@@ -21,6 +21,7 @@ class Api::V1::CmpController < Api::ApplicationController
   end
 
   def packet
+    # binding.pry
     new_packet = CmpMailPacket.new(packet_params)
     cmp_doc = CmpDocument.find_by(cmp_document_uuid: packet_params[:packet_uuid])
     if cmp_doc.nil?
@@ -29,6 +30,7 @@ class Api::V1::CmpController < Api::ApplicationController
         errors: new_packet.errors
       }, status: :unprocessable_entity
     elsif new_packet.save
+
       cmp_doc.update!(cmp_mail_packet: new_packet)
       render json: { message: "CMP packet successfully created" }, status: :ok
     else

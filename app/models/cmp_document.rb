@@ -13,6 +13,8 @@ class CmpDocument < ApplicationRecord
   validate :date_of_receipt_must_be_a_date
 
   def date_of_receipt_must_be_a_date
+    return if date_of_receipt.instance_of?(DateTime) || date_of_receipt.instance_of?(Date) || date_of_receipt.instance_of?(ActiveSupport::TimeWithZone)
+
     # Use the magic <attribute>_before_type_cast accessor to get the raw value
     before_val = date_of_receipt_before_type_cast
 
@@ -21,19 +23,16 @@ class CmpDocument < ApplicationRecord
       return
     end
 
-    unless before_val.is_a?(String)
-      before_val = before_val.strftime("%Y-%m-%d")
-    end
-
-    if (Date.parse(before_val) rescue false)
-      errors.add(:date_of_receipt, "invalid date format.")
-    end
 
     # For yyyy-mm-dd format:
     # Require non-zero first digit; require the exact number of digits for each.
     if !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
       errors.add(:date_of_receipt, "date_of_receipt must use the format yyyy-mm-dd")
+      return
     end
+
+    # Validates dateOfReceipt is in yyyy-mm-dd (csv_date) format and is parsable to a valid date
+    DateTime.strptime(before_val, Date::DATE_FORMATS[:csv_date])
   rescue Date::Error
     errors.add(:date_of_receipt, "date_of_receipt must be a valid date")
   end
