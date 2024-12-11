@@ -10,7 +10,7 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def call # rubocop:disable Metrics/CyclomaticComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
@@ -25,17 +25,7 @@ class HearingRequestDistributionQuery
       return only_genpop_appeals
     end
 
-    # We are returning an array of arrays in order to process the
-    # "not_genpop_appeals" separately from the "only_genpop_appeals" in
-    # HearingRequestCaseDistributor in order to accurately populate the `genpop`
-    # field in the `DistributedCase`. The last step in the automatic case
-    # distribution process is to create `DistributedCase`s for the Distribution.
-    # For the Hearing Docket, a DistributedCase validates the presence of the
-    # genpop attribute. This is used for reporting purposes and so we can
-    # verify that the algorithm is correct. For example, if we found a
-    # DistributedCase with `genpop_query` set to "not_genpop", but its `genpop`
-    # field was set to `true`, that would indicate a bug.
-    [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
+    []
   end
 
   def self.ineligible_judges_id_cache
@@ -49,11 +39,13 @@ class HearingRequestDistributionQuery
   def not_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_not_genpop_aod_hearing_query(base_relation)
+    non_aod_cavc_query = generate_not_genpop_non_aod_cavc_query(base_relation)
+    aod_cavc_query = generate_not_genpop_aod_cavc_query(base_relation)
 
-    ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
+    [ama_non_aod_hearing_query.or(ama_aod_hearing_query), non_aod_cavc_query, aod_cavc_query].flatten
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
@@ -83,13 +75,25 @@ class HearingRequestDistributionQuery
     no_hearings_or_only_no_held_hearings = []
     no_hearings_or_no_held_hearings.each do |appeal|
       if appeal.hearings.blank? || appeal.hearings.pluck(:disposition).exclude?("held")
-        no_hearings_or_only_no_held_hearings << appeal
+        if appeal.cavc?
+          if ineligible_or_excluded_original_judge(appeal)
+            no_hearings_or_only_no_held_hearings << appeal
+          elsif appeal.appeal_affinity&.affinity_start_date &&
+                ((appeal.aod? &&
+                  appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_aod_affinity_days
+                                                                 .to_i.days.ago) ||
+                (appeal.appeal_affinity.affinity_start_date < CaseDistributionLever.cavc_affinity_days.to_i.days.ago))
+            no_hearings_or_only_no_held_hearings << appeal
+          end
+        else
+          no_hearings_or_only_no_held_hearings << appeal
+        end
       end
     end
 
     [*result, *no_hearings_or_only_no_held_hearings].uniq
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     query =
@@ -113,6 +117,62 @@ class HearingRequestDistributionQuery
 
     query
   end
+
+  # rubocop:disable Metrics/MethodLength: Method has too many lines
+  def generate_not_genpop_non_aod_cavc_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.cavc_affinity_days)
+      elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_appeals
+      elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .with_appeal_affinities
+          .none
+      end
+
+    query
+  end
+  # rubocop:enable Metrics/MethodLength: Method has too many lines
+
+  # rubocop:disable Metrics/MethodLength: Method has too many lines
+  def generate_not_genpop_aod_cavc_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_aod_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.cavc_aod_affinity_days)
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .tied_to_distribution_judge(judge)
+          .ama_aod_appeals
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .with_no_hearings
+          .with_cavc_appeals
+          .with_appeal_affinities
+          .none
+      end
+
+    query
+  end
+  # rubocop:enable Metrics/MethodLength: Method has too many lines
 
   def generate_ama_not_genpop_aod_hearing_query(base_relation)
     query =
@@ -183,6 +243,18 @@ class HearingRequestDistributionQuery
       end
 
     query
+  end
+
+  def ineligible_or_excluded_original_judge(appeal)
+    judge = appeal
+      .cavc_remand
+      .source_appeal
+      .tasks
+      .find { |t| t.is_a?(JudgeDecisionReviewTask) && t.status == Constants.TASK_STATUSES.completed }
+      .assigned_to
+
+    self.class.ineligible_judges_id_cache.include?(judge.id) ||
+      JudgeTeam.judge_ids_with_exclude_appeals_from_affinity.include?(judge.id)
   end
 
   delegate :with_no_hearings, to: :base_relation

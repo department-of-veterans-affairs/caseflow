@@ -1,6 +1,6 @@
 import { def, get, itBehavesLike, sharedExamplesFor } from 'bdd-lazy-var/getter';
-import { centerOfPage, iconKeypressOffset } from '../../../../app/readerprototype/util/coordinates';
-import { ROTATION_DEGREES } from '../../../../app/readerprototype/util/readerConstants';
+import { centerOfPage, iconKeypressOffset } from '../../../../app/readerprototype/utils/coordinates';
+import { ROTATION_DEGREES } from '../../../../app/readerprototype/utils/readerConstants';
 
 describe('iconKeypressOffset for rotation', () => {
   def('output', () => iconKeypressOffset(get.coords, get.keyDirection, get.rotation));

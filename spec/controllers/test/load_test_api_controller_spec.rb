@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "webmock/rspec"
-
 describe Test::LoadTestApiController, :postgres, type: :controller do
   let!(:api_key) { ApiKey.create(consumer_name: "Load Testing", key_string: "test") }
   let(:body) do

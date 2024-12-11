@@ -13,10 +13,10 @@ import {
 import { handleSelectCommentIcon } from '../../../reader/PdfViewer/PdfViewerActions';
 import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
-import { centerOfPage, iconKeypressOffset } from '../../util/coordinates';
+import { centerOfPage, iconKeypressOffset } from '../../utils/coordinates';
 import Icon from './Icon';
 
-// This comment provides the framework for positioning, moving and selecting comment icons.
+// This component provides the framework for positioning, moving and selecting comment icons.
 // These icons (in this file referred to as 'annotations') are stored in the database with their positions
 // relative to the document scaled to 100% and 0 degrees of rotation. If we scale/rotate the document,
 // we have to calculate the mouse position in that transformed frame, use that transformed position for display, but
@@ -93,7 +93,7 @@ const Layer = (props) => {
         if (isPlacingAnnotation && placingAnnotationIconPageCoords) {
           dispatch(
             placeAnnotation(
-              pageNumber,
+              placingAnnotationIconPageCoords.pageIndex,
               {
                 xPosition: placingAnnotationIconPageCoords.x,
                 yPosition: placingAnnotationIconPageCoords.y,
@@ -146,7 +146,7 @@ const Layer = (props) => {
     const coordinates = getPageCoordinatesOfMouseEventPrototype(
       event,
       layerRef.current?.getBoundingClientRect(),
-      1,
+      1 / scale,
       rotationDegrees
     );
 

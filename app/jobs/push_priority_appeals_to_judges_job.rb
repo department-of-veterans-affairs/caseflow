@@ -13,7 +13,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   application_attr :queue
 
   def perform
-    unless use_by_docket_date?
+    if FeatureToggle.enabled?(:acd_ppj_distribute_not_genpop)
       @tied_distributions = distribute_non_genpop_priority_appeals
     end
 

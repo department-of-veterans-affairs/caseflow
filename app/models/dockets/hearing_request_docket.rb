@@ -7,8 +7,8 @@ class HearingRequestDocket < Docket
 
   def age_of_n_oldest_genpop_priority_appeals(num)
     hearing_distribution_query(
-      base_relation: ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num), genpop: "only_genpop"
-    ).call.map(&:ready_for_distribution_at)
+      base_relation: ready_priority_nonpriority_appeals(priority: true, ready: true), genpop: "only_genpop"
+    ).call.first(num).map(&:ready_for_distribution_at)
   end
 
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
@@ -19,8 +19,8 @@ class HearingRequestDocket < Docket
         priority: false,
         ready: true,
         judge: judge
-      ).limit(num), genpop: "only_genpop", judge: judge
-    ).call.map(&:receipt_date)
+      ), genpop: "only_genpop", judge: judge
+    ).call.first(num).map(&:receipt_date)
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
@@ -40,17 +40,14 @@ class HearingRequestDocket < Docket
         priority: true,
         ready: true,
         judge: judge
-      ).limit(num), genpop: "only_genpop", judge: judge
-    ).call.flatten.map(&:receipt_date)
+      ), genpop: "only_genpop", judge: judge
+    ).call.flatten.first(num).map(&:receipt_date)
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
-  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
-    query_args = { priority: priority, ready: true, judge: distribution.judge }
-    base_relation = ready_priority_nonpriority_appeals(query_args).limit(limit)
-
-    # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
-    genpop = "only_genpop" if use_by_docket_date?
+  def distribute_appeals(distribution, priority: false, genpop: "only_genpop", limit: 1, style: "push")
+    query_args = { priority: priority, genpop: genpop, ready: true, judge: distribution.judge }
+    base_relation = ready_priority_nonpriority_appeals(query_args)
 
     sct_appeals = extract_sct_appeals(query_args, limit)
 
@@ -59,8 +56,6 @@ class HearingRequestDocket < Docket
     end
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
-
-    appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
 
     appeals = self.class.limit_only_genpop_appeals(appeals, limit) if genpop.eql?("only_genpop") && limit
 

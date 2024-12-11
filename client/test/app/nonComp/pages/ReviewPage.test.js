@@ -7,6 +7,7 @@ import ReviewPage from 'app/nonComp/pages/ReviewPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from 'app/nonComp/reducers';
 import { vhaTaskFilterDetails } from 'test/data/taskFilterDetails';
 import ApiUtil from 'app/util/ApiUtil';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 const nonAdminVhaProps = {
   serverNonComp: {
@@ -47,7 +48,9 @@ const renderReviewPage = (storeValues = {}) => {
 
   return render(
     <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer} >
-      <ReviewPage />
+      <Router>
+        <ReviewPage />
+      </Router>
     </ReduxBase>
   );
 };
