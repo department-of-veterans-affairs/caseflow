@@ -156,7 +156,12 @@ module Hearings
 
     def component_hashes(file_name)
       base_path = Rails.root.join("tmp", "transcription_files")
-      tmp_dirs = { mp3: base_path.join("mp3"), rtf: base_path.join("rtf"), xls: base_path.join("xls") }
+      tmp_dirs = {
+        mp3: base_path.join("mp3"),
+        rtf: base_path.join("rtf"),
+        xls: base_path.join("xls"),
+        csv: base_path.join("csv")
+      }
       extension = file_name.split(".").last.to_sym
       [
         {
