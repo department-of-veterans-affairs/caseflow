@@ -94,7 +94,9 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   end
 
   def save_transcription_package_in_database(transcription_package_tmp)
-    transcription_package = TranscriptionPackage.create!(
+    # re-use unassigned version of package if it exists
+    transcription_package = TranscriptionPackage.find_or_create_by(task_number: @work_order[:work_order_name])
+    transcription_package.update!(
       aws_link_zip: s3_location(transcription_package_tmp),
       aws_link_work_order: s3_location(@work_order_tmp_path),
       created_by_id: RequestStore[:current_user].id,

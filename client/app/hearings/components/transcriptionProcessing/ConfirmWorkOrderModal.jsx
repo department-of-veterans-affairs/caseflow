@@ -204,7 +204,11 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     ApiUtil.post('/hearings/transcription_packages/dispatch',
       {
         data: payload
-      }).then(() => onCancel());
+      }).then((response) => {
+      const alert = encodeURIComponent(response.text);
+
+      history.push(`/transcription_files?alert=${alert}`);
+    });
   };
 
   const renderButtonSection = () => {

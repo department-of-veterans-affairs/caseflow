@@ -82,11 +82,31 @@ class TranscriptionPackage < CaseflowRecord
     find_by(task_number: task_number)&.update(status: "cancelled")
   end
 
-  def self.next_task_number
+  def self.next_task_number(user_id)
     fiscal_year = (Time.zone.now + 92.days).strftime("%Y")
     latest = TranscriptionPackage.where("task_number LIKE 'BVA-#{fiscal_year}%'").order("task_number DESC").first
-    next_task_number = latest ? latest.task_number.split("-").last.to_i + 1 : 1
-    "BVA-#{fiscal_year}-#{next_task_number.to_s.rjust(4, '0')}"
+
+    next_task_number = 1
+    extra = ""
+
+    if latest
+      latest_number = latest.task_number.split("-").last.to_i
+
+      # re-use temporary number
+      next_task_number = if latest.status.blank? && latest.created_by_id == user_id
+                           latest_number
+                         else
+                           latest_number + 1
+                         end
+    end
+
+    # pad year if number is more than four digits
+    if next_task_number.to_s.length > 4
+      extra = next_task_number.to_s[0...-4]
+      next_task_number = next_task_number.to_s[3..-1].to_i
+    end
+
+    "BVA-#{fiscal_year}#{extra}-#{next_task_number.to_s.rjust(4, '0')}"
   end
 
   private

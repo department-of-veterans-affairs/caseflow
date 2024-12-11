@@ -242,7 +242,7 @@ Rails.application.routes.draw do
     get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
     get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
-    get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
+    get 'transcriptions_packages/generate_task_number', to: "trantranscriptions_packagesscriptions#generate_task_number"
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -272,6 +272,7 @@ Rails.application.routes.draw do
   get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")
   get 'hearings/transcription_files/selected_files_info/:file_ids', to: 'hearings/transcription_files#selected_files_info'
   get 'hearings/transcription_packages/transcription_package_tasks', to: 'hearings/transcription_packages#transcription_package_tasks'
+  get 'hearings/transcription_packages/next_task_number', to: 'hearings/transcription_packages#next_task_number'
   post 'hearings/transcription_packages/dispatch', to: 'hearings/transcription_packages#create_package'
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
   get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
@@ -279,7 +280,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
   post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
   get 'hearings/transcription_files/fetch_file', to: 'hearings/transcription_files#fetch_file'
-  
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"

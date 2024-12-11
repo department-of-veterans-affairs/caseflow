@@ -14,41 +14,12 @@ const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }
   let history = useHistory();
 
   /**
-   * Generates the work order number
-   * @param {number} taskId - The task id for the transcription
-   * @return {string} The generated work order number
-   */
-  const generateWorkOrder = (taskId) => {
-    const taskIdString = taskId.toString();
-    const year = new Date().getFullYear().
-      toString();
-
-    let numberOfDigits = taskId.toString().length;
-    let sequencer;
-    let firstSet;
-
-    if (numberOfDigits > 5) {
-      firstSet = year.substring(2) + taskIdString.substring(0, 2);
-      sequencer = taskIdString.substring(2);
-    } else if (numberOfDigits === 5) {
-      firstSet = `${year.substring(2)}0${taskIdString.substring(0, 1)}`;
-      sequencer = taskIdString.substring(1);
-    } else {
-      firstSet = year;
-      sequencer = '0'.repeat(4 - numberOfDigits) + taskId;
-    }
-
-    setWorkOrder(`BVA-${firstSet}-${sequencer}`);
-  };
-
-  /**
-   * Grabs the taskId
+   * Grabs the task number
   */
-  const getTranscriptionTaskId = () => {
-    ApiUtil.get('/hearings/transcriptions/next_transcription').
-      // eslint-disable-next-line camelcase
+  const getNextTaskNumber = () => {
+    ApiUtil.get('/hearings/transcription_packages/next_task_number').
       then((response) => {
-        generateWorkOrder(response.body.task_id);
+        setWorkOrder(response.body.task_number);
       });
   };
 
@@ -117,7 +88,7 @@ const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }
   };
 
   useEffect(() => {
-    getTranscriptionTaskId();
+    getNextTaskNumber();
   }, []);
 
   return (
