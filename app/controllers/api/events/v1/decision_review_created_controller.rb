@@ -18,7 +18,6 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   end
 
   # rubocop:disable Layout/LineLength
-  # params[:claim_review][:auto_remand]
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
 
@@ -27,6 +26,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     claim_id = drc_params[:claim_id]
     headers = request.headers
     consumer_and_claim_ids = { consumer_event_id: consumer_event_id, claim_id: claim_id }
+    # checks if claim review is remanded
     if params[:claim_review][:auto_remand]
       ::Events::DecisionReviewRemanded.create!(consumer_and_claim_ids, headers, drc_params)
       render json: { message: "DecisionReviewRemandedEvent successfully processed and backfilled" }, status: :created
