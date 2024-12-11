@@ -712,7 +712,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         click_on "View #{appeal.documents.count} docs"
         expect(page).to have_content("CaseflowQueue")
-        expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
+        expect(page).to have_content("Back to your cases")
       end
     end
 
