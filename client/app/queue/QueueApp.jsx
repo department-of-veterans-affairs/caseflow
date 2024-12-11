@@ -1413,7 +1413,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/national_hearing_queue"
-              title="National Hearing Scheduling Queue | Caseflow"
+              title="National Hearings Scheduling Queue | Caseflow"
               render={this.routedNationalHearingQueue}
             />
 
