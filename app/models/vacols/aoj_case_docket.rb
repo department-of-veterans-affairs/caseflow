@@ -538,7 +538,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                                         range.nil? ? 1 : 0
                                       ])
                  end
-    byebug
+
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
