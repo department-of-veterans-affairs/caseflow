@@ -187,35 +187,46 @@ class TasksController < ApplicationController
   end
 
   def upload_transcription_to_vbms
-    file_paths = task.appeal.hearings.first.transcription_files
-      .where(file_type: "pdf").map(&:fetch_file_from_s3!)
+    pdf_file = Hearings::TranscriptionFile.where(file_type: "pdf")
+      .find_by(docket_number: appeal.docket_number)
 
-    appeal = task.appeal
-    file_paths.each do |current_file_path|
-      file_name = current_file_path.split("/").last
-      document_params =
-        {
-          veteran_file_number: appeal.veteran_file_number,
-          document_type: "Hearing Transcript",
-          document_subject: "notifications",
-          document_name: file_name,
-          application: "notification-report",
-          file: current_file_path
+    document_params = format_document_params(pdf_file)
+
+    response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
+    if response.success?
+      complete_transcript_review
+      set_flash_vbms_upload_success(document_params[:document_name], appeal)
+      render json: {
+        data: {
+          message: "Upload to VBMS successful."
         }
-      response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
-      if response.success?
-        # change status of ReviewTranscriptTask
-        complete_transcript_review
-      end
+      }.to_json, status: :ok
     end
   end
 
-  def error_found_upload_transcription_to_vbms; end
+  def error_found_upload_transcription_to_vbms
+    file_name = params[:file_info][:file_name]
+    set_flash_vbms_upload_success(file_name, appeal)
+  end
+
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+
+    render json: {}, status: :ok
+  rescue StandardError => error
+    render_update_errors(error)
+  end
 
   private
 
   def complete_transcript_review
-    return unless task.type == "ReviewTranscriptTask" && task.status == "in_progress"
+    return unless task.is_a?(ReviewTranscriptTask) && task.active?
 
     Transcription.where(task_id: task.id).update_all(
       updated_by_id: current_user.id,
@@ -461,5 +472,25 @@ class TasksController < ApplicationController
       :assigned_to,
       :parent
     ]
+  end
+
+  def set_flash_vbms_upload_success(file_name, appeal)
+    flash[:custom] = {
+      title: format(COPY::TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_TITLE, appeal.veteran_full_name),
+      message: format(COPY::TRANSCRIPT_UPLOAD_TO_VBMS_SUCCESS_BANNER_DETAIL, appeal.veteran_full_name, file_name)
+    }
+  end
+
+  def format_document_params(file)
+    file_path = file.fetch_file_from_s3!
+    file_name = file_path.split("/").last
+    {
+      veteran_file_number: appeal.veteran_file_number,
+      document_type: "Hearing Transcript",
+      document_subject: "notifications",
+      document_name: file_name,
+      application: "notification-report",
+      file: file_path
+    }
   end
 end
