@@ -141,7 +141,7 @@ describe Api::V1::CmpController, type: :request do
     let!(:cmp_packet_number) { cmp_packet_number_val }
     let!(:packet_source) { Faker::Internet.username(specifier: 8) }
     let!(:va_dor) { 1.hour.ago.strftime(Date::DATE_FORMATS[:csv_date]) }
-    let!(:veteran) { create(:veteran, middle_name: 'M') }
+    let!(:veteran) { create(:veteran, middle_name: "M") }
 
     let(:packet_post_data) do
       {
