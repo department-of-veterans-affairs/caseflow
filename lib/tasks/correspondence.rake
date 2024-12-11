@@ -140,7 +140,7 @@ def create_inbound_ops_permissions
       organization: InboundOpsTeam.singleton
     ) do |perm|
       perm.enabled = false
-      perm.description = Faker::Hipster.sentence
+      perm.description = "placeholder description"
     end
   end
   OrganizationPermission.find_by(permission: "superuser").update!(
