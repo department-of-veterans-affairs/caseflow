@@ -524,29 +524,53 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
 };
 
 export const fetchVeteranInformation = (uuid) => async (dispatch) => {
-  const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
-  const data = response.body;
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
+    const data = response.body;
 
-  dispatch(updateVeteranInformation(data));
+    dispatch(updateVeteranInformation(data));
 
-  return data;
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
 };
 
 export const fetchLinkedAppeals = (uuid) => async (dispatch) => {
-  const response = await ApiUtil.get(`/queue/correspondence/${uuid}/linked_appeals`);
-  const data = response.body;
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/linked_appeals`);
+    const data = response.body;
 
-  dispatch(updateLinkedAppeals(data));
+    dispatch(updateLinkedAppeals(data));
 
-  return data;
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
 };
 
 export const fetchCorrespondenceDetailsInitialPayload = (uuid) => async (dispatch) => {
-  const responses = await Promise.all([
-    dispatch(fetchVeteranInformation(uuid)),
-    dispatch(fetchLinkedAppeals(uuid))
-  ]);
+  try {
+    const responses = await Promise.all([
+      dispatch(fetchVeteranInformation(uuid)),
+      dispatch(fetchLinkedAppeals(uuid))
+    ]);
 
-  return responses;
-}
+    return responses;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
+};
 
