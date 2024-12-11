@@ -306,6 +306,7 @@ Rails.application.routes.draw do
   get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
+    resources :searches, controller: :saved_searches, only: [:index, :create, :destroy, :show]
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :history
@@ -313,8 +314,11 @@ Rails.application.routes.draw do
         patch :update_power_of_attorney
       end
     end
+    get "taskFilters", to: "decision_reviews#task_filters"
+    get "businessLineInfo", to: "decision_reviews#business_line_info"
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
     get "/(*all)", to: "decision_reviews#index"
+
   end
 
   resources :unrecognized_appellants, only: [:update] do

@@ -197,6 +197,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       click_on("Confirm")
 
       expect(page).to have_content(edit_establish_success_message_text)
+      expect(page).to have_content("Viewing 1-1 of 1 total")
       expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
 
       # Test adding a new issue without decision date then adding one

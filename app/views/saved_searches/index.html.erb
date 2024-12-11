@@ -1,0 +1,18 @@
+<% content_for :full_page_content do %>
+  <%= react_component("NonComp", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    flash: flash,
+    serverNonComp: {
+      businessLine: organization.name,
+      businessLineUrl: organization.url,
+      currentUserCssId: current_user.css_id,
+    },
+    savedSearches: {
+
+    }
+  }) %>
+<% end %>

@@ -3,20 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { MemoryRouter as Router } from 'react-router-dom';
 import ClaimHistoryPage from 'app/nonComp/pages/ClaimHistoryPage';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
 import { Provider } from 'react-redux';
-import { applyMiddleware, createStore, compose } from 'redux';
-import thunk from 'redux-thunk';
 import ApiUtil from 'app/util/ApiUtil';
+import createNonCompStore from '../nonCompStoreCreator';
 
 import individualClaimHistoryData from '../../../data/nonComp/individualClaimHistoryData';
 const renderClaimHistoryPage = (storeValues = individualClaimHistoryData) => {
-
-  const store = createStore(
-    CombinedNonCompReducer,
-    storeValues,
-    compose(applyMiddleware(thunk))
-  );
+  const store = createNonCompStore(storeValues);
 
   return render(
     <Provider store={store} >

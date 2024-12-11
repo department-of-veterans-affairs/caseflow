@@ -1770,6 +1770,15 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.json "stats"
     t.datetime "updated_at", null: false
   end
+  create_table "saved_searches", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.text "description"
+    t.string "name"
+    t.json "saved_search", default: {}, comment: "saved search data to store for the generate task report"
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_saved_searches_on_user_id"
+  end
 
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -2424,6 +2433,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
+  add_foreign_key "saved_searches", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "sent_hearing_admin_email_events", "sent_hearing_email_events"
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"

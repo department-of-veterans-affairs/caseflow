@@ -1,27 +1,34 @@
 /* eslint-disable max-lines */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-
+import { formatDateStrUtc } from 'app/util/DateUtil';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
+import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
-
+import {
+  saveUserSearch,
+  fetchedSearches,
+  selectSavedSearch,
+  clearStatus } from 'app/nonComp/actions/savedSearchSlice';
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
+import SaveSearchModal from 'app/nonComp/components/ReportPage/SaveSearchModal';
+import SaveLimitReachedModal from 'app/nonComp/components/ReportPage/SaveLimitReachedModal';
+import DeleteModal from 'app/nonComp/components/DeleteModal';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
-
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
+import COPY from 'app/../COPY';
+import { RESET_REPORT_PAGE_FORM_VALUES } from 'app/nonComp/constants';
 
 import {
   REPORT_TYPE_OPTIONS,
@@ -109,6 +116,7 @@ const ReportPageButtons = ({
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit,
+  handleSaveSearch,
   loading,
   loadingText }) => {
   return (
@@ -123,6 +131,15 @@ const ReportPageButtons = ({
         Cancel
       </Button>
       <div {...buttonInnerContainerStyle}>
+        <Button
+          classNames={['usa-button-secondary']}
+          label="save-search"
+          name="save_search"
+          onClick={handleSaveSearch}
+          disabled={isGenerateButtonDisabled}
+        >
+          Save search
+        </Button>
         <Button
           classNames={['usa-button-secondary']}
           label="clear-filters"
@@ -148,8 +165,7 @@ const ReportPageButtons = ({
   );
 };
 
-const EventCheckboxGroup = ({ header, options, name, onChange }) => {
-
+const EventCheckboxGroup = ({ header, options, name, onChange, field: { value } }) => {
   return (
     <div>
       { header && <h4>{header}</h4> }
@@ -159,6 +175,7 @@ const EventCheckboxGroup = ({ header, options, name, onChange }) => {
             name={`${name}.${option.id}`}
             key={`${name}.${option.id}`}
             label={option.label}
+            defaultValue={get(value, option.id)}
             stronglabel
             unpadded
             onChange={(val) => onChange({ option, val })}
@@ -184,13 +201,15 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
     fieldClasses += ' usa-input-error';
     fieldClasses += ' less-error-padding';
   }
-
-  const [value, setValue] = React.useState({});
+  const [value, setValue] = React.useState(field.value);
 
   const onCheckboxClick = ({ option, val }) => {
-    value[option.id] = val;
-    field.onChange(value);
-    setValue(value);
+    const valueCopy = { ...value };
+
+    // this was necessary as without this it wouldn't let value to get updated in Saved search.
+    valueCopy[option.id] = val;
+    field.onChange(valueCopy);
+    setValue(valueCopy);
   };
 
   const messageStyling = css({
@@ -214,18 +233,21 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
               header="System"
               options={options[0].system}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
             <EventCheckboxGroup
               header="General"
               options={options[0].general}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
             <EventCheckboxGroup
               header="Requests"
               options={options[0].requests}
               name={name}
+              field={field}
               onChange={onCheckboxClick}
             />
           </div>
@@ -235,6 +257,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
           <EventCheckboxGroup
             options={options}
             name={name}
+            field={field}
             onChange={onCheckboxClick}
           />
         </fieldset>
@@ -267,46 +290,54 @@ const RHFRadioButton = ({ options, name, control, label }) => {
 };
 
 const ReportPage = ({ history }) => {
+  const selectedSearch = useSelector((state) => state.savedSearch.selectedSearch);
+  const savedSearch = selectedSearch?.savedSearch;
+  const conditions = isEmpty(savedSearch?.conditions) ? [] : Object.values(savedSearch?.conditions);
+  const specificStatus = savedSearch?.specificStatus;
+  const specificEventType = savedSearch?.specificEventType;
+
+  /*  eslint-disable camelcase */
   const defaultFormValues = {
-    reportType: '',
-    conditions: [],
+    reportType: savedSearch?.reportType || '',
+    conditions,
     timing: {
-      range: null,
-      startDate: '',
-      endDate: '',
+      range: savedSearch?.timing?.range || '',
+      startDate: formatDateStrUtc(savedSearch?.timing?.startDate, 'YYYY-MM-DD') || '',
+      endDate: formatDateStrUtc(savedSearch?.timing?.endDate, 'YYYY-MM-DD') || '',
     },
-    radioEventAction: 'all_events_action',
-    radioStatus: 'all_statuses',
-    radioStatusReportType: 'last_action_taken',
+    radioEventAction: savedSearch?.radioEventAction || 'all_events_action',
+    radioStatus: savedSearch?.radioStatus || 'all_statuses',
+    radioStatusReportType: savedSearch?.radioStatusReportType || 'last_action_taken',
     specificStatus: {
-      incomplete: '',
-      in_progress: '',
-      pending: '',
-      completed: '',
-      cancelled: ''
+      incomplete: specificStatus?.incomplete || false,
+      in_progress: specificStatus?.in_progress || false,
+      pending: specificStatus?.pending || false,
+      completed: specificStatus?.completed || false,
+      cancelled: specificStatus?.cancelled || false
     },
     specificEventType: {
-      claim_created: '',
-      claim_closed: '',
-      claim_status_incomplete: '',
-      claim_status_pending: '',
-      claim_status_inprogress: '',
-      added_decision_date: '',
-      added_issue: '',
-      added_issue_no_decision_date: '',
-      removed_issue: '',
-      withdrew_issue: '',
-      completed_disposition: '',
-      requested_issue_modification: '',
-      requested_issue_addition: '',
-      requested_issue_removal: '',
-      requested_issue_withdrawal: '',
-      approval_of_request: '',
-      rejection_of_request: '',
-      cancellation_of_request: '',
-      edit_of_request: '',
+      claim_created: specificEventType?.claim_created || false,
+      claim_closed: specificEventType?.claim_closed || false,
+      claim_status_incomplete: specificEventType?.claim_status_incomplete || false,
+      claim_status_pending: specificEventType?.claim_status_pending || false,
+      claim_status_inprogress: specificEventType?.claim_status_inprogress || false,
+      added_decision_date: specificEventType?.added_decision_date || false,
+      added_issue: specificEventType?.added_issue || false,
+      added_issue_no_decision_date: specificEventType?.added_issue_no_decision_date || false,
+      removed_issue: specificEventType?.removed_issue || false,
+      withdrew_issue: specificEventType?.withdrew_issue || false,
+      completed_disposition: specificEventType?.completed_disposition || false,
+      requested_issue_modification: specificEventType?.requested_issue_modification || false,
+      requested_issue_addition: specificEventType?.requested_issue_addition || false,
+      requested_issue_removal: specificEventType?.requested_issue_removal || false,
+      requested_issue_withdrawal: specificEventType?.requested_issue_withdrawal || false,
+      approval_of_request: specificEventType?.approval_of_request || false,
+      rejection_of_request: specificEventType?.rejection_of_request || false,
+      cancellation_of_request: specificEventType?.cancellation_of_request || false,
+      edit_of_request: specificEventType?.cancellation_of_request || false,
     }
   };
+  /*  eslint-enable camelcase */
 
   const methods = useForm({
     defaultValues: { ...defaultFormValues },
@@ -315,14 +346,21 @@ const ReportPage = ({ history }) => {
     reValidateMode: 'onSubmit'
   });
 
-  const { reset, watch, formState, control, handleSubmit } = methods;
+  const { reset, watch, formState: { isDirty }, control, handleSubmit } = methods;
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
+  const saveSearchStatus = useSelector((state) => state.savedSearch.status);
+  const saveSearchAlertTitle = useSelector((state) => state.savedSearch.message);
+  const userSearches = useSelector((state) => state.savedSearch.fetchedSearches?.userSearches);
   const isCSVGenerating = csvGeneration === 'loading';
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
+  const onInvalid = (errors) => console.error(errors);
+  const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const saveLimitCount = userSearches.length;
 
   const processConditionOptions = (condition, options) => {
     let formattedOptions;
@@ -385,6 +423,12 @@ const ReportPage = ({ history }) => {
 
     return filters;
   };
+  const isDisabledGroup = !isDirty && !savedSearch?.reportType;
+
+  const handleViewSavedSearch = () => {
+    dispatch(selectSavedSearch({}));
+    dispatch(clearStatus(null));
+  };
 
   const submitForm = (data) => {
     const filterData = parseFilters(data);
@@ -393,24 +437,61 @@ const ReportPage = ({ history }) => {
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
+  const handleSave = (data) => {
+    dispatch(saveUserSearch(data));
+    setShowSaveSearchModal(true);
+  };
+
+  const handleClearFilters = () => {
+    dispatch(selectSavedSearch({}));
+    dispatch(clearStatus(null));
+    reset(RESET_REPORT_PAGE_FORM_VALUES);
+  };
+
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
+    dispatch(fetchedSearches({ organizationUrl: businessLineUrl }));
   }, []);
 
-  return (
+  return (<>
+    { saveSearchStatus === 'succeeded' ?
+      <Alert
+        type="success"
+        title={saveSearchAlertTitle}
+        message={COPY.SEARCH_ALERT_DESCRIPTION}
+        scrollOnAlert /> :
+      null
+    }
+    { saveSearchStatus === 'failed' ?
+      <Alert title="Something went wrong" type="error" scrollOnAlert>
+        If you continue to see this page, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </Alert> :
+      null
+    }
     <NonCompLayout
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty}
-          handleClearFilters={() => reset()}
-          handleSubmit={handleSubmit(submitForm)}
+          isGenerateButtonDisabled={isDisabledGroup}
+          handleClearFilters={handleClearFilters}
+          handleSubmit={handleSubmit(submitForm, onInvalid)}
+          handleSaveSearch={handleSubmit(handleSave)}
           loading={isCSVGenerating}
           loadingText="Generating CSV"
         />
       }
     >
-      <h1>Generate task report</h1>
+      <div className="report-page-header">
+        <h1>Generate task report</h1>
+        <Link
+          button="secondary"
+          to={`/${businessLineUrl}/searches`}
+          onClick={handleViewSavedSearch}>
+            View saved searches
+        </Link>
+      </div>
       <FormProvider {...methods}>
         <form>
           <RHFControlledDropdownContainer
@@ -430,8 +511,7 @@ const ReportPage = ({ history }) => {
                 options={SPECIFIC_STATUS_OPTIONS}
                 control={control}
                 name="specificStatus"
-              />) :
-              null
+              />) : null
             }
             <RHFRadioButton
               options={RADIO_STATUS_REPORT_TYPE_OPTIONS}
@@ -439,8 +519,7 @@ const ReportPage = ({ history }) => {
               label="Select type of status report"
               name="radioStatusReportType"
             />
-          </>) :
-            null
+          </>) : null
           }
           {watchReportType === 'event_type_action' ? (
             <RHFRadioButton
@@ -463,10 +542,27 @@ const ReportPage = ({ history }) => {
             <TimingSpecification /> :
             null
           }
-          {formState.isDirty ? <ReportPageConditions /> : null}
+          { showSaveSearchModal && saveLimitCount < 10 ?
+            <SaveSearchModal setShowSaveSearchModal={setShowSaveSearchModal} /> : null
+          }
+          { showSaveSearchModal && (saveLimitCount >= 10) ?
+            <SaveLimitReachedModal
+              userSearches={userSearches}
+              handleCancel={() => setShowSaveSearchModal(false)}
+              onClickDelete={() => setShowDeleteModal(true)}
+              handleRedirect={() => {
+                history.push(`/${businessLineUrl}/searches`);
+                setShowSaveSearchModal(false);
+                handleViewSavedSearch();
+              }}
+            /> : null
+          }
+          {showDeleteModal ? <DeleteModal setShowDeleteModal={setShowDeleteModal} /> : null}
+          {isDirty || savedSearch?.reportType ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>
+  </>
   );
 };
 
@@ -475,6 +571,7 @@ ReportPageButtons.propTypes = {
   isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
+  handleSaveSearch: PropTypes.func,
   loading: PropTypes.bool,
   loadingText: PropTypes.string,
 };
@@ -493,6 +590,7 @@ RHFCheckboxGroup.propTypes = {
 EventCheckboxGroup.propTypes = {
   options: PropTypes.array,
   onChange: PropTypes.func,
+  field: PropTypes.object,
   header: PropTypes.string,
   name: PropTypes.string
 };

@@ -1,27 +1,24 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import createNonCompStore from '../../nonCompStoreCreator';
 
 describe('DaysWaiting', () => {
   const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+    const store = createNonCompStore(storeValues);
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
