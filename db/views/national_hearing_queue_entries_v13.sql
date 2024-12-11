@@ -91,7 +91,7 @@ WITH latest_cutoff_date AS (
       AND (mst_status IS TRUE OR pact_status IS TRUE)
       GROUP BY decision_review_id
     ) AS request_issues_status ON (appeals.id = request_issues_status.decision_review_id)
-    JOIN request_issues ON (request_issues.decision_review_id = appeals.id AND request_issues.decision_review_type = 'Appeal')
+    LEFT JOIN request_issues ON (request_issues.decision_review_id = appeals.id AND request_issues.decision_review_type = 'Appeal')
   WHERE
     tasks.type = 'ScheduleHearingTask'
     AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
@@ -176,7 +176,7 @@ WITH latest_cutoff_date AS (
       MAX(isspact) AS pact
       FROM issues_awaiting_hearing_scheduling()
       GROUP BY isskey) AS fvi ON (fvi.isskey = brieff.bfkey)
-    JOIN reps_awaiting_hearing_scheduling() ON (repkey = legacy_appeals.vacols_id)
+    LEFT JOIN reps_awaiting_hearing_scheduling() ON (repkey = legacy_appeals.vacols_id)
   WHERE
     tasks.type = 'ScheduleHearingTask'
     AND tasks.status IN ('assigned', 'in_progress', 'on_hold')

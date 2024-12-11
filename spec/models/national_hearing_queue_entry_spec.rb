@@ -1477,6 +1477,52 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
     end
   end
+  context "claimant_indicator" do
+    subject do
+      NationalHearingQueueEntry.refresh
+      NationalHearingQueueEntry.find_by(appeal: appeal).contested_claim_indicator
+    end
+    context "For AMA appeals" do
+      let!(:appeal) do
+        create(
+          :appeal,
+          :with_schedule_hearing_tasks,
+          original_hearing_request_type: "central"
+        )
+      end
+      let!(:request_issue) do
+        [FactoryBot.create(:request_issue, :nonrating)]
+      end
+      it "an appeal with a nonrating issue category of Apportionment gets selected " do
+        appeal.update!(request_issues: request_issue)
+        is_expected.to eq true
+      end
+      it "an appeal with a nonrating issue category of Contested gets selected " do
+        request_issue[0].update!(nonrating_issue_category: "Contested")
+        appeal.update!(request_issues: request_issue)
+        is_expected.to eq true
+      end
+      it "an appeal with no nonrating_issue_category" do
+        request_issue = []
+        appeal.update!(request_issues: request_issue)
+        is_expected.to eq false
+      end
+
+      context "appeal with multiple request_issues" do
+        let!(:request_issues) do
+          [
+            FactoryBot.create(:request_issue, :nonrating),
+            FactoryBot.create(:request_issue, :rating_decision)
+          ]
+        end
+        it "an appeal with one qualifying request_issue" do
+          appeal.update!(request_issues: request_issues)
+          byebug
+          is_expected.to eq true
+        end
+      end
+    end
+  end
 
   def stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
     vacols_case = create(:case, bfhr: "1", bfd19: receipt_date, bfac: cavc ? "7" : "1")
