@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceDetailsController < CorrespondenceController
-  include CorrespondenceControllerConcern
-
   before_action :correspondence_details_access
 
   def correspondence_details
@@ -194,6 +192,10 @@ class CorrespondenceDetailsController < CorrespondenceController
     correspondences_appeals_tasks
   end
 
+  def veteran_information
+    render json: Correspondence::VeteranSerializer.new(veteran_by_correspondence)
+  end
+
   private
 
   def task_params
@@ -322,5 +324,15 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
 
     { prior_mail: serialized_mail }
+  end
+
+  def general_information
+    {
+      notes: correspondence.notes,
+      correspondence_type_id: correspondence.correspondence_type_id,
+      correspondence_tasks: correspondence.tasks.map do |task|
+        WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
+      end
+    }
   end
 end

@@ -77,6 +77,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.mailTasks
       }
     });
+  case ACTIONS.VETERAN_INFORMATION:
+    return update(state, {
+      veteranInformation: {
+        $set: action.payload.veteranInformation
+      }
+    });
   default:
     return state;
   }

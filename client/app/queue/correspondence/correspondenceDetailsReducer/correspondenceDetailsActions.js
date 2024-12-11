@@ -20,6 +20,15 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 
+export const updateVeteranInformation = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.VETERAN_INFORMATION,
+    payload: {
+      veteranInformation: payload
+    }
+  });
+};
+
 export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
     then((response) => {
@@ -550,4 +559,12 @@ export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
 
       console.error(errorMessage);
     });
+};
+
+export const fetchVeteranInformation = (uuid) => async (dispatch) => {
+  const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
+  const data = response.body.data.attributes;
+  console.log(data)
+
+  dispatch(updateVeteranInformation(data));
 };
