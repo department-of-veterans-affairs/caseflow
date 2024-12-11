@@ -354,7 +354,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         let(:another_nonpriority_ready_case_docket_number) { "9901002" }
         it "correctly orders the docket" do
           expect(subject.count).to eq(1)
-          puts subject
+
           expect(subject.first["bfkey"]).to eq another_nonpriority_ready_case.reload.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)

@@ -487,7 +487,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
 
     nonpriority_cdl_aoj_query = generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
-
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
@@ -626,6 +625,13 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
         appeals = conn.exec_query(query).to_a
+        if appeals.empty?
+          puts "appeals is empty"
+        else
+          puts "appeals is not empty"
+          puts appeals
+        end
+
         return appeals if appeals.empty?
 
         aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
