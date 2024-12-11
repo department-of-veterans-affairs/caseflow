@@ -33,8 +33,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
     let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
     before { TranscriptionTeam.singleton.add_user(user) }
 
-    let(:file_status_uploaded) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
-    let(:file_status_retrieval) { Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success }
+    let(:file_status_uploaded) { "Successful upload (AWS)" }
+    let(:file_status_retrieval) { "Retrieval (Webex)" }
 
     let(:hearing_day_1) { create(:hearing_day, scheduled_for: "2014-01-19") }
     let(:hearing_day_2) { create(:hearing_day, scheduled_for: "2020-05-14") }
@@ -72,7 +72,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       create(
         :transcription_file,
         hearing: hearing_3,
-        file_status: file_status_retrieval,
+        file_status: file_status_retrieva,
         transcription_id: transcription_1.id,
         date_returned_box: Time.zone.now + 16.days,
         date_upload_box: Time.zone.now + 12.days
@@ -445,7 +445,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_1, transcription_response_2, transcription_response_4, transcription_response_4]
+          data: [transcription_response_1, transcription_response_2, transcription_response_4, transcription_response_3]
         },
         tasks_per_page: 15,
         total_task_count: 4
