@@ -72,7 +72,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       create(
         :transcription_file,
         hearing: hearing_3,
-        file_status: file_status_retrieva,
+        file_status: file_status_retrieval,
         transcription_id: transcription_1.id,
         date_returned_box: Time.zone.now + 16.days,
         date_upload_box: Time.zone.now + 12.days
