@@ -1065,7 +1065,7 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
   correspondenceStatus: PropTypes.string,
-  mailTasks: PropTypes.object,
+  mailTasks: PropTypes.array,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
