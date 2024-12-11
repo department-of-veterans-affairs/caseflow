@@ -9,6 +9,9 @@ class Remediations::DuplicatePersonRemediationService
     Notification
   ].freeze
 
+  # Define the parameter struct for remediation audit params
+  RemediationAuditParams = Struct.new(:after_data, :before_data, :type, :id)
+
   def initialize(updated_person_id:, duplicate_person_ids:, event_record:)
     @updated_person_id = updated_person_id
     @duplicate_person_ids = duplicate_person_ids
@@ -43,15 +46,16 @@ class Remediations::DuplicatePersonRemediationService
 
       records.map do |record|
         before_data = record.attributes
-
         record.update!("#{column}": og_person.participant_id)
-
-        add_remediation_audit(
-          after_data: record.attributes,
-          before_data: before_data,
-          id: record.id,
-          type: record.class.name
+        # Use the parameter object for the audit params
+        audit_params = RemediationAuditParams.new(
+          record.attributes,  # after_data
+          before_data,        # before_data
+          record.class.name,  # type
+          record.id           # id
         )
+
+        add_remediation_audit(audit_params)
       end
     end
 
@@ -59,15 +63,15 @@ class Remediations::DuplicatePersonRemediationService
 
     attr_reader :duplicate_persons, :event_record, :og_person, :klass
 
-    def add_remediation_audit(after_data:, before_data:, type:, id:)
+    def add_remediation_audit(audit_params)
       EventRemediationAudit.create!(
         event_record: event_record,
-        remediated_record_type: type,
-        remediated_record_id: id,
+        remediated_record_type: audit_params.type,
+        remediated_record_id: audit_params.id,
         info: {
           remediation_type: "DuplicatePersonRemediationService",
-          after_data: after_data,
-          before_data: before_data
+          after_data: audit_params.after_data,
+          before_data: audit_params.before_data
         }
       )
     end
