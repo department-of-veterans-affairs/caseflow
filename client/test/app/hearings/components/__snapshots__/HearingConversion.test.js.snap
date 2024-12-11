@@ -43,7 +43,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -296,6 +296,7 @@ SAN FRANCISCO, CA 94103
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            aria-label="Pacific Time (US & Canada) (12:30 AM)"
                             aria-labelledby="appellant-tz-label"
                             aria-owns="appellant-tz-listbox"
                             autocapitalize="none"
@@ -471,6 +472,7 @@ SAN FRANCISCO, CA 94103
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            aria-label="Mountain Time (US & Canada) (1:30 AM)"
                             aria-labelledby="representative-tz-label"
                             aria-owns="representative-tz-listbox"
                             autocapitalize="none"
@@ -803,6 +805,7 @@ SAN FRANCISCO, CA 94103
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            aria-label="Pacific Time (US & Canada) (12:30 AM)"
                             aria-labelledby="appellant-tz-label"
                             aria-owns="appellant-tz-listbox"
                             autocapitalize="none"
@@ -978,6 +981,7 @@ SAN FRANCISCO, CA 94103
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            aria-label="Mountain Time (US & Canada) (1:30 AM)"
                             aria-labelledby="representative-tz-label"
                             aria-owns="representative-tz-listbox"
                             autocapitalize="none"
@@ -1136,6 +1140,7 @@ SAN FRANCISCO, CA 94103
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
+                          aria-label="null"
                           aria-labelledby="judge-dropdown-label"
                           aria-owns="judge-dropdown-listbox"
                           autocapitalize="none"

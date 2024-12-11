@@ -108,6 +108,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                             aria-expanded="false"
                             aria-haspopup="true"
                             aria-label="040HDENR"
+                            aria-labelledby="select-claim-label-label"
                             aria-owns="select-claim-label-listbox"
                             autocapitalize="none"
                             autocomplete="off"
