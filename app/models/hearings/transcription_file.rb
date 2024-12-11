@@ -48,7 +48,8 @@ class TranscriptionFile < CaseflowRecord
   }
 
   scope :unassigned, lambda {
-    where("transcription_packages.status IS NULL")
+    where("file_type != 'zip' AND
+      (transcription_packages.status IS NULL OR transcription_packages.status = 'cancelled')")
   }
 
   scope :completed, lambda {
@@ -137,6 +138,7 @@ class TranscriptionFile < CaseflowRecord
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
+    FileUtils.mkdir_p(File.dirname(tmp_location))
     S3Service.fetch_file(aws_link, tmp_location)
     tmp_location
   end

@@ -21,11 +21,13 @@ RSpec.describe Hearings::VaBoxUploadJob do
     allow(box_service).to receive(:get_child_folder_id).and_return("0000001")
     allow(Caseflow::S3Service).to receive(:fetch_file).and_return(master_zip_file_path)
     TranscriptionPackageHearing.create!(
-      hearing_id: hearing.id,
+      hearingable_id: hearing.id,
+      hearingable_type: "Hearing",
       transcription_package_id: transcription_package.id
     )
-    TranscriptionPackageLegacyHearing.create!(
-      legacy_hearing_id: legacy_hearing.id,
+    TranscriptionPackageHearing.create!(
+      hearingable_id: legacy_hearing.id,
+      hearingable_type: "LegacyHearing",
       transcription_package_id: transcription_package.id
     )
     [hearing, legacy_hearing].each do |h|

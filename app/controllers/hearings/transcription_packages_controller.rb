@@ -20,6 +20,52 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     }
   end
 
+  def create_package
+    result = TranscriptionPackages.new(transcription_pispatch_params).call
+    count = transcription_pispatch_params[:hearings].count
+    contractor = transcription_pispatch_params[:contractor_name]
+    status = "#{count} transcription file#{count != 1 ? 's' : ''} to #{contractor}"
+
+    if result
+      title = "You have successfully assigned #{status}"
+      message = ""
+      type = "success"
+    else
+      title = "Unable to package #{status}"
+      message = "All hearings in this work order will be returned to Unassigned queue"
+      type = "error"
+    end
+
+    render json: {
+      title: title,
+      message: message,
+      type: type
+    }
+  end
+
+  def next_task_number
+    task_number = TranscriptionPackage.next_task_number(current_user.id)
+
+    existing_package = TranscriptionPackage.find_by_task_number(task_number)
+    if !existing_package
+      TranscriptionPackage.create!(
+        task_number: task_number,
+        created_by_id: current_user.id
+      )
+    end
+
+    render json: { task_number: task_number }
+  end
+
+  def transcription_pispatch_params
+    params
+      .permit(:work_order_name,
+              :sent_to_transcriber_date,
+              :return_date,
+              :contractor_name,
+              hearings: [:hearing_id, :hearing_type])
+  end
+
   def apply_search
     return if params[:search].blank?
 

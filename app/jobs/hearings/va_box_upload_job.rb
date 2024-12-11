@@ -41,7 +41,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   private
 
   def box_service
-    @box_service ||= ExternalApi::VaBoxService.new
+    @box_service ||= VaBoxService.new
   end
 
   def upload_master_zip_to_box
@@ -79,7 +79,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
   def download_file_from_s3(s3_path)
     @master_zip_file_path = Rails.root.join("tmp", "transcription_files", File.basename(s3_path))
-    Caseflow::S3Service.fetch_file(s3_path, @master_zip_file_path)
+    S3Service.fetch_file(s3_path, @master_zip_file_path)
     Rails.logger.info("File successfully downloaded from S3: #{@master_zip_file_path}")
     @master_zip_file_path
   end
@@ -102,9 +102,10 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   end
 
   def update_transcriptions
-    @transcription_package.transcriptions.each do |transcription|
-      transcription.update!(
-        transcription_contractor: contractor,
+    @transcription_package.all_hearings.each do |hearingable|
+      hearingable.transcriptions&.update_all(
+        task_number: @transcription_package.task_number,
+        transcription_contractor_id: contractor.id,
         updated_by_id: RequestStore.store[:current_user].id,
         transcription_status: "in_transcription",
         sent_to_transcriber_date: Time.zone.today
@@ -113,11 +114,12 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   end
 
   def update_transcription_files
-    @transcription_package.transcriptions&.each do |transcription|
-      transcription.transcription_files&.update_all(
+    @transcription_package.all_hearings.each do |hearingable|
+      hearingable.transcription_files&.update_all(
         date_upload_box: Time.current,
         updated_by_id: RequestStore.store[:current_user].id,
-        file_status: "Successful Upload (BOX)"
+        file_status: "Successful Upload (BOX)",
+        locked_at: nil
       )
     end
   end

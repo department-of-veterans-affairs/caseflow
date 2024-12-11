@@ -57,6 +57,7 @@ module Hearings
 
     def create_zip_file(file_paths, hearing)
       zip_file_name = generate_zip_file_name(hearing)
+      FileUtils.mkdir_p(File.dirname(zip_file_name))
       Zip::File.open(zip_file_name, create: true) do |zip_file|
         file_paths.each { |path| zip_file.add(File.basename(path), path) }
       end
@@ -87,16 +88,20 @@ module Hearings
     end
 
     def create_and_upload_transcription_file(hearing, file_path)
-      TranscriptionFile.create!(
-        file_name: File.basename(file_path),
-        hearing_id: hearing.id,
-        hearing_type: hearing.class.name,
-        docket_number: hearing.docket_number,
-        file_type: "zip",
-        created_by_id: RequestStore[:current_user].id
-      ).upload_to_s3!
-    rescue ActiveRecord::RecordInvalid => error
-      Rails.logger.error "Failed to create transcription file: #{error.message}"
+      begin
+        TranscriptionFile.create!(
+          file_name: File.basename(file_path),
+          hearing_id: hearing.id,
+          hearing_type: hearing.class.name,
+          docket_number: hearing.docket_number,
+          file_type: "zip",
+          created_by_id: RequestStore[:current_user].id
+        ).upload_to_s3!
+      rescue ActiveRecord::RecordNotUnique => error
+        Rails.logger.error "Failed to create transcription file: #{error.message}"
+      rescue ActiveRecord::RecordInvalid => error
+        Rails.logger.error "Failed to create transcription file: #{error.message}"
+      end
     end
   end
 end

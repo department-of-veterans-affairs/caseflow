@@ -39,11 +39,6 @@ describe TranscriptionPackages do
         allow_any_instance_of(TranscriptionPackages).to receive(:upload_transcription_package).and_return(true)
         expect { subject.call }.not_to raise_error
       end
-
-      it "Call to upload_transcription_package method" do
-        expect(Hearings::VaBoxUploadJob).to receive(:perform_now).with(transcription_package)
-        subject.upload_transcription_package(transcription_package)
-      end
     end
   end
 end

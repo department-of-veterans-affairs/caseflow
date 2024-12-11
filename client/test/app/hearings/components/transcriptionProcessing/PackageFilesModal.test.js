@@ -20,13 +20,13 @@ const setup = () => {
   );
 };
 
-const mockTaskId = (taskId) => {
-  getSpy.mockImplementationOnce(() => new Promise((resolve) => resolve({ body: { task_id: taskId } })));
+const mockTaskId = (taskNumber) => {
+  getSpy.mockImplementationOnce(() => new Promise((resolve) => resolve({ body: { task_number: taskNumber } })));
 };
 
 describe('Package files modal', () => {
   it('radio button displays correct dates', () => {
-    mockTaskId(347);
+    mockTaskId('BVA-2025-1345');
     setup();
 
     expect(screen.getByRole('radio', { name: 'Return in 15 days (09/05/2024)' })).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('Package files modal', () => {
   });
 
   it('dropdown displays contractors', () => {
-    mockTaskId(347);
+    mockTaskId('BVA-2025-1345');
     setup();
     const dropdown = screen.getByRole('combobox');
 
@@ -44,28 +44,8 @@ describe('Package files modal', () => {
     expect(screen.getByText('The Ravens Group, Inc.')).toBeInTheDocument();
   });
 
-  it('generates work order properly when task id is low', async () => {
-    mockTaskId(347);
-    const year = new Date().getFullYear();
-
-    setup();
-
-    expect(await screen.findByText(`BVA-${year}-0347`)).toBeInTheDocument();
-  });
-
-  it('generates work order properly when task id is high', async () => {
-    mockTaskId(346749);
-    const year = new Date().getFullYear().
-      toString().
-      substring(2);
-
-    setup();
-
-    expect(await screen.findByText(`BVA-${year}34-6749`)).toBeInTheDocument();
-  });
-
   it('matches snapshot', () => {
-    mockTaskId(346749);
+    mockTaskId('BVA-2025-1345');
     const { container } = setup();
 
     expect(container).toMatchSnapshot();
@@ -74,6 +54,7 @@ describe('Package files modal', () => {
   it('passes a11y testing', async () => {
     jest.useRealTimers();
     mockTaskId(346749);
+    mockTaskId('BVA-202534-6749');
     const { container } = setup();
 
     const results = await axe(container);

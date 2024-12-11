@@ -7,7 +7,7 @@ import ApiUtil from 'app/util/ApiUtil';
 const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
 
   const unassignWorkOrder = (orderNumber) => {
-    const cleanedWorkOrderNumber = orderNumber.replace('BVA', '');
+    const cleanedWorkOrderNumber = orderNumber;
     const data = { task_number: cleanedWorkOrderNumber };
     const url = '/hearings/transcription_work_order/unassigning_work_order';
 

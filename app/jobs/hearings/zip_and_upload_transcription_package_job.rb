@@ -94,16 +94,32 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   end
 
   def save_transcription_package_in_database(transcription_package_tmp)
-    ::TranscriptionPackage.create!(
+    # re-use unassigned version of package if it exists
+    transcription_package = TranscriptionPackage.find_or_create_by(task_number: @work_order[:work_order_name])
+    transcription_package.update!(
       aws_link_zip: s3_location(transcription_package_tmp),
       aws_link_work_order: s3_location(@work_order_tmp_path),
       created_by_id: RequestStore[:current_user].id,
       status: "Successful upload (AWS)",
       task_number: @work_order[:work_order_name],
+      expected_return_date: format_return_date(@work_order[:return_date]),
       contractor_id: ::TranscriptionContractor.find_by(name: @work_order[:contractor_name])&.id
     )
+    @work_order[:hearings].each do |hearing|
+      TranscriptionPackageHearing.create!(
+        hearingable_id: hearing[:hearing_id],
+        hearingable_type: hearing[:hearing_type],
+        transcription_package_id: transcription_package.id
+      )
+    end
+    transcription_package
   rescue ActiveRecord::RecordInvalid => error
-    Rails.logger.error "Failed to create transcription file: #{error.message}"
+    Rails.logger.error "Failed to create transcription package: #{error.message}"
+  end
+
+  def format_return_date(return_date)
+    parts = return_date.split("/")
+    "#{parts[2]}-#{parts[0]}-#{parts[1]}".to_date
   end
 
   def cleanup_tmp_files

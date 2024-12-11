@@ -29,10 +29,22 @@ const TitleWrapper = styled.div`
 `;
 
 export const TranscriptionFileDispatchView = ({ organizations }) => {
-  const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
+
+  const alertFromUrl = () => {
+    const params = getQueryParams(window.location.search);
+    let alert = defaultAlert;
+
+    if (params.alert) {
+      alert = JSON.parse(decodeURIComponent(params.alert));
+    }
+
+    return alert;
+  };
+
+  const [alert, setAlert] = useState(alertFromUrl());
 
   const tabFromUrl = () => {
     const params = getQueryParams(window.location.search);

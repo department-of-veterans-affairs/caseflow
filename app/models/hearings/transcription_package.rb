@@ -3,9 +3,9 @@
 class TranscriptionPackage < CaseflowRecord
   belongs_to :contractor, class_name: "TranscriptionContractor"
   has_many :transcription_package_hearings
-  has_many :hearings, through: :transcription_package_hearings
-  has_many :transcription_package_legacy_hearings
-  has_many :legacy_hearings, through: :transcription_package_legacy_hearings
+  has_many :hearings, through: :transcription_package_hearings, source: :hearingable, source_type: "Hearing"
+  has_many :legacy_hearings,
+           through: :transcription_package_hearings, source: :hearingable, source_type: "LegacyHearing"
   has_many :transcriptions, foreign_key: :task_number, primary_key: :task_number
 
   scope :filter_by_date, lambda { |values, field_name|
@@ -57,7 +57,13 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def all_hearings
-    (hearings + legacy_hearings).map { |hearing| serialize_hearing(hearing) }
+    hearings + legacy_hearings
+  end
+
+  def all_hearings_serialized
+    all_hearings.map do |hearing|
+      serialize_hearing(hearing)
+    end
   end
 
   def formatted_date_upload_box
@@ -69,18 +75,38 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def contents_count
-    (hearings + legacy_hearings).length
+    transcription_package_hearings.length
   end
 
   def self.cancel_by_task_number(task_number)
     find_by(task_number: task_number)&.update(status: "cancelled")
   end
 
-  def self.next_task_number
+  def self.next_task_number(user_id)
     fiscal_year = (Time.zone.now + 92.days).strftime("%Y")
     latest = TranscriptionPackage.where("task_number LIKE 'BVA-#{fiscal_year}%'").order("task_number DESC").first
-    next_task_number = latest ? latest.task_number.split("-").last.to_i + 1 : 1
-    "BVA-#{fiscal_year}-#{next_task_number.to_s.rjust(4, '0')}"
+
+    next_task_number = 1
+    extra = ""
+
+    if latest
+      latest_number = latest.task_number.split("-").last.to_i
+
+      # re-use temporary number
+      next_task_number = if latest.status.blank? && latest.created_by_id == user_id
+                           latest_number
+                         else
+                           latest_number + 1
+                         end
+    end
+
+    # pad year if number is more than four digits
+    if next_task_number.to_s.length > 4
+      extra = next_task_number.to_s[0...-4]
+      next_task_number = next_task_number.to_s[3..-1].to_i
+    end
+
+    "BVA-#{fiscal_year}#{extra}-#{next_task_number.to_s.rjust(4, '0')}"
   end
 
   private

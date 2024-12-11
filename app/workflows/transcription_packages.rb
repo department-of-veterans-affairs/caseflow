@@ -22,17 +22,16 @@ class TranscriptionPackages
   end
 
   def create_bom_file
-    Hearings::CreateBomFileJob.perform_now(work_order_params) ? zip_and_upload_transcription_package : return
+    Hearings::CreateBillOfMaterialsJob.perform_now(work_order_params) ? zip_and_upload_transcription_package : return
   end
 
   def zip_and_upload_transcription_package
-    transcription_package = Hearings::ZipAndUploadTranscriptionPackageJob.perform_now(work_order_params)
-    if transcription_package.is_a?(TranscriptionPackage)
-      upload_transcription_package(transcription_package)
-    end
+    @transcription_package = Hearings::ZipAndUploadTranscriptionPackageJob.perform_now(work_order_params)
+    @transcription_package.is_a?(TranscriptionPackage) ? upload_transcription_package(@transcription_package) : return
   end
 
   def upload_transcription_package(transcription_package)
     Hearings::VaBoxUploadJob.perform_now(transcription_package)
+    @transcription_package.status == "Successful Upload (BOX)"
   end
 end

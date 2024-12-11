@@ -49,7 +49,12 @@ const advanceOnDocketFiles = [{
 }];
 
 const setup = (selectedFiles, workOrder, returnDateValue, contractor) => {
-  const history = { location: { state: { selectedFiles, workOrder, returnDateValue, contractor } } };
+  const history = {
+    push: jest.fn(),
+    location: {
+      state: { selectedFiles, workOrder, returnDateValue, contractor }
+    }
+  };
 
   return render(
     <Router>
