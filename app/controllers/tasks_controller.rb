@@ -219,20 +219,6 @@ class TasksController < ApplicationController
     end
   end
 
-  def cancel_review_transcript_task
-    instructions = params[:task][:instructions]
-
-    ActiveRecord::Base.transaction do
-      task = ReviewTranscriptTask.find(params[:id])
-      task.cancel_task_and_child_subtasks
-      task.update!(instructions: instructions)
-    end
-
-    render json: {}, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
-  end
-
   private
 
   def process_information_to_vbms(info_file, file_name, current_file_path)
