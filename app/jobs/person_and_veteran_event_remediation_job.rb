@@ -34,6 +34,8 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           event_record: event_record,
           updated_person_id: original_id
         ).remediate!
+      else
+        @event_record.processed!
       end
     end
 
@@ -72,6 +74,8 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           after_file_num,
           event_record
         ).remediate!
+      else
+        @event_record.processed!
       end
     end
 
@@ -107,7 +111,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   end
 
   def find_events(event_type)
-    EventRecord.where(evented_record_type: event_type, remediation_status: [pending, failed])
-    # EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
+    EventRecord.where(evented_record_type: event_type, remediation_status: [:pending, :failed])
   end
 end
