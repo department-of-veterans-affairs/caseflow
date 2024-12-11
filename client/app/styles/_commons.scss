@@ -744,6 +744,10 @@ form {
   padding: 2rem;
 }
 
+.cf-file-error-container {
+  background-color: $color-red-lightest;
+}
+
 .cf-file-input-container-selected {
   border: 1px dashed $color-gray-dark;
   background-color: $color-primary-alt-lightest;
