@@ -122,4 +122,29 @@ describe EventRecord, :postgres do
       expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
+
+  context "does something" do
+    let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
+    let!(:event_record) { EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1) }
+
+    it "set to processed" do
+      event_record.processed!
+      expect(event_record.processed?).to be_truthy
+    end
+
+    it "set to in_progress" do
+      event_record.remediated!
+      expect(event_record.remediated?).to be_truthy
+    end
+
+    it "set to pending" do
+      event_record.pending!
+      expect(event_record.pending?).to be_truthy
+    end
+
+    it "set to failed" do
+      event_record.failed!
+      expect(event_record.failed?).to be_truthy
+    end
+  end
 end
