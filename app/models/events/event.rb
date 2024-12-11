@@ -6,6 +6,7 @@ class Event < CaseflowRecord
   store_accessor :info, :errored_claim_id
 
   scope :with_errored_claim_id, -> { where.not("info -> 'errored_claim_id' IS NULL") }
+  scope :with_errored_participant_id, -> { where.not("info -> 'errored_participant_id' IS NULL") }
 
   def completed?
     completed_at?
@@ -14,6 +15,12 @@ class Event < CaseflowRecord
   def self.find_errors_by_claim_id(claim_id)
     with_errored_claim_id
       .where("info ->> 'errored_claim_id' = ?", claim_id)
+      .pluck(:error)
+  end
+
+  def self.find_errors_by_participant_id(participant_id)
+    with_errored_claim_id
+      .where("info ->> 'errored_participant_id' = ?", participant_id)
       .pluck(:error)
   end
 
