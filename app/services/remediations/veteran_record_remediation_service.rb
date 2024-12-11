@@ -14,11 +14,15 @@ class Remediations::VeteranRecordRemediationService
       # If there are duplicates, run dup_fix on @after_fn
       if dup_fix(after_fn)
         dups.each(&:destroy!)
+        @event_record.update!(remediation_status: 2)
       end
-    else
+    elsif fix_vet_records
       # Otherwise, fix veteran records normally
-      fix_vet_records
+      @event_record.update!(remediation_status: 2)
+    else
+      @event_record.update!(remediation_status: 3)
     end
+    @event_record.remediation_attempts += 1
   end
 
   private
