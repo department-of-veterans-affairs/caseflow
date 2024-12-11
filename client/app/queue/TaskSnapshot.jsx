@@ -16,7 +16,7 @@ import Alert from '../components/Alert';
 
 const tableStyling = css({
   width: '100%',
-  marginTop: '0px'
+  marginTop: '2rem'
 });
 
 const alertStyling = css({
