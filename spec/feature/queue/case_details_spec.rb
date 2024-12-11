@@ -705,7 +705,6 @@ RSpec.feature "Case details", :all_dbs do
     context "with reader role" do
       before do
         attorney_user.update!(roles: attorney_user.roles + ["Reader"])
-        allow(Fakes::VBMSService).to receive(:fetch_documents_for).and_call_original
       end
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
