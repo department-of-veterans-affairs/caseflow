@@ -267,6 +267,7 @@ Rails.application.routes.draw do
 
   scope module: "hearings/national_hearing_queue", path: "/national_hearing_queue" do
     get "/cutoff_date", action: "cutoff_date"
+    post "/cutoff_date", action: "update_cutoff_date"
   end
 
   patch "certifications" => "certifications#create"
