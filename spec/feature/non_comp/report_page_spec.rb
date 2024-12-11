@@ -322,15 +322,6 @@ feature "NonComp Report Page", :postgres do
     expect(page).to have_button("Generate task report", disabled: true)
   end
 
-  def latest_download
-    downloads.max_by { |file| File.mtime(file) }
-  end
-
-  def download_csv
-    wait_for_download
-    CSV.read(latest_download)
-  end
-
   def change_history_csv_file(rows)
     csv_file = download_csv
     expect(csv_file).to_not eq(nil)

@@ -36,7 +36,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
   const { watch, register } = useFormContext();
   const conds = watch('conditions');
 
-  let selectedOptions = conds.map((cond) => cond.condition).filter((cond) => cond !== null);
+  let selectedOptions = conds.map((cond) => cond.condition).filter((cond) => cond !== null && cond !== field.condition);
 
   // personnel and facility are mutually exclusive
   if (selectedOptions.includes('facility')) {
@@ -53,7 +53,6 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
   const conditionsLength = useWatch({ name: 'conditions' }).length;
   const shouldShowAnd = (conditionsLength > 1) && (index !== (conditionsLength - 1));
   const selectedConditionValue = useWatch({ control, name: `${name}.condition` });
-
   const hasMiddleContent = selectedConditionValue && selectedConditionValue !== 'daysWaiting';
   const middleContentClassName = hasMiddleContent ?
     'report-page-variable-content' :
@@ -76,7 +75,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
   return <div className="report-page-segment">
     <div className="cf-app-segment cf-app-segment--alt report-page-variable-condition" >
       <div className="report-page-variable-select">
-        <ConditionDropdown {...{ control, filteredOptions, name }} />
+        <ConditionDropdown {...{ control, filteredOptions, name, field }} />
       </div>
       {hasMiddleContent ? <div className="report-page-middle-content">including</div> : null}
       <div className={middleContentClassName}>

@@ -41,7 +41,7 @@ export const createSearch = createAsyncThunk(
   async({ organizationUrl, postData }, thunkApi) => {
     try {
       const url = `/decision_reviews/${organizationUrl}/searches`;
-      const response = await ApiUtil.post(url, { data: ApiUtil.convertToSnakeCase(postData) });
+      const response = await ApiUtil.post(url, { data: JSON.stringify(postData) });
 
       return thunkApi.fulfillWithValue(response.body);
     } catch (error) {
@@ -79,7 +79,10 @@ const savedSearchSlice = createSlice({
     },
     saveUserSearch: (state, action) => {
       state.saveUserSearch = action.payload;
-    }
+    },
+    clearStatus: (state, action) => {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.
@@ -126,4 +129,4 @@ const savedSearchSlice = createSlice({
 });
 
 export default savedSearchSlice.reducer;
-export const { selectSavedSearch, saveUserSearch } = savedSearchSlice.actions;
+export const { selectSavedSearch, saveUserSearch, clearStatus } = savedSearchSlice.actions;

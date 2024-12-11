@@ -26,6 +26,7 @@ export const conditionsSchema = yup.array().of(
   yup.lazy((value) => {
     return yup.object(
       { condition: yup.string().typeError(ERRORS.MISSING_CONDITION).
+        transform((curr, orig) => (orig === '' ? null : curr)).
         oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
         required(),
       options: conditionOptionSchemas[value.condition]

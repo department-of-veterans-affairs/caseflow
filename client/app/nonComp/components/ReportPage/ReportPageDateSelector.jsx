@@ -20,6 +20,7 @@ const ReportPageDateSelector = ({ name, label, control, errorMessage }) => {
           key={`date-selector-${name}`}
           label={label}
           stronglabel
+          value={field.value}
           onChange={(val) => {
             field.onChange(val);
           }}
