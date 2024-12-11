@@ -513,6 +513,54 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
   }
 };
 
+export const updateCorrespondenceStatus = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_STATUS,
+    payload: {
+      correspondenceStatus: payload
+    }
+  });
+};
+export const fetchCorrespondenceStatus = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/status`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).status;
+
+      dispatch(updateCorrespondenceStatus(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
+
+export const updateCorrespondenceMailTasks = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_MAIL_TASKS,
+    payload: {
+      mailTasks: payload
+    }
+  });
+};
+export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/mail_tasks`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).mailTasks;
+
+      dispatch(updateCorrespondenceMailTasks(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
+
 export const fetchVeteranInformation = (uuid) => async (dispatch) => {
   const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
   const data = response.body.data.attributes;

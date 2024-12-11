@@ -8,8 +8,13 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { fetchCorrespondencesAppealsTasks, updateCorrespondenceInfo,
-  updateExpandedLinkedAppeals } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  fetchCorrespondenceMailTasks,
+  fetchCorrespondencesAppealsTasks,
+  fetchCorrespondenceStatus,
+  updateCorrespondenceInfo,
+  updateExpandedLinkedAppeals
+} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -33,8 +38,9 @@ const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
+  const correspondenceStatus = props.correspondenceStatus;
   const expandedLinkedAppeals = props.expandedLinkedAppeals;
-  const mailTasks = props.correspondence.mailTasks;
+  const mailTasks = props.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const veteranInformation = props.veteranInformation;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
@@ -471,6 +477,8 @@ const CorrespondenceDetails = (props) => {
     });
 
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
+    dispatch(fetchCorrespondenceStatus(correspondence.uuid));
+    dispatch(fetchCorrespondenceMailTasks(correspondence.uuid));
   }, []);
 
   const correspondenceTasks = () => {
@@ -993,7 +1001,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p className="unwrap-text"><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item unwrap-text"><b>Record status: </b>{correspondenceInfo.status}</p>
+          <p className="last-item unwrap-text"><b>Record status: </b>{correspondenceStatus}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }
@@ -1056,6 +1064,8 @@ const CorrespondenceDetails = (props) => {
 CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
+  correspondenceStatus: PropTypes.string,
+  mailTasks: PropTypes.array,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
@@ -1084,6 +1094,8 @@ CorrespondenceDetails.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  correspondenceStatus: state.correspondenceDetails.correspondenceStatus,
+  mailTasks: state.correspondenceDetails.mailTasks,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
   expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals,
