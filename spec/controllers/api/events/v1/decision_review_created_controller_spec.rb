@@ -28,7 +28,27 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
           payload_hash["claim_review"]["auto_remand"] = true
 
           # Expect the service to be called
-          expect(::Events::DecisionReviewRemanded).to receive(:create!)
+          expect(::Events::DecisionReviewRemanded).to receive(:create!).and_call_original
+
+          post :decision_review_created, params: payload_hash
+
+          expect(response).to have_http_status(:created)
+        end
+
+        it "calls ::Events::DecisionReviewRemanded.create! with correct parameters" do
+          payload_hash = JSON.parse(payload)
+          payload_hash["claim_review"] ||= {}
+          payload_hash["claim_review"]["auto_remand"] = true
+
+          # Extract expected IDs from payload (adjust keys as needed)
+          event_id = payload_hash["event_id"]
+          claim_id = payload_hash["claim_id"]
+
+          expect(::Events::DecisionReviewRemanded).to receive(:create!).with(
+            hash_including(consumer_event_id: event_id, claim_id: claim_id),
+            kind_of(ActionDispatch::Http::Headers),
+            hash_including(event_id: event_id, claim_id: claim_id)
+          ).and_call_original
 
           post :decision_review_created, params: payload_hash
 

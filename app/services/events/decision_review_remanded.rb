@@ -7,6 +7,6 @@ class Events::DecisionReviewRemanded
   include RedisMutex::Macro
 
   class << self
-    def create!(params, headers, payload);end
+    def create!(params, headers, payload); end
   end
 end
