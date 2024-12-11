@@ -41,6 +41,10 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
     props.closeModal();
   };
 
+  const redirectAfterSubmit = () => {
+    window.location = `/queue/appeals/${props.appealId}`;
+  };
+
   const submit = () => {
     // W.I.P.
     // This is where we will send the backend request to upload to VBMS.
@@ -70,6 +74,7 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
             file: selectedFile.file,
             file_name: selectedFile.fileName
           },
+          appeal_id: props.appealId
         }
       };
 
