@@ -4,8 +4,8 @@ class Correspondence::CorrespondenceDetails::CorrespondenceSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
-
-  attributes :uuid, :id, :notes, :va_date_of_receipt, :nod, :status, :type
+ 
+  attributes :uuid, :id, :notes, :va_date_of_receipt, :nod, :type
 
   attribute :correspondence_documents do |object|
     object.correspondence_documents.map do |document|
