@@ -73,6 +73,19 @@ class QueueRepository
       true
     end
 
+    def reassign_decision_review_case_to_judge!(
+      vacols_id:,
+      created_in_vacols_date:,
+      judge_vacols_user_id:,
+      decass_attrs:
+    )
+      transaction do
+        update_location_to_judge(vacols_id, judge_vacols_user_id)
+        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+        update_decass_record(decass_record, decass_attrs)
+      end
+    end
+
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
       if ![:bva_dispatch, :quality_review, :omo_office].include? location

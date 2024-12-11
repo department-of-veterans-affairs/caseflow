@@ -108,17 +108,18 @@ class LegacyTasksController < ApplicationController
     }
   end
 
-  def reassign_to_judge
+  def decision_reassign_to_judge
     return unless FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
 
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
-    QueueRepository.reassign_case_to_judge!(
-      appeal.vacols_id,
-      VACOLS::Decass.where(defolder: appeal.vacols_id).max_by(&:deadtim),
-      assigned_to,
+
+    QueueRepository.reassign_decision_review_case_to_judge!(
+      vacols_id: appeal.vacols_id,
+      created_in_vacols_date: VACOLS::Decass.where(defolder: appeal.vacols_id).max_by(&:deadtim)[:deadtim],
+      judge_vacols_user_id: assigned_to,
       decass_attrs: {
-        modifying_user: current_user
+        modifying_user: current_user.vacols_uniq_id
       }
     )
 

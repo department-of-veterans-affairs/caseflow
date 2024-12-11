@@ -643,7 +643,7 @@ export const reassignTasksToUser = ({
     });
 }));
 
-export const legacyDecisionReassignToJudge = ({
+export const legacyReassignToJudge = ({
   tasks, assigneeId, instructions
 }, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const params = {
@@ -669,7 +669,7 @@ export const legacyDecisionReassignToJudge = ({
     });
 }));
 
-export const legacyReassignToJudge = ({
+export const legacyDecisionReassignToJudge = ({
   tasks, assigneeId, instructions
 }, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const params = {
@@ -682,7 +682,7 @@ export const legacyReassignToJudge = ({
     }
   };
 
-  return ApiUtil.post('/legacy_tasks/reassign_to_judge', params).
+  return ApiUtil.post('/legacy_tasks/decision_reassign_to_judge', params).
     then((resp) => resp.body).
     then((resp) => {
       const allTasks = prepareAllTasksForStore([resp.task.data]);
