@@ -18,7 +18,11 @@ class Remediations::DuplicatePersonRemediationService
   def remediate!
     if find_and_update_records
       duplicate_persons.each(&:destroy!)
+      @event_record.update!(remediation_status: 2)
+    else
+      @event_record.update!(remediation_status: 3)
     end
+    @event_record.remediation_attempts += 1
   end
 
   private
