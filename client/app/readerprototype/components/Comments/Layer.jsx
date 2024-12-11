@@ -13,7 +13,7 @@ import {
 import { handleSelectCommentIcon } from '../../../reader/PdfViewer/PdfViewerActions';
 import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
-import { centerOfPage, iconKeypressOffset } from '../../util/coordinates';
+import { centerOfPage, iconKeypressOffset } from '../../utils/coordinates';
 import Icon from './Icon';
 
 // This component provides the framework for positioning, moving and selecting comment icons.
