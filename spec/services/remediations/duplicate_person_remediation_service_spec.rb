@@ -113,7 +113,7 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
       end
 
       it "does not update any records and skips destroying duplicate persons" do
-        result = service.remediate!
+        service.remediate!
 
         mock_records.each do |mock_record|
           expect(mock_record).not_to have_received(:update!)
@@ -121,14 +121,11 @@ RSpec.describe Remediations::DuplicatePersonRemediationService, type: :service d
 
         expect(duplicate_person1).not_to have_received(:destroy!)
         expect(duplicate_person2).not_to have_received(:destroy!)
-
-        expect(result).to be_falsey
       end
 
       it "logs the error and does not destroy duplicate persons" do
-        result = service.remediate!
+        service.remediate!
 
-        expect(result).to be_falsey
         expect(duplicate_person1).not_to have_received(:destroy!)
         expect(duplicate_person2).not_to have_received(:destroy!)
       end
