@@ -130,7 +130,8 @@ const AddTaskView = (props) => {
                   defaultValue={objectForSelectedTaskType()}
                   onChange={(selectedOption) => updateTaskType(selectedOption)}
                   styles={customSelectStyless}
-                  className="add-task-dropdown-style"
+                  className="add-task-dropdown-style add-intake-task-dropdown-style"
+                  classNamePrefix="react-select"
                   aria-label="dropdown"
                 />
               </div>
