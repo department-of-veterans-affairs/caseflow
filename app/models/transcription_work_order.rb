@@ -17,7 +17,7 @@ class TranscriptionWorkOrder
 
     return {} unless transcription_package
 
-    transcription_package.all_hearings
+    transcription_package.all_hearings_serialized
   end
 
   def self.unassign_wo(task_number)
