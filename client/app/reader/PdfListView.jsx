@@ -79,10 +79,10 @@ export class PdfListView extends React.Component {
         queueTaskType={this.props.queueTaskType}
         veteranFullName={this.props.appeal.veteran_full_name}
         vbmsId={this.props.appeal.vbms_id} />}
-      <LastRetrievalAlert
+      {/* <LastRetrievalAlert
         userHasEfolderRole={this.props.userHasEfolderRole}
         efolderExpressUrl={this.props.efolderExpressUrl}
-        appeal={this.props.appeal} />
+        appeal={this.props.appeal} /> */}
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />

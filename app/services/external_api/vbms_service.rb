@@ -26,31 +26,31 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    # if use_ce_api?
-    #   begin
-    #     verify_current_user_veteran_access(appeal.veteran)
+    if use_ce_api?
+      begin
+        verify_current_user_veteran_access(appeal.veteran)
 
-    #     response = VeteranFileFetcher.fetch_veteran_file_list(
-    #       veteran_file_number: appeal.veteran_file_number,
-    #       claim_evidence_request: claim_evidence_request
-    #     )
-    #     documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
-    #     {
-    #       manifest_vbms_fetched_at: nil,
-    #       manifest_vva_fetched_at: nil,
-    #       documents: DocumentsFromVbmsDocuments.new(documents: documents, file_number: appeal.veteran_file_number).call
-    #     }
-    #   rescue StandardError => error
-    #     log_claim_evidence_error(error)
-    #     {
-    #       manifest_vbms_fetched_at: nil,
-    #       manifest_vva_fetched_at: nil,
-    #       documents: []
-    #     }
-    #   end
-    # else
+        response = VeteranFileFetcher.fetch_veteran_file_list(
+          veteran_file_number: appeal.veteran_file_number,
+          claim_evidence_request: claim_evidence_request
+        )
+        documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+        {
+          manifest_vbms_fetched_at: nil,
+          manifest_vva_fetched_at: nil,
+          documents: DocumentsFromVbmsDocuments.new(documents: documents, file_number: appeal.veteran_file_number).call
+        }
+      rescue StandardError => error
+        log_claim_evidence_error(error)
+        {
+          manifest_vbms_fetched_at: nil,
+          manifest_vva_fetched_at: nil,
+          documents: []
+        }
+      end
+    else
       ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
-    # end
+    end
   end
 
   def self.fetch_document_series_for(appeal)
