@@ -179,12 +179,12 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def correspondence_status
-    render json: { status: @correspondence.status }
+    render json: { status: correspondence.status }
   end
 
   def correspondence_mail_tasks
     render json: {
-      mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
+      mailTasks: correspondence.correspondence_mail_tasks.completed.map(&:label)
     }
   end
 
