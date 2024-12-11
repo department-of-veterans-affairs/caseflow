@@ -136,6 +136,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
         fileStatus: transcription_file_4.file_status
       }
     end
+    
 
     let(:transcription_response_4_completed) do
       {
