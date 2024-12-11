@@ -637,8 +637,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE",
-            skip: "This test fails in GHA but not locally" do
+    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -702,7 +701,7 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "with reader role", skip: "Flaky test" do
+    context "with reader role" do
       before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
