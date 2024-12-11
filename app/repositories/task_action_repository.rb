@@ -186,7 +186,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
+        options: options_for_acting_vlj_and_scm_users(user),
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -969,6 +969,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           value: user.id
         }
       end
+    end
+
+    def options_for_acting_vlj_and_scm_users(user)
+      (user.can_act_on_behalf_of_judges? || user.acting_judge_in_vacols?) ? users_to_options(Attorney.list_all) : nil
     end
 
     # Exclude users who aren't active or to whom the task is already assigned.
