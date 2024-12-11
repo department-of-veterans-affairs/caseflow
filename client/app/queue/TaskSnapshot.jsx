@@ -15,8 +15,7 @@ import DocketSwitchAlertBanner from './docketSwitch/DocketSwitchAlertBanner';
 import Alert from '../components/Alert';
 
 const tableStyling = css({
-  width: '100%',
-  marginTop: '2rem'
+  width: '100%'
 });
 
 const alertStyling = css({
