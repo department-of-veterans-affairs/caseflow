@@ -33,8 +33,8 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
     let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
     before { TranscriptionTeam.singleton.add_user(user) }
 
-    let(:file_status_uploaded) { "Successful upload (AWS)" }
-    let(:file_status_retrieval) { "Retrieval (Webex)" }
+    let(:file_status_uploaded) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
+    let(:file_status_retrieval) { Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success }
 
     let(:hearing_day_1) { create(:hearing_day, scheduled_for: "2014-01-19") }
     let(:hearing_day_2) { create(:hearing_day, scheduled_for: "2020-05-14") }
