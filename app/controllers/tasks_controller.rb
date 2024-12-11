@@ -242,6 +242,20 @@ class TasksController < ApplicationController
     )
   end
 
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+
+    render json: {}, status: :ok
+  rescue StandardError => error
+    render_update_errors(error)
+  end
+
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
     @appeal = task.appeal
