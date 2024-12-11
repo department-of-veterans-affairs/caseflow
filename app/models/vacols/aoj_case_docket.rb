@@ -135,7 +135,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
     from (
-      select BFKEY, BFDLOOUT, AOD, rownum DOCKET_INDEX, BFDPDCN,
+      select BFKEY, BFDLOOUT, AOD, COALESCE(rownum,0) DOCKET_INDEX, BFDPDCN,
         VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -538,7 +538,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                                         range.nil? ? 1 : 0
                                       ])
                  end
-
+    byebug
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
