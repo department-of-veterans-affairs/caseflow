@@ -11,29 +11,5 @@ class CmpMailPacket < ApplicationRecord
             :veteran_middle_initial,
             presence: true
 
-  validate :va_dor_must_be_a_date
-
   has_many :cmp_documents, inverse_of: :cmp_mail_packet, dependent: :nullify
-
-  def va_dor_must_be_a_date
-    # Use the magic <attribute>_before_type_cast accessor to get the raw value
-    before_val = va_dor_before_type_cast
-
-    if before_val.blank?
-      errors.add(:va_dor, :blank)
-      return
-    end
-
-    unless before_val.is_a?(String)
-      before_val = before_val.strftime("%Y-%m-%d")
-    end
-
-    # For yyyy-mm-dd format:
-    # Require non-zero first digit; require the exact number of digits for each.
-    if before_val.is_a?(String) && !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(before_val)
-      errors.add(:va_dor, "date_of_receipt must use the format yyyy-mm-dd")
-    end
-  rescue Date::Error
-    errors.add(:va_dor, "date_of_receipt must be a valid date")
-  end
 end

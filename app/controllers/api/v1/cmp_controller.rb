@@ -8,36 +8,32 @@ class Api::V1::CmpController < Api::ApplicationController
   end
 
   def document
+    return unprocessable_response("Invalid params") unless cmp_response_validator
+      .validate_cmp_document_request(cmp_document_params)
+
     new_document = CmpDocument.new(cmp_document_params)
 
     if new_document.save
       render json: { message: "CMP document successfully created" }, status: :ok
     else
-      render json: {
-        message: "CMP document could not be created",
-        errors: new_document.errors
-      }, status: :unprocessable_entity
+      unprocessable_response("Cmp document could now be created.", new_document)
     end
   end
 
   def packet
-    # binding.pry
+    return unprocessable_response("Invalid params") unless cmp_response_validator
+      .validate_cmp_mail_packet_request(packet_params)
+
     new_packet = CmpMailPacket.new(packet_params)
     cmp_doc = CmpDocument.find_by(cmp_document_uuid: packet_params[:packet_uuid])
-    if cmp_doc.nil?
-      render json: {
-        message: "CmpDocument does not exist.",
-        errors: new_packet.errors
-      }, status: :unprocessable_entity
-    elsif new_packet.save
 
+    return unprocessable_response("Cmp doc not found.") if cmp_doc.blank?
+
+    if new_packet.save
       cmp_doc.update!(cmp_mail_packet: new_packet)
       render json: { message: "CMP packet successfully created" }, status: :ok
     else
-      render json: {
-        message: "CMP document could not be created",
-        errors: new_packet.errors
-      }, status: :error
+      unprocessable_response("Packet could not be created.", new_packet)
     end
   end
 
@@ -82,5 +78,16 @@ class Api::V1::CmpController < Api::ApplicationController
 
     Rails.logger.info("provider data is #{provider_data}")
     true
+  end
+
+  def cmp_response_validator
+    @cmp_response_validator ||= CmpResponseValidator.new
+  end
+
+  def unprocessable_response(message, unprocessable_object = nil)
+    render json: {
+      message: message,
+      errors: unprocessable_object&.errors
+    }, status: :unprocessable_entity
   end
 end
