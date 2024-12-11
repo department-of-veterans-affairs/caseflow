@@ -9,22 +9,29 @@ class Hearings::NationalHearingQueueController < ApplicationController
     # December 31, 2019 is the fallback date in the event no user-defined cutoff dates exist.
     date ||= Date.new(2019, 12, 31)
 
-    begin
-      verified_date = Date.iso8601(date)
-    rescue ArgumentError
-      return invalid_date
-    end
-
-    render json: { cutoff_date: verified_date, user_can_edit: false }
+    render json: { cutoff_date: date, user_can_edit: false }
   end
 
-  def update_cutoff_date(cutoff_date)
-    record = SchedulableCutoffDate.create!(
-      cutoff_date: cutoff_date,
-      created_by_id: current_user.id,
-      created_at: Time.zone.now
-    )
-    record
+  def update_cutoff_date
+    required_params = params.require(:cutoff_date)
+
+    begin
+      Date.iso8601(required_params[:cutoff_date])
+
+      record = SchedulableCutoffDate.create!(
+        cutoff_date: required_params[:cutoff_date],
+        created_by_id: current_user.id,
+        created_at: Time.zone.now
+      )
+    rescue Date::Error => error
+      log_error(error)
+      return invalid_date
+    rescue StandardError => error
+      log_error(error)
+      return does_not_persist
+    end
+
+    render json: { cutoff_date_record: record }, status: :ok
   end
 
   private
@@ -36,6 +43,21 @@ class Hearings::NationalHearingQueueController < ApplicationController
         "title": "Invalid Date",
         "detail": "Please enter a valid date"
       ]
-    }, status: :unprocessable_entity
+    }, status: :bad_request
+  end
+
+  def does_not_persist
+    render json: {
+      "errors": [
+        "status": "500",
+        "title": "Internal Service Error",
+        "detail": "Cutoff date unable to persist, try again at a later time"
+      ]
+    }, status: :internal_server_error
+  end
+
+  def log_error(error)
+    Rails.logger.error(error)
+    Rails.logger.error(error.backtrace.join("\n"))
   end
 end
