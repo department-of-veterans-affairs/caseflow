@@ -24,13 +24,6 @@ const alertStyling = css({
   marginBottom: 0
 });
 
-const customAlertStyling = {
-  title: {
-    fontSize: '19px',
-    fontWeight: 400,
-  }
-};
-
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTask, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
@@ -42,7 +35,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTa
   const legacyTaskAlert = showBanner && (
     <Alert
       type="info"
-      title={<span style={customAlertStyling.title}>{COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL} </span>}
+      message={COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL}
       lowerMargin
     />
   );
