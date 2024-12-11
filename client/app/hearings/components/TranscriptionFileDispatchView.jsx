@@ -35,8 +35,6 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
 
   const alertFromUrl = () => {
     const params = getQueryParams(window.location.search);
-    console.log(params);
-
     let alert = defaultAlert;
 
     if (params.alert) {

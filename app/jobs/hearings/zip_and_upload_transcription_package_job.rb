@@ -118,7 +118,7 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   end
 
   def format_return_date(return_date)
-    parts = return_date.split('/')
+    parts = return_date.split("/")
     "#{parts[2]}-#{parts[0]}-#{parts[1]}".to_date
   end
 
