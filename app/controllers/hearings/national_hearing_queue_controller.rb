@@ -31,7 +31,7 @@ class Hearings::NationalHearingQueueController < ApplicationController
       return does_not_persist
     end
 
-    render json: { cutoff_date_record: record }, status: :ok
+    render json: { cutoff_date_record: record }, status: :created
   end
 
   private
@@ -41,7 +41,8 @@ class Hearings::NationalHearingQueueController < ApplicationController
       "errors": [
         "status": "400",
         "title": "Invalid Date",
-        "detail": "Please enter a valid date"
+        "detail": "Please enter a valid date",
+        "error_code": error_uuid
       ]
     }, status: :bad_request
   end
@@ -51,7 +52,8 @@ class Hearings::NationalHearingQueueController < ApplicationController
       "errors": [
         "status": "500",
         "title": "Internal Service Error",
-        "detail": "Cutoff date unable to persist, try again at a later time"
+        "detail": "Cutoff date unable to persist, try again at a later time",
+        "error_code": error_uuid
       ]
     }, status: :internal_server_error
   end
@@ -59,5 +61,6 @@ class Hearings::NationalHearingQueueController < ApplicationController
   def log_error(error)
     Rails.logger.error(error)
     Rails.logger.error(error.backtrace.join("\n"))
+    Rails.logger.error(error_uuid)
   end
 end
