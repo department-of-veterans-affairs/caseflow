@@ -55,7 +55,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       correspondence: @correspondence,
       correspondence_documents: @correspondence[:correspondenceDocuments],
       general_information: general_information,
-      mail_tasks: mail_tasks,
       appeals_information: appeals,
       inbound_ops_team_users: User.inbound_ops_team_users.select(:css_id).pluck(:css_id),
       correspondence_types: CorrespondenceType.all
@@ -67,7 +66,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       .new(correspondence)
       .serializable_hash[:data][:attributes]
       .merge(general_information)
-      .merge(mail_tasks)
       .merge(appeals)
       .merge(all_correspondences)
       .merge(prior_mail)
@@ -87,7 +85,6 @@ class CorrespondenceDetailsController < CorrespondenceController
     {
       correspondence: @correspondence_details[:correspondence],
       general_information: @correspondence_details[:general_information],
-      mailTasks: @correspondence_details[:mail_tasks],
       corres_docs: @correspondence_details[:correspondence_documents]
     }
   end
@@ -183,6 +180,12 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def correspondence_status
     render json: { status: @correspondence.status }
+  end
+
+  def correspondence_mail_tasks
+    render json: {
+      mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
+    }
   end
 
   def create_correspondence_appeal_task
@@ -292,12 +295,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       tasks: tasks,
       ama_serializer: ama_serializer
     ).call
-  end
-
-  def mail_tasks
-    {
-      mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
-    }
   end
 
   def all_correspondences

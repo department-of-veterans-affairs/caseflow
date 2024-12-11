@@ -527,3 +527,27 @@ export const fetchCorrespondenceStatus = (uuid) => (dispatch) => {
       console.error(errorMessage);
     });
 };
+
+export const updateCorrespondenceMailTasks = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_MAIL_TASKS,
+    payload: {
+      mailTasks: payload
+    }
+  });
+};
+export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/mail_tasks`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).mailTasks;
+
+      dispatch(updateCorrespondenceMailTasks(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};

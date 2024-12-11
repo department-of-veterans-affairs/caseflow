@@ -9,6 +9,7 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import {
+  fetchCorrespondenceMailTasks,
   fetchCorrespondencesAppealsTasks,
   fetchCorrespondenceStatus,
   updateCorrespondenceInfo,
@@ -39,7 +40,7 @@ const CorrespondenceDetails = (props) => {
   const correspondenceInfo = props.correspondenceInfo;
   const correspondenceStatus = props.correspondenceStatus;
   const expandedLinkedAppeals = props.expandedLinkedAppeals;
-  const mailTasks = props.correspondence.mailTasks;
+  const mailTasks = props.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
@@ -476,6 +477,7 @@ const CorrespondenceDetails = (props) => {
 
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
     dispatch(fetchCorrespondenceStatus(correspondence.uuid));
+    dispatch(fetchCorrespondenceMailTasks(correspondence.uuid));
 
   }, []);
 
@@ -1063,6 +1065,7 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
   correspondenceStatus: PropTypes.string,
+  mailTasks: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
@@ -1085,6 +1088,7 @@ CorrespondenceDetails.propTypes = {
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   correspondenceStatus: state.correspondenceDetails.correspondenceStatus,
+  mailTasks: state.correspondenceDetails.mailTasks,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
   expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals

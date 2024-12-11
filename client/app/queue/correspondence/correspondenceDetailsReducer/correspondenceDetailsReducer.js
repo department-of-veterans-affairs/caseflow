@@ -13,7 +13,7 @@ export const initialState = {
   expandedLinkedAppeals: [],
   veteranInformation: {},
   correspondenceStatus: '',
-  mailTasks: {},
+  mailTasks: [],
   // might be the same as expandedLinkedAppeals
   linkedAppeals: {},
   // array of appeal Ids
@@ -69,6 +69,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       correspondenceStatus: {
         $set: action.payload.correspondenceStatus
+      }
+    });
+  case ACTIONS.CORRESPONDENCE_MAIL_TASKS:
+    return update(state, {
+      mailTasks: {
+        $set: action.payload.mailTasks
       }
     });
   default:
