@@ -6,6 +6,8 @@ import { inProgressvirtualHearing } from 'test/data/virtualHearings';
 import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
 import { render, screen } from '@testing-library/react';
 import COPY from 'COPY';
+import VirtualHearingLink from
+  'app/hearings/components/VirtualHearingLink';
 
 describe('HearingLinks', () => {
   test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
@@ -20,7 +22,7 @@ describe('HearingLinks', () => {
         hearing={hearing}
         isVirtual
         user={anyUser}
-        virtualHearing={inProgressvirtualHearing}
+        virtualHearing={virtualWebexHearing.virtualHearing}
       />
     );
 
@@ -43,9 +45,8 @@ describe('HearingLinks', () => {
     const {asFragment} = render(
       <HearingLinks
         hearing={hearing}
-        wasVirtual
+        isVirtual={false}
         user={anyUser}
-        virtualHearing={inProgressvirtualHearing}
       />
     );
 
@@ -160,6 +161,7 @@ describe('HearingLinks', () => {
 
     // Ensure it's the guest link
     const link = screen.getByRole('link', { name: 'Join Hearing' });
+
     expect(link).toHaveAttribute('href', virtualHearing.virtualHearing.guestLink);
   });
 

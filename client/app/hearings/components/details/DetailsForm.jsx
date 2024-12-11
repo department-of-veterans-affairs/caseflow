@@ -125,6 +125,7 @@ const DetailsForm = (props) => {
           transcription={hearing.transcription}
           update={update}
           isLegacy={isLegacy}
+          isWebex={hearing.conferenceProvider !== 'pexip'}
         />
       )}
     </React.Fragment>

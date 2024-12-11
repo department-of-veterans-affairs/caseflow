@@ -10,9 +10,9 @@ describe Seeds::Hearings do
 
     it "creates all kinds of hearings", :aggregate_failures do
       expect { subject }.to_not raise_error
-      expect(Hearing.count).to eq(301) # Seeds::Users.new.seed! creates 4 hearings
+      expect(Hearing.count).to eq(301) # Seeds::Users.new.seed! creates additional hearings
       expect(LegacyHearing.count).to eq(295)
-      expect(HearingDay.count).to eq(401) # Seeds::Users.new.seed! creates 4 hearing days
+      expect(HearingDay.count).to eq(401) # Seeds::Users.new.seed! creates additional hearing days
     end
   end
 end

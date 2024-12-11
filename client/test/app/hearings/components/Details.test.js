@@ -371,7 +371,7 @@ describe('Details', () => {
             wrapperProps: {
               store: detailsStore,
               user: anyUser,
-              hearing:legacyWebexHearing
+              hearing: legacyWebexHearing
             },
           }
         );

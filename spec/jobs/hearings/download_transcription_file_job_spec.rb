@@ -62,9 +62,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           .and change(TranscriptionFile, :count).by(1)
       end
 
-      it "updates file_status of TranscriptionFile record, leaves date_receipt_webex nil" do
+      it "updates file_status of TranscriptionFile record, leaves date_receipt_recording nil" do
         expect { subject }.to raise_error(download_error)
-        expect(transcription_file.date_receipt_webex).to be_nil
+        expect(transcription_file.date_receipt_recording).to be_nil
         expect(transcription_file.file_status).to eq(file_status)
       end
 
@@ -87,9 +87,9 @@ describe Hearings::DownloadTranscriptionFileJob do
             expect(transcription_file.file_type).to eq(file_type)
           end
 
-          it "updates date_receipt_webex of TranscriptionFile record" do
+          it "updates date_receipt_recording of TranscriptionFile record" do
             subject
-            expect(transcription_file.date_receipt_webex).to_not be_nil
+            expect(transcription_file.date_receipt_recording).to_not be_nil
           end
 
           include_examples "all file types"
@@ -132,9 +132,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
 
-        it "updates date_receipt_webex of TranscriptionFile record" do
+        it "updates date_receipt_recording of TranscriptionFile record" do
           subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
+          expect(transcription_file.date_receipt_recording).to_not be_nil
         end
 
         include_examples "all file types"
@@ -170,9 +170,9 @@ describe Hearings::DownloadTranscriptionFileJob do
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
 
-        it "updates date_receipt_webex of TranscriptionFile record" do
+        it "updates date_receipt_recording of TranscriptionFile record" do
           subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
+          expect(transcription_file.date_receipt_recording).to_not be_nil
         end
 
         include_examples "all file types"

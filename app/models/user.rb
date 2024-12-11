@@ -118,6 +118,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
   end
 
+  def in_hearing_and_transcription_organization?
+    hearings_user? && TranscriptionTeam.singleton.users.include?(self)
+  end
+
   def can_withdraw_issues?
     CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
@@ -378,6 +382,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # rubocop:disable Metrics/MethodLength
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
+    if in_hearing_and_transcription_organization?
+      orgs << { name: "Transcription Dispatch", url: "/hearings/transcription_files" }
+    end
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
 

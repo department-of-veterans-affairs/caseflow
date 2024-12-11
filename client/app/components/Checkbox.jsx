@@ -64,7 +64,7 @@ Checkbox.propTypes = {
   /**
    * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
    */
-  defaultValue: PropTypes.bool,
+  defaultValue: PropTypes.string,
 
   /**
    * Text (or other node) to display in associated `label` element
@@ -117,7 +117,7 @@ Checkbox.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.bool,
+  value: PropTypes.string,
   styling: PropTypes.object,
   ariaLabel: PropTypes.string
 };

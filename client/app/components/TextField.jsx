@@ -115,6 +115,7 @@ export const TextField = (props) => {
             max={max}
             autoComplete={autoComplete}
             disabled={disabled}
+            aria-label={ariaLabelText}
             {...inputProps}
             {...ariaLabelObj}
             {...inputStyling}

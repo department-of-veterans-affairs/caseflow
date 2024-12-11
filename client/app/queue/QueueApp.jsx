@@ -65,6 +65,7 @@ import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
+import UploadTranscriptionVBMSNoErrorModal from './UploadTranscriptionVBMSNoErrorModal';
 import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
@@ -110,6 +111,8 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
+import ErrorsFoundAndCorrectedModal from './components/ErrorsFoundAndCorrectedModal';
+import CancelReviewTranscriptTaskModal from './components/CancelReviewTranscriptTaskModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -547,6 +550,13 @@ class QueueApp extends React.PureComponent {
     <ChangeTaskTypeModal {...props.match.params} />
   );
 
+  routedUploadTranscriptionVBMSModal = (props) => (
+    <UploadTranscriptionVBMSNoErrorModal
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
+  );
+
   routedChangeHearingRequestTypeToVirtual = (props) => (
     <HearingTypeConversionContainer type="Virtual" {...props.match.params} />
   );
@@ -682,6 +692,22 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
+  );
+
+  routedErrorsFoundAndCorrectedModal = (props) => (
+    <ErrorsFoundAndCorrectedModal
+      modalType="errors_found_and_corrected"
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
+  );
+
+  routedCancelReviewTranscriptTaskModal = (props) => (
+    <CancelReviewTranscriptTaskModal
+      modalType="cancel_review_transcript_task"
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
 
   queueName = () =>
@@ -1383,6 +1409,20 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED.value
+                }`}
+              title="Transcript Errors found and Corrected | Caseflow"
+              render={this.routedErrorsFoundAndCorrectedModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_REVIEW_TRANSCRIPT_TASK.value
+                }`}
+              title="Cancel Review Transcript Task | Caseflow"
+              render={this.routedCancelReviewTranscriptTaskModal}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIDEO} | Caseflow`}
@@ -1404,6 +1444,12 @@ class QueueApp extends React.PureComponent {
                   hearingType: 'Central',
                 })
               }
+            />
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/tasks/:taskId/modal/upload_transcription_vbms"
+              title={`${PAGE_TITLES.UPLOAD_TRANSCRIPTION_VBMS} | Caseflow`}
+              render={this.routedUploadTranscriptionVBMSModal}
             />
 
             <Route
