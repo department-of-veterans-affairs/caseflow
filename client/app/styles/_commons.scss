@@ -33,8 +33,8 @@ a:focus,
   outline: .25rem solid $color-focus-outline;
 }
 
-[type=radio]:focus+label::before,
-[type=checkbox]:focus+label::before {
+[type=radio]:focus + label::before,
+[type=checkbox]:focus + label::before {
   outline: .25rem solid $color-focus-outline;
   outline-offset: 3px;
 }
@@ -72,7 +72,6 @@ p {
 
 .cf-help-content,
 .cf-sg-content {
-
   h1,
   h2,
   h3,
@@ -95,7 +94,6 @@ p {
   line-height: 1.3em;
   margin-bottom: 40px;
 }
-
 // Usage h1 class for accessibility
 .cf-display-1 {
   font-weight: $font-bold;
@@ -209,16 +207,8 @@ dd {
 //  or  <h4 className="cf-margin-bottom-0">
 //  or  <img className="cf-padding-right-6rem cf-padding-left-0rem">
 
-$styles: (
-  'margin'),
-  ('padding'
-);
-$directions: (
-  'top'),
-  ('bottom'),
-  ('left'),
-  ('right'
-);
+$styles: ('margin'), ('padding');
+$directions: ('top'), ('bottom'), ('left'), ('right');
 $rems: (
   '0',
   '0rem',
@@ -391,7 +381,8 @@ $rems: (
 
   &.usa-button {
     &::after {
-      background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100% no-repeat;
+      background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100%
+        no-repeat;
     }
   }
 }
@@ -615,13 +606,13 @@ svg title {
   background: $color-gray-light;
   margin: auto;
 
-  >div {
+  > div {
     height: 100%;
     border-radius: 2px;
     background: $color-gray-dark;
   }
 
-  >.cf-continuous-progress-bar-warning {
+  > .cf-continuous-progress-bar-warning {
     background: $color-secondary;
   }
 }
@@ -711,12 +702,12 @@ svg title {
 
 // Adds top margin when .cf-app-segment
 // is preceded by an element
-*+.cf-app-segment {
+* + .cf-app-segment {
   margin-top: rem(30px);
 }
 
 .cf-app-footer {
-  >div {
+  > div {
     box-sizing: border-box;
     height: 125px;
     padding: 50px 0;
@@ -764,19 +755,10 @@ form {
   justify-content: space-between;
 }
 
-.cf-file-input-container-selected {
-  border: 1px dashed $color-gray-dark;
-  background-color: $color-primary-alt-lightest;
-  display: flex;
-  position: relative;
-  text-align: center;
-  width: 100%;
-  padding: 1.5rem;
-  justify-content: space-between;
-}
-
-.cf-file-error-container {
-  background-color: $color-red-lightest;
+.cf-file-container-selected-container {
+  background: none;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .cf-file-input-row-element {
@@ -907,7 +889,6 @@ form {
 // ============================*/
 
 .required {
-
   strong,
   b {
     &::after {
@@ -975,15 +956,14 @@ input {
 }
 
 fieldset {
-
-  >*,
+  > *,
   .cf-form-textinput {
     color: $color-gray-dark;
     margin-top: 10px;
   }
 }
 
-*+.cf-form-textinput {
+* + .cf-form-textinput {
   @include clearfix;
   margin-bottom: rem(20px);
   color: $color-gray-dark;
@@ -1042,7 +1022,7 @@ fieldset {
 
   // Account for proper alignment of long labels so they don't wrap under the checkbox
   &.cf-checkbox-group {
-    [type='checkbox']+label {
+    [type='checkbox'] + label {
       padding-left: 3.02rem;
       text-indent: -2rem;
 
@@ -1075,7 +1055,7 @@ fieldset {
 }
 
 .usa-input-error {
-  [type='radio']+label::before {
+  [type='radio'] + label::before {
     box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
   }
 }
@@ -1136,7 +1116,8 @@ fieldset {
   list-style-type: none;
 
   li {
-    background: url(#{$image-url}/icons/icon-check.svg) no-repeat left top transparent;
+    background: url(#{$image-url}/icons/icon-check.svg) no-repeat left top
+      transparent;
     background-size: 22px 17px;
     background-position-y: 7px;
     padding-left: 38px;
@@ -1231,7 +1212,6 @@ ul {
 }
 
 button {
-
   // preload default loading button SVG
   .cf-loading-icon-back,
   .cf-loading-icon-front {
@@ -1240,7 +1220,8 @@ button {
       display: inline-block;
       width: 0;
       height: 0;
-      background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
+      background: url(#{$image-url}/icons/loading-pill.svg) center center
+        no-repeat;
     }
   }
 
@@ -1259,7 +1240,8 @@ button {
   &.cf-cert {
     .cf-loading-icon-back {
       &::after {
-        background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center center no-repeat;
+        background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center
+          center no-repeat;
       }
     }
   }
@@ -1267,7 +1249,8 @@ button {
   &.cf-dispatch {
     .cf-loading-icon-back {
       &::after {
-        background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center center no-repeat;
+        background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center
+          center no-repeat;
       }
     }
   }
@@ -1374,7 +1357,6 @@ button {
   margin-bottom: 20px;
 
   .usa-accordion-button {
-
     &,
     i {
       color: $color-gray-dark;
@@ -1392,3 +1374,4 @@ button {
 .button-back-button {
   margin-left: 76%;
 }
+
