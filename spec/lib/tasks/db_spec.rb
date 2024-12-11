@@ -138,10 +138,10 @@ describe "db" do
 
         db:reset is prohibited.
   
-        Prefer using the appropriate sequence of database-specific tasks below:
+        Prefer using the appropriate database-specific task below:
 
-          db:drop:primary db:create:primary db:schema:load:primary db:seed  # Reset the primary database
-          db:drop:etl db:create:etl db:schema:load:etl db:seed              # Reset the etl database
+          db:reset:primary  # Reset the primary database
+          db:reset:etl      # Reset the etl database
       HEREDOC
 
       expect { subject }.to output(expected_output).to_stdout
@@ -210,10 +210,10 @@ describe "db" do
 
         db:setup is prohibited.
   
-        Prefer using the appropriate sequence of database-specific tasks below:
+        Prefer using the appropriate database-specific task below:
 
-          db:create:primary db:schema:load:primary db:seed  # Setup the primary database
-          db:create:etl db:schema:load:etl db:seed          # Setup the etl database
+          db:setup:primary  # Setup the primary database
+          db:setup:etl      # Setup the etl database
       HEREDOC
 
       expect { subject }.to output(expected_output).to_stdout
