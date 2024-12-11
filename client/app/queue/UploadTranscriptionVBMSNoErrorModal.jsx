@@ -50,17 +50,8 @@ const UploadTranscriptionVBMSNoErrorModal = (props) => {
     });
   };
 
-    return <React.Fragment>
-      <div>
-        <div>{COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT}</div>
-        <div {...marginTop(4)}>
-          <TextareaField
-            name={COPY.UPLOAD_TRANSCRIPTION_VBMS_TEXT_AREA}
-            onChange={(value) => this.setState({ notes: value })}
-            value={notes} />
-        </div>
-      </div>
-    </React.Fragment>;
+  const handleTextareaFieldChange = (event) => {
+    setNotes(event);
   };
 
   return (
