@@ -107,6 +107,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   end
 
   def find_events(event_type)
-    EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
+    EventRecord.where(evented_record_type: event_type, remediation_status: [pending, failed])
+    # EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
   end
 end
