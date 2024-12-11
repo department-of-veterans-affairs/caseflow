@@ -745,7 +745,7 @@ form {
 }
 
 .cf-file-error-container {
-  background-color: $color-red-lightest;
+  background-color: $color-red-lightest !important;
 }
 
 .cf-file-input-container-selected {
