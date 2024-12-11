@@ -67,7 +67,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       .serializable_hash[:data][:attributes]
       .merge(general_information)
       .merge(appeals)
-      .merge(all_correspondences)
+      .merge(related_correspondences)
       .merge(prior_mail)
       .merge(user_access)
   end
@@ -297,16 +297,16 @@ class CorrespondenceDetailsController < CorrespondenceController
     ).call
   end
 
-  def all_correspondences
-    { all_correspondences: serialized_correspondences }
+  def related_correspondences
+    { all_correspondences: serialized_related_correspondences }
   end
 
-  def serialized_correspondences
+  def serialized_related_correspondences
     serialized_data.map { |correspondence| correspondence[:attributes] }
   end
 
   def serialized_data
-    serializer = WorkQueue::CorrespondenceDetailsSerializer.new(ordered_correspondences)
+    serializer = WorkQueue::RelatedCorrespondencesSerializer.new(ordered_correspondences)
     serializer.serializable_hash[:data]
   end
 
@@ -318,7 +318,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
       .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
     serialized_mail = prior_mail.map do |correspondence|
-      WorkQueue::CorrespondenceDetailsSerializer.new(correspondence).serializable_hash[:data][:attributes]
+      WorkQueue::RelatedCorrespondencesSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
 
     { prior_mail: serialized_mail }
