@@ -125,7 +125,9 @@ describe EventRecord, :postgres do
 
   context "does something" do
     let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
-    let!(:event_record) { EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1) }
+    let!(:event_record) do
+      EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1)
+    end
 
     it "set to processed" do
       event_record.processed!
