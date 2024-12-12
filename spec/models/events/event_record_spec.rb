@@ -123,7 +123,7 @@ describe EventRecord, :postgres do
     end
   end
 
-  context "does something" do
+  context "remediation_status is updated with enumerators" do
     let!(:event1) { PersonUpdatedEvent.create!(reference_id: "1") }
     let!(:event_record) do
       EventRecord.create!(event_id: event1.id, evented_record_type: "Veteran", evented_record_id: 1)
