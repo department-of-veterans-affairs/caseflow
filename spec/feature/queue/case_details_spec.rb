@@ -637,8 +637,8 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE",
-            skip: "This test fails in GHA but not locally" do
+    # still flaky
+    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -674,7 +674,7 @@ RSpec.feature "Case details", :all_dbs do
       before do
         bgs.class.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "access the appeal's case details" do
@@ -702,7 +702,7 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "with reader role", skip: "Flaky test" do
+    context "with reader role" do
       before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
@@ -712,7 +712,8 @@ RSpec.feature "Case details", :all_dbs do
         click_on "View #{appeal.documents.count} docs"
 
         expect(page).to have_content("CaseflowQueue")
-        expect(page).to have_content("Back to your cases\n#{appeal.veteran_full_name}")
+        expect(page).to have_content("Back to your cases")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       end
     end
 
