@@ -150,7 +150,7 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
       {!isAnyFileSelected &&
         <div className={fileInputContainerClassName}>
           <FileUpload
-            preUploadText="Choose from folder"
+            preUploadText="Choose file from folder"
             id="cf-file-input"
             fileType=".pdf"
             onChange={handleFileChange}

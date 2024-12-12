@@ -78,7 +78,7 @@ exports[`ErrorsFoundAndCorrectedModal renders correctly 1`] = `
                 for="cf-file-input"
               >
                 <a>
-                  Choose from folder
+                  Choose file from folder
                 </a>
               </label>
               <div

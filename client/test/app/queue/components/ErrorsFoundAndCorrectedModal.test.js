@@ -54,7 +54,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
     expect(screen.getByText('Please upload the revised transcript file for upload to VBMS.')).
       toBeInTheDocument();
     expect(screen.getByText('Please select PDF')).toBeInTheDocument();
-    expect(screen.getByText('Choose from folder')).toBeInTheDocument();
+    expect(screen.getByText('Choose file from folder')).toBeInTheDocument();
     expect(screen.getByText('Please provide context and instructions for this action')).
       toBeInTheDocument();
     expect(textarea.value).toBe('');
@@ -67,7 +67,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
       <ErrorsFoundAndCorrectedModal {...defaultProps} />
     );
 
-    const input = screen.getByLabelText(/Choose from folder/i);
+    const input = screen.getByLabelText(/Choose file from folder/i);
 
     userEvent.upload(input, file);
 
@@ -93,7 +93,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
       screen.queryByText(/File name must exactly macth the transcript file name/i)
     ).not.toBeInTheDocument();
 
-    const input = screen.getByLabelText(/Choose from folder/i);
+    const input = screen.getByLabelText(/Choose file from folder/i);
     const textarea = screen.getByRole('textbox');
 
     userEvent.upload(input, file);
@@ -119,7 +119,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
     expect(screen.getByText('Upload to VBMS').closest('button')).
       toBeDisabled();
 
-    const input = screen.getByLabelText(/Choose from folder/i);
+    const input = screen.getByLabelText(/Choose file from folder/i);
     const textarea = screen.getByRole('textbox');
 
     userEvent.upload(input, file);
