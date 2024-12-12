@@ -49,6 +49,7 @@ development:
     port: 1521
     <% end %>
     database: <%= ENV['DEMO_DB'] || "BVAP" %>
+    database_tasks: false
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -79,6 +80,7 @@ test:
       (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
       (CONNECT_DATA=(SID=BVAP))
     )"
+    database_tasks: false
 
 # For use by GH workflow `Make-docs-to-webpage` (See `.github/workflows/make-docs.yml`)
 make_docs:
@@ -102,6 +104,7 @@ make_docs:
     pool: 1
     timeout: 5000
     database: test-vacols
+    database_tasks: false
 
 demo:
   primary:
@@ -112,6 +115,7 @@ demo:
     pool: 5
     timeout: 5000
     database: db/demo-vacols.sqlite3
+    database_tasks: false
 
 ssh_forwarding:
   primary:
@@ -124,6 +128,7 @@ ssh_forwarding:
     username: <%= ENV["VACOLS_USERNAME"] %>
     password: <%= ENV["VACOLS_PASSWORD"] %>
     database: BVAP
+    database_tasks: false
 
 staging:
   primary:
@@ -136,6 +141,7 @@ staging:
     host: vacols.dev.vaco.va.gov
     port: 1526
     database: BVAP.VACO.VA.GOV
+    database_tasks: false
 
 production:
   primary:
@@ -152,3 +158,4 @@ production:
     port: <%= ENV["VACOLS_PORT"] %>
     database: <%= ENV["VACOLS_DATABASE"] %>
     pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+    database_tasks: false
