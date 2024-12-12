@@ -110,6 +110,17 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
       let!(:review_appeal) do
         create(:appeal, :at_judge_review, associated_judge: judge_one, associated_attorney: attorney_one)
       end
+      let!(:blocked_legacy_appeal) do
+        create(:legacy_appeal,
+               :with_schedule_hearing_tasks,
+               :with_veteran,
+               vacols_case: create(
+                 :case_with_form_9,
+                 :type_original,
+                 :status_active,
+                 case_issues: create_list(:case_issue, 2, :compensation)
+               ))
+      end
       let(:assigner_name) { "#{scm_user.full_name.split(' ').first.first}. #{scm_user.full_name.split(' ').last}" }
 
       before do
@@ -118,6 +129,11 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
         allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
+        FeatureToggle.enable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+      end
+
+      after do
+        FeatureToggle.disable!(:legacy_case_movement_scm_to_vlj_for_blockhtask)
       end
 
       scenario "on ama appeals" do
@@ -228,6 +244,45 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
       end
 
       scenario "on legacy appeals" do
+        step "assign a blocked legacy appeal to a judge" do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: blocked_legacy_appeal.veteran_file_number
+          click_on "Search"
+          expect(page).to have_content("1 case found")
+          click_on(blocked_legacy_appeal.docket_number)
+          click_dropdown(propmt: "Select an action...", text: "Case Movement: Cancel blocking tasks and advance to judge")
+
+          expect(page).to have_content(COPY::BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE)
+          expect(page).to have_content(HearingTask.name)
+          expect(page).to have_content(Bva.singleton.name)
+          expect(page).to have_content(ScheduleHearingTask.name)
+
+          # Validate before moving on
+          click_on "Continue"
+          expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
+          find("label", text: "Death dismissal").click
+          fill_in("cancellationInstructions", with: "Instructions for cancellation")
+          click_on "Continue"
+
+          # Validate before moving on
+          click_on "Cancel Task and Reassign"
+          expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+          click_dropdown(prompt: "Select...", text: judge_one.full_name)
+          fill_in("judgeInstructions", with: "Instructions for the judge")
+          click_on "Cancel Task and Reassign"
+
+          # Check case timeline
+          expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_one.full_name)
+          expect(page).to have_content("#{HearingTask.name} cancelled")
+          expect(page).to have_content("#{ScheduleHearingTask.name} cancelled")
+          expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
+          page.find_all(".taskInformationTimelineContainerStyling button", text: "View task instructions").first.click
+          expect(page).to have_content("TASK INSTRUCTIONS\nCancelled Tasks: HearingTask,ScheduleHearingTask\n" \
+          "Death dismissal: Instructions for cancellation\nInstructions for the judge")
+
+          expect(page).to have_content("#{LegacyAppealAssignmentTrackingTask.name} completed")
+        end
+
         step "reassign a JudgeLegacyAssignTask" do
           visit "/queue/#{judge_one.css_id}/assign"
           click_on(legacy_appeal.veteran_file_number)
