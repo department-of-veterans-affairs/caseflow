@@ -186,6 +186,15 @@ class TasksController < ApplicationController
     }
   end
 
+  def uploaded_transcription_file
+    file = Hearings::TranscriptionFile.where(docket_number: appeal.docket_number)
+      .where(file_type: "pdf")
+      .where.not(date_upload_aws: nil)
+      .order(date_upload_aws: :desc)
+      .first
+    render json: file
+  end
+
   def upload_transcription_to_vbms
     pdf_file = Hearings::TranscriptionFile.where(file_type: "pdf")
       .find_by(docket_number: appeal.docket_number)
