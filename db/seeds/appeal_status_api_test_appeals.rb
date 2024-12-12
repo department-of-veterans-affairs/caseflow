@@ -16,7 +16,14 @@ module Seeds
     private
 
     # compensation_all is basically a duplicate of compensation
-    ISSUE_CATEGORIES = Constants::ISSUE_CATEGORIES.delete("compensation_all")
+    def issue_categories
+      @issue_categories =
+        begin
+          categories = Constants.ISSUE_CATEGORIES.to_h
+          categories.delete(:compensation_all)
+          categories
+        end
+    end
 
     def initial_file_number_and_ssn
       @file_number ||= 456_000_000
@@ -108,8 +115,8 @@ module Seeds
     end
 
     def generate_nonrating_category_and_description
-      benefit_type = Constants::ISSUE_CATEGORIES.keys.sample
-      category = Constants::ISSUE_CATEGORIES[benefit_type].sample
+      benefit_type = issue_categories.keys.sample
+      category = issue_categories[benefit_type].sample
 
       [benefit_type, category]
     end
