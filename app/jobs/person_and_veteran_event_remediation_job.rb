@@ -34,7 +34,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           updated_person_id: original_id
         ).remediate!
       else
-        @event_record.processed!
+        event_record.processed!
       end
     end
 
@@ -74,7 +74,7 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           event_record
         ).remediate!
       else
-        @event_record.processed!
+        event_record.processed!
       end
     end
 
