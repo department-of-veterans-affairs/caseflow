@@ -29,4 +29,31 @@ describe Hearings::NationalHearingQueueController, type: :controller do
       end
     end
   end
+
+  context "POST cutoff_date" do
+    context "Whenever the cutoff date is not a valid date" do
+      subject { post :update_cutoff_date, params: { cutoff_date: "not a valid date" } }
+
+      it "Returns a 400 error" do
+        expect(subject.response_code).to eq 400
+      end
+    end
+
+    context "Whenever the record fails to persist in the database" do
+      subject { post :update_cutoff_date, params: { cutoff_date: "2019-12-31" } }
+
+      it "Returns a 500 error" do
+        allow(SchedulableCutoffDate).to receive(:create!).and_raise(StandardError.new("error"))
+        expect(subject.response_code).to eq 500
+      end
+    end
+
+    context "Whenever the new record persists in the database" do
+      subject { post :update_cutoff_date, params: { cutoff_date: "2019-12-31" } }
+
+      it "Returns a 201 success" do
+        expect(subject.response_code).to eq 201
+      end
+    end
+  end
 end

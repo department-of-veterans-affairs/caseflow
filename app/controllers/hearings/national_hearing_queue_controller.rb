@@ -13,13 +13,13 @@ class Hearings::NationalHearingQueueController < ApplicationController
   end
 
   def update_cutoff_date
-    required_params = params.require(:cutoff_date)
+    params.require(:cutoff_date)
 
     begin
-      Date.iso8601(required_params[:cutoff_date])
+      Date.iso8601(params[:cutoff_date])
 
       record = SchedulableCutoffDate.create!(
-        cutoff_date: required_params[:cutoff_date],
+        cutoff_date: params[:cutoff_date],
         created_by_id: current_user.id,
         created_at: Time.zone.now
       )
