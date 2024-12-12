@@ -10,6 +10,8 @@ class Test::UsersController < ApplicationController
   before_action :require_global_admin, only: :log_in_as_user
   skip_before_action :deny_vso_access, only: [:index, :set_user, :show]
 
+  include Test::TestControllerHelper
+
   APPS = [
     {
       name: "Queue",
@@ -73,10 +75,12 @@ class Test::UsersController < ApplicationController
   ].freeze
 
   # :nocov:
-  def index; end
+  def index
+    render template: "test/index"
+  end
 
   def show
-    render "index"
+    render template: "test/index"
   end
 
   # Set current user in DEMO
@@ -183,11 +187,6 @@ class Test::UsersController < ApplicationController
     )
   end
 
-  def user_session
-    (params[:id] == "me") ? session : nil
-  end
-  helper_method :user_session
-
   def veteran_records
     redirect_to "/unauthorized" if Rails.deploy_env?(:prod) || \
                                    Rails.deploy_env?(:prodtest) || \
@@ -213,25 +212,6 @@ class Test::UsersController < ApplicationController
 
     veterans.concat(fake_veterans)
   end
-
-  def test_users
-    return [] unless ApplicationController.dependencies_faked?
-
-    User.all
-  end
-  helper_method :test_users
-
-  def features_list
-    return [] unless ApplicationController.dependencies_faked?
-
-    FeatureToggle.features
-  end
-  helper_method :features_list
-
-  def ep_types
-    %w[full partial none all]
-  end
-  helper_method :ep_types
 
   def new_default_end_products
     {
