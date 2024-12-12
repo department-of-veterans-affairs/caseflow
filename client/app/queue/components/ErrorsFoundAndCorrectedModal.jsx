@@ -58,7 +58,9 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
     ApiUtil.get(`/tasks/${props.task.taskId}/uploaded_transcription_file`, {
       query: { appeal_id: props.appealId }
     }).then((response) => {
-      setTranscriptFileName(response.body.file_name);
+      if (response.body) {
+        setTranscriptFileName(response.body.file_name);
+      }
     });
   }, []);
 

@@ -73,7 +73,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
 
     await waitFor(() => {
       expect(input.files.length).toBe(1);
-      // Two nstanceso file names. Existing file name and file name uploaded by user
+      // Two instances of file names. Existing file name and file name uploaded by user
       expect(screen.getAllByText('test.pdf')).toHaveLength(2);
       expect(screen.getByText('Selected file')).toBeInTheDocument();
       expect(screen.getByText('Change file')).toBeInTheDocument();
