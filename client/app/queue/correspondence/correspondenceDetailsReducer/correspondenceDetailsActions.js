@@ -29,6 +29,69 @@ export const updateVeteranInformation = (payload) => (dispatch) => {
   });
 };
 
+export const updateExistingAppeals = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.EXISTING_APPEALS,
+    payload: {
+      existingAppeals: payload
+    }
+  });
+};
+
+export const updateTasksUnrelatedToAppeal = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL,
+    payload: {
+      tasksUnrelatedToAppeal: payload
+    }
+  });
+};
+
+export const updateCorrespondenceTypes = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_TYPES,
+    payload: {
+      correspondenceTypes: payload
+    }
+  });
+};
+
+export const updateGeneralInformation = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.GENERAL_INFORMATION,
+    payload: {
+      generalInformation: payload
+    }
+  });
+};
+
+export const updateResponseLetters = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESPONSE_LETTERS,
+    payload: {
+      responseLetters: payload
+    }
+  });
+};
+
+export const updateLinkedCorrespondences = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.LINKED_CORRESPONDENCES,
+    payload: {
+      linkedCorrespondences: payload
+    }
+  });
+};
+
+export const updateAllCorrespondences = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ALL_CORRESPONDENCES,
+    payload: {
+      allCorrespondences: payload
+    }
+  });
+};
+
 export const fetchCorrespondencesAppealsTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/correspondences_appeals_tasks`).
     then((response) => {
