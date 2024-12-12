@@ -11,6 +11,8 @@
     totalCasesToComplete: to_complete_count,
     veteranName: task.appeal.veteran_full_name,
     userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    userQuotas: team_quota.user_quotas.map(&:to_hash),
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date

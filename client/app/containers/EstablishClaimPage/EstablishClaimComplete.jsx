@@ -5,8 +5,6 @@ import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
 import StatusMessage from '../../components/StatusMessage';
 
-const PARSE_INT_RADIX = 10;
-
 export default class EstablishClaimComplete extends React.Component {
 
   render() {
@@ -19,13 +17,12 @@ export default class EstablishClaimComplete extends React.Component {
       handleAlert,
       handleAlertClear,
       totalCasesCompleted,
-      totalCasesToComplete,
-      employeeCount,
+      userQuotas,
+      userId,
       veteranName
     } = this.props;
 
-    let availableTasksMessage, casesAssigned, employeeCountInt,
-      hasQuotaReached, quotaReachedMessage, secondHeader, totalCases;
+    let availableTasksMessage, casesAssigned, hasQuotaReached, quotaReachedMessage, secondHeader;
 
     availableTasksMessage = availableTasks ? 'You can now establish the next claim or return to your Work History.' :
       'You can now close Caseflow or return to your Work History.';
@@ -33,6 +30,8 @@ export default class EstablishClaimComplete extends React.Component {
     secondHeader = <span>{veteranName}'s claim has been processed. <br />
       {availableTasksMessage}
     </span>;
+
+    let userQuota = userQuotas.find((userQuota) => userQuota.user_id === userId);
 
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
@@ -45,11 +44,8 @@ export default class EstablishClaimComplete extends React.Component {
       }
     };
 
-    totalCases = totalCasesToComplete + totalCasesCompleted;
-    employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
+    casesAssigned = userQuota.task_count;
 
-    casesAssigned = employeeCountInt > 0 ?
-      Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
     return <div>
@@ -84,7 +80,11 @@ EstablishClaimComplete.propTypes = {
   checklist: PropTypes.array,
   employeeCount: PropTypes.number,
   firstHeader: PropTypes.string,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func,
   totalCasesAssigned: PropTypes.number,
   totalCasesCompleted: PropTypes.number,
+  userId: PropTypes.number,
+  userQuotas: PropTypes.arrayOf(PropTypes.object).isRequired,
   veteranName: PropTypes.string
 };
