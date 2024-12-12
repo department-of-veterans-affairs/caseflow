@@ -3,12 +3,12 @@
 exports[`renders 1`] = `
 <div>
   <div
-    class="prototype-canvas-wrapper"
+    class="prototype-canvas-wrapper invisible-page"
     id="canvasWrapper-1"
-    style="height: 792px; width: 612px; position: relative; background-color: white;"
+    style="height: 792px; width: 612px; position: relative; background-color: transparent;"
   >
     <canvas
-      class="prototype-canvas cf-pdf-page-hidden"
+      class="prototype-canvas "
       height="792"
       id="canvas-1"
       style="position: relative; top: 0px;"
