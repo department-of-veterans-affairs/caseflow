@@ -76,6 +76,13 @@ class TranscriptionPackage < CaseflowRecord
     find_by(task_number: task_number)&.update(status: "cancelled")
   end
 
+  def self.next_task_number
+    fiscal_year = (Time.zone.now + 92.days).strftime("%Y")
+    latest = TranscriptionPackage.where("task_number LIKE 'BVA-#{fiscal_year}%'").order("task_number DESC").first
+    next_task_number = latest ? latest.task_number.split("-").last.to_i + 1 : 1
+    "BVA-#{fiscal_year}-#{next_task_number.to_s.rjust(4, '0')}"
+  end
+
   private
 
   def format_date_for_table(date)
