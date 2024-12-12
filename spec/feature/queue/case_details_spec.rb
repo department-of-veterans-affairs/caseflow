@@ -673,11 +673,10 @@ RSpec.feature "Case details", :all_dbs do
       before do
         bgs.class.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, "NonUniqueResultException")
+          .and_raise(BGS::ShareError.new("NonUniqueResultException"))
       end
 
       scenario "access the appeal's case details" do
-        reload_case_detail_page(appeal.external_id)
         reload_case_detail_page(appeal.external_id)
         using_wait_time(5) do
           expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
