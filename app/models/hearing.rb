@@ -89,13 +89,6 @@ class Hearing < CaseflowRecord
   attr_accessor :override_full_hearing_day_validation
 
   scope :with_no_disposition, -> { where(disposition: nil) }
-  scope :not_scheduled_in_error,
-        lambda {
-          where(
-            "disposition != ? or disposition is null",
-            Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-          )
-        }
 
   HEARING_TYPES = {
     R: "Virtual",

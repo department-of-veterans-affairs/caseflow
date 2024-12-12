@@ -99,7 +99,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where(vdkey: hearing_day_ids)
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where.not(folder_nr: nil)
-        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
+        .where("hearing_disp is null")
     end
 
     # Finds all hearings for specific days that are assigned to a judge.
@@ -113,7 +113,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where("staff.sdomainid = #{id}")
         .where.not(folder_nr: nil)
-        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
+        .where("hearing_disp is null")
     end
 
     # Finds all hearings for an appeal.
