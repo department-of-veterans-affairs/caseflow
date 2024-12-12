@@ -221,36 +221,6 @@ namespace :db do
     HEREDOC
   end
 
-  namespace :schema do
-    Rake::Task["db:schema:dump"].clear if Rake::Task.task_defined?("db:schema:dump")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :dump do
-      puts <<~HEREDOC
-
-        db:schema:dump is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-  
-          db:schema:dump:primary  # Creates a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) for primary database
-          db:schema:dump:etl      # Creates a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) for etl database
-      HEREDOC
-    end
-
-    Rake::Task["db:schema:load"].clear if Rake::Task.task_defined?("db:schema:load")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :load do
-      puts <<~HEREDOC
-
-        db:schema:load is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-  
-          db:schema:load:primary  # Loads a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) into the primary database
-          db:schema:load:etl      # Loads a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) into the etl database
-      HEREDOC
-    end
-  end
-
   Rake::Task["db:setup"].clear if Rake::Task.task_defined?("db:setup")
   desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
   task :setup do
@@ -263,64 +233,6 @@ namespace :db do
         db:setup:primary  # Setup the primary database
         db:setup:etl      # Setup the etl database
     HEREDOC
-  end
-
-  namespace :test do
-    Rake::Task["db:test:load"].clear if Rake::Task.task_defined?("db:test:load")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :load do
-      puts <<~HEREDOC
-
-        db:test:load is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:load:primary  # Recreate the primary test database from the current schema
-          db:test:load:etl      # Recreate the etl test database from the current schema
-      HEREDOC
-    end
-
-    Rake::Task["db:test:load_schema"].clear if Rake::Task.task_defined?("db:test:load_schema")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :load_schema do
-      puts <<~HEREDOC
-
-        db:test:load_schema is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:load_schema:primary  # Recreate the primary test database from an existent schema file (schema.rb or structure.sql, depending on `config.active_record.schema_format`)
-          db:test:load_schema:etl      # Recreate the etl test database from an existent schema file (schema.rb or structure.sql, depending on `config.active_record.schema_format`)
-      HEREDOC
-    end
-
-    Rake::Task["db:test:prepare"].clear if Rake::Task.task_defined?("db:test:prepare")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :prepare do
-      puts <<~HEREDOC
-
-        db:test:prepare is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-        
-          db:test:prepare:primary  # Load the schema for the primary test database
-          db:test:prepare:etl      # Load the schema for the etl test database
-      HEREDOC
-    end
-
-    Rake::Task["db:test:purge"].clear if Rake::Task.task_defined?("db:test:purge")
-    desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
-    task :purge do
-      puts <<~HEREDOC
-
-        db:test:purge is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-        
-          db:test:purge:primary  # Empty the primary test database
-          db:test:purge:etl      # Empty the etl test database
-      HEREDOC
-    end
   end
 end
 # rubocop:enable Rails/RakeEnvironment, Layout/HeredocIndentation, Style/SignalException, Rails/Blank

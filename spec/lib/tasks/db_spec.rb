@@ -166,42 +166,6 @@ describe "db" do
     end
   end
 
-  describe "schema:dump" do
-    subject { Rake::Task["db:schema:dump"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:schema:dump is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:schema:dump:primary  # Creates a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) for primary database
-          db:schema:dump:etl      # Creates a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) for etl database
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
-  describe "schema:load" do
-    subject { Rake::Task["db:schema:load"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:schema:load is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:schema:load:primary  # Loads a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) into the primary database
-          db:schema:load:etl      # Loads a database schema file (either db/schema.rb or db/structure.sql, depending on `config.active_record.schema_format`) into the etl database
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
   describe "setup" do
     subject { Rake::Task["db:setup"].invoke }
 
@@ -214,78 +178,6 @@ describe "db" do
 
           db:setup:primary  # Setup the primary database
           db:setup:etl      # Setup the etl database
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
-  describe "test:load" do
-    subject { Rake::Task["db:test:load"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:test:load is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:load:primary  # Recreate the primary test database from the current schema
-          db:test:load:etl      # Recreate the etl test database from the current schema
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
-  describe "test:load_schema" do
-    subject { Rake::Task["db:test:load_schema"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:test:load_schema is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:load_schema:primary  # Recreate the primary test database from an existent schema file (schema.rb or structure.sql, depending on `config.active_record.schema_format`)
-          db:test:load_schema:etl      # Recreate the etl test database from an existent schema file (schema.rb or structure.sql, depending on `config.active_record.schema_format`)
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
-  describe "test:prepare" do
-    subject { Rake::Task["db:test:prepare"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:test:prepare is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:prepare:primary  # Load the schema for the primary test database
-          db:test:prepare:etl      # Load the schema for the etl test database
-      HEREDOC
-
-      expect { subject }.to output(expected_output).to_stdout
-    end
-  end
-
-  describe "test:purge" do
-    subject { Rake::Task["db:test:purge"].invoke }
-
-    it "no-ops and outputs a helpful message" do
-      expected_output = <<~HEREDOC
-
-        db:test:purge is prohibited.
-  
-        Prefer using the appropriate database-specific task below:
-
-          db:test:purge:primary  # Empty the primary test database
-          db:test:purge:etl      # Empty the etl test database
       HEREDOC
 
       expect { subject }.to output(expected_output).to_stdout
