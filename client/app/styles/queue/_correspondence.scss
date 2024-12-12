@@ -935,6 +935,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     [class^="checkbox-wrapper-"] {
       label {
         padding-left: 30px;
+
         span {
           position: relative;
           top: 5px;
@@ -1172,6 +1173,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-bottom: 10px;
   }
 }
+
 .task-selection-dropdown-box-intake {
   margin-top: -18px;
 
@@ -2218,7 +2220,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .waive-evidence-check-box {
 
   .cf-form-checkbox label,
-  .cf-form-radio-option label{
+  .cf-form-radio-option label {
     padding-top: 40px;
   }
 
