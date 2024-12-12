@@ -182,24 +182,30 @@ export const AddAppealRelatedTaskView = (props) => {
             <div>
               {taskRelatedAppeals.toSorted().map((appealId, index) => {
                 return (
-                  <ExistingAppealTasksView
-                    key={index}
-                    appeal={appealById(appealId)}
-                    newTasks={newTasks}
-                    setNewTasks={setNewTasks}
-                    waivedTasks={waivedTasks}
-                    setWaivedTasks={setWaivedTasks}
-                    nextTaskId={nextTaskId}
-                    setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
-                    unlinkAppeal={appealCheckboxOnChange}
-                    allTaskTypeOptions={
-                      appealById(appealId).active ?
-                        props.allTaskTypeOptions :
-                        INTAKE_FORM_TASK_TYPES.relatedToAppealInactive
-                    }
-                    filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
-                    autoTexts={props.autoTexts}
-                  />
+                  <React.Fragment key={index}>
+                    {index > 0 && (
+                      <div className="hr-container">
+                        <hr className="intake-form-existing-appeal-tasks-view-divider" />
+                      </div>
+                    )}
+                    <ExistingAppealTasksView
+                      appeal={appealById(appealId)}
+                      newTasks={newTasks}
+                      setNewTasks={setNewTasks}
+                      waivedTasks={waivedTasks}
+                      setWaivedTasks={setWaivedTasks}
+                      nextTaskId={nextTaskId}
+                      setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+                      unlinkAppeal={appealCheckboxOnChange}
+                      allTaskTypeOptions={
+                        appealById(appealId).active ?
+                          props.allTaskTypeOptions :
+                          INTAKE_FORM_TASK_TYPES.relatedToAppealInactive
+                      }
+                      filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                      autoTexts={props.autoTexts}
+                    />
+                  </React.Fragment>
                 );
               })}
             </div>
