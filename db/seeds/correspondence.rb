@@ -134,7 +134,7 @@ module Seeds
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
         (0..35).each do |i|
-          if i%5 == 1
+          if i % 5 == 1
             appeal = create(:appeal, :with_decision_issue, :type_cavc_remand, veteran: veteran)
             creation_params = {
               source_appeal_id: appeal.id,
@@ -153,7 +153,7 @@ module Seeds
             }
             CavcRemand.create!(creation_params)
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          elsif i%5 == 2
+          elsif i % 5 == 2
             appeal = create(:appeal, :advanced_on_docket_due_to_age, veteran: veteran)
 
             AdvanceOnDocketMotion.create!(
@@ -162,7 +162,7 @@ module Seeds
               granted: true,
               reason: Constants.AOD_REASONS.age,
               appeal: appeal
-              )
+            )
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           else
             appeal = create(:appeal, veteran: veteran)
@@ -181,46 +181,99 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
+        current_task_count = CorrespondenceTask.where(assigned_to: user).count
+
+        break if current_task_count >= 60
+
         # Creating inactive appeals that have a RootTask with the status of canceled
         create_inactive_appeals_for_user(user, veteran)
 
         # Correspondences with unassigned ReviewPackageTask
-        create_correspondence_with_unassigned_review_package_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_unassigned_review_package_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
-        create_correspondence_with_intake_and_failed_upload_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_intake_and_failed_upload_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with CorrespondenceIntakeTask with a status of in_progress
-        create_correspondence_with_intake_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_intake_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
-        create_correspondence_with_review_package_and_failed_upload_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_review_package_and_failed_upload_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with the CorrespondenceRootTask with the status of completed
-        create_correspondence_with_completed_root_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_completed_root_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with ReviewPackageTask in progress
-        create_correspondence_with_review_package_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_review_package_task(user, veteran)
+          current_task_count += 1
+        end
 
-        # Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
-        create_correspondence_with_action_required_tasks(user, veteran)
+        # Correspondences with the tasks for Action Required tab
+        if current_task_count < 60
+          create_correspondence_with_action_required_tasks(user, veteran)
+          current_task_count += 1
+        end
 
-        # correspondences with reassign / remove task for action required
-        create_correspondences_with_review_remove_package_tasks
+        # Correspondences with reassign/remove task for action required
+        if current_task_count < 60
+          create_correspondences_with_review_remove_package_tasks
+          current_task_count += 1
+        end
 
         # Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
-        create_correspondence_with_completed_mail_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_completed_mail_task(user, veteran)
+          current_task_count += 1
+        end
 
         # Correspondences with the CorrespondenceRootTask with the status of canceled
-        create_correspondence_with_canceled_root_task(user, veteran)
+        if current_task_count < 60
+          create_correspondence_with_canceled_root_task(user, veteran)
+          current_task_count += 1
+        end
 
-        # Correspondences with the tasks for CAVC and Congress Interest
-        create_cavc_mailtask(user, veteran)
+        # Correspondences with the tasks for CAVC
+        if current_task_count < 60
+          create_cavc_mailtask(user, veteran)
+          current_task_count += 1
+        end
 
-        create_congress_interest_mailtask(user, veteran)
-        create_correspondence_with_in_progress_review_package_task(user, veteran)
-        create_correspondence_with_in_progress_intake_task(user, veteran)
-        create_nod_correspondence(user, veteran)
+        # Correspondences with Congress Interest
+        if current_task_count < 60
+          create_congress_interest_mailtask(user, veteran)
+          current_task_count += 1
+        end
+
+        if current_task_count < 60
+          create_correspondence_with_in_progress_review_package_task(user, veteran)
+          current_task_count += 1
+        end
+
+        if current_task_count < 60
+          create_correspondence_with_in_progress_intake_task(user, veteran)
+          current_task_count += 1
+        end
+
+        if current_task_count < 60
+          create_nod_correspondence(user, veteran)
+          current_task_count += 1
+        end
       end
     end
 
@@ -251,7 +304,15 @@ module Seeds
     end
 
     def create_correspondence_with_completed_root_task(user = {}, veteran = {})
-      30.times do |_i|
+      # Check current task count before creating new tasks
+      current_task_count = CorrespondenceTask.where(assigned_to: user).count
+      return if current_task_count >= 60
+
+      # Calculate how many more tasks we can create
+      remaining_tasks = 60 - current_task_count
+      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+
+      tasks_to_create.times do |_i|
         begin
           corres = create_correspondence(user, veteran)
           assign_review_package_task(corres, user)
@@ -386,7 +447,15 @@ module Seeds
     end
 
     def create_correspondence_with_in_progress_review_package_task(user, veteran = {})
-      30.times do |_i|
+      # Check current task count before creating new tasks
+      current_task_count = CorrespondenceTask.where(assigned_to: user).count
+      return if current_task_count >= 60
+
+      # Calculate how many more tasks we can create
+      remaining_tasks = 60 - current_task_count
+      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+
+      tasks_to_create.times do |_i|
         begin
           corres = create_correspondence(user, veteran)
           assign_review_package_task(corres, user)
@@ -399,7 +468,15 @@ module Seeds
     end
 
     def create_correspondence_with_in_progress_intake_task(user, veteran = {})
-      30.times do |_i|
+      # Check current task count before creating new tasks
+      current_task_count = CorrespondenceTask.where(assigned_to: user).count
+      return if current_task_count >= 60
+
+      # Calculate how many more tasks we can create
+      remaining_tasks = 60 - current_task_count
+      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+
+      tasks_to_create.times do |_i|
         begin
           corres = create_correspondence(user, veteran)
           cit = create_correspondence_intake(corres, user)
@@ -411,7 +488,15 @@ module Seeds
     end
 
     def create_nod_correspondence(user, veteran = {})
-      30.times do |_i|
+      # Check current task count before creating new tasks
+      current_task_count = CorrespondenceTask.where(assigned_to: user).count
+      return if current_task_count >= 60
+
+      # Calculate how many more tasks we can create
+      remaining_tasks = 60 - current_task_count
+      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+
+      tasks_to_create.times do |_i|
         begin
           corres = create_correspondence(user, veteran)
           create_multiple_docs(corres, veteran)
