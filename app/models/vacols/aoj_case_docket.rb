@@ -535,9 +535,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                                         judge.vacols_attorney_id,
                                         (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                         (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                        judge.vacols_attorney_id,
-                                        range,
-                                        range.nil? ? 1 : 0
+                                        judge.vacols_attorney_id
+                                        # ,
+                                        # range,
+                                        # range.nil? ? 1 : 0
                                       ])
                  end
 
