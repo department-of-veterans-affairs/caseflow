@@ -200,7 +200,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     correspondence_appeals = correspondence.correspondence_appeals
 
     serialized_appeals = correspondence_appeals.map do |appeal|
-      WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
 
     render json: serialized_appeals
@@ -265,7 +265,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def serialized_correspondence_appeals
     appeals = []
     correspondence.correspondence_appeals.map do |appeal|
-      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      appeals << WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
 
     appeals

@@ -4,7 +4,7 @@ class Correspondence::CorrespondenceDetails::CorrespondenceSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
- 
+
   attributes :uuid, :id, :notes, :va_date_of_receipt, :nod, :type
 
   attribute :correspondence_documents do |object|
@@ -68,7 +68,7 @@ class Correspondence::CorrespondenceDetails::CorrespondenceSerializer
   attribute :correspondence_appeals do |object|
     appeals = []
     object.correspondence_appeals.map do |appeal|
-      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      appeals << WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
     appeals
   end
