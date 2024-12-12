@@ -678,6 +678,7 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "access the appeal's case details" do
         reload_case_detail_page(appeal.external_id)
+        reload_case_detail_page(appeal.external_id)
         using_wait_time(5) do
           expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
         end
