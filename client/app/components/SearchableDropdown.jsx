@@ -42,16 +42,22 @@ const CustomOption = (props) => {
 
 const CustomInput = (props) => {
   const innerProps = {
-    ...props.innerProps,
+    ...(props.innerProps || {}),
     role: 'combobox',
     'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
     'aria-expanded': props.selectProps.menuIsOpen,
     'aria-haspopup': true,
   };
 
+  const labelId = `${kebabCase(props.selectProps.name)}-label`;
+
   const updatedProps = {
     ...innerProps,
-    ...(props.selectProps?.value && { 'aria-label': `${props.selectProps?.value?.label}` })
+    'aria-labelledby': innerProps['aria-labelledby'] || labelId,
+    // Add aria-label only if no aria-labelledby is used and there's a value
+    ...(props.selectProps?.value && !innerProps['aria-labelledby'] && {
+      'aria-label': `${props.selectProps.value.label}`,
+    }),
   };
 
   return <components.Input {...props} {...updatedProps} />;

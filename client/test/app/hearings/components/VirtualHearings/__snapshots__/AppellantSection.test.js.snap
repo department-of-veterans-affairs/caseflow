@@ -321,6 +321,7 @@ SAN FRANCISCO, CA 94103
                         aria-expanded="false"
                         aria-haspopup="true"
                         aria-label="Pacific Time (US & Canada) (3:00 AM)"
+                        aria-labelledby="appellant-tz-label"
                         aria-owns="appellant-tz-listbox"
                         autocapitalize="none"
                         autocomplete="off"
