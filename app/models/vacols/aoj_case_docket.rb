@@ -135,7 +135,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
     from (
-      select BFKEY, BFDLOOUT, AOD, rownum DOCKET_INDEX, BFDPDCN,
+      select BFKEY, BFDLOOUT, AOD, COALESCE(rownum,0) DOCKET_INDEX, BFDPDCN,
         VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -487,7 +487,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
 
     nonpriority_cdl_aoj_query = generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
-
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
@@ -519,6 +518,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       SQL
     end
 
+    puts "aoj_affinity_lever_value: #{aoj_affinity_lever_value}"
+
     fmtd_query = if aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
                    sanitize_sql_array([
                                         query,
@@ -534,9 +535,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                                         judge.vacols_attorney_id,
                                         (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                         (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                        judge.vacols_attorney_id,
-                                        range,
-                                        range.nil? ? 1 : 0
+                                        judge.vacols_attorney_id
+                                        # ,
+                                        # range,
+                                        # range.nil? ? 1 : 0
                                       ])
                  end
 
@@ -626,6 +628,13 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
         appeals = conn.exec_query(query).to_a
+        if appeals.empty?
+          puts "appeals is empty"
+        else
+          puts "appeals is not empty"
+          puts appeals
+        end
+
         return appeals if appeals.empty?
 
         aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)

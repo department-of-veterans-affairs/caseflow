@@ -36,7 +36,7 @@ describe BgsPowerOfAttorney do
       end
     end
 
-    context "by_file_number", skip: "Test is flaky" do
+    context "by_file_number" do
       let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
 
       it "record is expired" do
@@ -115,7 +115,7 @@ describe BgsPowerOfAttorney do
         end
       end
 
-      it "does not raise an error on unique constraint violation", skip: "Test is flaky" do
+      it "does not raise an error on unique constraint violation" do
         threads = []
         concurrency.times do
           threads << Thread.new do
@@ -177,7 +177,7 @@ describe BgsPowerOfAttorney do
         end
       end
 
-      it "does not raise an error on unique constraint violation", skip: "Test is flaky" do
+      it "does not raise an error on unique constraint violation" do
         threads = []
         concurrency.times do
           threads << Thread.new do
