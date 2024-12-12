@@ -510,8 +510,6 @@ describe('CorrespondenceDetails', () => {
       tasksUnrelatedToAnAppeal
     );
 
-    console.log(store.getState());
-
     render(
       <Provider store={store}>
         <MemoryRouter>
