@@ -530,7 +530,7 @@ describe HearingDay, :all_dbs do
   context "bulk persist" do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Generators::VACOLS::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       create(:ro_schedule_period)
     end
 

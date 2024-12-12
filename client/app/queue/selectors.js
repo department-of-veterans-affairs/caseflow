@@ -208,7 +208,6 @@ const taskIsLegacyAttorneyJudgeTask = (task) => {
   const legacyAttorneyJudgeTaskTypes = [
     'AttorneyLegacyTask',
     'JudgeLegacyTask',
-    'JudgeLegacyAssignTask',
     'JudgeLegacyDecisionReviewTask'
   ];
 
