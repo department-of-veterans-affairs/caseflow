@@ -139,6 +139,8 @@ export const ScheduleVeteranForm = ({
           )}
           <div {...marginTop(30)}>
             <RegionalOfficeDropdown
+              id="regional-office"
+              aria-labelledby="regional-office-label"
               errorMessage={errors?.regionalOffice}
               excludeVirtualHearingsOption={!virtual}
               onChange={(regionalOffice) =>

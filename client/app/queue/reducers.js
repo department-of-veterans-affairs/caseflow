@@ -23,7 +23,10 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
 import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
+import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
+import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
 import cachingReducer from './caching/cachingReducer';
+import correspondenceDetailsReducer from './correspondence/correspondenceDetailsReducer/correspondenceDetailsReducer';
 
 export const initialState = {
   judges: {},
@@ -139,6 +142,12 @@ const deleteAppeal = (state, action) => {
 const deleteTask = (state, action) => {
   return update(state, {
     tasks: { $unset: action.payload.taskId }
+  });
+};
+
+const deleteAmaTask = (state, action) => {
+  return update(state, {
+    amaTasks: { $unset: action.payload.taskId }
   });
 };
 
@@ -754,6 +763,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.DELETE_APPEAL]: deleteAppeal,
   [ACTIONS.CLEAR_APPEAL]: clearAppealDetails,
   [ACTIONS.DELETE_TASK]: deleteTask,
+  [ACTIONS.DELETE_AMA_TASK]: deleteAmaTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
   [ACTIONS.EDIT_NOD_DATE_UPDATES]: editNodDateUpdates,
   [ACTIONS.SET_OVERTIME]: setOvertime,
@@ -813,7 +823,10 @@ const rootReducer = combineReducers({
   cavcRemand: editCavRemandReducer,
   editClaimantReducer,
   cavcDashboard: cavcDashboardReducer,
-  caching: cachingReducer
+  intakeCorrespondence: intakeCorrespondenceReducer,
+  reviewPackage: reviewPackageReducer,
+  caching: cachingReducer,
+  correspondenceDetails: correspondenceDetailsReducer
 });
 
 export default timeFunction(

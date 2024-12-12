@@ -42,7 +42,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
+          caseflow_veteran_ids: appeals_controller_params[:veteran_ids]&.split(","), user: current_user
         ).search_call
 
         render_search_results_as_json(result)
@@ -52,7 +52,7 @@ class AppealsController < ApplicationController
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
-    appeals_id = params[:appeals_id]
+    appeals_id = appeals_controller_params[:appeals_id]
     respond_to do |format|
       format.json do
         results = find_notifications_by_appeals_id(appeals_id)
@@ -138,7 +138,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         if appeal.accessible?
-          id = params[:appeal_id]
+          id = url_appeal_uuid
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
@@ -162,16 +162,15 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(url_appeal_uuid)
   end
 
   def url_appeal_uuid
-    params[:appeal_id]
+    params.permit(:appeal_id)[:appeal_id]
   end
 
   def update
     if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
-
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -187,7 +186,21 @@ class AppealsController < ApplicationController
     end
   end
 
+  def active_evidence_submissions
+    appeal = Appeal.find(url_appeal_uuid)
+    render json: appeal.evidence_submission_task
+  end
+
   private
+
+  def appeals_controller_params
+    params.permit(
+      :appeal_id,
+      :any,
+      :appeals_id,
+      :veteran_ids
+    )
+  end
 
   def create_subtasks!
     # if cc appeal, create SendInitialNotificationLetterTask
@@ -448,7 +461,7 @@ class AppealsController < ApplicationController
     # close out any tasks that might be open
     open_issue_task = Task.where(
       assigned_to: SpecialIssueEditTeam.singleton
-    ).where(status: "assigned").where(appeal: appeal)
+    ).where(status: Constants.TASK_STATUSES.assigned).where(appeal: appeal)
     open_issue_task[0].delete unless open_issue_task.empty?
 
     task = IssuesUpdateTask.create!(

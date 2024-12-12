@@ -23,6 +23,8 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "sct_action_required",
   "SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME": "sct_completed",
   "SPECIALTY_CASE_TEAM_UNASSIGNED_TASKS_TAB_NAME": "sct_unassigned",
@@ -35,7 +37,38 @@
   "CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME": "vha_caregiver_support_unassigned",
   "CAREGIVER_SUPPORT_IN_PROGRESS_TASKS_TAB_NAME": "caregiver_support_in_progress",
   "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
+  "CORRESPONDENCE_ASSIGNED_TASKS_LABEL": "Assigned",
+  "CORRESPONDENCE_COMPLETED_TASKS_LABEL": "Completed",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_LABEL": "In Progress",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_LABEL": "Action Required",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_LABEL": "Assigned",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_LABEL": "Completed",
+  "CORRESPONDENCE_PENDING_TASKS_LABEL": "Pending",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_LABEL": "Unassigned",
+  "CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME": "correspondence_assigned",
+  "CORRESPONDENCE_COMPLETED_TASKS_TAB_NAME": "correspondence_completed",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_TAB_NAME": "correspondence_in_progress",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_TAB_NAME": "correspondence_action_required",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME": "correspondence_team_assigned",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_TAB_NAME": "correspondence_team_completed",
+  "CORRESPONDENCE_PENDING_TASKS_TAB_NAME": "correspondence_pending",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME": "correspondence_unassigned",
+  "CORRESPONDENCE_ASSIGNED_TASKS_DESCRIPTION": "Correspondence assigned to you:",
+  "CORRESPONDENCE_COMPLETED_TASKS_DESCRIPTION": "Completed correspondence:",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_DESCRIPTION": "Correspondence in progress that are assigned to you:",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_DESCRIPTION": "Correspondence with pending requests:",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_DESCRIPTION": "Correspondence that is currently assigned to mail team users:",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_DESCRIPTION": "Completed correspondence:",
+  "CORRESPONDENCE_PENDING_TASKS_DESCRIPTION": "Correspondence that is currently assigned to non-mail team users:",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_DESCRIPTION": "Correspondence owned by the Mail team are unassigned to an individual:",
+  "CORRESPONDENCE_ORG_TABLE_TITLE": "Correspondence Cases",
+  "CORRESPONDENCE_USER_TABLE_TITLE": "Your Correspondence",
   "COLUMNS": {
+    "ACTION_TYPE": {
+      "name": "actionType",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type"]
+    },
     "APPEAL_TYPE": {
       "filterable": true,
       "name": "typeColumn"
@@ -53,6 +86,9 @@
       "sorting_columns": [
         "veteran_name"
       ]
+    },
+    "CHECKBOX_COLUMN": {
+      "name": "checkboxColumn"
     },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
@@ -76,6 +112,11 @@
       "sorting_columns": [
         "assigned_at"
       ]
+    },
+    "DAYS_WAITING_CORRESPONDENCE": {
+      "name": "daysWaitingCorrespondence",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
     },
     "LAST_ACTION": {
       "name": "lastActionColumn"
@@ -119,6 +160,19 @@
         "issue_types"
       ]
     },
+    "NOTES": {
+      "name": "notes"
+    },
+    "VA_DATE_OF_RECEIPT": {
+      "name": "vaDor"
+    },
+    "VETERAN_DETAILS": {
+      "name": "veteranDetails"
+    },
+    "PACKAGE_DOCUMENT_TYPE": {
+      "filterable": true,
+      "name": "packageDocTypeColumn"
+    },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },
@@ -156,6 +210,11 @@
       "sorting_columns": [
         "closed_at"
       ]
+    },
+    "CORRESPONDENCE_TASK_CLOSED_DATE": {
+      "name": "correspondenceCompletedDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["closed_at"]
     },
     "TASK_CREATED_AT": {
       "name": "createdDateColumn",
@@ -225,5 +284,10 @@
     "IS_FORMER_TRAVEL": {
       "key": "former Travel"
     }
+  },
+
+  "PACKAGE_DOC_TYPE_FILTER_OPTIONS": {
+    "NOD": "NOD",
+    "NON_NOD": "Non-NOD"
   }
 }

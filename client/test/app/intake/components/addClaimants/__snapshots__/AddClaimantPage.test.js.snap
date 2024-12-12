@@ -124,7 +124,6 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="relationship-label"
                           aria-owns="relationship-listbox"
                           autocapitalize="none"
                           autocomplete="off"

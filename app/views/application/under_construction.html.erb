@@ -1,0 +1,11 @@
+<% content_for :page_title do certification_header("Under Construction") end %>
+
+<% content_for :full_page_content do %>
+  <%= react_component("UnderConstruction", props: {
+    userDisplayName: current_user ? current_user.display_name : "",
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    dependenciesFaked: ApplicationController.dependencies_faked?,
+  }) %>
+<% end %>

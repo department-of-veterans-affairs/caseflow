@@ -262,6 +262,13 @@ export const deleteTask = (taskId) => ({
   }
 });
 
+export const deleteAmaTask = (taskId) => ({
+  type: ACTIONS.DELETE_AMA_TASK,
+  payload: {
+    taskId
+  }
+});
+
 export const deleteAppeal = (appealId) => ({
   type: ACTIONS.DELETE_APPEAL,
   payload: {

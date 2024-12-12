@@ -43,7 +43,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time 
+                    Hearing Time
                   </span>
                 </strong>
               </legend>
@@ -648,7 +648,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time 
+                    Hearing Time
                   </span>
                 </strong>
               </legend>
@@ -1370,7 +1370,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time 
+                    Hearing Time
                   </span>
                 </strong>
               </legend>
@@ -2438,7 +2438,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="judge-dropdown-label"
+                              aria-label="null"
                               aria-owns="judge-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -2534,7 +2534,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-coordinator-dropdown-label"
+                              aria-label="null"
                               aria-owns="hearing-coordinator-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -2632,7 +2632,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-room-dropdown-label"
+                              aria-label="2 (1W200B)"
                               aria-owns="hearing-room-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -2735,7 +2735,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-type-label"
+                              aria-label="Virtual"
                               aria-owns="hearing-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -3127,7 +3127,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="appellant-tz-label"
+                                aria-label="Pacific Time (US & Canada) (12:30 AM)"
                                 aria-owns="appellant-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -3287,7 +3287,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="representative-tz-label"
+                                aria-label="Mountain Time (US & Canada) (1:30 AM)"
                                 aria-owns="representative-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -3587,7 +3587,6 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="transcriber-label"
                               aria-owns="transcriber-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -3780,7 +3779,6 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="problem-type-label"
                               aria-owns="problem-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -4439,7 +4437,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="judge-dropdown-label"
+                              aria-label="null"
                               aria-owns="judge-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -4535,7 +4533,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-coordinator-dropdown-label"
+                              aria-label="null"
                               aria-owns="hearing-coordinator-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -4633,7 +4631,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-room-dropdown-label"
+                              aria-label="2 (1W200B)"
                               aria-owns="hearing-room-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -4736,7 +4734,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-type-label"
+                              aria-label="Virtual"
                               aria-owns="hearing-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -5128,7 +5126,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="appellant-tz-label"
+                                aria-label="Pacific Time (US & Canada) (12:30 AM)"
                                 aria-owns="appellant-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -5288,7 +5286,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="representative-tz-label"
+                                aria-label="Mountain Time (US & Canada) (1:30 AM)"
                                 aria-owns="representative-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -5588,7 +5586,6 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="transcriber-label"
                               aria-owns="transcriber-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -5781,7 +5778,6 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="problem-type-label"
                               aria-owns="problem-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -6437,7 +6433,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="judge-dropdown-label"
+                              aria-label="null"
                               aria-owns="judge-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -6533,7 +6529,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-coordinator-dropdown-label"
+                              aria-label="null"
                               aria-owns="hearing-coordinator-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -6631,7 +6627,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-room-dropdown-label"
+                              aria-label="1 (1W200A)"
                               aria-owns="hearing-room-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -6734,7 +6730,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-type-label"
+                              aria-label="Video"
                               aria-owns="hearing-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -7083,7 +7079,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="appellant-tz-label"
+                                aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                 aria-owns="appellant-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -7243,7 +7239,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="representative-tz-label"
+                                aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                 aria-owns="representative-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -7428,7 +7424,6 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="transcriber-label"
                               aria-owns="transcriber-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -7621,7 +7616,6 @@ exports[`Details Matches snapshot with default props 1`] = `
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="problem-type-label"
                               aria-owns="problem-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -8278,7 +8272,7 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="judge-dropdown-label"
+                              aria-label="null"
                               aria-owns="judge-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -8374,7 +8368,7 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-coordinator-dropdown-label"
+                              aria-label="null"
                               aria-owns="hearing-coordinator-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -8472,7 +8466,7 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-room-dropdown-label"
+                              aria-label="1 (1W200A)"
                               aria-owns="hearing-room-dropdown-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -8575,7 +8569,7 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-type-label"
+                              aria-label="Video"
                               aria-owns="hearing-type-listbox"
                               autocapitalize="none"
                               autocomplete="off"
@@ -8896,7 +8890,6 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="appellant-tz-label"
                                 aria-owns="appellant-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"
@@ -9056,7 +9049,6 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
                                 aria-autocomplete="list"
                                 aria-expanded="false"
                                 aria-haspopup="true"
-                                aria-labelledby="representative-tz-label"
                                 aria-owns="representative-tz-listbox"
                                 autocapitalize="none"
                                 autocomplete="off"

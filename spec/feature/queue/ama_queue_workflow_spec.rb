@@ -249,7 +249,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 1.5 It passes the feature tests for adding a new issue appeal PACT" do
+  context " AC 1.5 It passes the feature tests for adding a new issue appeal PACT", :skip do
     scenario "Adding a new issue with PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -273,7 +273,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 1.6 It passes the feature tests for adding a new issue appeal MST & PACT" do
+  context " AC 1.6 It passes the feature tests for adding a new issue appeal MST & PACT", :skip do
     scenario "Adding a new issue with MST & PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"

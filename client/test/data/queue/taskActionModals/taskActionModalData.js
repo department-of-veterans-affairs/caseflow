@@ -2875,4 +2875,67 @@ export const cancelHearingPostponementRequestData = {
   ...uiData
 };
 
+const correspondenceAvailableActionsList = [
+  { label: 'Change task type' },
+  { label: 'Assign to team' },
+  { label: 'Assign to person' },
+  { label: 'Mark task complete' },
+  { label: 'Cancel task' }
+];
+const correspondenceTasksCommonData = {
+  assignedTo: 'Litigation Support',
+  assignedOn: '09/03/2024',
+  type: 'Organization',
+  availableActions: correspondenceAvailableActionsList,
+  status: 'assigned'
+};
+
+export const tasksUnrelatedToAnAppeal = [
+  {
+    label: 'Other motion',
+    instructions: ['test OM'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'FOIA request',
+    instructions: ['test OM', 'test cavc2'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Privacy act request',
+    instructions: ['test PAR', 'test par2'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Congressional interest',
+    instructions: ['CI'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Privacy complaint',
+    instructions: ['PC'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Death certificate',
+    instructions: ['DC'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Power of attorney-related',
+    instructions: ['PoAR'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'Status inquiry',
+    instructions: ['SI'],
+    ...correspondenceTasksCommonData
+  },
+  {
+    label: 'CAVC Correspondence',
+    instructions: ['CAVC C'],
+    ...correspondenceTasksCommonData
+  }
+];
+
 /* eslint-enable max-lines */

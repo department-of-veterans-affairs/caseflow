@@ -2,6 +2,6 @@
 
 class JudgeQueue < GenericQueue
   def tasks
-    super.active.where(type: JudgeAssignTask.name)
+    super.active.not_correspondence.where(type: JudgeAssignTask.name)
   end
 end

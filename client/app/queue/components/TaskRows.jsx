@@ -280,7 +280,7 @@ class TaskRows extends React.PureComponent {
   };
 
   taskLabelListItem = (task) => {
-    if (task.closedAt) {
+    if (task.closedAt && !task?.waivable) {
       return null;
     }
 
@@ -516,13 +516,15 @@ class TaskRows extends React.PureComponent {
       return null;
     }
 
-    return this.showActionsSection(task) ? (
+    return this.showActionsSection(task) || this.taskIsWaivable(task) ? (
       <div>
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <ActionsDropdown task={task} appealId={appeal.externalId} />
       </div>
     ) : null;
   };
+
+  taskIsWaivable = (task) => task?.waivable && this.props.waivableUser;
 
   showActionsSection = (task) => task && !this.props.hideDropdown;
 
@@ -772,6 +774,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  waivableUser: PropTypes.bool
 };
 
 export default TaskRows;

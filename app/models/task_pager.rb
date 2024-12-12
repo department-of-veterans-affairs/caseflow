@@ -25,7 +25,7 @@ class TaskPager
 
   def paged_tasks
     @paged_tasks ||= begin
-      tasks = sorted_tasks(filtered_tasks)
+      tasks = sorted_tasks(filtered_tasks).not_correspondence
       limit = queue_tab.custom_task_limit || TASKS_PER_PAGE
       pagination_enabled ? tasks.page(page).per(limit) : tasks
     end

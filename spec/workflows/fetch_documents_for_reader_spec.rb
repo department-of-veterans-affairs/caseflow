@@ -131,5 +131,15 @@ describe FetchDocumentsForReaderJob, :all_dbs do
         end
       end
     end
+
+    context "with Correspondence" do
+      let(:correspondence) { create(:correspondence) }
+      subject { described_class.new(user: user, appeals: [appeal, correspondence]) }
+
+      it "exclude fetching Correspondences" do
+        subject.process
+        expect(subject.instance_variable_get(:@appeals_successful)).to eq([appeal])
+      end
+    end
   end
 end

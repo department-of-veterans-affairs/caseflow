@@ -19,7 +19,7 @@ RSpec.feature "MailTasks", :postgres do
         AodMotionMailTask.create!(
           appeal: root_task.appeal,
           parent_id: root_task.id,
-          assigned_to: MailTeam.singleton
+          assigned_to: InboundOpsTeam.singleton
         )
       end
 
@@ -69,7 +69,7 @@ RSpec.feature "MailTasks", :postgres do
       old_task_type.create!(
         appeal: root_task.appeal,
         parent_id: root_task.id,
-        assigned_to: MailTeam.singleton
+        assigned_to: InboundOpsTeam.singleton
       )
     end
 
@@ -287,7 +287,9 @@ RSpec.feature "MailTasks", :postgres do
           postpone_payload = AppellantNotification.create_payload(appeal,
                                                                   Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
             .to_json
-          expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+          using_wait_time(30) do
+            expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+          end
         end
         expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
       end
