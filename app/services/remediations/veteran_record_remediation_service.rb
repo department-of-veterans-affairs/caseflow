@@ -3,10 +3,8 @@
 class Remediations::VeteranRecordRemediationService
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
-  # Define the parameter struct for remediation audit params
   RemediationAuditParams = Struct.new(:class_name, :record_id, :before_data, :after_data)
 
-  # Define the lookup hash for column names
   COLUMN_NAME_LOOKUP = {
     "Appeal" => "veteran_file_number",
     "AvailableHearingLocations" => "veteran_file_number",
@@ -29,17 +27,17 @@ class Remediations::VeteranRecordRemediationService
   end
 
   def remediate!
-    if dups.any? # If there are duplicates, run dup_fix on @after_fn
+    if dups.any?
       if dup_fix(after_fn)
         dups.each(&:destroy!)
-        @event_record.remediated!
+        event_record.remediated!
       end
-    elsif fix_vet_records # Otherwise, fix veteran records normally
-      @event_record.remediated!
+    elsif fix_vet_records
+      event_record.remediated!
     else
-      @event_record.failed!
+      event_record.failed!
     end
-    @event_record.remediation_attempts += 1
+    event_record.remediation_attempts += 1
   end
 
   private
@@ -64,12 +62,10 @@ class Remediations::VeteranRecordRemediationService
         "Job failed during record update: #{error.message}",
         "Error in #{self.class.name}"
       )
-      # sentry log / metabase dashboard
     end
   end
 
   def fix_vet_records
-    # fixes file number
     collections = grab_collections(before_fn)
     update_records!(collections, after_fn)
   end
@@ -85,7 +81,6 @@ class Remediations::VeteranRecordRemediationService
       before_data = collection.attributes
       column_name = infer_column_name(collection.class)
       collection.update!(column_name => file_number)
-      # Use the struct for the audit params
       audit_params = RemediationAuditParams.new(
         collection.class.name,
         collection.id,
@@ -100,7 +95,6 @@ class Remediations::VeteranRecordRemediationService
 
     attr_reader :collection, :file_number, :event_record
 
-    # utilize the lookup hash for column names
     def infer_column_name(klass)
       COLUMN_NAME_LOOKUP[klass.name] || fail("Unknown class: #{klass.name}, cannot determine column.")
     end
@@ -120,7 +114,6 @@ class Remediations::VeteranRecordRemediationService
   end
 
   def update_records!(collections, file_number)
-    # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
         UpdateCollectionRecord.new(collection, file_number, event_record).call
