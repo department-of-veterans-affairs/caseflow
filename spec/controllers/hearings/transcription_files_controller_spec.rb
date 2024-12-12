@@ -445,7 +445,7 @@ RSpec.describe Hearings::TranscriptionFilesController, type: :controller do
       expected_response = {
         task_page_count: 1,
         tasks: {
-          data: [transcription_response_1, transcription_response_2, transcription_response_4, transcription_response_3]
+          data: [transcription_response_1, transcription_response_2, transcription_response_3, transcription_response_4]
         },
         tasks_per_page: 15,
         total_task_count: 4
