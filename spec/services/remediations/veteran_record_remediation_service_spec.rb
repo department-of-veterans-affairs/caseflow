@@ -64,7 +64,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
 
-        update_mock_instances_after_fn # Use the shared logic to update mock instances
+        update_mock_instances_after_fn
 
         expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
@@ -88,7 +88,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         # Expect that `dup_fix` should not be called in this scenario.
         expect(vet_record_service).not_to receive(:dup_fix)
 
-        update_mock_instances_after_fn # Use the shared logic to update mock instances
+        update_mock_instances_after_fn
 
         vet_record_service.remediate!
 
