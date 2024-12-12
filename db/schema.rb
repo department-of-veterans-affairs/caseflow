@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_04_205006) do
+ActiveRecord::Schema.define(version: 2024_12_10_095300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2686,7 +2686,7 @@ ActiveRecord::Schema.define(version: 2024_12_04_205006) do
               COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
               replace((appeals.receipt_date)::text, '-'::text, ''::text) AS receipt_date,
               (appeals.uuid)::text AS external_id,
-              (appeals.stream_type)::text AS appeal_stream,
+              initcap(replace((appeals.stream_type)::text, '_'::text, ' '::text)) AS appeal_stream,
               (appeals.stream_docket_number)::text AS docket_number,
                   CASE
                       WHEN ((appeals.aod_based_on_age = true) OR (advance_on_docket_motions.granted = true) OR (veteran_person.date_of_birth <= (CURRENT_DATE - 'P75Y'::interval)) OR (aod_based_on_age_recognized_claimants.quantity > 0)) THEN true
