@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import COPY from '../../../../COPY';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
@@ -51,8 +52,7 @@ describe('ErrorsFoundAndCorrectedModal', () => {
     const textarea = screen.getByRole('textbox');
 
     expect(screen.getByText('Upload transcript to VBMS')).toBeInTheDocument();
-    expect(screen.getByText('Please upload the revised transcript file for upload to VBMS.')).
-      toBeInTheDocument();
+    expect(screen.getByText(COPY.ERROR_FOUND_CORRECTED_UPLOAD_TRANSCRIPT_VBMS_TEXT)).toBeInTheDocument();
     expect(screen.getByText('Please select PDF')).toBeInTheDocument();
     expect(screen.getByText('Choose file from folder')).toBeInTheDocument();
     expect(screen.getByText('Please provide context and instructions for this action')).

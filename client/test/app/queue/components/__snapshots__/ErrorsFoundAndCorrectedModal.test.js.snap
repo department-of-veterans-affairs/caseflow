@@ -55,7 +55,7 @@ exports[`ErrorsFoundAndCorrectedModal renders correctly 1`] = `
           data-css-2flkvz=""
         >
           <p>
-            Please upload the revised transcript file for upload to VBMS.
+            Please upload the revised transcript file for upload to VBMS. File name must match the original file name. There can be no extra spaces or characters.
           </p>
           <p>
             <strong

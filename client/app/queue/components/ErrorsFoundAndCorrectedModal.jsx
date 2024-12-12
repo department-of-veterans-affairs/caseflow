@@ -141,7 +141,8 @@ export const ErrorsFoundAndCorrectedModal = (props) => {
       confirmButton={<Button disabled={isSubmitDisabled} onClick={submit}>Upload to VBMS</Button>}
       cancelButton={<Button disabled={loading} linkStyling onClick={cancel}>Cancel</Button>}
     >
-      <p>Please upload the revised transcript file for upload to VBMS.</p>
+      <p>Please upload the revised transcript file for upload to VBMS. File name must match the original file name.
+        There can be no extra spaces or characters.</p>
       <p>
         <strong style={{ color: 'black' }}>Transcript file name</strong>
         <div>{transcriptFileName}</div>
