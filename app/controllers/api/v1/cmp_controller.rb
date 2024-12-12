@@ -88,6 +88,6 @@ class Api::V1::CmpController < Api::ApplicationController
     render json: {
       message: message,
       errors: unprocessable_object&.errors
-    }, status: :unprocessable_entity
+    }, status: :error
   end
 end
