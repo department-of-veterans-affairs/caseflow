@@ -1,5 +1,4 @@
 FROM metabase/metabase:v0.50.21
-MAINTAINER BID Appeals
 
 ENV MB_PLUGINS_DIR /app/plugins
 
