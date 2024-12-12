@@ -42,7 +42,10 @@ module Seeds
       wqjudge_control = create_scenario_6_veteran(first_name: "Wqjudge", last_name: "Control")
 
       def set_decass_atty(atty, sc)
-        QueueRepository.send(:update_decass_record, VACOLS::Decass.find_by(defolder: sc.vacols_id), attorney_id: atty.vacols_attorney_id)
+        QueueRepository.send(:update_decass_record, VACOLS::Decass.find_by(defolder: sc.vacols_id), attorney_id: atty.vacols_attorney_id,
+        work_product: "DEC",
+        document_id: "12345-12345678"
+        )
       end
 
       # Case 1: Wqjudge One (Priority, 2 issues)
