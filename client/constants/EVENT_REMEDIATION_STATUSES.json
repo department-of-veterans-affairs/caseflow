@@ -1,0 +1,6 @@
+{
+  "pending": "pending",
+  "processed": "processed",
+  "remediated": "remediated",
+  "failed": "failed"
+}

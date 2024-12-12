@@ -9,6 +9,8 @@ class Remediations::DuplicatePersonRemediationService
     Notification
   ].freeze
 
+  RemediationAuditParams = Struct.new(:after_data, :before_data, :type, :id)
+
   def initialize(updated_person_id:, duplicate_person_ids:, event_record:)
     @updated_person_id = updated_person_id
     @duplicate_person_ids = duplicate_person_ids
@@ -18,7 +20,11 @@ class Remediations::DuplicatePersonRemediationService
   def remediate!
     if find_and_update_records
       duplicate_persons.each(&:destroy!)
+      event_record.remediated!
+    else
+      event_record.failed!
     end
+    event_record.remediation_attempts += 1
   end
 
   private
@@ -39,15 +45,15 @@ class Remediations::DuplicatePersonRemediationService
 
       records.map do |record|
         before_data = record.attributes
-
         record.update!("#{column}": og_person.participant_id)
-
-        add_remediation_audit(
-          after_data: record.attributes,
-          before_data: before_data,
-          id: record.id,
-          type: record.class.name
+        audit_params = RemediationAuditParams.new(
+          record.attributes,
+          before_data,
+          record.class.name,
+          record.id
         )
+
+        add_remediation_audit(audit_params)
       end
     end
 
@@ -55,15 +61,15 @@ class Remediations::DuplicatePersonRemediationService
 
     attr_reader :duplicate_persons, :event_record, :og_person, :klass
 
-    def add_remediation_audit(after_data:, before_data:, type:, id:)
+    def add_remediation_audit(audit_params)
       EventRemediationAudit.create!(
         event_record: event_record,
-        remediated_record_type: type,
-        remediated_record_id: id,
+        remediated_record_type: audit_params.type,
+        remediated_record_id: audit_params.id,
         info: {
           remediation_type: "DuplicatePersonRemediationService",
-          after_data: after_data,
-          before_data: before_data
+          after_data: audit_params.after_data,
+          before_data: audit_params.before_data
         }
       )
     end
@@ -77,7 +83,6 @@ class Remediations::DuplicatePersonRemediationService
         end
       end
     rescue StandardError => error
-      # Log the error specific to find_and_update_records and return false
       Rails.logger.error "Error in find_and_update_records: #{error.message}"
       SlackService.new.send_notification("Error in find_and_update_records: #{error.message}",
                                          "Error in #{self.class.name}")

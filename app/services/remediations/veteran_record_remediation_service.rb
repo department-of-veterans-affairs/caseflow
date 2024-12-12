@@ -3,6 +3,23 @@
 class Remediations::VeteranRecordRemediationService
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
+  RemediationAuditParams = Struct.new(:class_name, :record_id, :before_data, :after_data)
+
+  COLUMN_NAME_LOOKUP = {
+    "Appeal" => "veteran_file_number",
+    "AvailableHearingLocations" => "veteran_file_number",
+    "EndProductEstablishment" => "veteran_file_number",
+    "HigherLevelReview" => "veteran_file_number",
+    "RampElection" => "veteran_file_number",
+    "RampRefiling" => "veteran_file_number",
+    "SupplementalClaim" => "veteran_file_number",
+    "Intake" => "veteran_file_number",
+    "BgsPowerOfAttorney" => "file_number",
+    "Form8" => "file_number",
+    "Document" => "file_number",
+    "LegacyAppeal" => "vbms_id"
+  }.freeze
+
   def initialize(before_fn, after_fn, event_record)
     @before_fn = before_fn
     @after_fn = after_fn
@@ -11,14 +28,16 @@ class Remediations::VeteranRecordRemediationService
 
   def remediate!
     if dups.any?
-      # If there are duplicates, run dup_fix on @after_fn
       if dup_fix(after_fn)
         dups.each(&:destroy!)
+        event_record.remediated!
       end
+    elsif fix_vet_records
+      event_record.remediated!
     else
-      # Otherwise, fix veteran records normally
-      fix_vet_records
+      event_record.failed!
     end
+    event_record.remediation_attempts += 1
   end
 
   private
@@ -43,12 +62,10 @@ class Remediations::VeteranRecordRemediationService
         "Job failed during record update: #{error.message}",
         "Error in #{self.class.name}"
       )
-      # sentry log / metabase dashboard
     end
   end
 
   def fix_vet_records
-    # fixes file number
     collections = grab_collections(before_fn)
     update_records!(collections, after_fn)
   end
@@ -62,14 +79,16 @@ class Remediations::VeteranRecordRemediationService
 
     def call
       before_data = collection.attributes
-      column_name = infer_column_name(collection.class) # Dynamically determine the column name based on the model class
+      column_name = infer_column_name(collection.class)
       collection.update!(column_name => file_number)
-      add_remediation_audit(
-        class_name: collection.class.name,
-        record_id: collection.id,
-        before_data: before_data,
-        after_data: collection.attributes
+      audit_params = RemediationAuditParams.new(
+        collection.class.name,
+        collection.id,
+        before_data,
+        collection.attributes
       )
+
+      add_remediation_audit(audit_params)
     end
 
     private
@@ -77,35 +96,24 @@ class Remediations::VeteranRecordRemediationService
     attr_reader :collection, :file_number, :event_record
 
     def infer_column_name(klass)
-      case klass.name
-      when "Appeal", "AvailableHearingLocations", "EndProductEstablishment", "HigherLevelReview", "RampElection",
-           "RampRefiling", "SupplementalClaim", "Intake"
-        "veteran_file_number"
-      when "BgsPowerOfAttorney", "Form8", "Document"
-        "file_number"
-      when "LegacyAppeal"
-        "vbms_id"
-      else
-        fail "Unknown class: #{klass.name}, cannot determine column."
-      end
+      COLUMN_NAME_LOOKUP[klass.name] || fail("Unknown class: #{klass.name}, cannot determine column.")
     end
 
-    def add_remediation_audit(class_name:, record_id:, before_data:, after_data:)
+    def add_remediation_audit(audit_params)
       EventRemediationAudit.create!(
         event_record: event_record,
-        remediated_record_type: class_name,
-        remediated_record_id: record_id,
+        remediated_record_type: audit_params.class_name,
+        remediated_record_id: audit_params.record_id,
         info: {
           remediation_type: "VeteranRecordRemediationService",
-          after_data: after_data,
-          before_data: before_data
+          after_data: audit_params.after_data,
+          before_data: audit_params.before_data
         }
       )
     end
   end
 
   def update_records!(collections, file_number)
-    # update records with updated file_number
     ActiveRecord::Base.transaction do
       collections.each do |collection|
         UpdateCollectionRecord.new(collection, file_number, event_record).call

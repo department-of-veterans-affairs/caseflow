@@ -8,7 +8,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   retry_on(PersonAndVeteranRemediationJobError, attempts: 3, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception.message}")
   end
-  # retry_on PersonAndVeteranEventRemediationJob::PersonAndVeteranRemediationJobError, wait: 5.seconds, attempts: 3
 
   def setup_job
     RequestStore.store[:current_user] = User.system_user
@@ -34,6 +33,8 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           event_record: event_record,
           updated_person_id: original_id
         ).remediate!
+      else
+        event_record.processed!
       end
     end
 
@@ -72,6 +73,8 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
           after_file_num,
           event_record
         ).remediate!
+      else
+        event_record.processed!
       end
     end
 
@@ -107,6 +110,6 @@ class PersonAndVeteranEventRemediationJob < CaseflowJob
   end
 
   def find_events(event_type)
-    EventRecord.where(evented_record_type: event_type).exists?(["updated_at >= ?", 5.minutes.ago])
+    EventRecord.where(evented_record_type: event_type, remediation_status: [:pending, :failed])
   end
 end

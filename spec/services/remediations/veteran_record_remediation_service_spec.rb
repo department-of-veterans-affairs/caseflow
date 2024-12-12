@@ -37,14 +37,22 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
     end
   end
 
+  # Shared logic for updating file_number in the mock instances
+  def update_mock_instances_after_fn
+    mock_classes.each do |mock_instance|
+      column = column_mapping[mock_instance.class]
+      allow(mock_instance).to receive(:update!).with(column => after_fn).and_wrap_original do
+        mock_instance.send("#{column}=", after_fn)
+      end
+    end
+  end
+
   before do
     # Stub Veteran.find_by_file_number to handle both before_fn and after_fn
     allow(Veteran).to receive(:find_by_file_number).with(before_fn).and_return(mock_veteran)
     allow(Veteran).to receive(:find_by_file_number).with(after_fn).and_return(mock_veteran)
     # Stub Veteran.where to return mock_veteran and duplicate_veteran for the same SSN
     allow(Veteran).to receive(:where).with(ssn: "123456789").and_return([mock_veteran, duplicate_veteran])
-    # Spy on `destroy!` for both mock_veteran and duplicate_veteran
-    # allow(mock_veteran).to receive(:destroy!).and_return(nil)
     allow(duplicate_veteran).to receive(:destroy!).and_return(nil)
     # Allow grab_collections to return mock classes
     allow(vet_record_service).to receive(:grab_collections).with(before_fn).and_return(mock_classes)
@@ -56,12 +64,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         # We expect the `dup_fix` method to be called and the collections for the duplicate veterans to be updated.
         expect(vet_record_service).to receive(:dup_fix).with(after_fn).and_call_original
 
-        mock_classes.each do |mock_instance|
-          column = column_mapping[mock_instance.class]
-          allow(mock_instance).to receive(:update!).with(column => after_fn).and_wrap_original do
-            mock_instance.send("#{column}=", after_fn)
-          end
-        end
+        update_mock_instances_after_fn
 
         expect(duplicate_veteran).to receive(:destroy!).and_return(nil)
 
@@ -85,12 +88,7 @@ RSpec.describe Remediations::VeteranRecordRemediationService do
         # Expect that `dup_fix` should not be called in this scenario.
         expect(vet_record_service).not_to receive(:dup_fix)
 
-        mock_classes.each do |mock_instance|
-          column = column_mapping[mock_instance.class]
-          allow(mock_instance).to receive(:update!).with(column => after_fn).and_wrap_original do
-            mock_instance.send("#{column}=", after_fn)
-          end
-        end
+        update_mock_instances_after_fn
 
         vet_record_service.remediate!
 

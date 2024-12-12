@@ -6,6 +6,13 @@ class EventRecord < CaseflowRecord
   has_many :event_remediation_audits
   store_accessor :info
 
+  enum remediation_status: {
+    pending: 0, # the event_record has not yet been processed by the job
+    processed: 1, # the event_record was processed by the job without need for remediation
+    remediated: 2, # the event_record was processed by the job and successfully remediated
+    failed: 3 # the event_record was processed by the job, but the remediation failed
+  }
+
   validate :valid_evented_record
 
   def valid_evented_record
