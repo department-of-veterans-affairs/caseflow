@@ -133,6 +133,10 @@ class NonCompDispositions extends React.PureComponent {
     const dateIsValid = Boolean((new Date(decisionDate)) >= new Date(receiptDate)) &&
       Boolean(Date.parse(decisionDate) < new Date());
 
+    if (this.props.task.business_line !== 'vha') {
+      return true;
+    }
+
     if (dateIsValid) {
       this.setState({ errorMessage: '' });
     } else {
@@ -313,9 +317,9 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
-              minDate={receiptDate}
-              errorMessage={this.state.errorMessage}
-              noFutureDates
+              minDate={this.props.task.business_line === 'vha' ? receiptDate : null}
+              errorMessage={this.props.task.business_line === 'vha' ? this.state.errorMessage : null}
+              noFutureDates={this.props.task.business_line === 'vha'}
               type="date"
             />
           </InlineForm>
