@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selectors';
+import {
+  appealWithDetailSelector,
+  taskSnapshotTasksForAppeal,
+  latestCaseTimelineTaskForAppeal } from './selectors';
 import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -9,10 +12,10 @@ import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
 import DocketSwitchAlertBanner from './docketSwitch/DocketSwitchAlertBanner';
+import Alert from '../components/Alert';
 
 const tableStyling = css({
-  width: '100%',
-  marginTop: '0px'
+  width: '100%'
 });
 
 const alertStyling = css({
@@ -20,21 +23,37 @@ const alertStyling = css({
   marginBottom: 0
 });
 
-export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
+export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTask, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
+  const { css_id: locationUserCssId } = appeal?.locationHistory?.at(-1)?.locationUser || {};
+  const showBanner = (
+    latestCaseTimeLineTask?.type === 'LegacyAppealAssignmentTrackingTask' &&
+    latestCaseTimeLineTask?.assignedTo.cssId === locationUserCssId
+  );
+  const legacyTaskAlert = showBanner && (
+    <Alert
+      type="info"
+      message={COPY.TASK_SNAPSHOT_CASE_MOVED_ALERT_LABEL}
+      lowerMargin
+    />
+  );
 
   const sectionBody = tasks.length ? (
-    <table {...tableStyling} summary="layout table">
-      <tbody>
-        <TaskRows appeal={appeal}
-          taskList={tasks}
-          timeline={false}
-          editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
-          hideDropdown={hideDropdown}
-        />
-      </tbody>
-    </table>
+    <>
+      {legacyTaskAlert}
+      <table {...tableStyling} summary="layout table">
+        <tbody>
+          <TaskRows
+            appeal={appeal}
+            taskList={tasks}
+            timeline={false}
+            editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
+            hideDropdown={hideDropdown}
+          />
+        </tbody>
+      </table>
+    </>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
@@ -52,25 +71,34 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
-      <div {...alertStyling} {...sectionSegmentStyling}>
-        { docketSwitchDisposition === 'partially_granted' &&
+      {docketSwitchDisposition === 'partially_granted' && (
+        <div {...alertStyling} {...sectionSegmentStyling}>
           <DocketSwitchAlertBanner appeal={appeal} />
-        }
+        </div>
+      )}
+      {appeal.switchedDockets?.some((docketSwitch) => docketSwitch.disposition !== 'denied') && (
+        <div {...alertStyling} {...sectionSegmentStyling}>
+          {appeal.switchedDockets?.map((docketSwitch) =>
+            docketSwitch.disposition === 'denied' ? '' : (
+              <DocketSwitchAlertBanner
+                key={docketSwitch.id}
+                appeal={appeal}
+                docketSwitch={docketSwitch}
+              />
+            )
+          )}
+        </div>
+      )}
+      <div {...sectionSegmentStyling}>
+        {sectionBody}
       </div>
-      <div {...alertStyling} {...sectionSegmentStyling}>
-        { appeal.switchedDockets ? appeal.switchedDockets.map((docketSwitch) =>
-          docketSwitch.disposition === 'denied' ? '' :
-            <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch} />) :
-          ''
-        }
-      </div>
-      <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
   );
 };
 
 TaskSnapshot.propTypes = {
   tasks: PropTypes.array,
+  latestCaseTimeLineTask: PropTypes.object,
   appeal: PropTypes.object,
   hideDropdown: PropTypes.bool,
   showPulacCerulloAlert: PropTypes.bool
@@ -79,7 +107,8 @@ TaskSnapshot.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId }),
+    latestCaseTimeLineTask: latestCaseTimelineTaskForAppeal(state, { appealId: ownProps.appealId }),
   };
 };
 
