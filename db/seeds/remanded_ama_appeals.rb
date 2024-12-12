@@ -79,7 +79,7 @@ module Seeds
         "inadequate_medical_opinion",
         "advisory_medical_opinion",
         "inextricably_intertwined",
-        "error_satisfying_regulatory_or_statutory_duty",
+        "error",
         "other"
       ]
     end

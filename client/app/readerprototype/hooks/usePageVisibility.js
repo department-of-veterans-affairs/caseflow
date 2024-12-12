@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 
-const usePageVisibility = (ref, threshold = 0) => {
+const usePageVisibility = (ref) => {
   const [isIntersecting, setIntersecting] = useState(false);
 
   useEffect(() => {
-    if (ref.current) {
-      const observer = new IntersectionObserver(([entry]) =>
-        setIntersecting(entry.isIntersecting), { threshold }
-      );
+    const observer = new IntersectionObserver(([entry]) =>
+      setIntersecting(entry.isIntersecting)
+    );
 
-      observer.observe(ref.current);
+    observer.observe(ref.current);
 
-      return () => {
-        observer.disconnect();
-      };
-    }
+    return () => {
+      observer.disconnect();
+    };
   }, [ref]);
 
   return isIntersecting;

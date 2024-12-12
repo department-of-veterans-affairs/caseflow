@@ -25,13 +25,8 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-
-      # adjust for non_genpop for distributing non_genpop appeals during the push priority job only
-      scope = if genpop == "not_genpop" && judge.present?
-                only_non_genpop_appeals_for_push_job(scope, judge)
-              else
-                adjust_for_affinity(scope, not_affinity, judge)
-              end
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
+      scope = adjust_for_affinity(scope, not_affinity, judge) if FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -64,7 +59,7 @@ class Docket
     # `count` on `appeals` will return a hash. To get the number of appeals, we
     # can pluck the ids and ask for the size of the resulting array.
     # See the docs for ActiveRecord::Calculations
-    appeals(priority: priority, ready: ready, not_affinity: true).ids.size
+    appeals(priority: priority, ready: ready).ids.size
   end
 
   # currently this is used for reporting needs
@@ -73,7 +68,11 @@ class Docket
   end
 
   def genpop_priority_count
-    appeals(priority: true, ready: true).ids.size
+    # By default all cases are considered genpop. This can be overridden for specific dockets
+    # For evidence submission and direct review docket, all appeals are genpop;
+    # Don't need to specify anything more than "ready" and "priority".
+    # This is overridden in hearing request docket.
+    count(priority: true, ready: true)
   end
 
   def weight
@@ -113,7 +112,7 @@ class Docket
   end
 
   def ready_priority_appeal_ids
-    appeals(priority: true, ready: true, not_affinity: true).pluck(:uuid)
+    appeals(priority: true, ready: true).pluck(:uuid)
   end
 
   def tied_to_vljs(judge_ids)
@@ -150,13 +149,13 @@ class Docket
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        new_dist_case = create_distribution_case_for_task(distribution, task, priority, genpop)
+        new_dist_case = create_distribution_case_for_task(distribution, task, priority)
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
-        create_distribution_case_for_task(distribution, task, priority, genpop)
+        create_distribution_case_for_task(distribution, task, priority)
       end
     end
   end
@@ -207,13 +206,13 @@ class Docket
   private
 
   # :reek:ControlParameter
-  def only_non_genpop_appeals_for_push_job(scope, judge)
-    scope.non_genpop_with_case_distribution_lever(judge, docket_type)
+  def adjust_for_genpop(scope, genpop, judge)
+    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
   def adjust_for_affinity(scope, not_affinity, judge = nil)
     if judge.present?
-      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge, docket_type))
+      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
     elsif not_affinity
       scope
     else
@@ -242,10 +241,9 @@ class Docket
   end
 
   # :reek:FeatureEnvy
-  def create_distribution_case_for_task(distribution, task, priority, genpop)
+  def create_distribution_case_for_task(distribution, task, priority)
     distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                            docket: docket_type,
-                                           genpop_query: genpop,
                                            priority: priority,
                                            ready_at: task.appeal.ready_for_distribution_at,
                                            task: task,

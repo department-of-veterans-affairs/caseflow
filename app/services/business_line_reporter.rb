@@ -1,28 +1,20 @@
 # frozen_string_literal: true
 
 class BusinessLineReporter
-  attr_reader :business_line, :filters
+  attr_reader :business_line
 
   BUSINESS_LINE_OPTIONS = %w[business_line appeal_id appeal_type claimant_name request_issues_count
                              decision_issues_count veteran_file_number intake_user_id
                              task_type task_id tasks_url task_assigned_to created_at closed_at].freeze
 
-  def initialize(business_line, filters = nil)
+  def initialize(business_line)
     @business_line = business_line
-    @filters = { filters: filters, sort_by: :id, sort_order: :asc }
   end
 
   def tasks
-    # If it is the VhaBusinessLine use the decision review queue task methods since they support the filters
-    if business_line.is_a?(VhaBusinessLine)
-      business_line.completed_tasks(filters).includes(
-        [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
-      )
-    else
-      business_line.tasks.completed.includes(
-        [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
-      ).order(id: :asc)
-    end
+    business_line.tasks.completed.includes(
+      [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+    ).order(id: :asc)
   end
 
   # rubocop:disable Metrics/AbcSize

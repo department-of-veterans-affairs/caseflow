@@ -10,13 +10,11 @@ import {
   veteranParticipantIdColumn,
   veteranSsnColumn,
   decisionReviewTypeColumn,
-  pendingIssueModificationColumn,
-  vhaTaskCompletedDateColumn
+  pendingIssueModificationColumn
 } from './TaskTableColumns';
 import {
   issueCountColumn,
-  issueTypesColumn,
-  taskCompletedDateColumn
+  issueTypesColumn
 } from '../../queue/components/TaskTableColumns';
 import {
   buildDecisionReviewFilterInformation,
@@ -77,10 +75,6 @@ class TaskTableTabUnconnected extends React.PureComponent {
     return claimantColumnObject;
   };
 
-  getDateCompletedColumn = (businessLineUrl) => {
-    return businessLineUrl === 'vha' ? vhaTaskCompletedDateColumn() : taskCompletedDateColumn();
-  };
-
   getTableColumns = () => [
     this.claimantColumnHelper(),
     {
@@ -98,8 +92,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
       ...issueTypesColumn(),
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
-    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null,
-    this.state.tabName === 'completed' ? this.getDateCompletedColumn(this.props.businessLineUrl) : null,
+    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null
   ].filter((column) => column !== null);
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
@@ -163,8 +156,7 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
-  tabName: PropTypes.string,
-  businessLineUrl: PropTypes.string
+  tabName: PropTypes.string
 };
 
 const TaskTableTab = connect(

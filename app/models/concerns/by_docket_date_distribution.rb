@@ -17,19 +17,8 @@ module ByDocketDateDistribution
     @push_priority_target = limit
     @rem = 0
     @appeals = []
-
-    if limit.nil?
-      # Distribute priority appeals that are tied to judges (not genpop) with no limit.
-      args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
-      dockets.each_key do |docket|
-        collect_appeals do
-          dockets[docket].distribute_appeals(self, args)
-        end
-      end
-    else
-      # Distribute <limit> number of cases, regardless of docket type, oldest first.
-      distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
-    end
+    # Distribute <limit> number of cases, regardless of docket type, oldest first.
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
     @appeals
   end
 

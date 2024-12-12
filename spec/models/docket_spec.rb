@@ -144,6 +144,21 @@ describe Docket, :all_dbs do
             expect(subject).to match_array([cavc_appeal])
           end
         end
+
+        context "when acd_exclude_from_affinity flag is enabled" do
+          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+          after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+
+          context "when called for ready is true and judge is passed" do
+            let(:judge) { judge_decision_review_task.assigned_to }
+
+            subject { DirectReviewDocket.new.appeals(ready: true, priority: false, judge: judge) }
+
+            it "returns non priority appeals" do
+              expect(subject).to match_array([appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal])
+            end
+          end
+        end
       end
 
       context "when ready is false" do
@@ -156,7 +171,7 @@ describe Docket, :all_dbs do
       end
 
       context "when looking for only priority and ready appeals" do
-        subject { DirectReviewDocket.new.appeals(priority: true, ready: true, not_affinity: true) }
+        subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
         it "returns priority/ready appeals" do
           expect(subject).to_not include appeal
           expect(subject).to_not include denied_aod_motion_appeal
@@ -220,7 +235,7 @@ describe Docket, :all_dbs do
       end
 
       context "when only looking for appeals that are ready for distribution" do
-        subject { DirectReviewDocket.new.appeals(ready: true, not_affinity: true) }
+        subject { DirectReviewDocket.new.appeals(ready: true) }
 
         it "only returns active appeals that meet both of these conditions:
             it has at least one Distribution Task with status assigned
@@ -339,7 +354,7 @@ describe Docket, :all_dbs do
       subject { docket.genpop_priority_count }
 
       it "counts genpop priority appeals" do
-        expect(subject).to eq(2)
+        expect(subject).to eq(3)
       end
 
       context "when acd_exclude_from_affinity flag is enabled" do
@@ -409,12 +424,12 @@ describe Docket, :all_dbs do
       end
 
       it "returns an empty array when the lever value is true and priority is true" do
-        CaseDistributionLever.find_by(item: "disable_ama_non_priority_direct_review").update!(value: "true")
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "true"))
         expect(docket.ready_priority_nonpriority_appeals(ready: true)).to eq([])
       end
 
       it "returns the correct appeals when the lever value is false and priority is true" do
-        expected_appeals = docket.appeals(priority: true, ready: true)
+        expected_appeals = docket.appeals(priority: true)
         result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
         expect(result).to match_array(expected_appeals)
       end
@@ -426,7 +441,7 @@ describe Docket, :all_dbs do
         end
 
         it "returns the correct appeals" do
-          expected_appeals = docket.appeals(priority: true, ready: true)
+          expected_appeals = docket.appeals(priority: true)
           result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
           expect(result).to match_array(expected_appeals)
         end

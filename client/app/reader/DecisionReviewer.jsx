@@ -12,7 +12,7 @@ import CaseSearchLink from '../components/CaseSearchLink';
 import NavigationBar from '../components/NavigationBar';
 import PageRoute from '../components/PageRoute';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { selectAnnotation, stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { formatNameShort } from '../util/FormatUtil';
@@ -68,7 +68,6 @@ export class DecisionReviewer extends React.PureComponent {
   onJumpToComment = (history, vacolsId) => (comment) => () => {
     this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
-    this.props.selectAnnotation(comment.uuid);
   }
 
   determineInitialCategoryFilter = (props) => {
@@ -147,10 +146,7 @@ export class DecisionReviewer extends React.PureComponent {
       <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
-        featureToggles={this.props.featureToggles}
         zoomLevel={this.state.zoomLevel}
         onZoomChange={this.updateZoomLevel}
         {...props}
@@ -213,7 +209,6 @@ DecisionReviewer.propTypes = {
   userHasEfolderRole: PropTypes.bool,
   isPlacingAnnotation: PropTypes.any,
   onScrollToComment: PropTypes.func,
-  selectAnnotation: PropTypes.func,
   setCategoryFilter: PropTypes.func,
   singleDocumentMode: PropTypes.bool,
   stopPlacingAnnotation: PropTypes.func,
@@ -241,8 +236,7 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     onScrollToComment,
     setCategoryFilter,
-    stopPlacingAnnotation,
-    selectAnnotation
+    stopPlacingAnnotation
   }, dispatch)
 });
 

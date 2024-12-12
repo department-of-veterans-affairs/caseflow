@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 /**
@@ -129,15 +130,4 @@ export const createSpyRequestPatch = (postData) => {
         }
       }
     )));
-};
-
-export const openFilter = async (container) => {
-  const svg = container.querySelectorAll('svg');
-
-  const filter = svg[svg.length - 1];
-
-  fireEvent.click(filter);
-  await waitFor(() => {
-    expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-  });
 };

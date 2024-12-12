@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import usePageVisibility from '../hooks/usePageVisibility';
-import { ROTATION_DEGREES } from '../utils/readerConstants';
+import { ROTATION_DEGREES } from '../util/readerConstants';
 
 // This Page component is expected to be used within a flexbox container. Flex doesn't notice when children are
 // transformed (scaled and rotated). Where * is the flex container:
@@ -28,33 +28,19 @@ import { ROTATION_DEGREES } from '../utils/readerConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({
-  page,
-  rotation = ROTATION_DEGREES.ZERO,
-  renderItem,
-  scale,
-  setRenderingMetrics,
-  setCurrentPage
-}) => {
-  const scaleFraction = scale / 100;
-  const currentPageFraction = Math.min(0.5 / Math.pow(scaleFraction, 2), 1);
+const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
   const canvasRef = useRef(null);
-  const isVisibleRef = useRef(null);
-
-  isVisibleRef.current = usePageVisibility(canvasRef);
-  const shouldSetCurrentPage = usePageVisibility(canvasRef, currentPageFraction);
-
+  const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
-  const renderTaskRef = useRef(null);
+  const renderTimeout = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
-  const hasRenderedRef = useRef(false);
+  const [hasRendered, setHasRendered] = useState(false);
   const reportedStatsRef = useRef(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const viewportRef = useRef(page.getViewport({ scale: scaleFraction }));
-
-  const scaledHeight = viewportRef.current.height;
-  const scaledWidth = viewportRef.current.width;
+  const scaleFraction = scale / 100;
+  const viewport = page.getViewport({ scale: scaleFraction });
+  const scaledHeight = viewport.height;
+  const scaledWidth = viewport.width;
   let rotatedHeight = scaledHeight;
   let rotatedWidth = scaledWidth;
   let top = 0;
@@ -71,73 +57,85 @@ const Page = memo(({
     height: `${rotatedHeight}px`,
     width: `${rotatedWidth}px`,
     position: 'relative',
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
   };
   let canvasStyle = {
     rotate: rotation,
     position: 'relative',
     top,
+    // removes offscreen canvas from rendering calculations to improve performance
+    contentVisibility: 'auto',
   };
 
-  const render = async () => {
-    if (!viewportRef.current) {
-      return;
-    }
-    if (canvasRef.current && isVisibleRef.current && !hasRenderedRef.current) {
-      if (renderTaskRef.current) {
-        // try to let an existing render task to finish
-        try {
-          await renderTaskRef.current.promise;
-        } catch {
-          // no op when an existing render task fails
-        }
-      }
+  const render = () => {
+    if (canvasRef.current && isVisible && !hasRendered) {
+      const task = page.render({ canvasContext: canvasRef.current.getContext('2d', { alpha: false }), viewport });
 
-      renderTaskRef.current = page.render({
-        canvasContext: canvasRef.current.getContext('2d', { alpha: false }),
-        viewport: viewportRef.current,
+      task.promise.then(() => {
+        if (scale === previousScale) {
+          setHasRendered(true);
+        } else {
+          // if the scale has changed while this was processing, render it again
+          clearTimeout(renderTimeout.current);
+          renderTimeout.current = setTimeout(render, 0);
+
+        }
+      }).catch(() => {
+        clearTimeout(renderTimeout.current);
+        renderTimeout.current = setTimeout(render, 0);
       });
-
-      try {
-        setIsLoading(true);
-        await renderTaskRef.current.promise;
-        const pageStats = page?._stats;
-
-        if (pageStats && Array.isArray(pageStats.times)) {
-
-          const renderingTimes = pageStats.times.find((time) => time.name === 'Rendering');
-
-          if (!reportedStatsRef.current && renderingTimes) {
-            setRenderingMetrics(renderingTimes.end - renderingTimes.start);
-            reportedStatsRef.current = true;
-          }
-        }
-        setIsLoading(false);
-        hasRenderedRef.current = true;
-      } catch {
-        // no op when current render task fails
-      }
     }
   };
 
-  // render when scale changes, the canvas is ready, we haven't rendered, or the page becomes visible
+  // render immediately when the canvas ref is ready
   useEffect(() => {
-    render();
-  }, [canvasRef.current, hasRenderedRef.current, isVisibleRef.current, viewportRef.current]);
+    clearTimeout(renderTimeout.current);
+    renderTimeout.current = setTimeout(render, 0);
+  }, [canvasRef.current]);
 
-  // cancel any existing render tasks if still running when we unmount
+  // render when the page becomes visible. only do it the first time at this zoom level
+  // so that scrolling doesn't trigger rerenders
+  useEffect(() => {
+    if (isVisible) {
+      clearTimeout(renderTimeout.current);
+      renderTimeout.current = setTimeout(render, 500);
+    }
+
+  }, [isVisible]);
+
+  // render when hasRendered has been reset to false. if the page isn't visible, the render
+  // function ignores the render request
+  useEffect(() => {
+    if (hasRendered) {
+      const pageStats = page?._stats;
+
+      if (pageStats && Array.isArray(pageStats.times)) {
+
+        const renderingTimes = pageStats.times.find((time) => time.name === 'Rendering');
+
+        if (!reportedStatsRef.current && renderingTimes) {
+          setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+          reportedStatsRef.current = true;
+        }
+      }
+    } else {
+      clearTimeout(renderTimeout.current);
+      renderTimeout.current = setTimeout(render, 0);
+    }
+  }, [hasRendered]);
+
+  // as we zoom in and out, we need to re-render
+  useEffect(() => {
+    clearTimeout(renderTimeout.current);
+    renderTimeout.current = setTimeout(render, 1000);
+  }, [scale, previousScale]);
+
+  // clean up the timeout if we navigate away
   useEffect(() => {
     return () => {
-      renderTaskRef.current?.cancel();
+      clearTimeout(renderTimeout.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (shouldSetCurrentPage) {
-      setCurrentPage(page.pageNumber);
-    }
-
-  }, [shouldSetCurrentPage, scale]);
 
   // previousScale keeps track of the previous value of scale. if scale changes, that will trigger a component
   // rerender. before that happens, we'd normally try to finish the current component render.
@@ -145,25 +143,23 @@ const Page = memo(({
   // performance.
   if (previousScale !== scale) {
     setPreviousScale(scale);
-    hasRenderedRef.current = false;
-    viewportRef.current = page.getViewport({ scale: scale / 100 });
-    renderTaskRef.current?.cancel();
+    setHasRendered(false);
 
     return;
   }
 
-  const showCanvas = !isLoading;
+  const hideCanvas = !hasRendered || scale !== previousScale;
 
   return (
     <div
       id={`canvasWrapper-${page.pageNumber}`}
-      className={`prototype-canvas-wrapper ${isVisibleRef.current ? 'visible-page' : 'invisible-page'}`}
+      className="prototype-canvas-wrapper"
       style={wrapperStyle}
       ref={wrapperRef}
     >
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className={`prototype-canvas ${showCanvas ? '' : 'cf-pdf-page-hidden' }`}
+        className={`prototype-canvas ${hideCanvas ? 'cf-pdf-page-hidden' : '' }`}
         style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}
@@ -189,8 +185,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
-  setRenderingMetrics: PropTypes.func,
-  setCurrentPage: PropTypes.func
+  setRenderingMetrics: PropTypes.func
 };
 
 export default Page;
