@@ -255,6 +255,8 @@ class NonCompDispositions extends React.PureComponent {
 
     const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
 
+    const isVhaBusinessLine = this.props.task.business_line === 'vha';
+
     return <div>
       {displayPOAComponent && <div className="cf-decisions">
         <div className="cf-decision">
@@ -317,9 +319,9 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
-              minDate={this.props.task.business_line === 'vha' ? receiptDate : null}
-              errorMessage={this.props.task.business_line === 'vha' ? this.state.errorMessage : null}
-              noFutureDates={this.props.task.business_line === 'vha'}
+              minDate={isVhaBusinessLine ? receiptDate : null}
+              errorMessage={isVhaBusinessLine ? this.state.errorMessage : null}
+              noFutureDates={isVhaBusinessLine}
               type="date"
             />
           </InlineForm>
