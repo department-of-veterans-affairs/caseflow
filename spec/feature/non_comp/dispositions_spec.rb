@@ -50,8 +50,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         veteran_file_number: veteran.file_number,
         benefit_type: non_comp_org.url,
         veteran_is_not_claimant: false,
-        claimant_type: :veteran_claimant,
-        created_at: Time.zone.now
+        claimant_type: :veteran_claimant
       )
     end
 
@@ -84,7 +83,6 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
-    let(:valid_decision_date) { decision_review.created_at.strftime("%m/%d") }
 
     let(:vet_id_column_value) { veteran.ssn }
 
@@ -163,7 +161,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
 
       scenario "only date is set" do
-        fill_in "decision-date", with: valid_decision_date
+        fill_in "decision-date", with: arbitrary_decision_date
         expect(page).to have_button("Complete", disabled: true)
       end
 
@@ -177,14 +175,9 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       scenario "both disposition and date are set" do
         fill_in "decision-date", with: arbitrary_decision_date
-
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
-
-        expect(page).to have_text("Decision date must be between Form Receipt Date")
-        expect(page).to have_button("Complete", disabled: true)
-        fill_in "decision-date", with: valid_decision_date
 
         expect(page).to have_button("Complete", disabled: false)
       end
@@ -200,7 +193,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
-      fill_in "decision-date", with: valid_decision_date
+      fill_in "decision-date", with: arbitrary_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -231,7 +224,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       find_disabled_disposition("Denied", "denied")
 
       # decision date should be saved
-      expect(page).to have_css("input[value='#{valid_decision_date.to_date.strftime('%Y-%m-%d')}']")
+      expect(page).to have_css("input[value='#{arbitrary_decision_date.to_date.strftime('%Y-%m-%d')}']")
     end
 
     context "when there is an error saving" do
@@ -245,7 +238,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
-        fill_in "decision-date", with: valid_decision_date
+        fill_in "decision-date", with: arbitrary_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")
@@ -288,7 +281,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let!(:vha_org) { VhaBusinessLine.singleton }
     let(:user) { create(:default_user, roles: ["Mail Intake"]) }
     let(:veteran) { create(:veteran) }
-    let(:decision_date) { Time.zone.now - 2.days }
+    let(:decision_date) { Time.zone.now + 10.days }
 
     let!(:in_progress_task) do
       create(:higher_level_review,

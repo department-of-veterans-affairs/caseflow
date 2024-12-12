@@ -23,7 +23,6 @@ export const DateSelector = (props) => {
     value,
     dateErrorMessage,
     noFutureDates = false,
-    minDate = null,
     inputStyling,
     validateDate,
     ...passthroughProps
@@ -35,7 +34,7 @@ export const DateSelector = (props) => {
         return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
       }
 
-      if (noFutureDates && futureDate(date) && !minDate) {
+      if (noFutureDates && futureDate(date)) {
         return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
       }
 
@@ -55,15 +54,10 @@ export const DateSelector = (props) => {
   }, [value]);
 
   let max = '9999-12-31';
-  let min = '0000-01-01';
 
   if (noFutureDates) {
     max = new Date().toISOString().
       split('T')[0];
-  }
-
-  if (minDate) {
-    min = minDate;
   }
 
   return (
@@ -80,7 +74,6 @@ export const DateSelector = (props) => {
       required={required}
       {...passthroughProps}
       max={max}
-      min={min}
       dateErrorMessage={dateErrorMessage}
       inputStyling={inputStyling}
     />
@@ -158,11 +151,6 @@ DateSelector.propTypes = {
    * Disables future dates from being selected or entered
    */
   noFutureDates: PropTypes.bool,
-
-  /**
-   * Specify a minimum date that can be selected
-   */
-  minDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
 
   /**
    * Disables form submission if date is empty or invalid

@@ -94,19 +94,6 @@ describe DecisionReviewTask, :postgres do
         expect(remand_sc).to_not be_nil
         expect(remand_sc.request_issues.first.contested_issue_description).to eq("description 3")
       end
-
-      context "vha business line" do
-        let(:vha_business_line) { VhaBusinessLine.singleton }
-        let(:decision_date) { 500.years.ago }
-
-        before do
-          task.update!(assigned_to: vha_business_line)
-          task.appeal.update!(benefit_type: "vha")
-        end
-        it "cannot be completed on invalid decision date" do
-          expect(subject).to eq false
-        end
-      end
     end
 
     context "completed task" do
