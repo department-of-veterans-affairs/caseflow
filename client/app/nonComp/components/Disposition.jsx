@@ -217,7 +217,7 @@ class NonCompDispositions extends React.PureComponent {
     const displayRequestIssueModification = (!isVhaBusinessLine || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
-    const receiptDate = moment(appeal.receiptDate, 'YYYY/MM/DD');
+    const receiptDate = formatDateStrUtc(appeal.receiptDate, 'YYYY-MM-DD');
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
