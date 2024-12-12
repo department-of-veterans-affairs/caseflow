@@ -70,9 +70,14 @@ class Fakes::VBMSService
 
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     fetched_at_format = "%FT%T.%LZ"
+    # {
+    #   manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
+    #   manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
+    #   documents: (document_records || {})[appeal.veteran_file_number] || @documents || []
+    # }
     {
-      manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
-      manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
+      manifest_vbms_fetched_at: Time.zone.now,
+      manifest_vva_fetched_at: Time.zone.now,
       documents: (document_records || {})[appeal.veteran_file_number] || @documents || []
     }
   end
