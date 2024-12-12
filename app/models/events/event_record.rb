@@ -13,11 +13,6 @@ class EventRecord < CaseflowRecord
     failed: 3 # the event_record was processed by the job, but the remediation failed
   }
 
-  # scope :pending, -> { where(remediation_status: pending) }
-  # scope :processed, -> { where(remediation_status: processed) }
-  # scope :remediated, -> { where(remediation_status: remediated) }
-  # scope :failed, -> { where(remediation_status: failed) }
-
   validate :valid_evented_record
 
   def valid_evented_record
