@@ -53,24 +53,33 @@ describe Appeal, :all_dbs do
   end
 
   context "includes PrintsTaskTree concern" do
-    context "#structure" do
+    context "#structure with tasks" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
-      subject { appeal.structure(:id) }
+      subject { appeal.structure([root_task, child_task], :id) }
 
       it "returns the task structure" do
-        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-        expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
+        expect_any_instance_of(RootTask).to receive(:structure).with([root_task, child_task], :id)
+        expect(subject.key?(:"Appeal #{appeal.id} [#{root_task}, #{child_task}, id]")).to be_truthy
       end
     end
 
     context "#structure_as_json" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
-      subject { appeal.structure_as_json(:id) }
+      subject { appeal.structure_as_json([root_task, child_task], :id) }
 
       it "returns the task tree as a hash" do
-        expect(subject).to eq(Appeal: { id: appeal.id, tasks: [{ RootTask: { id: root_task.id, tasks: [] } }] })
+        expect(subject).to(
+          eq(
+            Appeal: {
+              id: appeal.id,
+              tasks: [{ RootTask: { id: root_task.id, tasks: [{ Task: { id: child_task.id, tasks: [] } }] } }]
+            }
+          )
+        )
       end
     end
   end
@@ -962,7 +971,7 @@ describe Appeal, :all_dbs do
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
           expect(appeal.assigned_to_location).to(
-            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+            eq(assignee.css_id), appeal.structure_render([root_task, task], :id, :status, :created_at, :assigned_to_id)
           )
         end
       end
