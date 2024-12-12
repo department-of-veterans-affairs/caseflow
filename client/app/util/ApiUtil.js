@@ -13,9 +13,10 @@ export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 // eslint-disable-next-line no-process-env
 const onDemo = process.env.DEPLOY_ENV === 'demo';
 
-const defaultTimeoutSettings = {
-  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS,
-  deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
+const defaultTimeoutSettings = (isProgressBar) => {
+  const responseTimeout = onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS;
+
+  return isProgressBar ? { response: responseTimeout } : { response: responseTimeout, deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS };
 };
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
@@ -155,7 +156,8 @@ const httpMethods = {
   },
 
   get(url, options = {}) {
-    const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+    const { isProgressBar = false } = options;
+    const timeoutSettings = Object.assign({}, defaultTimeoutSettings(isProgressBar), _.get(options, 'timeout', {}));
 
     options.t0 = performance.now();
     options.start = moment().format();
@@ -166,6 +168,20 @@ const httpMethods = {
       query(options.query).
       timeout(timeoutSettings).
       on('error', (err) => errorHandling(url, err, 'GET', options));
+
+    if (typeof options.onProgress === 'function') {
+      promise.on('progress', (event) => {
+        const loaded = event.loaded;
+
+        options.onProgress({ loaded });
+      });
+    }
+
+    if (typeof options.cancellableRequest === 'function') {
+      const pendingRequest = promise;
+
+      options.cancellableRequest({ request: pendingRequest });
+    }
 
     if (options.responseType) {
       promise.responseType(options.responseType);

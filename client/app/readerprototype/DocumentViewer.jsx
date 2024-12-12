@@ -131,6 +131,10 @@ const DocumentViewer = (props) => {
               setIsDocumentLoadError={setIsDocumentLoadError}
               setNumPages={setNumPages}
               zoomLevel={props.zoomLevel}
+              readerPreferences={props.readerPreferences}
+              featureToggles={props.featureToggles}
+              userId={props.userId}
+              onrequestCancel={() => props.history.push(props.documentPathBase)}
             />
           </div>
           <ReaderFooter
@@ -166,7 +170,9 @@ DocumentViewer.propTypes = {
   showPdf: PropTypes.func,
   match: PropTypes.object,
   zoomLevel: PropTypes.number,
-  onZoomChange: PropTypes.func
+  onZoomChange: PropTypes.func,
+  readerPreferences: PropTypes.object,
+  userId: PropTypes.any
 };
 
 export default DocumentViewer;

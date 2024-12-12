@@ -16,7 +16,8 @@ jest.mock('superagent', () => ({
   timeout: jest.fn().mockReturnThis(),
   use: jest.fn().mockReturnThis(),
   on: jest.fn().mockReturnThis(),
-  then: jest.fn().mockReturnThis()
+  then: jest.fn().mockReturnThis(),
+  responseType: jest.fn().mockReturnThis()
 }));
 
 const defaultHeaders = {
@@ -153,6 +154,11 @@ describe('ApiUtil', () => {
   });
 
   describe('.get', () => {
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     test('returns modified Request object', () => {
       // Setup the test
       const options = { query: { bar: 'baz' } };
@@ -185,6 +191,85 @@ describe('ApiUtil', () => {
         expect(request.then).toHaveBeenCalled(res);
         expect(successHandling).toHaveBeenCalled();
       })
+    });
+
+    test('calls onProgress with percent loaded when provided', () => {
+      const onProgressMock = jest.fn();
+      const options = {
+        onProgress: onProgressMock,
+        responseType: 'arraybuffer'
+      };
+      const req = ApiUtil.get('/foo', options);
+
+      // Simulate 2 progress events
+      const progressHandler = req.on.mock.calls.find((call) => call[0] === 'progress')[1];
+
+      progressHandler({ loaded: 50 });
+      progressHandler({ loaded: 100 });
+
+      expect(onProgressMock).toHaveBeenCalledTimes(2);
+      expect(onProgressMock).toHaveBeenNthCalledWith(1, { loaded: 50 });
+      expect(onProgressMock).toHaveBeenNthCalledWith(2, { loaded: 100 });
+    });
+
+    test('does not set up progress handler when onProgress is not provided', () => {
+      const req = ApiUtil.get('/foo');
+      const progressCall = req.on.mock.calls.find(call => call[0] === 'progress');
+
+      expect(progressCall).toBeUndefined();
+    });
+
+    test('sets responseType when provided', () => {
+      const options = {
+        responseType: 'arraybuffer'
+      };
+
+      const req = ApiUtil.get('/foo', options);
+
+      expect(req.responseType).toHaveBeenCalledWith('arraybuffer');
+    });
+  });
+
+  describe('testing the removal of the 5-minute timeout for progress bar scenarios', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+    test('verify the default timeout settings remain the same when no progress bar', () => {
+      const options = {};
+      const req = ApiUtil.get('/foo', options);
+
+      expect(req.timeout).toHaveBeenCalledWith(expect.objectContaining({
+        response: 60000,
+        deadline: 300000
+      }));
+    });
+
+    test('verify 5-min timeout is removed when there is a progress bar', () => {
+      const options = { isProgressBar: true };
+      const req = ApiUtil.get('/foo', options);
+
+      expect(req.timeout).toHaveBeenCalledWith(expect.objectContaining({
+        response: 60000
+      }));
+      expect(req.timeout).not.toHaveBeenCalledWith(expect.objectContaining({ deadline: expect.any(Number) }));
+    });
+
+    test('now allows downloads longer than 5 mins when there is a progress bar', () => {
+      const options = {
+        isProgressBar: true,
+        responseType: 'arraybuffer',
+        onProgress: jest.fn()
+      };
+
+      jest.useFakeTimers();
+      const req = ApiUtil.get('/foo', options);
+
+      req.on('progress', options.onProgress);
+      options.onProgress({ loaded: 50 });
+      jest.advanceTimersByTime(310000); // 5 mins and 10 s
+      options.onProgress({ loaded: 100 });
+      expect(options.onProgress).toHaveBeenCalledTimes(2);
+      jest.useRealTimers();
     });
   });
 });
