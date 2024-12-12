@@ -62,8 +62,8 @@ const ReaderToolbar = ({
   };
 
   return (
-    <div id="prototype-toolbar" className="cf-pdf-header cf-pdf-toolbar">
-      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
+    <div className="cf-pdf-header cf-pdf-toolbar">
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbarSection} {...pdfToolbarStyles.toolbarLeft}>
         {showClaimsLink && (
           <Link
             to={`${documentPathBase}`}
@@ -75,7 +75,7 @@ const ReaderToolbar = ({
           </Link>
         )}
       </div>
-      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbarSection} {...pdfToolbarStyles.toolbarCenter}>
         <span className="category-icons-and-doc-type">
           <span className="cf-pdf-doc-category-icons">
             <DocumentCategoryIcons doc={doc} />
@@ -99,7 +99,7 @@ const ReaderToolbar = ({
           </span>
         </span>
       </div>
-      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbarSection} {...pdfToolbarStyles.toolbarRight}>
         <span className="cf-pdf-button-text">Zoom:</span>
         <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
         <Button

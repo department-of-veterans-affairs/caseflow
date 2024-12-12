@@ -608,16 +608,6 @@ input[type='search'].cf-search-input-with-close {
 }
 
 // scss-lint:disable IdSelector
-#prototype-toolbar {
-  overflow: hidden;
-  display: flex;
-
-  .toolbar-section {
-    overflow: hidden;
-  }
-}
-
-// scss-lint:disable IdSelector
 #prototype-footer {
   position: absolute;
   display: flex;

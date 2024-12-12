@@ -18,24 +18,34 @@ export const pdfWrapper = css({
 const pdfWrapperSmall = 1165;
 
 export const pdfToolbarStyles = {
-  openSidebarMenu: css({ marginRight: '2%' }),
-  toolbar: css({ width: '33%' }),
+  openSidebarMenu: css({
+    marginRight: '2%',
+    overflow: 'auto'
+  }),
+  toolbarSection: css({
+    width: '33%',
+  }),
   toolbarLeft: css({
+    overflow: 'hidden',
     '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-      width: '18%' }
-    }
+      width: '18%',
+    } }
   }),
   toolbarCenter: css({
-    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-      width: '24%' }
-    }
+    overflow: 'auto',
+    '&&': { [`@med,ia(max-width:${pdfWrapperSmall}px)`]: {
+      width: '24%',
+    } }
   }),
   toolbarRight: css({
+    overflow: 'auto',
     textAlign: 'right',
+    display: 'flex',
+    justifyContent: 'flex-end',
     '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
       width: '44%',
-      '& .cf-pdf-button-text': { display: 'none' } }
-    }
+      '& .cf-pdf-button-text': { display: 'none' }
+    } }
   }),
   // TODO replace prototype-footer
   footer: css({
