@@ -250,7 +250,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_on "Search"
           expect(page).to have_content("1 case found")
           click_on(blocked_legacy_appeal.docket_number)
-          click_dropdown(propmt: "Select an action...", text: "Case Movement: Cancel blocking tasks and advance to judge")
+          click_dropdown(propmt: "Select an action...",
+                         text: "Case Movement: Cancel blocking tasks and advance to judge")
 
           expect(page).to have_content(COPY::BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE)
           expect(page).to have_content(HearingTask.name)

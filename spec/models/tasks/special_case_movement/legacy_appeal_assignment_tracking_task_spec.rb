@@ -4,7 +4,7 @@ describe LegacyAppealAssignmentTrackingTask do
   describe ".create" do
     context "with Special Case Movement Team user" do
       let(:scm_user) { create(:user) }
-      let(:cancelled_tasks) { "Tasks that were cancelled"}
+      let(:cancelled_tasks) { "Tasks that were cancelled" }
       let(:cancellation_instructions) { "Cancelling task" }
       let(:assign_instructions) { "Assigning task" }
       let(:instructions) { [cancellation_instructions, assign_instructions] }
