@@ -2012,13 +2012,16 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-intake-task-dropdown-style {
-  .react-select__indicator-separator{
-    margin: 8px 6px 0 6px;
+
+  .react-select__indicator-separator {
+    margin: 8px 6px 0;
   }
+
   .react-select__dropdown-indicator {
     padding-left: 9px;
     padding-bottom: 0;
   }
+
   .react-select__menu {
     top: 100%;
     background-color: $color-white;
