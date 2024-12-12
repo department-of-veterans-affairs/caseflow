@@ -187,7 +187,7 @@ class TasksController < ApplicationController
   end
 
   def uploaded_transcription_file
-    file = task.appeal.hearings.first.transcription_files
+    file = Hearings::TranscriptionFile.where(docket_number: appeal.docket_number)
       .where(file_type: "pdf")
       .where.not(date_upload_aws: nil)
       .order(date_upload_aws: :desc)

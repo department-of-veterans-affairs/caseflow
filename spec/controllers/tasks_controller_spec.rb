@@ -1727,8 +1727,24 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     let(:docket_number) { hearing.docket_number }
     let(:appeal_id) { hearing.appeal.uuid }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
-    let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
-    let!(:create_transcription_task) do
+    let(:transcription_file) { Hearings::TranscriptionFile.find_by(file_name: file_name) }
+    let(:user) { create(:default_user) }
+    let(:root_task){ create(:root_task) }
+    let!(:review_transcript_task) do
+      ReviewTranscriptTask.create!(
+        appeal: hearing.appeal,
+        parent: root_task,
+        assigned_to: user
+      )
+    end
+    let(:params) do
+      {
+        id: review_transcript_task.id.to_s,
+        appeal_id: appeal_id
+      }
+    end
+
+    before do
       Hearings::TranscriptionFile.create!(
         hearing_id: hearing.id,
         hearing_type: "Hearing",
@@ -1739,27 +1755,10 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         date_upload_aws: Time.zone.today,
         aws_link: "vaec-appeals-caseflow-test/transcript_pdf/#{file_name}"
       )
-    end
-    let(:transcription_file) { Hearings::TranscriptionFile.find_by(file_name: file_name) }
-    let(:user) { create(:default_user) }
-    let(:root_task) { create(:root_task, appeal: hearing.appeal) }
-    let(:distribution_task) { create(:distribution_task, parent: root_task) }
-    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
-    let!(:review_transcript_task) do
-      ReviewTranscriptTask.create!(
-        appeal: hearing.appeal,
-        parent: root_task,
-        assigned_to: user
-      )
-    end
-    let(:params) do
-      {
-        id: review_transcript_task.id.to_s
-      }
+      review_transcript_task.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
     it "gets transcription_file" do
-      review_transcript_task.update!(status: Constants.TASK_STATUSES.in_progress)
       get :uploaded_transcription_file, params: params
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
