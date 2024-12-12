@@ -68,6 +68,9 @@ export const docListIsFiltered = createSelector(
 // text is a selector that returns the text Pages are currently filtered by
 // result is an Array of Page ids that match the current search :text
 export const getSearchTerm = (state) => state.searchActionReducer?.searchTerm;
+export const getRelativeIndex = (state) => state.searchActionReducer?.relativeIndex;
+export const getPageIndexWithMatch = (state) => state.searchActionReducer.pageIndexWithMatch;
+
 const getExtractedText = (state) => state.searchActionReducer?.extractedText;
 const getFile = (state, props) => props.file;
 
@@ -79,6 +82,9 @@ export const getTextForFile = createSelector(
 export const getMatchesPerPageInFile = createSelector(
   [getTextForFile, getSearchTerm],
   (textForFile, searchTerm) => {
+    if (!searchTerm) {
+      return [];
+    }
     // This function copied from here:
     // https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
     const escapeRegExp = (str) => {
