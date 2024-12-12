@@ -41,7 +41,7 @@ class DeleteMetricsJob < CaseflowJob
 
   def validate_metric_type(metric_type)
     if Metric::METRIC_TYPES.value?(metric_type)
-      @options[:metric_type]
+      @options[:metric_type] = metric_type
     end
   end
 
