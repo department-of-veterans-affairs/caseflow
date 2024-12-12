@@ -127,15 +127,15 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   validateDecisionDate = () => {
+    if (this.props.businessLineUrl !== 'vha') {
+      return true;
+    }
+
     const decisionDate = formatDateStr(this.state.decisionDate);
     const receiptDate = formatDateStr(this.props.appeal.receiptDate);
 
     const dateIsValid = Boolean((new Date(decisionDate)) >= new Date(receiptDate)) &&
       Boolean(Date.parse(decisionDate) < new Date());
-
-    if (this.props.task.business_line !== 'vha') {
-      return true;
-    }
 
     if (dateIsValid) {
       this.setState({ errorMessage: '' });
@@ -213,8 +213,8 @@ class NonCompDispositions extends React.PureComponent {
     let editIssuesLink = null;
     const editIssuesDisabled = task.type === 'Remand';
     const editIssuesButtonType = editIssuesDisabled ? 'disabled' : 'secondary';
-    const displayPOAComponent = task.business_line === 'vha';
-    const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
+    const isVhaBusinessLine = this.props.businessLineUrl === 'vha';
+    const displayRequestIssueModification = (!isVhaBusinessLine || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
     const receiptDate = moment(appeal.receiptDate, 'YYYY/MM/DD');
@@ -255,10 +255,8 @@ class NonCompDispositions extends React.PureComponent {
 
     const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
 
-    const isVhaBusinessLine = this.props.task.business_line === 'vha';
-
     return <div>
-      {displayPOAComponent && <div className="cf-decisions">
+      {isVhaBusinessLine && <div className="cf-decisions">
         <div className="cf-decision">
           <hr />
           <div className="usa-grid-full">
@@ -271,7 +269,7 @@ class NonCompDispositions extends React.PureComponent {
       </div>}
       <div className="cf-decisions">
         <div className="cf-decision">
-          {displayPOAComponent && <hr />}
+          {isVhaBusinessLine && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
               <h2 style={{ marginBottom: '30px' }}>Decision</h2>
@@ -348,7 +346,8 @@ NonCompDispositions.propTypes = {
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
   isBusinessLineAdmin: PropTypes.bool,
-  handleSave: PropTypes.func
+  handleSave: PropTypes.func,
+  businessLineUrl: PropTypes.string
 };
 
 export default connect(
@@ -356,6 +355,7 @@ export default connect(
     appeal: state.nonComp.appeal,
     task: state.nonComp.task,
     decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
-    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin
+    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
+    businessLineUrl: state.nonComp.businessLineUrl
   })
 )(NonCompDispositions);
