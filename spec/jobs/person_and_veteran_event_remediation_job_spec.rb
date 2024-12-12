@@ -26,7 +26,7 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
 
   before do
     allow(RequestStore.store).to receive(:[]=)
-    allow(User).to receive(:system_user).and_return(User.new) # Assuming there's a system_user
+    allow(User).to receive(:system_user).and_return(User.new)
 
     # Mocking find_events to return an array with our event_record_person and event_record_veteran
     allow(job).to receive(:find_events).with("Person").and_return([event_record_person])
@@ -54,7 +54,7 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
         # Modify the mock to return only the original person
         allow(Person).to receive(:where).with(ssn: "123456789").and_return([person])
         expect(duplicate_person_service).not_to receive(:remediate!)
-        expect(event_record_person).to receive(:processed!) # Ensure processed! is called
+        expect(event_record_person).to receive(:processed!)
         job.perform
       end
     end
@@ -78,7 +78,7 @@ RSpec.describe PersonAndVeteranEventRemediationJob, type: :job do
   describe "#setup_job" do
     it "sets current_user in the RequestStore" do
       expect(RequestStore.store).to receive(:[]=).with(:current_user, User.system_user)
-      job.send(:setup_job) # Calling private method directly for test
+      job.send(:setup_job)
     end
   end
 end
