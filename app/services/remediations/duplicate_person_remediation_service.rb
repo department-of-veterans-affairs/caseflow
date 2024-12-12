@@ -9,7 +9,6 @@ class Remediations::DuplicatePersonRemediationService
     Notification
   ].freeze
 
-  # Define the parameter struct for remediation audit params
   RemediationAuditParams = Struct.new(:after_data, :before_data, :type, :id)
 
   def initialize(updated_person_id:, duplicate_person_ids:, event_record:)
@@ -47,12 +46,11 @@ class Remediations::DuplicatePersonRemediationService
       records.map do |record|
         before_data = record.attributes
         record.update!("#{column}": og_person.participant_id)
-        # Use the parameter object for the audit params
         audit_params = RemediationAuditParams.new(
-          record.attributes,  # after_data
-          before_data,        # before_data
-          record.class.name,  # type
-          record.id           # id
+          record.attributes,
+          before_data,
+          record.class.name,
+          record.id
         )
 
         add_remediation_audit(audit_params)
@@ -85,7 +83,6 @@ class Remediations::DuplicatePersonRemediationService
         end
       end
     rescue StandardError => error
-      # Log the error specific to find_and_update_records and return false
       Rails.logger.error "Error in find_and_update_records: #{error.message}"
       SlackService.new.send_notification("Error in find_and_update_records: #{error.message}",
                                          "Error in #{self.class.name}")
