@@ -143,13 +143,15 @@ FactoryBot.define do
       stream_type { Constants.AMA_STREAM_TYPES.court_remand }
       transient do
         remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+        judge { JudgeTeam.first&.judge || create(:user, :with_vacols_judge_record) }
       end
       initialize_with do
         cavc_remand = create(:cavc_remand,
                              remand_subtype: remand_subtype,
                              veteran: veteran,
                              # pass docket type so that the created source appeal is the same docket type
-                             docket_type: attributes[:docket_type])
+                             docket_type: attributes[:docket_type],
+                             judge: judge)
         # cavc_remand creation triggers creation of a remand_appeal having appropriate tasks depending on remand_subtype
         cavc_remand.remand_appeal
       end
@@ -172,10 +174,11 @@ FactoryBot.define do
     trait :held_hearing do
       transient do
         adding_user { nil }
+        tied_judge { nil }
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: evaluator.tied_judge, appeal: appeal, adding_user: evaluator.adding_user)
       end
     end
 
