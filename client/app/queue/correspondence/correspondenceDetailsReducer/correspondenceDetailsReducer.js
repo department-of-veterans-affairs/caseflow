@@ -83,6 +83,48 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.veteranInformation
       }
     });
+  case ACTIONS.EXISTING_APPEALS:
+    return update(state, {
+      existingAppeals: {
+        $set: action.payload.existingAppeals
+      }
+    });
+  case ACTIONS.TASKS_UNRELATED_TO_APPEAL:
+    return update(state, {
+      tasksUnrelatedToAppeal: {
+        $set: action.payload.tasksUnrelatedToAppeal
+      }
+    });
+  case ACTIONS.CORRESPONDENCE_TYPES:
+    return update(state, {
+      correspondenceTypes: {
+        $set: action.payload.correspondenceTypes
+      }
+    });
+  case ACTIONS.GENERAL_INFORMATION:
+    return update(state, {
+      generalInformation: {
+        $set: action.payload.generalInformation
+      }
+    });
+  case ACTIONS.RESPONSE_LETTERS:
+    return update(state, {
+      responseLetters: {
+        $set: action.payload.responseLetters
+      }
+    });
+  case ACTIONS.LINKED_CORRESPONDENCES:
+    return update(state, {
+      linkedCorrespondences: {
+        $set: action.payload.linkedCorrespondences
+      }
+    });
+  case ACTIONS.ALL_CORRESPONDENCES:
+    return update(state, {
+      allCorrespondences: {
+        $set: action.payload.allCorrespondences
+      }
+    });
   default:
     return state;
   }
