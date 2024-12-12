@@ -184,7 +184,7 @@ export const AddAppealRelatedTaskView = (props) => {
                 return (
                   <React.Fragment key={index}>
                     {index > 0 && (
-                      <div className="hr-container">
+                      <div className="hr-intake-container">
                         <hr className="intake-form-existing-appeal-tasks-view-divider" />
                       </div>
                     )}

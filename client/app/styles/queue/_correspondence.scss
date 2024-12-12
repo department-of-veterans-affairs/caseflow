@@ -618,7 +618,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding: 3rem 4rem;
 
   p {
-    color: #0071bc
+    color: $color-blue;
   }
 
   .p-review-and-confirm {
@@ -643,7 +643,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .corr-icon {
     position: absolute;
-    color: #0071bc;
+    color: $color-blue;
   }
 
   .corr-sectionlink {
@@ -892,8 +892,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     row-gap: 20px; // Consistent spacing between grid items
     justify-items: start; // Align items to the start of each row
     align-items: start; // Align items to the start vertically within each cell
-    width: 100%; // Ensure grid spans full width of the container
-    max-width: 100%; // Prevent grid from exceeding container's width
     margin: 0 auto; // Center grid container horizontally
     padding-left: 60px;
     padding-right: 50px;
@@ -933,6 +931,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     [class^="cf-form-checkbox"] {
       margin-left: -3px;
     }
+
     [class^="checkbox-wrapper-"] {
       label {
         padding-left: 30px;
@@ -942,10 +941,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
         }
       }
     }
+
     @media (max-width: 1460px) {
       margin-left: 53px;
     }
+
   }
+
   .add-task-window {
     display: block;
     padding-left: 34px;
@@ -1217,12 +1219,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: grid;
   grid-template-columns: repeat(2, 1fr); // Default to 2 equal-width columns
   grid-auto-rows: auto; // Automatically create new rows as needed
-  column-gap: 55px;
+  column-gap: 50px;
   row-gap: 42px; // Consistent spacing between grid items
   justify-items: start; // Align items to the start of each row
   align-items: start; // Align items to the start vertically within each cell
-  width: 100%; // Ensure grid spans full width of the container
-  max-width: 100%; // Prevent grid from exceeding container's width
   margin: 0 auto; // Center grid container horizontally
   padding-left: 60px;
   padding-right: 70px;
@@ -2202,7 +2202,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   border: 0.1px solid $color-gray-intake;
 }
 
-.hr-container {
+.hr-intake-container {
   width: 100%;
   padding: 0 28px;
   box-sizing: border-box;
@@ -2217,8 +2217,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .waive-evidence-check-box {
 
-  .cf-form-checkbox label, .cf-form-radio-option label{
+  .cf-form-checkbox label,
+  .cf-form-radio-option label{
     padding-top: 40px;
   }
+
 }
 
