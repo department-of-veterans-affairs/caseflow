@@ -243,6 +243,10 @@ Rails.application.routes.draw do
     get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
     get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
+    get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
+    get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
+    resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
+    get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -278,7 +282,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
   post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
   get 'hearings/transcription_files/fetch_file', to: 'hearings/transcription_files#fetch_file'
-  
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"

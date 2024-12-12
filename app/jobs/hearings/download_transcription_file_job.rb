@@ -209,7 +209,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       file_name: file_name_arg,
       hearing_id: hearing.id,
       hearing_type: hearing.class.name,
-      docket_number: docket_number
+      docket_number: docket_number,
+      recording_transcriber: hearing.recording_transcriber
     ) do |file|
       file.file_type = file_name_arg.split(".").last
       file.created_by_id = RequestStore[:current_user].id
