@@ -16,7 +16,7 @@ class Api::V1::CmpController < Api::ApplicationController
     if new_document.save
       render json: { message: "CMP document successfully created" }, status: :ok
     else
-      unprocessable_response("Cmp document could now be created.", new_document)
+      unprocessable_response("Cmp document could not be created.", new_document)
     end
   end
 
