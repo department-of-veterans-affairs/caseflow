@@ -345,7 +345,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
 
     context "when range is specified" do
-      let(:range) { 1 }
+      let(:range) { 3 }
 
       # We do not provide a range if this feature toggle is enabled
       before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }

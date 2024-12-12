@@ -518,6 +518,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       SQL
     end
 
+    puts "aoj_affinity_lever_value: #{aoj_affinity_lever_value}"
+
     fmtd_query = if aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
                    sanitize_sql_array([
                                         query,
