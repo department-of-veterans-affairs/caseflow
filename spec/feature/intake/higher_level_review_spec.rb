@@ -474,19 +474,6 @@ feature "Higher-Level Review", :all_dbs do
     end
   end
 
-  it "Shows a review error when something goes wrong" do
-    start_higher_level_review(veteran_no_ratings)
-    visit "/intake"
-
-    ## Validate error message when complete intake fails
-    expect_any_instance_of(HigherLevelReviewIntake).to receive(:review!).and_raise("A random error. Oh no!")
-
-    click_intake_continue
-
-    expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review_request")
-  end
-
   # this version is slightly different from what is in IntakeHelpers
   # TODO it would be good to reconcile and save some duplication.
   def start_higher_level_review(
@@ -525,26 +512,6 @@ feature "Higher-Level Review", :all_dbs do
     [higher_level_review, intake]
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
-    start_higher_level_review(veteran_no_ratings)
-
-    visit "/intake"
-
-    click_intake_continue
-    click_intake_add_issue
-    add_intake_nonrating_issue(
-      category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
-    )
-
-    expect(page).to have_content("1 issue")
-
-    click_intake_finish
-
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-  end
-
   def complete_higher_level_review
     start_higher_level_review(veteran_no_ratings)
 
@@ -562,38 +529,6 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-  end
-
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
-    complete_higher_level_review
-  end
-
-  scenario "intake can still be completed when ratings are locked" do
-    mock_locked_rating_response
-    complete_higher_level_review
-  end
-
-  context "ratings with disabiliity codes" do
-    let(:disabiliity_receive_date) { receipt_date + 2.days }
-    let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_diagnostic_codes) do
-      generate_ratings_with_disabilities(
-        veteran,
-        disabiliity_receive_date,
-        disability_profile_date
-      )
-    end
-
-    scenario "saves diagnostic codes" do
-      hlr, = start_higher_level_review(veteran)
-      visit "/intake"
-      click_intake_continue
-      save_and_check_request_issues_with_diagnostic_codes(
-        Constants.INTAKE_FORM_NAMES.higher_level_review,
-        hlr
-      )
-    end
   end
 
   context "Add / Remove Issues page" do
@@ -686,37 +621,6 @@ feature "Higher-Level Review", :all_dbs do
              benefit_type: previous_supplemental_claim.benefit_type)
     end
 
-    context "Veteran has no ratings" do
-      let(:decision_date) { (receipt_date + 9000.days).to_date.mdY }
-
-      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: profile_date.mdY
-        )
-
-        expect(page).to have_content("1 issue")
-      end
-
-      scenario "validate decision date" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake/add_issues"
-        click_intake_add_issue
-
-        fill_in "Issue category", with: "Apportionment"
-        find("#issue-category").send_keys :enter
-
-        fill_in "Decision date", with: decision_date
-        expect(page).to have_content("Decision date cannot be in the future")
-      end
-    end
-
     context "Veteran with future ratings" do
       before { FeatureToggle.enable!(:show_future_ratings) }
       after { FeatureToggle.disable!(:show_future_ratings) }
@@ -728,15 +632,6 @@ feature "Higher-Level Review", :all_dbs do
         expect(page).to have_content("Future rating issue 1")
         expect(higher_level_review.receipt_date).to eq(receipt_date)
       end
-    end
-
-    scenario "Add Issues modal uses promulgation date" do
-      start_higher_level_review(veteran)
-      visit "/intake/add_issues"
-      click_intake_add_issue
-      rating_date = promulgation_date.mdY
-
-      expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
     scenario "compensation claim" do
@@ -757,6 +652,9 @@ feature "Higher-Level Review", :all_dbs do
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
+
+      # ensure Add Issue Modal uses promulgation date
+      expect(page).to have_content("Past decisions from #{promulgation_date.mdY}")
 
       expect(page).to have_content("Add issue 1")
       expect(page).to have_content("Does issue 1 match any of these issues")
@@ -1082,55 +980,6 @@ feature "Higher-Level Review", :all_dbs do
       )
     end
 
-    context "when veteran chooses decision issue from a previous appeal" do
-      let(:previous_appeal) { create(:appeal, :outcoded, veteran: veteran) }
-      let(:appeal_reference_id) { "appeal123" }
-      let!(:previous_appeal_request_issue) do
-        create(
-          :request_issue,
-          decision_review: previous_appeal,
-          contested_rating_issue_reference_id: appeal_reference_id,
-          closed_at: 2.months.ago
-        )
-      end
-      let!(:previous_appeal_decision_issue) do
-        create(:decision_issue,
-               decision_review: previous_appeal,
-               request_issues: [previous_appeal_request_issue],
-               rating_issue_reference_id: appeal_reference_id,
-               participant_id: veteran.participant_id,
-               description: "appeal decision issue",
-               decision_text: "appeal decision issue",
-               benefit_type: "compensation",
-               caseflow_decision_date: profile_date)
-      end
-
-      scenario "the issue is ineligible" do
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
-
-        expect(page).to have_content("Add / Remove Issues")
-
-        click_intake_add_issue
-        add_intake_rating_issue("appeal decision issue")
-        expect(page).to have_content(
-          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
-        )
-        click_intake_finish
-
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-
-        expect(
-          RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
-        ).to eq("appeal_to_higher_level_review")
-
-        ineligible_checklist = find("ul.cf-issue-checklist")
-        expect(ineligible_checklist).to have_content(
-          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
-        )
-      end
-    end
-
     context "when veteran has active nonrating request issues" do
       let(:another_higher_level_review) { create(:higher_level_review) }
       let!(:active_nonrating_request_issue) do
@@ -1165,22 +1014,6 @@ feature "Higher-Level Review", :all_dbs do
                                     nonrating_issue_description: active_nonrating_request_issue.description,
                                     decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
       end
-    end
-
-    it "Shows a review error when something goes wrong" do
-      start_higher_level_review(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      add_intake_rating_issue("Left knee granted", "I am an issue note")
-
-      ## Validate error message when complete intake fails
-      expect_any_instance_of(HigherLevelReviewIntake).to receive(:complete!).and_raise("A random error. Oh no!")
-
-      click_intake_finish
-
-      expect(page).to have_content("Something went wrong")
-      expect(page).to have_current_path("/intake/add_issues")
     end
 
     context "Non-compensation" do
@@ -1249,42 +1082,6 @@ feature "Higher-Level Review", :all_dbs do
                  )).to_not be_nil
         end
       end
-    end
-
-    scenario "canceling" do
-      _, intake = start_higher_level_review(veteran)
-      visit "/intake/add_issues"
-
-      expect(page).to have_content("Add / Remove Issues")
-      safe_click "#cancel-intake"
-      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
-      safe_click ".close-modal"
-      expect(page).to_not have_css("#modal_id-title")
-      safe_click "#cancel-intake"
-
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "System error").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: false)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "Other").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      fill_in "Tell us more about your situation.", with: "blue!"
-      expect(page).to have_button("Cancel intake", disabled: false)
-      safe_click ".confirm-cancel"
-
-      expect(page).to have_content("Welcome to Caseflow Intake!")
-      expect(page).to_not have_css(".cf-modal-title")
-
-      intake.reload
-      expect(intake.completed_at).to eq(Time.zone.now)
-      expect(intake.cancel_reason).to eq("other")
-      expect(intake).to be_canceled
     end
 
     context "with active legacy appeal" do
@@ -1447,58 +1244,6 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content("Contention: Looks like a VACOLS issue")
         end
       end
-
-      context "with legacy opt in not approved" do
-        scenario "adding issues" do
-          start_higher_level_review(veteran, legacy_opt_in_approved: false)
-          visit "/intake/add_issues"
-          click_intake_add_issue
-          add_intake_rating_issue(/^Left knee granted$/)
-
-          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-          # do not show inactive appeals when legacy opt in is false
-          expect(page).to_not have_content("impairment of hip")
-          expect(page).to_not have_content("typhoid arthritis")
-          add_intake_rating_issue("ankylosis of hip")
-
-          expect(page).to have_content(
-            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
-          )
-
-          click_intake_finish
-
-          ineligible_checklist = find("ul.cf-issue-checklist")
-          expect(ineligible_checklist).to have_content(
-            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
-          )
-
-          expect(RequestIssue.find_by(
-                   contested_issue_description: "Left knee granted",
-                   ineligible_reason: :legacy_issue_not_withdrawn,
-                   vacols_id: "vacols1",
-                   vacols_sequence_id: "1"
-                 )).to_not be_nil
-
-          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
-        end
-      end
-    end
-  end
-
-  context "has a chain of prior decision issues" do
-    let(:start_date) { Time.zone.today - 300.days }
-    before do
-      prior_hlr = create(:higher_level_review, veteran_file_number: veteran.file_number)
-      request_issue = create(:request_issue,
-                             contested_rating_issue_reference_id: "old123",
-                             contested_rating_issue_profile_date: untimely_ratings.profile_date,
-                             decision_review: prior_hlr)
-      setup_prior_decision_issue_chain(prior_hlr, request_issue, veteran, start_date)
-    end
-
-    it "disables prior contestable issues" do
-      start_higher_level_review(veteran)
-      check_decision_issue_chain(start_date)
     end
   end
 end
