@@ -99,7 +99,7 @@ const ReaderToolbar = ({
           </span>
         </span>
       </div>
-      <div className="toolbar-section"  {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
+      <div className="toolbar-section" {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
         <span className="cf-pdf-button-text">Zoom:</span>
         <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
         <Button
