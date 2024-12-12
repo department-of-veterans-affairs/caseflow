@@ -18,7 +18,6 @@ feature "Individual Claim History", :postgres do
   end
 
   def click_filter_option(filter_text)
-    binding.pry
     sort = find("[aria-label='Filter by Activity']")
     sort.click
 

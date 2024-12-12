@@ -187,20 +187,28 @@ class TasksController < ApplicationController
   end
 
   def upload_transcription_to_vbms
-    pdf_file = Hearings::TranscriptionFile.where(file_type: "pdf")
+    pdf_file = TranscriptionFile.where(file_type: "pdf")
       .find_by(docket_number: appeal.docket_number)
 
-    document_params = format_document_params(pdf_file)
+    if pdf_file
+      document_params = format_document_params(pdf_file)
 
-    response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
-    if response.success?
-      complete_transcript_review
-      set_flash_vbms_upload_success(document_params[:document_name], appeal)
+      response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
+      if response.success?
+        complete_transcript_review
+        set_flash_vbms_upload_success(document_params[:document_name], appeal)
+        render json: {
+          data: {
+            message: "Upload to VBMS successful."
+          }
+        }.to_json, status: :ok
+      end
+    else
       render json: {
         data: {
-          message: "Upload to VBMS successful."
+          message: "File not found."
         }
-      }.to_json, status: :ok
+      }.to_json, status: :bad_request
     end
   end
 
@@ -240,13 +248,7 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
-
-    render json: { success: true }, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
   end
-
-
 
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
