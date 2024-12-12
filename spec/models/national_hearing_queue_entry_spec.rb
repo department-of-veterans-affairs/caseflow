@@ -1478,6 +1478,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
   end
   context "claimant_indicator" do
+    after(:each) { clean_up_after_threads }
     subject do
       NationalHearingQueueEntry.refresh
       NationalHearingQueueEntry.find_by(appeal: appeal).contested_claim_indicator
@@ -1508,17 +1509,42 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
         is_expected.to eq false
       end
 
-      context "appeal with multiple request_issues" do
+      context "appeal with one qualifying request_issue and another request issue that doesn't" do
         let!(:request_issues) do
           [
             FactoryBot.create(:request_issue, :nonrating),
             FactoryBot.create(:request_issue, :rating_decision)
           ]
         end
-        it "an appeal with one qualifying request_issue" do
+        it "is set to true" do
           appeal.update!(request_issues: request_issues)
-          byebug
           is_expected.to eq true
+        end
+      end
+
+      context "appeal with two qualifying request_issues" do
+        let!(:request_issues) do
+          [
+            FactoryBot.create(:request_issue, :nonrating),
+            FactoryBot.create(:request_issue, :nonrating)
+          ]
+        end
+        it "an appeal with multiple qualifying request_issue" do
+          appeal.update!(request_issues: request_issues)
+          is_expected.to eq true
+        end
+      end
+
+      context "appeal with two non-qualifying request_issues" do
+        let!(:request_issues) do
+          [
+            FactoryBot.create(:request_issue, :rating_decision),
+            FactoryBot.create(:request_issue, :rating_decision)
+          ]
+        end
+        it "will appear as false" do
+          appeal.update!(request_issues: request_issues)
+          is_expected.to eq false
         end
       end
     end

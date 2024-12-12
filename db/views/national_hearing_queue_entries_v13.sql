@@ -61,8 +61,8 @@ WITH latest_cutoff_date AS (
     veterans.date_of_death IS NOT NULL AS veteran_deceased_indicator,
     stream_type = 'court_remand' AS cavc_indicator,
     CASE
-      WHEN request_issues.nonrating_issue_category LIKE '%Apportionment%'
-        OR request_issues.nonrating_issue_category LIKE '%Contested%'
+      WHEN contested_claim_status.aggregate_nonrating_issue LIKE '%Apportionment%'
+        OR contested_claim_status.aggregate_nonrating_issue LIKE '%Contested%'
         THEN TRUE
         ELSE FALSE
     END AS contested_claim_indicator
@@ -91,7 +91,13 @@ WITH latest_cutoff_date AS (
       AND (mst_status IS TRUE OR pact_status IS TRUE)
       GROUP BY decision_review_id
     ) AS request_issues_status ON (appeals.id = request_issues_status.decision_review_id)
-    LEFT JOIN request_issues ON (request_issues.decision_review_id = appeals.id AND request_issues.decision_review_type = 'Appeal')
+    LEFT JOIN (
+	  SELECT decision_review_id, string_agg(nonrating_issue_category, ',') AS aggregate_nonrating_issue
+      FROM request_issues
+      WHERE decision_review_type = 'Appeal'
+      GROUP BY decision_review_id
+    ) AS contested_claim_status ON (appeals.id = contested_claim_status.decision_review_id)
+    --request_issues ON (request_issues.decision_review_id = appeals.id AND request_issues.)
   WHERE
     tasks.type = 'ScheduleHearingTask'
     AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
