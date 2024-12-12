@@ -285,7 +285,6 @@ class TasksController < ApplicationController
     render json: {}, status: :ok
   rescue StandardError => error
     render_update_errors(error)
-
   end
 
   def send_initial_notification_letter
