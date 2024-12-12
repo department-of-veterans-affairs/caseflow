@@ -1217,7 +1217,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: grid;
   grid-template-columns: repeat(2, 1fr); // Default to 2 equal-width columns
   grid-auto-rows: auto; // Automatically create new rows as needed
-  column-gap: 20px;
+  column-gap: 55px;
   row-gap: 42px; // Consistent spacing between grid items
   justify-items: start; // Align items to the start of each row
   align-items: start; // Align items to the start vertically within each cell
@@ -1225,7 +1225,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   max-width: 100%; // Prevent grid from exceeding container's width
   margin: 0 auto; // Center grid container horizontally
   padding-left: 60px;
-  padding-right: 80px;
+  padding-right: 70px;
 
   .task-selection-dropdown-box-intake {
     margin-bottom: 40px;
