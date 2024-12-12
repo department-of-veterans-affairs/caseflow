@@ -61,6 +61,8 @@ Rails.application.routes.draw do
       post "mpi", to: "mpi#veteran_updates"
       post "va_notify_update", to: "va_notify#notifications_update"
       post "cmp", to: "cmp#upload"
+      post "cmp/document", to: "cmp#document"
+      post "token", to: "token#index"
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -365,7 +367,7 @@ Rails.application.routes.draw do
     get "/correspondence/team", to: "correspondence_queue#correspondence_team"
     put "/correspondence/:correspondence_uuid/update_cmp", to: "correspondence_review_package#update_cmp"
     get "/correspondence/packages", to: "correspondence_review_package#package_documents"
-    get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
+    get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf", as: "correspondence_review_package_pdf"
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     get "/correspondence/:correspondence_uuid/correspondences_appeals_tasks",
           to: "correspondence_details#correspondences_appeals_tasks"

@@ -7,7 +7,38 @@ security:
   bearerAuth: []
 servers:
 - url: "/api/v1"
-paths: {}
+paths:
+  /token:
+    post:
+      tags:
+      - token-resource
+      summary: Get API key provided by Caseflow
+      description: Get a API key token for the provider consumer name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: API Key request
+              required:
+                - consumer_name
+              properties:
+                consumer_name:
+                  description: Consumer Name
+                  type: string
+                  example: Some Application
+      responses:
+        '200':
+          description:  Response containing the API Key token
+          content:
+            application/json:
+              schema:
+                type: object
+                title: API Key response
+                properties:
+                  api_key:
+                    type: string
 components:
   securitySchemes:
     bearerAuth:

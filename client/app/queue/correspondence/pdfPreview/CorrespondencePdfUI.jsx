@@ -15,28 +15,14 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 /**
  * Represents the root layout and component structure for viewing PDF files
  * @param {Object} documents - Document metadata obtained from Document Controller
- * @param {string} documentPathBase - String path containing appeal Id. Directs to /:appeal_id/documents
+ * @param {string} selectedId - ID of the selected document
  */
 const CorrespondencePdfUI = (props) => {
-  // Note: Replace hard-coded data objects to dynamically include actual API request data
-
   // Destructured Props and State
   const {
     documents,
     selectedId
   } = props;
-
-  const mappedMockDocumentData = documents.map((doc, index) => {
-    return (
-      {
-        id: doc.correspondence_id,
-        type: doc.document_title,
-        content_url: `/queue/correspondence/${index + 1}/pdf`
-      }
-    );
-  });
-  // Hard Coded Temp Data Objects
-  const documentPathBase = '/2941741/documents';
 
   // useRefs (persist data through React render cycle)
   // Contains a ref to each canvas DOM element generated after document loads
@@ -49,7 +35,6 @@ const CorrespondencePdfUI = (props) => {
   });
 
   // useStates (re-renders components on change)
-
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [pdfDocProxy, setPdfDocProxy] = useState(null);
@@ -71,11 +56,10 @@ const CorrespondencePdfUI = (props) => {
       return Promise.all(promises);
     };
 
-    // Note: Refactor when CorrespondenceDocument controller is created
-    // Note: Need to add error handling
+    // TODO: Need to add error handling
     const loadPdf = async () => {
       try {
-        const response = await ApiUtil.get(`${mappedMockDocumentData[selectedId].content_url}`, {
+        const response = await ApiUtil.get(`/queue/correspondence/${documents[selectedId].uuid}/pdf`, {
           cache: true,
           withCredentials: true,
           timeout: true,
@@ -136,7 +120,6 @@ const CorrespondencePdfUI = (props) => {
 
   // Rotations
   const handleDocumentRotation = () => {
-    //
     setRotation((prev) => (prev + ROTATION_INCREMENTS) % COMPLETE_ROTATION);
   };
 
@@ -223,8 +206,7 @@ const CorrespondencePdfUI = (props) => {
   return (
     <div className="cf-pdf-preview-container pdf-wrapper">
       <CorrespondencePdfToolBar
-        doc={mappedMockDocumentData[selectedId]}
-        documentPathBase={documentPathBase}
+        doc={documents[selectedId]}
         zoomIn={zoomIn}
         zoomOut={zoomOut}
         fitToScreen={fitToScreen}

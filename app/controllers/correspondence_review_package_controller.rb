@@ -43,24 +43,52 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
-    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[pdf_params[:pdf_id].to_i]
-
-    document_disposition = "inline"
-    if pdf_params[:download]
-      document_disposition = "attachment; filename='#{pdf_params[:type]}-#{pdf_params[:id]}.pdf'"
+    if correspondence_document.present?
+      if FeatureToggle.enabled?(:vefs_integration)
+        fetch_correspondence_document_from_vefs
+      else
+        expires_in 30.days, public: true
+        send_file(
+          correspondence_document.pdf_location,
+          type: "application/pdf",
+          disposition: "inline"
+        )
+      end
+    else
+      correspondence_document_not_found_response
     end
-
-    # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
   end
 
   private
+
+  def correspondence_document
+    @correspondence_document ||= CorrespondenceDocument.find_by(uuid: params["pdf_id"])
+  end
+
+  def fetch_correspondence_document_from_vefs
+    doc_content = cmp_document_fetcher.get_cmp_document_content(correspondence_document.uuid)
+
+    if doc_content.present?
+      expires_in 30.days, public: true
+      send_data(
+        doc_content,
+        type: "application/pdf",
+        disposition: "inline"
+      )
+    else
+      correspondence_document_not_found_response
+    end
+  end
+
+  def correspondence_document_not_found_response
+    render json: {
+      "errors": ["message": "Could not find correspondence document with given UUID"]
+    }, status: :not_found
+  end
+
+  def cmp_document_fetcher
+    @cmp_document_fetcher ||= CmpDocumentFetcher.new
+  end
 
   def set_instance_variables
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
@@ -98,10 +126,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   def correspondence_params
     params.require(:correspondence).permit(:correspondence, :notes, :correspondence_type_id, :va_date_of_receipt)
       .merge(params.require(:veteran).permit(:file_number, :first_name, :last_name))
-  end
-
-  def pdf_params
-    params.permit(pdf: [:pdf_id, :type, :id, :download])
   end
 
   def update_veteran_on_correspondence

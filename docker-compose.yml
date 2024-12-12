@@ -28,7 +28,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=sqs,dynamodb,kms
+      - SERVICES=sqs,dynamodb,kms,s3
     volumes:
       - ./local/sqs/conf:/conf
 

@@ -1500,6 +1500,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
+    csv (3.1.2)
     d3-rails (7.8.5)
       railties (>= 3.1)
     danger (6.2.2)
@@ -1638,6 +1639,10 @@ GEM
     heapy (0.2.0)
       thor
     holidays (6.6.1)
+    httparty (0.22.0)
+      csv
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     httpi (2.4.4)
       rack
@@ -1716,6 +1721,7 @@ GEM
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
     msgpack (1.4.2)
+    multi_xml (0.6.0)
     multipart-post (2.1.1)
     nap (1.1.0)
     nenv (0.3.0)
@@ -2174,6 +2180,7 @@ DEPENDENCIES
   govdelivery-tms
   guard-rspec
   holidays (~> 6.4)
+  httparty (~> 0.22.0)
   icalendar
   immigrant
   json_schemer (~> 0.2.16)

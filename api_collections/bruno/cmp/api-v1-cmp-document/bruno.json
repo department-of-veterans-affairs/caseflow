@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "/api/v1/cmp/document",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
