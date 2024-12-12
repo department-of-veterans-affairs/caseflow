@@ -2214,41 +2214,41 @@ ActiveRecord::Schema.define(version: 2024_11_26_015325) do
   end
 
   create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
     t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.datetime "SUSPENSE_DATE"
     t.string "SUSPENSE_REASON_CODE", limit: 25
     t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.integer "CONTENTION_COUNT"
+    t.string "CLAIM_SOJ", limit: 25
     t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "PRIORITY", limit: 10
     t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.datetime "ESTABLISHMENT_DATE"
+    t.string "INTAKE_SITE", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.datetime "CREATEDDT", null: false
+    t.datetime "LASTUPDATEDT", null: false
+    t.datetime "EXPIRATIONDT"
+    t.decimal "VERSION", precision: 38, null: false
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "RATING_SOJ", limit: 25
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.string "POA_CODE", limit: 25
     t.index ["CLAIM_ID"], name: "claim_id_index"
     t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
