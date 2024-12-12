@@ -261,6 +261,10 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
+  scope module: 'hearings/national_hearing_queue', path: '/national_hearing_queue' do
+    get "/(*params)", action: "index"
+  end
+
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
@@ -460,6 +464,13 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
+
+    resources :load_tests, only: [:index]
+    get "/load_tests/build_cookie", to: "load_tests#build_cookie", as: "build_cookie"
+    post "/load_tests/run_load_tests", to: "load_tests#run_load_tests", as: "run_load_tests"
+
+    post "/load_test_api/user", to: "load_test_api#user", as: "user"
+    get "/load_test_api/target", to: "load_test_api#target", as: "target"
 
     resources :hearings, only: [:index]
 
