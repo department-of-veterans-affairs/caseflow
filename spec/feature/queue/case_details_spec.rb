@@ -712,6 +712,7 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(page).to have_content("CaseflowQueue")
         expect(page).to have_content("Back to your cases")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       end
     end
 
