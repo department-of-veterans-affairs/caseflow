@@ -620,6 +620,7 @@ input[type='search'].cf-search-input-with-close {
 // scss-lint:disable IdSelector
 #prototype-footer {
   position: absolute;
+  bottom: 0;
   display: flex;
   overflow: hidden;
   align-items: center;
@@ -649,6 +650,7 @@ input[type='search'].cf-search-input-with-close {
 }
 
 .prototype-canvas {
+  background-color: $white;
   display: inline-block;
   position: relative;
 }

@@ -318,7 +318,6 @@ FactoryBot.define do
                 appeal_affinity { true }
                 affinity_start_date { 1.month.ago }
                 tied_to { true }
-                not_ready { false }
               end
 
               bfmpro { "HIS" }
@@ -379,7 +378,7 @@ FactoryBot.define do
                 params = {
                   bfdpdcn: vacols_case.bfddec,
                   bfac: "7",
-                  bfcurloc: evaluator.not_ready ? "57" : "81",
+                  bfcurloc: "81",
                   bfcorkey: vacols_case.bfcorkey,
                   bfcorlid: vacols_case.bfcorlid,
                   bfdnod: vacols_case.bfdnod,
@@ -419,7 +418,6 @@ FactoryBot.define do
             # The judge and attorney should be the VACOLS::Staff records of those users
             # This factory uses the :aod trait to mark it AOD instead of a transient attribute
             # Pass `tied_to: false` to create an original appeal without a previous hearing
-            # Pass the sattyid of the desired original deciding judge if different from the hearing judge
             factory :legacy_aoj_appeal do
               transient do
                 judge { nil }
@@ -429,7 +427,6 @@ FactoryBot.define do
                 affinity_start_date { 60.days.ago }
                 tied_to { true }
                 hearing_after_decision { false }
-                original_dec_judge_sattyid { nil }
               end
 
               status_active
@@ -488,7 +485,7 @@ FactoryBot.define do
                   bfd19: new_case.bfd19,
                   bfcurloc: "99",
                   bfddec: new_case.bfdpdcn,
-                  bfmemid: evaluator.original_dec_judge_sattyid || original_judge.sattyid,
+                  bfmemid: original_judge.sattyid,
                   bfattid: original_attorney.sattyid,
                   folder: original_folder,
                   correspondent: new_case.correspondent,

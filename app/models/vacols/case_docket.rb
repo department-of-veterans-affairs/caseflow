@@ -210,15 +210,14 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS = "
-    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD,
-      APPEALS.BFCORLID, APPEALS.HEARING_DATE, APPEALS.BFDPDCN,
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
-      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL, STAFF.SDOMAINID as VLJ_ID,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
       case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
          PREV_DECIDING_JUDGE
     from (
-      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID, BFDPDCN,
-        VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
+        VLJ_HEARINGS.VLJ,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -680,7 +679,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       range.nil? ? 1 : 0
                                     ])
 
-    distribute_appeals(fmtd_query, judge, limit, genpop, dry_run)
+    distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -739,11 +738,11 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       ])
                  end
 
-    distribute_appeals(fmtd_query, judge, limit, genpop, dry_run)
+    distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
   # :nocov:
 
-  def self.distribute_appeals(query, judge, limit, genpop, dry_run)
+  def self.distribute_appeals(query, judge, limit, dry_run)
     cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
     cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
     excluded_judges_attorney_ids = excluded_judges_sattyids
@@ -755,12 +754,9 @@ class VACOLS::CaseDocket < VACOLS::Record
       if dry_run
         dry_appeals = conn.exec_query(query).to_a
 
-        cavc_affinity_filter(dry_appeals, judge_sattyid, cavc_affinity_lever_value,
-                             excluded_judges_attorney_ids, genpop)
+        cavc_affinity_filter(dry_appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids)
         cavc_aod_affinity_filter(dry_appeals, judge_sattyid, cavc_aod_affinity_lever_value,
-                                 excluded_judges_attorney_ids, genpop)
-
-        genpop_filter(dry_appeals) if genpop == "not_genpop"
+                                 excluded_judges_attorney_ids)
 
         dry_appeals
       else
@@ -769,11 +765,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids, genpop)
-        cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value,
-                                 excluded_judges_attorney_ids, genpop)
-
-        genpop_filter(appeals) if genpop == "not_genpop"
+        cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids)
+        cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids)
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
@@ -837,71 +830,55 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def self.cavc_affinity_filter(
-    appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids, genpop = "any"
-  )
+  def self.cavc_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       # will skip if not CAVC || if CAVC being distributed to tied_to judge || if not tied to any judge
-      next if tied_to_or_not_cavc?(appeal, judge_sattyid, genpop)
+      next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
-        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
       )
     end
   end
 
-  def self.cavc_aod_affinity_filter(
-    appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids, genpop = "any"
-  )
+  def self.cavc_aod_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       # will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge
-      next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid, genpop)
+      next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
-        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
       )
     end
   end
 
-  # this will currently only apply to priority appeals via the push priority job because we don't pass
-  # "not_genpop" through any nonpriority distributions
-  def self.genpop_filter(appeals)
-    appeals.reject! do |appeal|
-      # bfac 3 = AOJ and bfac 7 = CAVC which are filtered in their own methods to account for affinities
-      next if %w[3 7].include?(appeal["bfac"])
-
-      appeal["vlj"].nil? || ineligible_judges_sattyids&.include?(appeal["vlj"])
-    end
-  end
-
-  def self.tied_to_or_not_cavc?(appeal, judge_sattyid, genpop)
+  def self.tied_to_or_not_cavc?(appeal, judge_sattyid)
     (appeal["bfac"] != "7" || appeal["aod"] != 0) ||
       (appeal["bfac"] == "7" && appeal["aod"] == 0 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
 
-  def self.tied_to_or_not_cavc_aod?(appeal, judge_sattyid, genpop)
+  def self.tied_to_or_not_cavc_aod?(appeal, judge_sattyid)
     (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
       (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil? && genpop != "not_genpop")
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
 
-  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
   def self.common_affinity_filter_logic(
-    appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities, genpop
+    appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
   )
     if not_distributing_to_tied_judge?(appeal, judge_sattyid)
-      return if ineligible_judges_sattyids&.include?(appeal["vlj"]) && genpop != "not_genpop"
+      return if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
       return (appeal["vlj"] != judge_sattyid)
     end
@@ -913,29 +890,21 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     return true if appeal["prev_deciding_judge"].nil? && !ineligible_judges_sattyids.include?(appeal["vlj"])
 
-    return if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids) && genpop != "not_genpop"
+    return if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
     if case_affinity_days_lever_value_is_selected?(lever_value)
-      if appeal["prev_deciding_judge"] == judge_sattyid
-        if genpop == "not_genpop"
-          return !reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], lever_value)
-        elsif genpop != "not_genpop"
-          return
-        end
-      end
+      return if appeal["prev_deciding_judge"] == judge_sattyid
 
-      genpop == "not_genpop" || reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], lever_value)
+      reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], lever_value)
     elsif lever_value == Constants.ACD_LEVERS.infinite
-      return if
-        (deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?) &&
-        genpop != "not_genpop"
+      return if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
       appeal["prev_deciding_judge"] != judge_sattyid
     elsif lever_value == Constants.ACD_LEVERS.omit
-      appeal["prev_deciding_judge"] == appeal["vlj"] || genpop == "not_genpop"
+      appeal["prev_deciding_judge"] == appeal["vlj"]
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def self.not_distributing_to_tied_judge?(appeal, judge_sattyid)
     !appeal["vlj"].blank? &&
@@ -994,13 +963,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
 
       vljs_strings = split_lists.flat_map do |k, v|
-        # running array.join(', ') creates a string where each ID is considered an integer which causes issues
-        # in the VACOLS queries if a user's SATTYID has leading zeroes (which exists in production)
-        base = ""
-        v.map { |vlj_id| base += "'#{vlj_id}', " }
-        2.times { base.chop! }
-        base = "(#{base})"
-
+        base = "(#{v.join(', ')})"
         if prev_deciding_judge
           base += " or PREV_DECIDING_JUDGE in " unless k == split_lists.keys.last
         else

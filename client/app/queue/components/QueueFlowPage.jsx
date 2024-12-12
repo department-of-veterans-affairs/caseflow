@@ -39,13 +39,8 @@ class QueueFlowPage extends React.PureComponent {
     return true;
   });
 
-  cancelAttorneyCheckoutMsg = (isLegacyAppeal) => {
-    if (!isLegacyAppeal) {
-      return COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_AMA;
-    }
-
+  cancelAttorneyCheckoutMsg = () => {
     return COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES;
-
   }
 
   withUnblockedTransition = (callback = _.noop) => {
@@ -178,7 +173,7 @@ class QueueFlowPage extends React.PureComponent {
           onClick: this.cancelFlow
         }]}
         closeHandler={() => this.props.hideModal('cancelCheckout')}>
-        {this.cancelAttorneyCheckoutMsg(this.props.isLegacyAppeal)}
+        {this.cancelAttorneyCheckoutMsg()}
       </Modal>
     </div>}
     <AppSegment filledBackground>
@@ -211,8 +206,7 @@ QueueFlowPage.propTypes = {
   showModal: PropTypes.func,
   hideModal: PropTypes.func,
   checkoutStagedAppeal: PropTypes.func,
-  resetDecisionOptions: PropTypes.func,
-  isLegacyAppeal: PropTypes.bool
+  resetDecisionOptions: PropTypes.func
 };
 
 QueueFlowPage.defaultProps = {

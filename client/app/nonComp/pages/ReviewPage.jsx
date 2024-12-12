@@ -40,10 +40,7 @@ const NonCompReviewsPage = ({
   history }) => {
 
   const downloadCsv = () => {
-    const queryParams = businessLineUrl === 'vha' ? `?${new URLSearchParams(window.location.search).toString()}` : '';
-    const csvUrl = `/decision_reviews/${businessLineUrl}.csv${queryParams}`;
-
-    location.href = csvUrl;
+    location.href = `/decision_reviews/${businessLineUrl}.csv`;
   };
 
   const successAlert = decisionIssuesStatus?.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED ?

@@ -22,7 +22,7 @@ describe BusinessLine do
       expect(subject.tasks_query_type).to eq(
         incomplete: "on_hold",
         in_progress: "active",
-        completed: "completed",
+        completed: "recently_completed",
         pending: "active"
       )
     end

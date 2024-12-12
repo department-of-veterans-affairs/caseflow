@@ -64,11 +64,15 @@ class HearingRequestCaseDistributor
   def not_genpop_appeals
     return appeals if genpop == "not_genpop"
 
+    return appeals[0] if genpop == "any"
+
     []
   end
 
   def only_genpop_appeals
     return appeals if genpop == "only_genpop"
+
+    return appeals[1] if genpop == "any"
 
     []
   end

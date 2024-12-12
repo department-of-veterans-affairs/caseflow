@@ -1346,24 +1346,24 @@ Object {
               class="load-test-container-checkbox test-class-sizing"
             >
               <div
-                class="checkbox-wrapper-scheduleHearingTasksColumnsAmaTabJSON cf-form-checkboxes"
+                class="checkbox-wrapper-scheduleHearingTasksColumnsAMATabJSON cf-form-checkboxes"
               >
                 <div
                   class="cf-form-checkbox"
                 >
                   <input
-                    aria-label="scheduleHearingTasksColumnsAmaTabJSON"
-                    id="scheduleHearingTasksColumnsAmaTabJSON"
-                    name="scheduleHearingTasksColumnsAmaTabJSON"
+                    aria-label="scheduleHearingTasksColumnsAMATabJSON"
+                    id="scheduleHearingTasksColumnsAMATabJSON"
+                    name="scheduleHearingTasksColumnsAMATabJSON"
                     type="checkbox"
                   />
                   <label
-                    for="scheduleHearingTasksColumnsAmaTabJSON"
+                    for="scheduleHearingTasksColumnsAMATabJSON"
                   >
                     <span
                       class=""
                     >
-                      scheduleHearingTasksColumnsAmaTabJSON
+                      scheduleHearingTasksColumnsAMATabJSON
                     </span>
                      
                   </label>
@@ -3262,24 +3262,24 @@ Object {
             class="load-test-container-checkbox test-class-sizing"
           >
             <div
-              class="checkbox-wrapper-scheduleHearingTasksColumnsAmaTabJSON cf-form-checkboxes"
+              class="checkbox-wrapper-scheduleHearingTasksColumnsAMATabJSON cf-form-checkboxes"
             >
               <div
                 class="cf-form-checkbox"
               >
                 <input
-                  aria-label="scheduleHearingTasksColumnsAmaTabJSON"
-                  id="scheduleHearingTasksColumnsAmaTabJSON"
-                  name="scheduleHearingTasksColumnsAmaTabJSON"
+                  aria-label="scheduleHearingTasksColumnsAMATabJSON"
+                  id="scheduleHearingTasksColumnsAMATabJSON"
+                  name="scheduleHearingTasksColumnsAMATabJSON"
                   type="checkbox"
                 />
                 <label
-                  for="scheduleHearingTasksColumnsAmaTabJSON"
+                  for="scheduleHearingTasksColumnsAMATabJSON"
                 >
                   <span
                     class=""
                   >
-                    scheduleHearingTasksColumnsAmaTabJSON
+                    scheduleHearingTasksColumnsAMATabJSON
                   </span>
                    
                 </label>
