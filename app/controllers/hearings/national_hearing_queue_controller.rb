@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Hearings::NationalHearingQueueController < ApplicationController
+  # skip_before_action :verify_authenticity_token
+
   def index
     respond_to do |format|
       format.html { render "national_hearing_queue/index" }
@@ -11,6 +13,8 @@ class Hearings::NationalHearingQueueController < ApplicationController
   # have their hearings scheduled as well as if the current_user is authorized to provide new
   # cutoff dates.
   def cutoff_date
+    byebug
+
     date = SchedulableCutoffDate.most_recently_added&.cutoff_date
     # December 31, 2019 is the fallback date in the event no user-defined cutoff dates exist.
     date ||= Date.new(2019, 12, 31)
@@ -19,13 +23,13 @@ class Hearings::NationalHearingQueueController < ApplicationController
   end
 
   def update_cutoff_date
-    params.require(:cutoff_date)
+    required_params = params.require(:cutoff_date)
 
     begin
-      Date.iso8601(params[:cutoff_date])
+      Date.iso8601(required_params[:cutoff_date])
 
       record = SchedulableCutoffDate.create!(
-        cutoff_date: params[:cutoff_date],
+        cutoff_date: required_params[:cutoff_date],
         created_by_id: current_user.id,
         created_at: Time.zone.now
       )
