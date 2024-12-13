@@ -246,8 +246,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: /^(#{time} (A|a)(M|m)( E)?)/, name: "optionalHearingTime0")
     end
 
-    def slots_select_hearing_time(time, date)
-      tz = Time.zone.parse("#{time} #{date} America/New_York").dst? ? "EDT" : "EST"
+    def slots_select_hearing_time(time, date, tz_name = "America/New_York")
+      is_dst = Time.zone.parse("#{time} #{date} #{tz_name}").dst?
+
+      tz = if tz_name == "America/Denver"
+             is_dst ? "MDT" : "MST"
+           else
+             is_dst ? "EDT" : "EST"
+           end
 
       find(".time-slot-button", text: "#{time} #{tz}").click
     end
@@ -833,7 +839,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # way to select a hearing time
 
         select_custom_hearing_time(time) unless slots
-        slots_select_hearing_time(time, date) if slots == "slot"
+        if slots == "slot"
+          slots_select_hearing_time(
+            time, date, Constants::REGIONAL_OFFICE_INFORMATION[ro_key]["timezone"]
+          )
+        end
         slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
