@@ -514,7 +514,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         where ((((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
         or #{nonpriority_cdl_aoj_query})
-        and (DOCKET_INDEX <= ? or 1 = ?)
+       -- and (DOCKET_INDEX <= ? or 1 = ?)
       SQL
     end
 
@@ -535,10 +535,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                                         judge.vacols_attorney_id,
                                         (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                         (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                        judge.vacols_attorney_id
-                                        # ,
-                                        # range,
-                                        # range.nil? ? 1 : 0
+                                        judge.vacols_attorney_id,
+                                        range,
+                                        range.nil? ? 1 : 0
                                       ])
                  end
 
@@ -628,6 +627,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
         appeals = conn.exec_query(query).to_a
+
         if appeals.empty?
           puts "appeals is empty"
         else
