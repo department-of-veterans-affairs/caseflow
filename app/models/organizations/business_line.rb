@@ -149,6 +149,7 @@ class BusinessLine < Organization
         .from(combined_decision_review_tasks_query)
         .includes(*decision_review_task_includes)
         .where(task_filter_predicate(query_params[:filters]))
+        .where(closed_at_filter_predicate(query_params[:filters]))
         .order(order_clause)
     end
 
@@ -1081,6 +1082,70 @@ class BusinessLine < Organization
 
     def where_clause_from_array(table_class, column, values_array)
       table_class.arel_table[column].in(values_array)
+    end
+
+    def closed_at_filter_predicate(filters)
+      return "" if filters.blank?
+
+      closed_at_filter = locate_closed_at_filter(filters)
+
+      return "" unless closed_at_filter
+
+      # ex: "val"=> val=[before,2024-09-08,]
+      closed_at_params = closed_at_filter["val"].first.split(",")
+
+      build_closed_at_filter_predicate(closed_at_params) || ""
+    end
+
+    def locate_closed_at_filter(filters)
+      parsed_filters = parse_filters(filters)
+
+      parsed_filters.find do |filter|
+        filter["col"].include?("completedDateColumn")
+      end
+    end
+
+    def build_closed_at_filter_predicate(closed_at_params)
+      return "" if closed_at_params.blank?
+
+      mode, start_date, end_date = closed_at_params
+      operator = date_filter_mode_to_operator(mode)
+
+      # Break early if start date is not present and it's not one of these 3 filter types
+      return "" if !%w[last_7_days last_30_days last_365_days].include?(operator) && start_date.blank?
+
+      date_filter_lambda_hash(start_date, end_date).fetch(operator, lambda {
+        Rails.logger.error("Unsupported mode **#{operator}** used for closed at date filtering")
+        ""
+      }).call
+    end
+
+    def date_filter_lambda_hash(start_date, end_date)
+      {
+        ">" => -> { "tasks.closed_at::date > '#{start_date}'::date" },
+        "<" => -> { "tasks.closed_at::date < '#{start_date}'::date" },
+        "=" => -> { "tasks.closed_at::date = '#{start_date}'::date" },
+        "between" => lambda {
+          # Ensure the dates are sorted correctly so either ordering works e.g. start > end or end > start
+          start_date, end_date = [start_date, end_date].map(&:to_date).sort
+          end_date ? "tasks.closed_at::date BETWEEN '#{start_date}'::date AND '#{end_date}'::date" : ""
+        },
+        "last_7_days" => -> { { closed_at: 1.week.ago..Time.zone.now } },
+        "last_30_days" => -> { { closed_at: 30.days.ago..Time.zone.now } },
+        "last_365_days" => -> { { closed_at: 365.days.ago..Time.zone.now } }
+      }
+    end
+
+    def date_filter_mode_to_operator(mode)
+      {
+        "between" => "between",
+        "after" => ">",
+        "before" => "<",
+        "on" => "=",
+        "last7" => "last_7_days",
+        "last30" => "last_30_days",
+        "last365" => "last_365_days"
+      }[mode]
     end
   end
   # rubocop:enable Metrics/ClassLength
