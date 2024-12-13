@@ -115,6 +115,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let(:instructions) { "Complete the review and draft a decision." }
+
     before do
       User.stub = user
       @staff_user = create(:staff, role, user: user)
@@ -155,13 +157,15 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         params = {
           "appeal_id": @appeal.id,
           "assigned_to_id": attorney.id,
-          "judge_id": user.id
+          "judge_id": user.id,
+          "instructions": instructions
         }
         allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
           assigned_by: current_user,
           judge: user,
           attorney: attorney,
-          vacols_id: @appeal.vacols_id
+          vacols_id: @appeal.vacols_id,
+          instructions: [instructions]
         ).and_return(true)
 
         post :create, params: { tasks: params }
@@ -186,13 +190,15 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       it "should be successful" do
         params = {
           "appeal_id": @appeal.id,
-          "assigned_to_id": attorney.id
+          "assigned_to_id": attorney.id,
+          "instructions": instructions
         }
         allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
           assigned_by: user,
           judge: user,
           attorney: attorney,
-          vacols_id: @appeal.vacols_id
+          vacols_id: @appeal.vacols_id,
+          instructions: [instructions]
         ).and_return(true)
 
         post :create, params: { tasks: params }
