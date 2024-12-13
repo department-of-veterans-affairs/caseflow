@@ -529,6 +529,10 @@ module Caseflow::Error
   end
   class DecisionReviewUpdatedClaimReviewError < StandardError; end
   class DecisionReviewUpdatedEndProductEstablishmentError < StandardError; end
+  class DecisionReviewCompletedEndProductEstablishmentError < StandardError; end
+  class DecisionReviewCompletedClaimReviewError < StandardError; end
+  class DecisionReviewCompletedRequestIssueError < StandardError; end
+
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
