@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../app/helpers/sync_decided_appeals_helper"
-
 describe "SyncDecidedAppealsHelper" do
   self.use_transactional_tests = false
 
