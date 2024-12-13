@@ -269,12 +269,12 @@ module Seeds
 
         if current_task_count < 60
           create_correspondence_with_in_progress_intake_task(user, veteran)
-          current_task_count += 1
         end
-        
+
         create_nod_correspondence(user, veteran)
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # :reek:FeatureEnvy
     def create_correspondence_with_unassigned_review_package_task(user = {}, veteran = {})
@@ -520,4 +520,5 @@ module Seeds
       ]
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
