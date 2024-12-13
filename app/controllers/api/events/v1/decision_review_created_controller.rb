@@ -26,8 +26,14 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     claim_id = drc_params[:claim_id]
     headers = request.headers
     consumer_and_claim_ids = { consumer_event_id: consumer_event_id, claim_id: claim_id }
-    ::Events::DecisionReviewCreated.create!(consumer_and_claim_ids, headers, drc_params)
-    render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
+    # checks if claim review is remanded
+    if params[:claim_review][:auto_remand]
+      ::Events::DecisionReviewRemanded.create!(consumer_and_claim_ids, headers, drc_params)
+      render json: { message: "DecisionReviewRemandedEvent successfully processed and backfilled" }, status: :created
+    else
+      ::Events::DecisionReviewCreated.create!(consumer_and_claim_ids, headers, drc_params)
+      render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
+    end
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
