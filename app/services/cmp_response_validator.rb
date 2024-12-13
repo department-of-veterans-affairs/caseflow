@@ -2,11 +2,11 @@
 
 class CmpResponseValidator
   def validate_cmp_document_request(api_request)
-    date_field_must_be_a_valid_date(api_request[:date_of_receipt])
+    date_field_must_be_a_valid_date(api_request[:dateOfReceipt])
   end
 
   def validate_cmp_mail_packet_request(api_request)
-    date_field_must_be_a_valid_date(api_request[:va_dor])
+    date_field_must_be_a_valid_date(api_request[:vaDor])
   end
 
   private
@@ -16,7 +16,6 @@ class CmpResponseValidator
       Rails.logger.error("blank")
       return false
     end
-
     # For yyyy-mm-dd format:
     # Require non-zero first digit; require the exact number of digits for each.
     if !/^[1-9]{1}\d{3}-\d{2}-\d{2}$/.match?(date_field)
