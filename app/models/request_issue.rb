@@ -1181,14 +1181,14 @@ class RequestIssue < CaseflowRecord
     when ActiveSupport::TimeWithZone
       input.to_datetime
     when String
-      if input.include?(":")
-        DateTime.parse(input)
-      else
-        Date.parse(input)
-      end
+      parse_string_date(input)
     else
       fail ArgumentError, "Input must be a String, Date, DateTime, or ActiveSupport::TimeWithZone. Got #{input.class}"
     end
+  end
+
+  def parse_string_date(date_string)
+    date_string.include?(":") ? DateTime.parse(date_string) : Date.parse(date_string)
   end
 end
 # rubocop:enable Metrics/ClassLength
