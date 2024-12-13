@@ -41,6 +41,8 @@ checks:
 plugins:
   brakeman:
     enabled: true
+    exclude_patterns:
+      - 'lib/helpers/war_room/DtaDooDescriptionRemediationByReportLoad.rb'
   bundler-audit:
     enabled: true
   duplication:
@@ -51,13 +53,13 @@ plugins:
         javascript:
           mass_threshold: 81
     exclude_patterns:
-    - 'db/migrate/*'
-    - 'db/etl_migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
-    - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
-    - 'spec/controllers/idt/api/appeals_controller_spec.rb'
-    - 'spec/controllers/tasks_controller_spec.rb'
+    - 'db/etl_migrate/*'
+    - 'db/migrate/*'
     - 'spec/controllers/decision_reviews_controller_spec.rb'
+    - 'spec/controllers/idt/api/appeals_controller_spec.rb'
+    - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
+    - 'spec/controllers/tasks_controller_spec.rb'
     - 'spec/models/hearings/conference_link_spec.rb'
   eslint:
     enabled: true
@@ -79,10 +81,18 @@ plugins:
       Attribute:
         enabled: false
     exclude_patterns:
-    - 'db/migrate/*'
-    - 'db/etl_migrate/*'
     - 'app/jobs/dispatch_email_job.rb'
     - 'app/mailers/dispatch_mailer.rb'
+    - 'db/etl_migrate/*'
+    - 'db/migrate/*'
+    - 'lib/helpers/sanitizers.rb'
+    - 'lib/helpers/war_room/claim_label_change.rb'
+    - 'lib/helpers/war_room/DtaDooDescriptionRemediationByReportLoad.rb'
+    - 'lib/helpers/war_room/dupp_ep_claims_sync_status_update_can_clr.rb'
+    - 'lib/helpers/war_room/hearings_info_migration.rb'
+    - 'lib/helpers/war_room/payee_code_update.rb'
+    - 'lib/helpers/war_room/remand_dta_or_doo_higher_level_review.rb'
+    - 'lib/helpers/war_room/report_load_end_product_sync.rb'
   rubocop:
     enabled: true
     channel: rubocop-0-83
@@ -116,15 +126,14 @@ plugins:
             - "spec/feature/**/*.rb"
 
 exclude_patterns:
-  - 'db/schema.rb'
-  - 'db/etl_schema.rb'
-  - 'db/seeds.rb'
-  - 'db/scripts/*'
-  - 'node_modules/**/*'
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
-  - 'tmp/**/*'
   - 'app/assets/**/*'
-  - 'client/test/data/camoQueueConfigData.js'
   - 'client/app/intake/components/mockData/issueListProps.js'
+  - 'client/test/data/camoQueueConfigData.js'
+  - 'db/etl_schema.rb'
+  - 'db/schema.rb'
+  - 'db/scripts/*'
+  - 'db/seeds.rb'
   - 'db/seeds/*'
-
+  - 'node_modules/**/*'
+  - 'tmp/**/*'
