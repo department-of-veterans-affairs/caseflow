@@ -57,12 +57,12 @@ export const DocketStartTimes = ({
       },
       {
         displayText: halfDayAmLabel,
-        value: roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, roTimezone),
+        value: amStartTimeString,
         slotCount: fullDaySlots / 2
       },
       {
         displayText: halfDayPmLabel,
-        value: roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, roTimezone),
+        value: pmStartTimeString,
         slotCount: fullDaySlots / 2
       }
     ];

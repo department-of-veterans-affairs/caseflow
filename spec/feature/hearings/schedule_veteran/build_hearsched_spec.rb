@@ -246,8 +246,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: /^(#{time} (A|a)(M|m)( E)?)/, name: "optionalHearingTime0")
     end
 
-    def slots_select_hearing_time(time, date)
-      tz = Time.zone.parse("#{time} #{date} America/New_York").dst? ? "EDT" : "EST"
+    def slots_select_hearing_time(time, date, tz_name = "America/New_York")
+      is_dst = Time.zone.parse("#{time} #{date} #{tz_name}").dst?
+
+      tz = if tz_name == "America/Denver"
+             is_dst ? "MDT" : "MST"
+           else
+             is_dst ? "EDT" : "EST"
+           end
 
       find(".time-slot-button", text: "#{time} #{tz}").click
     end
@@ -831,8 +837,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
+
         select_custom_hearing_time(time) unless slots
-        slots_select_hearing_time(time, date) if slots == "slot"
+        if slots == "slot"
+          slots_select_hearing_time(
+            time, date, Constants::REGIONAL_OFFICE_INFORMATION[ro_key]["timezone"]
+          )
+        end
         slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
@@ -1114,9 +1125,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       it_behaves_like "an appeal where there is an open hearing"
 
-      it_behaves_like "change from Central hearing", "11:00 AM", "slot"
+      it_behaves_like "change from Central hearing", "8:30 AM", "slot"
 
-      it_behaves_like "change from Video hearing", "10:30 AM", "slot"
+      it_behaves_like "change from Video hearing", "8:30 AM", "slot"
 
       it_behaves_like "withdraw a hearing"
     end
