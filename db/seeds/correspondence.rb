@@ -4,6 +4,7 @@
 require_relative "./helpers/queue_helpers"
 
 module Seeds
+  # rubocop:disable Metrics/ClassLength
   class Correspondence < Base
     include QueueHelpers
 
@@ -178,6 +179,7 @@ module Seeds
       veterans
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
@@ -269,11 +271,8 @@ module Seeds
           create_correspondence_with_in_progress_intake_task(user, veteran)
           current_task_count += 1
         end
-
-        if current_task_count < 60
-          create_nod_correspondence(user, veteran)
-          current_task_count += 1
-        end
+        
+        create_nod_correspondence(user, veteran)
       end
     end
 
@@ -453,7 +452,7 @@ module Seeds
 
       # Calculate how many more tasks we can create
       remaining_tasks = 60 - current_task_count
-      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+      tasks_to_create = [10, remaining_tasks].min # Take minimum of 30 or remaining capacity
 
       tasks_to_create.times do |_i|
         begin
@@ -474,7 +473,7 @@ module Seeds
 
       # Calculate how many more tasks we can create
       remaining_tasks = 60 - current_task_count
-      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+      tasks_to_create = [11, remaining_tasks].min # Take minimum of 11 or remaining capacity
 
       tasks_to_create.times do |_i|
         begin
@@ -494,7 +493,7 @@ module Seeds
 
       # Calculate how many more tasks we can create
       remaining_tasks = 60 - current_task_count
-      tasks_to_create = [30, remaining_tasks].min # Take minimum of 30 or remaining capacity
+      tasks_to_create = [10, remaining_tasks].min # Take minimum of 30 or remaining capacity
 
       tasks_to_create.times do |_i|
         begin
