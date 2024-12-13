@@ -218,6 +218,19 @@ class TasksController < ApplicationController
     end
   end
 
+  def cancel_review_transcript_task
+    instructions = params[:task][:instructions]
+
+    ActiveRecord::Base.transaction do
+      task = ReviewTranscriptTask.find(params[:id])
+      task.cancel_task_and_child_subtasks
+      task.update!(instructions: instructions)
+    end
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
+  end
+
   private
 
   def process_information_to_vbms(file_name, file_contents)
@@ -237,19 +250,6 @@ class TasksController < ApplicationController
       }
 
     PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
-  end
-
-  def cancel_review_transcript_task
-    instructions = params[:task][:instructions]
-
-    ActiveRecord::Base.transaction do
-      task = ReviewTranscriptTask.find(params[:id])
-      task.cancel_task_and_child_subtasks
-      task.update!(instructions: instructions)
-    end
-    render json: {
-      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
-    }
   end
 
   def complete_transcript_review
