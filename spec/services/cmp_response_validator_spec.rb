@@ -5,13 +5,13 @@ describe CmpResponseValidator do
 
   describe "#validate_cmp_document_request" do
     it "accepts valid data" do
-      data = { dateOfReceipt: Time.current.strftime(Date::DATE_FORMATS[:csv_date]) }
+      data = { date_of_receipt: Time.current.strftime(Date::DATE_FORMATS[:csv_date]) }
 
       expect(described.validate_cmp_document_request(data)).to eq(true)
     end
 
     it "rejects invalid data" do
-      data = { dateOfReceipt: "202020202020" }
+      data = { date_of_receipt: "202020202020" }
 
       expect(described.validate_cmp_document_request(data)).to eq(false)
     end
@@ -19,13 +19,13 @@ describe CmpResponseValidator do
 
   describe "#validate_cmp_mail_packet_request" do
     it "accepts valid data" do
-      data = { vaDor: Time.current.strftime(Date::DATE_FORMATS[:csv_date]) }
+      data = { va_dor: Time.current.strftime(Date::DATE_FORMATS[:csv_date]) }
 
       expect(described.validate_cmp_mail_packet_request(data)).to eq(true)
     end
 
     it "rejects invalid data" do
-      data = { vaDor: "202020202020" }
+      data = { va_dor: "202020202020" }
 
       expect(described.validate_cmp_mail_packet_request(data)).to eq(false)
     end

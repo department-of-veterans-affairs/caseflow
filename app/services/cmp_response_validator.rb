@@ -2,11 +2,11 @@
 
 class CmpResponseValidator
   def validate_cmp_document_request(api_request)
-    date_field_must_be_a_valid_date(api_request[:dateOfReceipt])
+    date_field_must_be_a_valid_date(api_request[:date_of_receipt])
   end
 
   def validate_cmp_mail_packet_request(api_request)
-    date_field_must_be_a_valid_date(api_request[:vaDor])
+    date_field_must_be_a_valid_date(api_request[:va_dor])
   end
 
   private
