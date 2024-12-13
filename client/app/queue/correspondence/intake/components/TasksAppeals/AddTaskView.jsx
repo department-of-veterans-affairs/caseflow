@@ -54,6 +54,7 @@ const AddTaskView = (props) => {
       <div key={task.id}>
         {modalVisible &&
         <CheckboxModal
+          className="checkbox-modal-style"
           checkboxData={props.autoTexts}
           toggleModal={handleModalToggle}
           closeHandler={handleModalToggle}

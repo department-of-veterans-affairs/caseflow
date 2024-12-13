@@ -527,11 +527,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-direction: column;
   overflow-y: scroll;
   max-height: 400px;
-  width: 73%;
   overflow-x: hidden;
   transform: scale(1.3);
   translate: 0;
-  margin: 80px auto 50px 74px;
+  margin: 80px auto 50px 88px;
 
   .cf-form-checkbox {
     label {
@@ -883,7 +882,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .tasks-appeal-title {
-    margin-left: 6rem;
+    margin-left: 4rem;
     margin-bottom: 2%;
   }
 
@@ -896,19 +895,19 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     justify-items: start; // Align items to the start of each row
     align-items: start; // Align items to the start vertically within each cell
     margin: 0 auto; // Center grid container horizontally
-    padding-left: 60px;
+    padding-left: 40px;
     padding-right: 50px;
 
     // Media query for smaller screens
-    @media (max-width: 1460px) {
+    @media (max-width: 1260px) {
       grid-template-columns: repeat(1, 1fr); // Switch to 1 column on smaller screens
       justify-items: center; // Center the single column grid items
     }
   }
 
   .area-around-add-tasks-button {
-    padding-left: 6rem;
-    padding-right: 6rem;
+    padding-left: 4rem;
+    padding-right: 3.5rem;
     margin-top: -30px;
     display: flex;
     justify-content: space-between;
@@ -929,10 +928,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-left: 34px;
     padding-bottom: 2.4% !important;
     margin-bottom: 20px;
-    width: 52rem;
+    width: 45rem;
 
     [class^="cf-form-checkbox"] {
       margin-left: -3px;
+      margin-bottom: -2px;
     }
 
     [class^="checkbox-wrapper-"] {
@@ -946,7 +946,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
       }
     }
 
-    @media (max-width: 1460px) {
+    @media (max-width: 1260px) {
       margin-left: 53px;
     }
 
@@ -957,11 +957,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-left: 34px;
     padding-bottom: 4.8%;
     margin-bottom: 20px;
-    width: 52rem;
+    width: 29rem;
   }
 
   .evidence-window-submission-task-dropdown {
-    width: 45rem;
+    // margin-top: 2px;
+    width: 38rem;
   }
 
   .area-below-evidence-window-submission-task-dropdown {
@@ -1095,7 +1096,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .review-tasks-and-appeal-box {
   margin-bottom: 2rem;
-  padding: 3rem 4rem;
+  padding: 3rem 3rem;
 }
 
 .mail-tasks-title {
@@ -1224,12 +1225,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: grid;
   grid-template-columns: repeat(2, 1fr); // Default to 2 equal-width columns
   grid-auto-rows: auto; // Automatically create new rows as needed
-  column-gap: 50px;
+  column-gap: 60px;
   row-gap: 42px; // Consistent spacing between grid items
   justify-items: start; // Align items to the start of each row
   align-items: start; // Align items to the start vertically within each cell
   margin: 0 auto; // Center grid container horizontally
-  padding-left: 60px;
+  padding-left: 40px;
   padding-right: 70px;
 
   .task-selection-dropdown-box-intake {
@@ -1238,7 +1239,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
   // Media query for smaller screens
-  @media (max-width: 1460px) {
+  @media (max-width: 1260px) {
     grid-template-columns: repeat(1, 1fr); // Switch to 1 column on smaller screens
     justify-items: center; // Center the single column grid items
   }
@@ -1249,7 +1250,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-tasks-button-for-unrelated-appeals {
-  padding: 2rem 6rem;
+  padding: 2rem 4rem;
   }
 
 
@@ -1428,6 +1429,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-left: 8px;
   color: $color-blue;
   margin-bottom: -1px;
+
+  g {
+    fill: $color-blue;
+  }
 }
 
 .myletters {
@@ -2019,10 +2024,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .new-tasks-gray-border-styling {
   border: 1px solid $color-cream;
   width: 50%;
-  min-width: 522px; // Set minimum width to match existing cards
+  min-width: 447px; // Set minimum width to match existing cards
   margin-right: -35px;
   padding-left: 35px;
-  padding-right: 42px;
+  padding-right: 30px;
   padding-top: 20px;
   padding-bottom: 20px;
 }
@@ -2234,3 +2239,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 }
 
+.checkbox-modal-style {
+  .cf-modal-body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+}
