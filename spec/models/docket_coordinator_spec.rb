@@ -225,7 +225,6 @@ describe DocketCoordinator do
   end
 
   shared_examples "correct priority count" do
-    FeatureToggle.enable!(:acd_distribute_by_docket_date)
     let(:judge) { create(:user, :with_vacols_judge_record) }
 
     let(:tied_legacy_case_count) { 5 }
@@ -248,6 +247,7 @@ describe DocketCoordinator do
     end
 
     before do
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       tied_legacy_case_count.times do
         create(
           :case,
@@ -284,6 +284,10 @@ describe DocketCoordinator do
       genpop_evidence_case_count.times do
         create(:appeal, :evidence_submission_docket, :ready_for_distribution, :advanced_on_docket_due_to_age)
       end
+    end
+
+    after do
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
     end
 
     it "returns the count of all priority cases that are ready to be distributed" do

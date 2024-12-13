@@ -171,7 +171,7 @@ feature "Attorney checkout flow", :all_dbs do
   after do
     FeatureToggle.disable!(:mst_identification)
     FeatureToggle.disable!(:pact_identification)
-    FeatureToggle.enable!(:legacy_mst_pact_identification)
+    FeatureToggle.disable!(:legacy_mst_pact_identification)
     FeatureToggle.disable!(:acd_distribute_by_docket_date)
   end
 
