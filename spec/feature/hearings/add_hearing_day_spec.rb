@@ -321,7 +321,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         let(:choice) { 0 }
         let(:total_slots) { HearingDay::SLOTS_BY_REQUEST_TYPE["V"][:default] } # T
         let(:first_slot_time) { nil }
-        let(:result) { "2019-04-15T08:30:00-07:00" }
+        let(:result) { "2019-04-15T09:00:00-07:00" }
         include_examples "adding full or half day dockets"
       end
 
