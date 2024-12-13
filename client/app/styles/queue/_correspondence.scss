@@ -619,7 +619,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .p-review-and-confirm {
     color: $color-black;
-    font-size: .85em;
+    font-size: 17px;
   }
 
   h1 {
@@ -645,6 +645,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .corr-sectionlink {
     margin-left: 20px;
     margin-right: 10px;
+    text-align: right;
   }
 
   .corr-flex {
@@ -672,6 +673,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
     th {
       width: 25%;
+      padding-top: 20px;
     }
 
     td {
@@ -707,6 +709,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-top: .1rem;
     padding-left: 20px;
     padding-right: 20px;
+    margin-top: 1em;
   }
 
   .style-for-tasks-and-content {
@@ -778,6 +781,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     background-color: $color-white;
     border: 1px solid $color-light-blue;
     white-space: nowrap;
+
+    span {
+      color: $color-gray-dark;
+    }
   }
 
   .currently-active-task-answer {
@@ -1413,6 +1420,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .correspondence-letters-table {
   padding-top: 20px;
   padding-bottom: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.corr-cf-pdf-external-link-icon {
+  margin-left: 8px;
+  color: $color-blue;
+  margin-bottom: -1px;
 }
 
 .myletters {

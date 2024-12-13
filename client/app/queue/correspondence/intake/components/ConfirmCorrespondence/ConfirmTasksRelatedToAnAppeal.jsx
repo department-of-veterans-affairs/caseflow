@@ -88,7 +88,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
                 rel="noopener noreferrer">
                 <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
                 <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
-                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
+                <ExternalLinkIcon size={15} className="corr-cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
               </a>
             </div>
           </td>
