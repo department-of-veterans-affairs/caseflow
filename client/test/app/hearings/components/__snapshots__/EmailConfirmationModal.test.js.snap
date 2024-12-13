@@ -517,6 +517,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
         >
           <span
             class="usa-sr-only"
+            style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
           >
             Close
           </span>
@@ -622,6 +623,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
         >
           <span
             class="usa-sr-only"
+            style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
           >
             Close
           </span>
@@ -797,6 +799,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
         >
           <span
             class="usa-sr-only"
+            style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
           >
             Close
           </span>
@@ -963,6 +966,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
         >
           <span
             class="usa-sr-only"
+            style="opacity: 1; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
           >
             Close
           </span>

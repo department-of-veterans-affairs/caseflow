@@ -15,6 +15,10 @@ class WorkQueue::LegacyAppealSearchSerializer
     end
   end
 
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+
   attribute :hearings do |object, params|
     hearings(object, params)
   end

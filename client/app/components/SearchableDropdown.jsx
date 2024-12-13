@@ -176,6 +176,7 @@ export class SearchableDropdown extends React.Component {
       isClearable,
       inputRef,
       loading,
+      taskId,
       placeholder,
       errorMessage,
       label,
@@ -272,7 +273,8 @@ export class SearchableDropdown extends React.Component {
               components={replacedComponents}
               name={name}
               classNamePrefix="cf-select"
-              inputId={`${kebabCase(name)}`}
+              inputId={
+                taskId ? `${kebabCase(name)}-${kebabCase(taskId)}` : `${kebabCase(name)}`}
               options={options}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
@@ -442,6 +444,7 @@ SearchableDropdown.propTypes = {
   onChange: PropTypes.func,
   onInputChange: PropTypes.func,
   options: SelectOpts,
+  taskId: PropTypes.number,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,

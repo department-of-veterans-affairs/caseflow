@@ -91,6 +91,35 @@ class LegacyTasksController < ApplicationController
     }
   end
 
+  def blocked_assign_to_judge
+    return unless FeatureToggle.enabled?(:legacy_case_movement_scm_to_vlj_for_blockhtask)
+
+    ApplicationRecord.multi_transaction do
+      tracking_task = LegacyAppealAssignmentTrackingTask.create!(
+        appeal: appeal,
+        assigned_to: assigned_to,
+        assigned_by_id: current_user.id,
+        instructions: params[:tasks][:instructions],
+        status: Constants.TASK_STATUSES.completed
+      )
+
+      return invalid_task_movement_error if tracking_task.blank?
+
+      QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
+    end
+
+    # Remove overtime status of an appeal when reassigning to a judge
+    appeal.overtime = false if appeal.overtime?
+
+    render json: {
+      task: json_task(AttorneyLegacyTask.from_vacols(
+                        VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
+                        appeal,
+                        assigned_to
+                      ))
+    }
+  end
+
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
