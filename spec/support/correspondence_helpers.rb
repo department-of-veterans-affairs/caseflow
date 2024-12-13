@@ -129,7 +129,7 @@ module CorrespondenceHelpers
     find_and_route_to_intake
     click_button("Continue")
     click_button("+ Add tasks")
-    all("#reactSelectContainer")[0].click
+    all(".react-select__control")[0].click
     find_by_id("react-select-2-option-0").click
     find_by_id("content", visible: :all).fill_in with: "Correspondence test text"
     click_button("Continue")

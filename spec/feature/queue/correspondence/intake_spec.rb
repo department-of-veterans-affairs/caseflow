@@ -65,7 +65,7 @@ RSpec.feature("The Correspondence Intake page") do
     it "successfully navigates on return to queue and save intake" do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[3].click
-      click_on("Return-To-Queue-button-id-1")
+      click_on("Return-to-queue-button-id-1")
       using_wait_time(20) do
         expect(page).to have_content("You have successfully saved the intake form")
       end
@@ -140,13 +140,13 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
+      all(".react-select__control")[0].click
       find_by_id("react-select-2-option-4").click
       expect(page).to have_content("Other Motion")
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[1].click
+      all(".react-select__control")[1].click
       find_by_id("react-select-3-option-4").click
-      within all("#reactSelectContainer")[1] do
+      within all(".react-select__control")[1] do
         expect(page).to have_content("Other Motion")
       end
       expect(page).to have_button("+ Add tasks", disabled: false)
@@ -175,7 +175,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re-enables continue button when all new task has been filled out" do
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
+      all(".react-select__control")[0].click
       find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
       find_by_id("content").fill_in with: "Correspondence Text"
@@ -184,7 +184,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re populates fields after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
+      all(".react-select__control")[0].click
       find_by_id("react-select-2-option-0").click
       find_by_id("content").fill_in with: "Correspondence test text"
       click_button("button-back-button")
@@ -356,7 +356,7 @@ RSpec.feature("The Correspondence Intake page") do
       intake_path = current_path
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[1].click
-      click_on("Return-To-Queue-button-id-1")
+      click_on("Return-to-queue-button-id-1")
       using_wait_time(20) do
         expect(page).to have_content("You have successfully saved the intake form")
       end
@@ -401,7 +401,7 @@ RSpec.feature("The Correspondence Intake page") do
       intake_path = current_path
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[1].click
-      click_on("Return-To-Queue-button-id-1")
+      click_on("Return-to-queue-button-id-1")
       using_wait_time(15) do
         expect(page).to have_content("You have successfully saved the intake form")
       end
