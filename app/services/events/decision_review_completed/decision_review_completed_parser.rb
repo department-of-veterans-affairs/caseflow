@@ -17,11 +17,11 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
       File.read(Rails.root.join("app",
                                 "services",
                                 "events",
-                                "decision_review_updated",
-                                "decision_review_updated_example.json"))
+                                "decision_review_completed",
+                                "decision_review_completed_example.json"))
     end
 
-    # This method creates a new instance of DecisionReviewCreatedParser in order to
+    # This method creates a new instance of DecisionReviewCompletedParser in order to
     # mimic the parsing of a payload recieved by appeals-consumer
     # arguments being passed in are the sample_header and example_response
     def load_example
@@ -45,24 +45,20 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
     @payload[:event_id]
   end
 
-  def claim_id
-    @payload[:claim_id]
-  end
-
-  def claim_creation_time
-    @payload[:claim_creation_time]
-  end
-
   def css_id
     @payload[:css_id].presence
+  end
+
+  def station_id
+    @payload[:station].presence
   end
 
   def detail_type
     @payload[:detail_type].presence
   end
 
-  def station_id
-    @payload[:station].presence
+  def claim_id
+    @payload[:claim_id].presence
   end
 
   def claim_review_informal_conference
@@ -75,6 +71,14 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
 
   def claim_review_legacy_opt_in_approved
     @payload.dig(:claim_review, :legacy_opt_in_approved)
+  end
+
+  def claim_review_remand_source_id
+    @payload.dig(:claim_review, :remand_source_id)
+  end
+
+  def claim_review_auto_remand
+    @payload.dig(:claim_review, :auto_remand)
   end
 
   def end_product_establishment_development_item_reference_id
@@ -96,74 +100,6 @@ class Events::DecisionReviewCompleted::DecisionReviewCompletedParser
   def end_product_establishment_last_synced_at
     last_synced_at_milliseconds = @payload.dig(:end_product_establishment, :last_synced_at)
     convert_milliseconds_to_datetime(last_synced_at_milliseconds)
-  end
-
-  def original_source
-    @payload.dig(:original_source)
-  end
-
-  def decision_review_type
-    @payload.dig(:decision_review_type)
-  end
-
-  def file_number
-    @payload.dig(:file_number)
-  end
-
-  def claimant_participant_id
-    @payload.dig(:claimant_participant_id)
-  end
-
-  def claim_category
-    @payload.dig(:claim_category)
-  end
-
-  def claim_received_date
-    @payload.dig(:claim_received_date)
-  end
-
-  def claim_lifecycle_status
-    @payload.dig(:claim_lifecycle_status)
-  end
-
-  def payee_code
-    @payload.dig(:payee_code)
-  end
-
-  def ols_issue
-    @payload.dig(:ols_issue)
-  end
-
-  def originated_from_vacols_issue
-    @payload.dig(:originated_from_vacols_issue)
-  end
-
-  def limited_poa_code
-    @payload.dig(:limited_poa_code)
-  end
-
-  def tracked_item_action
-    @payload.dig(:tracked_item_action)
-  end
-
-  def tracked_item_id
-    @payload.dig(:tracked_item_id)
-  end
-
-  def informal_conference_requested
-    @payload.dig(:informal_conference_requested)
-  end
-
-  def same_station_review_requested
-    @payload.dig(:same_station_review_requested)
-  end
-
-  def claim_time
-    @payload.dig(:claim_time)
-  end
-
-  def auto_remand
-    @payload.dig(:auto_remand)
   end
 
   def completed_issues
