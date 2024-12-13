@@ -1212,6 +1212,23 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
             end
           end
         end
+
+        context "when an appeal has already been distributed" do
+          let(:docket) { Constants.AMA_DOCKETS.direct_review }
+
+          it "creates SendInitialNotificationLetterTask as child of RootTask" do
+            appeal.tasks.of_type(:DistributionTask).first.completed!
+
+            subject
+            task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
+
+            expect(response).to be_successful
+            expect(task.present?).to be true
+            expect(task.parent.type).to eq RootTask.name
+            expect(task.assigned_to).to eq ClerkOfTheBoard.singleton
+            expect(task.assigned_by).to eq current_user
+          end
+        end
       end
     end
   end

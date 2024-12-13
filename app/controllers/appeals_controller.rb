@@ -592,6 +592,7 @@ class AppealsController < ApplicationController
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
     case appeal.docket_type
@@ -602,6 +603,12 @@ class AppealsController < ApplicationController
     when "direct_review"
       parent_task = appeal.tasks.find_by(type: "DistributionTask")
     end
+
+    # if distributed, create root task as parent task
+    if appeal.distributed?
+      parent_task = appeal.tasks.find_by(type: "RootTask")
+    end
+
     unless parent_task.nil?
       @send_initial_notification_letter ||= appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                             SendInitialNotificationLetterTask.create!(
@@ -612,6 +619,7 @@ class AppealsController < ApplicationController
                                             )
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def power_of_attorney_data
     {
