@@ -148,7 +148,7 @@ export const ConfirmCorrespondenceView = (props) => {
           <div className="corr-autoleft">
             <Button className="corr-button" linkStyling onClick={() => props.goToStep(1)}>
               <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
+              <span className="corr-sectionlink">Edit section</span>
             </Button>
           </div>
         </div>
@@ -198,7 +198,7 @@ export const ConfirmCorrespondenceView = (props) => {
           <div className="corr-autoleft">
             <Button className="corr-button" linkStyling onClick={() => props.goToStep(1)}>
               <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
+              <span className="corr-sectionlink">Edit section</span>
             </Button>
           </div>
         </div>
@@ -214,7 +214,7 @@ export const ConfirmCorrespondenceView = (props) => {
           <div className="corr-autoleft">
             <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
               <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
+              <span className="corr-sectionlink">Edit section</span>
             </Button>
           </div>
         </div>
@@ -231,7 +231,7 @@ export const ConfirmCorrespondenceView = (props) => {
           <div className="corr-autoleft">
             <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
               <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
+              <span className="corr-sectionlink">Edit section</span>
             </Button>
           </div>
         </div>
@@ -242,7 +242,7 @@ export const ConfirmCorrespondenceView = (props) => {
           <div className="corr-autoleft">
             <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
               <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
+              <span className="corr-sectionlink">Edit section</span>
             </Button>
           </div>
         </div>
