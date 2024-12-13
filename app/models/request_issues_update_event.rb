@@ -94,6 +94,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def update_request_issue!(request_issue, parser_issue)
     request_issue.update(
       ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -124,10 +125,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       untimely_exemption: parser_issue.ri_untimely_exemption,
       untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
       benefit_type: parser_issue.ri_benefit_type,
-      veteran_participant_id: parser_issue.ri_veteran_participant_id
+      veteran_participant_id: parser_issue.ri_veteran_participant_id,
+      end_product_establishment_id: @epe&.id || request_issue.end_product_establishment_id
     )
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   # Set the closed_at date and closed_status for removed issues based on the event data
   def update_removed_issues!
