@@ -37,32 +37,32 @@ class ClaimantValidator
     return if payee_code
     return if veteran_is_claimant?
 
-    errors[:payee_code] << ERRORS[:blank]
-    decision_review.errors[:benefit_type] << ERRORS[:payee_code_required]
+    errors.add(:payee_code, ERRORS[:blank])
+    decision_review.errors.add(:benefit_type, ERRORS[:payee_code_required])
   end
 
   def validate_participant_id
     return if participant_id
 
-    errors[:participant_id] << ERRORS[:blank]
-    decision_review.errors[:veteran_is_not_claimant] << ERRORS[:claimant_required]
+    errors.add(:participant_id, ERRORS[:blank])
+    decision_review.errors.add(:veteran_is_not_claimant, ERRORS[:claimant_required])
   end
 
   # added conditional to check if claimant is NOT from a decision_review_created_event
   def validate_claimant_address
     if claimant.address_line_1.nil? && !claimant&.from_decision_review_created_event?
-      errors[:address] << ERRORS[:blank]
-      decision_review.errors[:claimant] << ERRORS[:claimant_address_required]
+      errors.add(:address, ERRORS[:blank])
+      decision_review.errors.add(:claimant, ERRORS[:claimant_address_required])
     elsif !claimant_address_lines_valid? && !claimant&.from_decision_review_created_event?
-      errors[:address] << ERRORS[:invalid]
-      decision_review.errors[:claimant] << ERRORS[:claimant_address_invalid]
+      errors.add(:address, ERRORS[:invalid])
+      decision_review.errors.add(:claimant, ERRORS[:claimant_address_invalid])
     end
   end
 
   def validate_claimant_city
     if !claimant_city_valid?
-      errors[:address] << ERRORS[:invalid]
-      decision_review.errors[:claimant] << ERRORS[:claimant_city_invalid]
+      errors.add(:address, ERRORS[:invalid])
+      decision_review.errors.add(:claimant, ERRORS[:claimant_city_invalid])
     end
   end
 
