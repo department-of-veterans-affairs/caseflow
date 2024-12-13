@@ -7,6 +7,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
   >
     <div
       class="cf-table-wrapper"
+      data-testid="queue-table-data-testid"
     >
       <div
         class="cf-pagination"
@@ -87,6 +88,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -99,6 +101,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -116,6 +119,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="types filter"
@@ -196,6 +200,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -208,6 +213,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -305,6 +311,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -317,6 +324,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -414,6 +422,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -426,6 +435,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -523,6 +533,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -535,6 +546,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -552,6 +564,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="contractor filter"
@@ -632,6 +645,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -644,6 +658,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -661,6 +676,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="status filter"
@@ -749,6 +765,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                 </span>
                 <span
                   data-css-pdggcs=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -984,6 +1001,7 @@ exports[`TranscriptionFileDispatchTable All Tab loads a table from backend data 
                 </span>
                 <span
                   data-css-1sxe3ac=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1221,6 +1239,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
   >
     <div
       class="cf-table-wrapper"
+      data-testid="queue-table-data-testid"
     >
       <div
         class="cf-pagination"
@@ -1350,6 +1369,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -1362,6 +1382,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -1459,6 +1480,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -1471,6 +1493,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -1568,6 +1591,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -1580,6 +1604,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -1597,6 +1622,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="contractor filter"
@@ -1677,6 +1703,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -1689,6 +1716,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -1706,6 +1734,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="status filter"
@@ -1954,7 +1983,6 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
                 >
                   1
                    item
-                  
                 </a>
               </div>
             </td>
@@ -3692,6 +3720,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
   >
     <div
       class="cf-table-wrapper"
+      data-testid="queue-table-data-testid"
     >
       <div
         class="cf-pagination"
@@ -3772,6 +3801,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -3784,6 +3814,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -3801,6 +3832,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="types filter"
@@ -3881,6 +3913,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -3893,6 +3926,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -3990,6 +4024,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -4002,6 +4037,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -4099,6 +4135,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -4111,6 +4148,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -4208,6 +4246,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -4220,6 +4259,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -4237,6 +4277,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="contractor filter"
@@ -4317,6 +4358,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -4329,6 +4371,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -4346,6 +4389,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="status filter"
@@ -4434,6 +4478,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                 </span>
                 <span
                   data-css-pdggcs=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4671,6 +4716,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
                 </span>
                 <span
                   data-css-1sxe3ac=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4906,6 +4952,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
   >
     <div
       class="cf-table-wrapper"
+      data-testid="queue-table-data-testid"
     >
       <div
         class="cf-pagination"
@@ -5079,6 +5126,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -5091,6 +5139,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -5108,6 +5157,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="types filter"
@@ -5188,6 +5238,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -5200,6 +5251,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -5297,6 +5349,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                         fill-rule="nonzero"
                       >
                         <g
+                          data-testid="topColorGroup"
                           fill="#d6d7d9"
                           transform="translate(2.000000, 1.000000)"
                         >
@@ -5309,6 +5362,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                           </g>
                         </g>
                         <g
+                          data-testid="bottomColorGroup"
                           fill="#d6d7d9"
                           transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                         >
@@ -5326,6 +5380,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-ilmt4b=""
+                  data-testid="table-filter-testid"
                 >
                   <svg
                     aria-label="hearing types filter"
@@ -5433,6 +5488,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-pdggcs=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5644,6 +5700,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-1sxe3ac=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5854,6 +5911,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-17najwi=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6064,6 +6122,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-18vpg64=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6274,6 +6333,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-tlwt8j=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6484,6 +6544,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-9fabxo=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6694,6 +6755,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-12idy4m=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6895,6 +6957,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-1ukfvy7=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7096,6 +7159,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-1dk7x=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7297,6 +7361,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-nbo1f8=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7498,6 +7563,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-1wn9cvu=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7699,6 +7765,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-ewv8ey=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7900,6 +7967,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-zwyxqd=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8101,6 +8169,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-8vvpvi=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8302,6 +8371,7 @@ exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backen
                 </span>
                 <span
                   data-css-1cp00uo=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

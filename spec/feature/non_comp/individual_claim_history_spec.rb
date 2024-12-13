@@ -29,7 +29,8 @@ feature "Individual Claim History", :postgres do
     sort = find("[aria-label='Filter by Activity. Filtering by #{filter_text}']")
     sort.click
 
-    clear_button_filter = page.find(class: "cf-clear-filter-button-wrapper")
+    # clear_button_filter = page.find(class: "cf-clear-filter-button-wrapper")
+    clear_button_filter = page.find_all(".cf-dropdown-filter")[0]
     clear_button_filter.click
   end
 
