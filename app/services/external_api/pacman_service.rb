@@ -69,7 +69,7 @@ class ExternalApi::PacmanService
           fileNumber: file_number,
           name: name,
           documentReferences: [{
-            id: document_reference[:id],
+            id: parse(document_reference[:id]),
             copies: document_reference[:copies]
           }]
         },
@@ -197,6 +197,11 @@ class ExternalApi::PacmanService
           HTTPI.post(request)
         end
       end
+    end
+
+    def parse(document_reference_id)
+      return document_reference_id if document_reference_id.start_with?("{") && end_with?("}")
+      "{#{document_reference_id}}".upcase
     end
   end
 end
