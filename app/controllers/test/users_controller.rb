@@ -122,6 +122,13 @@ class Test::UsersController < ApplicationController
     head :ok
   end
 
+  def generate_api_key
+    return unless Rails.deploy_env?(:demo)
+
+    key = ApiKey.create!(consumer_name: "Demo-#{SecureRandom.uuid}")
+    render json: { api_key_string: key.key_string }
+  end
+
   def toggle_feature
     params[:enable]&.each do |f|
       FeatureToggle.enable!(f[:value])

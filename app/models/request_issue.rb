@@ -740,6 +740,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def api_status_description
+    return description if FeatureToggle.enabled?(:appeals_status_api_full_issue_description)
+
     description = fetch_diagnostic_code_status_description(diagnostic_code)
     return description if description
 
