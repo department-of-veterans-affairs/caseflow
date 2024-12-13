@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UserInfoController < ApplicationController
-  include BgsService
+  include BGSServiceConcern
 
   before_action :deny_non_bva_admins, only: [:represented_organizations]
 
