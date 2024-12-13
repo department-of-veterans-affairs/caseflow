@@ -50,7 +50,8 @@ feature "NonComp Dispositions Task Page", :postgres do
         veteran_file_number: veteran.file_number,
         benefit_type: non_comp_org.url,
         veteran_is_not_claimant: false,
-        claimant_type: :veteran_claimant
+        claimant_type: :veteran_claimant,
+        created_at: Time.zone.now
       )
     end
 
@@ -83,6 +84,8 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
+    let(:valid_decision_date) { decision_review.created_at.strftime("%m/%d/%Y") }
+    let(:future_decision_date) { 5.days.from_now.strftime("%m/%d/%Y") }
 
     let(:vet_id_column_value) { veteran.ssn }
 
@@ -152,16 +155,13 @@ feature "NonComp Dispositions Task Page", :postgres do
       before do
         visit dispositions_url
         FeatureToggle.enable!(:poa_button_refresh)
+        expect(page).to have_button("Complete", disabled: true)
       end
 
       after { FeatureToggle.disable!(:poa_button_refresh) }
 
-      scenario "neither disposition nor date is set" do
-        expect(page).to have_button("Complete", disabled: true)
-      end
-
       scenario "only date is set" do
-        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in "decision-date", with: valid_decision_date
         expect(page).to have_button("Complete", disabled: true)
       end
 
@@ -175,11 +175,23 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       scenario "both disposition and date are set" do
         fill_in "decision-date", with: arbitrary_decision_date
+
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
 
         expect(page).to have_button("Complete", disabled: false)
+      end
+
+      scenario "still allows future decision dates" do
+        fill_in "decision-date", with: future_decision_date
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: false)
+        click_on "Complete"
+        expect(page).to have_content("Decision Completed")
       end
     end
 
@@ -193,7 +205,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
-      fill_in "decision-date", with: arbitrary_decision_date
+      fill_in "decision-date", with: valid_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -224,7 +236,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       find_disabled_disposition("Denied", "denied")
 
       # decision date should be saved
-      expect(page).to have_css("input[value='#{arbitrary_decision_date.to_date.strftime('%Y-%m-%d')}']")
+      expect(page).to have_css("input[value='#{valid_decision_date.to_date.strftime('%Y-%m-%d')}']")
     end
 
     context "when there is an error saving" do
@@ -238,7 +250,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
-        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in "decision-date", with: valid_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")
@@ -264,7 +276,6 @@ feature "NonComp Dispositions Task Page", :postgres do
     before do
       User.stub = user
       vha_org.add_user(user)
-      Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
 
       OrganizationsUser.make_user_admin(admin_user, VhaBusinessLine.singleton)
     end
@@ -274,14 +285,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     after do
-      Timecop.return
       FeatureToggle.disable!(:poa_button_refresh)
     end
 
     let!(:vha_org) { VhaBusinessLine.singleton }
     let(:user) { create(:default_user, roles: ["Mail Intake"]) }
     let(:veteran) { create(:veteran) }
-    let(:decision_date) { Time.zone.now + 10.days }
+    let(:decision_date) { 2.days.ago }
+    # The date picker disables entering the year if the min/max values are a 1 year span
+    let(:decision_date_formatted_for_datepicker) { decision_date.strftime("%m/%d") }
+    let(:future_decision_date) { 5.days.from_now.strftime("%m/%d/%Y") }
+    let(:before_receipt_date) { 1.year.ago.strftime("%m/%d/%Y") }
 
     let!(:in_progress_task) do
       create(:higher_level_review,
@@ -291,7 +305,8 @@ feature "NonComp Dispositions Task Page", :postgres do
              :update_assigned_at,
              benefit_type: "vha",
              veteran: veteran,
-             claimant_type: :veteran_claimant)
+             claimant_type: :veteran_claimant,
+             receipt_date: 5.days.ago)
     end
 
     let(:poa_task) do
@@ -318,7 +333,9 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       step "completing a task should redirect to completed task tab" do
         visit dispositions_url
-        fill_in "decision-date", with: decision_date.strftime("%m/%d/%Y")
+        expect(page).to have_selector("h1", text: "Veterans Health Administration")
+        expect(page).to have_content(veteran.name)
+        fill_in "decision-date", with: decision_date_formatted_for_datepicker
         fill_in_disposition(0, "Granted", "granted")
         scroll_to(page, align: :bottom)
         expect(page).to have_button("Complete", disabled: false)
@@ -339,6 +356,26 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(page).to have_text(COPY::DISPOSITION_DECISION_DATE_LABEL)
         expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
       end
+    end
+
+    it "should not allow disposition with an invalid decision date" do
+      visit dispositions_url
+      expect(page).to have_button("Complete", disabled: true)
+
+      fill_in "decision-date", with: future_decision_date
+      fill_in_disposition(0, "Granted")
+      scroll_to(page, align: :bottom)
+
+      # Do not allow future dates
+      expect(page).to have_button("Complete", disabled: true)
+      expect(page).to have_content("Decision date must be between Form Receipt Date")
+
+      # Do not allow a date before the receipt date of the appeal
+      visit dispositions_url
+      fill_in_disposition(0, "Granted")
+      fill_in "decision-date", with: before_receipt_date
+      expect(page).to have_button("Complete", disabled: true)
+      expect(page).to have_content("Decision date must be between Form Receipt Date")
     end
 
     it "VHA Decision Review should have Power of Attorney Section" do

@@ -23,6 +23,7 @@ import {
 } from '../util';
 import Link from 'app/components/Link';
 import Alert from '../../components/Alert';
+import { sprintf } from 'sprintf-js';
 
 const messageStyling = css({
   fontSize: '17px !important',
@@ -109,7 +110,8 @@ class NonCompDispositions extends React.PureComponent {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeOrDecidedRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: '',
-      isFilledOut: false
+      isFilledOut: false,
+      errorMessage: ''
     };
   }
 
@@ -124,12 +126,44 @@ class NonCompDispositions extends React.PureComponent {
     this.props.handleSave(dispositionData);
   }
 
+  validateDecisionDate = () => {
+    if (this.props.businessLineUrl !== 'vha') {
+      return true;
+    }
+
+    const decisionDate = formatDateStr(this.state.decisionDate);
+    const receiptDate = formatDateStr(this.props.appeal.receiptDate);
+
+    const dateIsValid = Boolean((new Date(decisionDate)) >= new Date(receiptDate)) &&
+      Boolean(Date.parse(decisionDate) < new Date());
+
+    if (dateIsValid) {
+      this.setState({ errorMessage: '' });
+    } else {
+      this.setState({
+        errorMessage: sprintf(
+          COPY.DATE_SELECTOR_DATE_RANGE_ERROR,
+          formatDateStr(this.props.appeal.receiptDate),
+          formatDateStr(new Date())),
+        isFilledOut: false
+      });
+    }
+
+    return dateIsValid;
+  }
+
   checkFormFilledOut = () => {
     // check if all dispositions have values & date is set
     const allDispositionsSet = this.state.requestIssues.every(
       (requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
 
-    this.setState({ isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate) });
+    let validDate = null;
+
+    if (this.state.decisionDate) {
+      validDate = this.validateDecisionDate();
+    }
+
+    this.setState({ isFilledOut: (allDispositionsSet && validDate) });
   }
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
@@ -179,10 +213,11 @@ class NonCompDispositions extends React.PureComponent {
     let editIssuesLink = null;
     const editIssuesDisabled = task.type === 'Remand';
     const editIssuesButtonType = editIssuesDisabled ? 'disabled' : 'secondary';
-    const displayPOAComponent = task.business_line === 'vha';
-    const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
+    const isVhaBusinessLine = this.props.businessLineUrl === 'vha';
+    const displayRequestIssueModification = (!isVhaBusinessLine || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
+    const receiptDate = formatDateStrUtc(appeal.receiptDate, 'YYYY-MM-DD');
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -221,7 +256,7 @@ class NonCompDispositions extends React.PureComponent {
     const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
 
     return <div>
-      {displayPOAComponent && <div className="cf-decisions">
+      {isVhaBusinessLine && <div className="cf-decisions">
         <div className="cf-decision">
           <hr />
           <div className="usa-grid-full">
@@ -234,7 +269,7 @@ class NonCompDispositions extends React.PureComponent {
       </div>}
       <div className="cf-decisions">
         <div className="cf-decision">
-          {displayPOAComponent && <hr />}
+          {isVhaBusinessLine && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
               <h2 style={{ marginBottom: '30px' }}>Decision</h2>
@@ -282,6 +317,9 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
+              minDate={isVhaBusinessLine ? receiptDate : null}
+              errorMessage={isVhaBusinessLine ? this.state.errorMessage : null}
+              noFutureDates={isVhaBusinessLine}
               type="date"
             />
           </InlineForm>
@@ -308,7 +346,8 @@ NonCompDispositions.propTypes = {
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
   isBusinessLineAdmin: PropTypes.bool,
-  handleSave: PropTypes.func
+  handleSave: PropTypes.func,
+  businessLineUrl: PropTypes.string
 };
 
 export default connect(
@@ -316,6 +355,7 @@ export default connect(
     appeal: state.nonComp.appeal,
     task: state.nonComp.task,
     decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
-    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin
+    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
+    businessLineUrl: state.nonComp.businessLineUrl
   })
 )(NonCompDispositions);
