@@ -204,9 +204,7 @@ class HearingDay < CaseflowRecord
 
     time = first_slot_time || (request_type == "T" ? "09:00" : "08:30")
 
-    combine_time_and_date(first_slot_time || "08:30",
-                          timezone,
-                          scheduled_for)
+    combine_time_and_date(time, timezone, scheduled_for)
   end
 
   def judge_first_name
