@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_12_181521) do
+ActiveRecord::Schema.define(version: 2024_12_10_194420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1711,6 +1711,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
     t.string "reference_id", comment: "The ID of the decision review issue record internal to C&P."
+    t.bigint "remand_source_id", comment: "ID of the original Decision Review with the remanded decision that generated this Remand Claim & Issue(s)"
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
     t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
@@ -1763,12 +1764,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -1885,6 +1886,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   end
 
   create_table "supplemental_claims", comment: "Intake data for Supplemental Claims.", force: :cascade do |t|
+    t.boolean "auto_remand", comment: "Indicates if this SupplementalClaim was created as a result of an Auto Remand"
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "created_at"
     t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
