@@ -62,6 +62,10 @@ RUN apt install -y ${CASEFLOW} &&  \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
+# GH Private repo access PAT setup
+RUN --mount=type=secret,id=GIT_CREDENTIAL \
+     export PRIVATE_ACCESS_TOKEN=$(cat /run/secrets/GIT_CREDENTIAL) && \
+     git config --global url."https://$PRIVATE_ACCESS_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 # install jemalloc
 RUN apt install -y --no-install-recommends libjemalloc-dev
