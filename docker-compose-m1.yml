@@ -1,4 +1,3 @@
-version: '3'
 services:
   appeals-redis:
     container_name: appeals-redis
@@ -7,14 +6,20 @@ services:
       - "6379:6379"
 
   appeals-postgres:
-    image: postgres:14.8
+    build:
+      context: ./docker-bin/pg
+      dockerfile: Dockerfile
     container_name: appeals-db
+    platform: linux/amd64
     ports:
       - "5432:5432"
     volumes:
       - "postgresdata:/var/lib/postgresql/data"
     environment:
+     - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   appeals-localstack-aws:
     platform: linux/amd64

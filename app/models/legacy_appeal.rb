@@ -43,6 +43,7 @@ class LegacyAppeal < CaseflowRecord
   has_one :appeal_state, as: :appeal
   has_many :vbms_uploaded_documents, as: :appeal
   has_many :notifications, as: :notifiable
+  has_one :national_hearing_queue_entry, as: :appeal
 
   class UnknownLocationError < StandardError; end
 

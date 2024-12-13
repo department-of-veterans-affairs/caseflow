@@ -51,6 +51,7 @@ class Appeal < DecisionReview
       .order(closed_at: :desc, assigned_at: :desc)
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
+  has_one :national_hearing_queue_entry, as: :appeal
 
   delegate :address_line_1,
            :address_line_2,
