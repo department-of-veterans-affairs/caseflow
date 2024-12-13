@@ -179,7 +179,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
       find("button", text: "Save Changes").click
 
       expect(page).to have_content("You have successfully updated this hearing day.")
-      expect(hearing_day.reload.first_slot_time).to eq("08:30")
+      expect(hearing_day.reload.first_slot_time).to eq("8:30")
       expect(hearing_day.reload.total_slots).to eq(5)
     end
   end
