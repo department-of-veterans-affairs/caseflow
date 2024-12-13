@@ -24,8 +24,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .cf-pdf-preview-header {
   opacity: 1;
   padding: 15px 23px 15px 15px;
-  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
-  // z-index: 7;
 
   .category-icons-and-doc-type {
     display: flex;
@@ -570,8 +568,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .review-package-field-styling {
-  // display: flex;
-  // gap: 5%;
   margin-top: 20px;
   max-width: 100rem;
 
@@ -1242,7 +1238,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-task-container {
-  //margin-left: 5%;
   padding-right: 20px;
 }
 
@@ -1782,7 +1777,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .first-row {
-  //padding-right: 3%;
   flex-wrap: nowrap;
   min-width: fit-content;
 }
@@ -1795,7 +1789,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .tasks-added-text-alternate {
   padding-top: 20px;
-  //padding-bottom: 20px;
   display: block;
 
   .tasks-added-button-spacing {
