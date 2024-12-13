@@ -16,6 +16,7 @@ $color-red: #cd2026;
 $color-bright-red: #ff0000;
 $color-gray-darker: #5b616b;
 $color-gray: #5b616b;
+$color-gray-intake: #d7d6d9;
 $color-bg-hsl: hsl(0, 0%, 100%);
 $color-bg-hsl-a: hsl(0, 0%, 80%);
 
@@ -617,7 +618,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding: 3rem 4rem;
 
   p {
-    color: $color-black;
+    color: $color-blue;
   }
 
   .p-review-and-confirm {
@@ -642,6 +643,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .corr-icon {
     position: absolute;
+    color: $color-blue;
   }
 
   .corr-sectionlink {
@@ -885,32 +887,81 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .tasks-appeal-title {
-    margin-left: 2%;
+    margin-left: 6rem;
     margin-bottom: 2%;
   }
 
   .evidence-window-submission-task {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // Default to 2 equal-width columns
+    grid-auto-rows: auto; // Automatically create new rows as needed
+    column-gap: 20px;
+    row-gap: 20px; // Consistent spacing between grid items
+    justify-items: start; // Align items to the start of each row
+    align-items: start; // Align items to the start vertically within each cell
+    margin: 0 auto; // Center grid container horizontally
+    padding-left: 60px;
+    padding-right: 50px;
+
+    // Media query for smaller screens
+    @media (max-width: 1460px) {
+      grid-template-columns: repeat(1, 1fr); // Switch to 1 column on smaller screens
+      justify-items: center; // Center the single column grid items
+    }
   }
 
   .area-around-add-tasks-button {
-    padding: 2.5rem;
+    padding-left: 6rem;
+    padding-right: 6rem;
+    margin-top: -30px;
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 1460px) {
+      margin-bottom: 10px;
+    }
   }
 
   .cursor-style-for-unlink-appeal-button {
     cursor: pointer;
+    padding-top: 20px;
   }
 
   .evidence-window-submission-box {
     display: block;
     padding: 2rem;
-    padding-bottom: 11%;
-    margin-left: 3rem;
-    margin-bottom: 3rem;
-    width: 50rem;
+    padding-left: 34px;
+    padding-bottom: 2.4% !important;
+    margin-bottom: 20px;
+    width: 52rem;
+
+    [class^="cf-form-checkbox"] {
+      margin-left: -3px;
+    }
+
+    [class^="checkbox-wrapper-"] {
+      label {
+        padding-left: 30px;
+
+        span {
+          position: relative;
+          top: 5px;
+        }
+      }
+    }
+
+    @media (max-width: 1460px) {
+      margin-left: 53px;
+    }
+
+  }
+
+  .add-task-window {
+    display: block;
+    padding-left: 34px;
+    padding-bottom: 4.8%;
+    margin-bottom: 20px;
+    width: 52rem;
   }
 
   .evidence-window-submission-task-dropdown {
@@ -918,7 +969,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .area-below-evidence-window-submission-task-dropdown {
-    padding: 1.5rem;
+    padding: 20px;
   }
 
   .review-tasks-and-appeals-box {
@@ -932,8 +983,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-left: 1px;
   }
 
+  .task-selection-title-evidence-submission {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    margin-left: 1px;
+  }
+
   .provide-context-text-styling {
-    padding: 1.5rem;
+    padding: 20px;
   }
 }
 
@@ -1113,10 +1170,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .task-selection-box-for-new-tasks {
-  display: block;
-  padding: 2rem;
-  //margin-bottom: 3rem;
-  max-width: 45rem;
+  padding-top: 2rem;
 }
 
 .task-selection-dropdown-box {
@@ -1124,6 +1178,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .task-selection-title {
     margin-bottom: 10px;
+  }
+}
+
+.task-selection-dropdown-box-intake {
+  margin-top: -18px;
+
+  .task-selection-title {
+    margin-bottom: 5px;
   }
 }
 
@@ -1163,8 +1225,27 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
 .area-above-add-task-view {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // Default to 2 equal-width columns
+  grid-auto-rows: auto; // Automatically create new rows as needed
+  column-gap: 50px;
+  row-gap: 42px; // Consistent spacing between grid items
+  justify-items: start; // Align items to the start of each row
+  align-items: start; // Align items to the start vertically within each cell
+  margin: 0 auto; // Center grid container horizontally
+  padding-left: 60px;
+  padding-right: 70px;
+
+  .task-selection-dropdown-box-intake {
+    margin-bottom: 40px;
+    padding-top: 5px;
+}
+
+  // Media query for smaller screens
+  @media (max-width: 1460px) {
+    grid-template-columns: repeat(1, 1fr); // Switch to 1 column on smaller screens
+    justify-items: center; // Center the single column grid items
+  }
 }
 
 .add-task-container {
@@ -1173,7 +1254,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .add-tasks-button-for-unrelated-appeals {
-  padding: 2rem 2.5rem;
+  padding: 2rem 6rem;
   }
 
 
@@ -1943,19 +2024,23 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .new-tasks-gray-border-styling {
-  display: block;
-  //border: 1px solid $color-cream;
-  padding: 0.5rem;
-  margin-bottom: 1.5rem;
+  border: 1px solid $color-cream;
+  width: 50%;
+  min-width: 522px; // Set minimum width to match existing cards
+  margin-right: -35px;
+  padding-left: 35px;
+  padding-right: 42px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .gray-border {
   border: 1px solid $color-cream;
-  padding: 1.5rem;
+  padding-bottom: 1.5rem !important;
 }
 
 .margin-bottom-for-add-task-view {
-  margin-bottom: 2rem;
+  margin-left: 0;
 }
 
 
@@ -2037,6 +2122,74 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.add-task-dropdown-style-intake {
+  // Override the control (outer container) for the select dropdown
+  .react-select__control {
+    border-color: $color-black;
+    border-radius: 0;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+
+    &:hover {
+      border-color: $color-black;
+    }
+  }
+
+  // Adjust the dropdown menu styles
+  .react-select__menu {
+    border-radius: 0;
+  }
+
+  // Set the color for each option
+  .react-select__option {
+    color: $color-black;
+  }
+
+  // Style the indicator separator
+  .react-select__indicator-separator {
+    background-color: $color-black;
+    width: 1px;
+    margin: 0 6px;
+    height: 48px;
+  }
+
+  // Style the dropdown indicator (arrow)
+  .react-select__dropdown-indicator {
+    color: $color-black;
+    padding-right: 15px;
+    padding-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    font: bold;
+
+    &:hover {
+      color: $color-black; // Keep arrow black on hover
+    }
+  }
+
+  // Hover style for options
+  .react-select__option--is-focused {
+    background-color: $color-gray-darker;
+    color: $color-white;
+  }
+
+  .react-select__option--is-selected {
+    background-color: $color-gray-darker;
+    color: $color-white;
+  }
+
+  // Set the value container (where selected option text is displayed)
+  .react-select__value-container {
+    padding: 0 8px;
+    line-height: 50px;
+    position: unset;
+  }
+}
+
 .back-button {
   margin-left: 240px;
 }
@@ -2053,4 +2206,38 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 20px;
 }
 
+.corr-intake-add-auto-button {
+  margin-top: -30px !important;
+}
+
+.corr-intake-remove-task-button {
+  margin-top: -8px !important;
+}
+
+.intake-form-divider {
+  margin-top: 30px;
+  border: 0.1px solid $color-gray-intake;
+}
+
+.hr-intake-container {
+  width: 100%;
+  padding: 0 28px;
+  box-sizing: border-box;
+
+  .intake-form-existing-appeal-tasks-view-divider {
+    width: 100%;
+    margin: 20px auto; // Centers the hr and adds top/bottom spacing
+    border: none;
+    border-top: 1px solid $color-gray-intake;
+  }
+}
+
+.waive-evidence-check-box {
+
+  .cf-form-checkbox label,
+  .cf-form-radio-option label {
+    padding-top: 40px;
+  }
+
+}
 
