@@ -12,8 +12,6 @@ class IneligibleJudgeList
   }.freeze
 
   EMPTY_KEY_VALUE = "No Key Present"
-  INACTIVE_VACOLS = CaseDistributionIneligibleJudges.ineligible_vacols_judges
-  INACTIVE_CASEFLOW = CaseDistributionIneligibleJudges.ineligible_caseflow_judges
 
   def self.generate_rows(record)
     HEADERS.keys.map { |key| record[key] }
@@ -47,9 +45,17 @@ class IneligibleJudgeList
     }
   end
 
+  def self.inactive_caseflow
+    @inactive_caseflow ||= CaseDistributionIneligibleJudges.ineligible_caseflow_judges
+  end
+
+  def self.inactive_vacols
+    @inactive_vacols ||= CaseDistributionIneligibleJudges.ineligible_vacols_judges
+  end
+
   def self.get_reason_for_ineligibility(css_id_value, sdomainid_value)
-    inactive_caseflow_user = INACTIVE_CASEFLOW.find { |caseflow_user| caseflow_user[:css_id] == css_id_value }
-    inactive_vacols_user = INACTIVE_VACOLS.find { |vacols_user| vacols_user[:sdomainid] == sdomainid_value }
+    inactive_caseflow_user = inactive_caseflow.find { |caseflow_user| caseflow_user[:css_id] == css_id_value }
+    inactive_vacols_user = inactive_vacols.find { |vacols_user| vacols_user[:sdomainid] == sdomainid_value }
 
     @reason = if inactive_caseflow_user && inactive_vacols_user
                 "BOTH"
