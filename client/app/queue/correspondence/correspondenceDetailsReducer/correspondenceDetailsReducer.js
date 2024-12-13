@@ -65,6 +65,7 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.expandedLinkedAppeals
       }
     });
+
   case ACTIONS.CORRESPONDENCE_STATUS:
     return update(state, {
       correspondenceStatus: {
@@ -81,6 +82,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       veteranInformation: {
         $set: action.payload.veteranInformation
+      }
+    });
+  case ACTIONS.LINKED_APPEALS:
+    return update(state, {
+      linkedAppeals: {
+        $set: action.payload.linkedAppeals
       }
     });
   case ACTIONS.EXISTING_APPEALS:

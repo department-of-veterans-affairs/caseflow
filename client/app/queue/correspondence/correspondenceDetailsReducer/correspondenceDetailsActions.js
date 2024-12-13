@@ -7,6 +7,7 @@ import { onReceiveTasks, deleteAmaTask } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
+// Redux Store Update Methods
 export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -20,11 +21,39 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 
+export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY,
+    payload: {
+      tasksUnrelatedToAppealEmpty
+    }
+  });
+};
+
+export const updateCorrespondenceInfo = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CORRESPONDENCE_INFO,
+      payload: {
+        correspondence
+      }
+    });
+  };
+
 export const updateVeteranInformation = (payload) => (dispatch) => {
   dispatch({
     type: ACTIONS.VETERAN_INFORMATION,
     payload: {
       veteranInformation: payload
+    }
+  });
+};
+
+export const updateLinkedAppeals = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.LINKED_APPEALS,
+    payload: {
+      linkedAppeals: payload
     }
   });
 };
@@ -400,15 +429,6 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
     });
 };
 
-export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY,
-    payload: {
-      tasksUnrelatedToAppealEmpty
-    }
-  });
-};
-
 // Add task not related to appeal
 export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch) => {
   const patchData = {
@@ -521,16 +541,6 @@ export const createCorrespondenceAppealTask = (data, correspondence, appealId) =
     });
 };
 
-export const updateCorrespondenceInfo = (correspondence) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.CORRESPONDENCE_INFO,
-      payload: {
-        correspondence
-      }
-    });
-  };
-
 export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch) => {
   return ApiUtil.patch(`/queue/correspondence/${uuid}/edit_general_information`, payload).
     then((response) => {
@@ -576,6 +586,40 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
   }
 };
 
+export const fetchVeteranInformation = (uuid) => async (dispatch) => {
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
+    const data = response.body;
+
+    dispatch(updateVeteranInformation(data));
+
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
+};
+
+export const fetchLinkedAppeals = (uuid) => async (dispatch) => {
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/linked_appeals`);
+    const data = response.body;
+
+    dispatch(updateLinkedAppeals(data));
+
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
+};
+
 export const updateCorrespondenceStatus = (payload) => (dispatch) => {
   dispatch({
     type: ACTIONS.CORRESPONDENCE_STATUS,
@@ -584,6 +628,7 @@ export const updateCorrespondenceStatus = (payload) => (dispatch) => {
     }
   });
 };
+
 export const fetchCorrespondenceStatus = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/status`).
     then((response) => {
@@ -608,6 +653,7 @@ export const updateCorrespondenceMailTasks = (payload) => (dispatch) => {
     }
   });
 };
+
 export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
   return ApiUtil.get(`/queue/correspondence/${uuid}/mail_tasks`).
     then((response) => {
@@ -624,10 +670,19 @@ export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
     });
 };
 
-export const fetchVeteranInformation = (uuid) => async (dispatch) => {
-  const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
-  const data = response.body.data.attributes;
-  console.log(data)
+export const fetchCorrespondenceDetailsInitialPayload = (uuid) => async (dispatch) => {
+  try {
+    const responses = await Promise.all([
+      dispatch(fetchVeteranInformation(uuid)),
+      dispatch(fetchLinkedAppeals(uuid))
+    ]);
 
-  dispatch(updateVeteranInformation(data));
+    return responses;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
 };

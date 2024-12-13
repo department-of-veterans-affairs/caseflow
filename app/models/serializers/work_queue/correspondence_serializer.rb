@@ -73,7 +73,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :correspondence_appeals do |object|
     appeals = []
     object.correspondence_appeals.map do |appeal|
-      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      appeals << WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
     appeals
   end

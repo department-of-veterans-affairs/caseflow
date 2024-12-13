@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkQueue::CorrespondenceAppealsSerializer
+class WorkQueue::CorrespondenceLinkedAppealsSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
@@ -46,6 +46,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
   attribute :aod do |object|
     object.appeal.aod?
   end
+
   attribute :withdrawn do |object|
     object.appeal.withdrawn?
   end

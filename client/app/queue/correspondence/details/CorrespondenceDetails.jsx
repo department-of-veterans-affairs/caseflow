@@ -43,6 +43,7 @@ const CorrespondenceDetails = (props) => {
   const mailTasks = props.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const veteranInformation = props.veteranInformation;
+  const linkedAppeals = props.linkedAppeals;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -479,6 +480,7 @@ const CorrespondenceDetails = (props) => {
     dispatch(fetchCorrespondencesAppealsTasks(correspondence.uuid));
     dispatch(fetchCorrespondenceStatus(correspondence.uuid));
     dispatch(fetchCorrespondenceMailTasks(correspondence.uuid));
+
   }, []);
 
   const correspondenceTasks = () => {
@@ -1099,7 +1101,8 @@ const mapStateToProps = (state) => ({
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
   expandedLinkedAppeals: state.correspondenceDetails.expandedLinkedAppeals,
   appealsFromStore: state.queue.appeals,
-  veteranInformation: state.correspondenceDetails.veteranInformation
+  veteranInformation: state.correspondenceDetails.veteranInformation,
+  linkedAppeals: state.correspondenceDetails.linkedAppeals,
 });
 
 const mapDispatchToProps = (dispatch) => (
