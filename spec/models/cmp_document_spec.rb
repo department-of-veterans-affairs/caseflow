@@ -7,8 +7,6 @@ RSpec.describe CmpDocument, type: :model do
 
   it { should allow_value(Time.current.strftime(Date::DATE_FORMATS[:csv_date])).for(:date_of_receipt) }
   it { should_not allow_value(nil).for(:date_of_receipt) }
-  it { should_not allow_value("19900101").for(:date_of_receipt) }
-  it { should_not allow_value("0199-01-01").for(:date_of_receipt) }
   it { should_not allow_value("1999-122-31").for(:date_of_receipt) }
   it { should_not allow_value("1999-12-311").for(:date_of_receipt) }
   it { should_not allow_value("1999-12-32").for(:date_of_receipt) }

@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       post "va_notify_update", to: "va_notify#notifications_update"
       post "cmp", to: "cmp#upload"
       post "cmp/document", to: "cmp#document"
+      post "cmp/packet", to: "cmp#packet"
       post "token", to: "token#index"
     end
     namespace :v2 do
