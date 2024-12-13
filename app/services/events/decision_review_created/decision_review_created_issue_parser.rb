@@ -114,4 +114,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   def ri_nonrating_issue_bgs_source
     @issue.dig(:nonrating_issue_bgs_source).presence
   end
+
+  def ri_remand_source_id
+    @issue.dig(:remand_source_id).presence
+  end
 end
