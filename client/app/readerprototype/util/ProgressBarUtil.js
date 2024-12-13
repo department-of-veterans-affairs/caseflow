@@ -1,4 +1,10 @@
 import { storeMetrics } from '../../util/Metrics';
+// Below are customizable values that determine wait times for document loading
+// and are then used to decide whether or not we show the progress bar,
+// times are in milliseconds
+const delayBeforeProgressBarBackupValue = 1000;
+const showProgressBarThresholdBackupValue = 3000;
+
 // Function to calculate download progress as the document loads
 const calculateProgress = ({ loaded, fileSize }) => {
   let percentage = 0;
@@ -14,12 +20,9 @@ const calculateProgress = ({ loaded, fileSize }) => {
 // Returns a boolean based on params passed in and the 2 variables passed in as progressBarOptions
 const shouldShowProgressBar = ({ elapsedTime, downloadSpeed, percentage, loaded, fileSize, readerPreferences }) => {
 
-  const delayBeforeProgressBar = readerPreferences.delayBeforeProgressBar;
-  const showProgressBarThreshold = readerPreferences.showProgressBarThreshold;
+  const delayBeforeProgressBar = readerPreferences.delayBeforeProgressBar || delayBeforeProgressBarBackupValue;
+  const showProgressBarThreshold = readerPreferences.showProgressBarThreshold || showProgressBarThresholdBackupValue;
 
-  if (!delayBeforeProgressBar || !showProgressBarThreshold) {
-    return false;
-  }
   if (percentage < 100 && elapsedTime > delayBeforeProgressBar) {
     const projectedEndTime = (fileSize - loaded) / downloadSpeed;
 
@@ -41,6 +44,7 @@ const logCancelRequest = ({ progressData, documentId, userId, getStartTime }) =>
     documentId,
     {
       user_id: userId,
+      documentId,
       download_percent: progressPercentage,
       document_size_bytes: totalBytes,
       elapsed_time_ms: elapsedTime,

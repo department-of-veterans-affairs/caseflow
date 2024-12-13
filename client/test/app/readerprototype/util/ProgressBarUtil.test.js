@@ -27,18 +27,6 @@ describe('ProgressBarUtil', () => {
       showProgressBarThreshold: 1000,
     };
 
-    it('returns false if delayBeforeProgressBar or showProgressBarThreshold is not set', () => {
-      expect(
-        ProgressBarUtil.shouldShowProgressBar({
-          elapsedTime: 3000,
-          downloadSpeed: 10,
-          percentage: 5,
-          loaded: 500,
-          fileSize: 10000,
-          readerPreferences: {},
-        })
-      ).toBe(false);
-    });
     it('returns false if percentage is 100', () => {
       expect(
         ProgressBarUtil.shouldShowProgressBar({
@@ -100,6 +88,7 @@ describe('ProgressBarUtil', () => {
         documentId,
         {
           user_id: userId,
+          documentId,
           download_percent: progressData.progressPercentage,
           document_size_bytes: progressData.totalBytes,
           elapsed_time_ms: elapsedTime,
