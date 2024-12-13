@@ -20,11 +20,11 @@ import { pdfUiClass, pdfWrapper } from './utils/styles';
 import ReaderFooter from './components/ReaderFooter';
 
 const DocumentViewer = memo((props) => {
+  const dispatch = useDispatch();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const showSideBar = useSelector(showSideBarSelector);
-  const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
   const filteredDocuments = useSelector((state) => getFilteredDocuments(state));
@@ -42,10 +42,6 @@ const DocumentViewer = memo((props) => {
   /* eslint-disable camelcase */
   const prefetchFiles = [prevDoc, nextDoc].map((file) => file?.content_url);
   const files = [...prefetchFiles, doc.content_url].filter((file) => file);
-
-  if (!doc) {
-    return;
-  }
 
   useEffect(() => {
     setShowSearchBar(false);
@@ -142,7 +138,6 @@ const DocumentViewer = memo((props) => {
             showClaimsLink={props.allDocuments.length > 1}
             showSearchBar={showSearchBar}
             toggleSearchBar={setShowSearchBar}
-            showSideBar={showSideBar}
             toggleSideBar={() => dispatch(togglePdfSidebar())}
             zoomLevel={props.zoomLevel}
           />
@@ -180,13 +175,11 @@ const DocumentViewer = memo((props) => {
             />
           </div>
         </div>
-        {showSideBar && (
-          <ReaderSidebar
-            doc={doc}
-            showSideBar={showSideBar}
-            vacolsId={props.match.params.vacolsId}
-          />
-        )}
+        <ReaderSidebar
+          doc={doc}
+          hideSideBar={hideSideBar}
+          vacolsId={props.match.params.vacolsId}
+        />
         <DeleteModal documentId={currentDocumentId} />
         <ShareModal />
       </div>
