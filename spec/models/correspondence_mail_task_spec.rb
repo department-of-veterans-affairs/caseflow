@@ -43,9 +43,9 @@ RSpec.describe CorrespondenceMailTask, type: :model do
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
         Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
-        Constants.TASK_ACTIONS.COR_RETURN_TO_INBOUND_OPS.to_h
+        Constants.TASK_ACTIONS.COR_RETURN_TO_INBOUND_OPS.to_h,
+        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
       ]
     end
 
