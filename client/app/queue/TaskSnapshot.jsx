@@ -27,7 +27,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, latestCaseTimeLineTa
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
   const docketSwitchDisposition = appeal.docketSwitch?.disposition;
   const { css_id: locationUserCssId } =
-    appeal?.locationHistory?.find((loc) => loc.closedAt === null).locationUser || {};
+    appeal?.locationHistory?.find((loc) => loc.closedAt === null)?.locationUser || {};
   const showBanner = (
     latestCaseTimeLineTask?.type === 'LegacyAppealAssignmentTrackingTask' &&
     latestCaseTimeLineTask?.assignedTo.cssId === locationUserCssId
