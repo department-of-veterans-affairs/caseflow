@@ -15,7 +15,6 @@ class Hearings::TranscriptionFilesController < ApplicationController
     file.clean_up_tmp_location
   end
 
-
   def transcription_file_tasks
     @transcription_files = TranscriptionFile.filterable_values
     select_based_on_tab

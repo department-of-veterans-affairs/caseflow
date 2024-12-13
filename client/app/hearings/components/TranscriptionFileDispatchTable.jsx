@@ -60,7 +60,7 @@ const styles = css({
   '& th:last-child .cf-dropdown-filter': {
     left: '-231px',
   },
-   '& .unassigned-tab td:nth-child(3)': {
+  '& .unassigned-tab td:nth-child(3)': {
     fontWeight: 'bold',
   },
   '& .cf-table-wrapper': {
