@@ -108,6 +108,33 @@ class LegacyTasksController < ApplicationController
     }
   end
 
+  def decision_reassign_to_judge
+    return unless FeatureToggle.enabled?(:legacy_case_movement_vlj_to_vlj_for_evalnsign)
+
+    # If the user being assigned to is a judge, do not create a DECASS record, just
+    # update the location to the assigned judge.
+
+    QueueRepository.reassign_decision_review_case_to_judge!(
+      vacols_id: appeal.vacols_id,
+      created_in_vacols_date: VACOLS::Decass.where(defolder: appeal.vacols_id).max_by(&:deadtim)[:deadtim],
+      judge_vacols_user_id: assigned_to,
+      decass_attrs: {
+        modifying_user: current_user.vacols_uniq_id
+      }
+    )
+
+    # Remove overtime status of an appeal when reassigning to a judge
+    appeal.overtime = false if appeal.overtime?
+
+    render json: {
+      task: json_task(AttorneyLegacyTask.from_vacols(
+                        VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
+                        appeal,
+                        assigned_to
+                      ))
+    }
+  end
+
   def update
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
       return reassign_with_das

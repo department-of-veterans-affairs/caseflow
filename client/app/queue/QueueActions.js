@@ -669,6 +669,32 @@ export const legacyReassignToJudge = ({
     });
 }));
 
+export const legacyDecisionReassignToJudge = ({
+  tasks, assigneeId, instructions
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        appeal_id: oldTask.appealId,
+        instructions
+      }
+    }
+  };
+
+  return ApiUtil.post('/legacy_tasks/decision_reassign_to_judge', params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
+
+      dispatch(onReceiveTasks(pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
+    });
+}));
+
 const refreshTasks = (dispatch, userId, userRole, type = null) => {
   let url = `/tasks?user_id=${userId}&role=${userRole}`;
 

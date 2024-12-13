@@ -254,6 +254,11 @@
     "value": "modal/reassign_to_judge",
     "func": "reassign_to_judge_data"
   },
+  "LEGACY_DECISION_REASSIGN_TO_JUDGE": {
+    "label": "Re-assign to a judge",
+    "value": "modal/legacy_decision_reassign_to_judge",
+    "func": "legacy_decision_reassign_to_judge_data"
+  },
   "REASSIGN_TO_PERSON": {
     "label": "Re-assign to person",
     "value": "modal/reassign_to_person",
