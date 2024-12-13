@@ -3,7 +3,7 @@
 module AssociatedBgsRecord
   extend ActiveSupport::Concern
 
-  include BgsService
+  include BGSServiceConcern
 
   module ClassMethods
     # bgs_attr_accessor will lazy load the underlying data from BGS upon first call
