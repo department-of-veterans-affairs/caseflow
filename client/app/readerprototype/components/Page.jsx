@@ -37,12 +37,10 @@ const Page = memo(({
   setCurrentPage
 }) => {
   const scaleFraction = scale / 100;
-  const currentPageFraction = Math.min(0.5 / Math.pow(scaleFraction, 2), 1);
   const canvasRef = useRef(null);
   const isVisibleRef = useRef(null);
 
   isVisibleRef.current = usePageVisibility(canvasRef);
-  const shouldSetCurrentPage = usePageVisibility(canvasRef, currentPageFraction);
 
   const wrapperRef = useRef(null);
   const renderTaskRef = useRef(null);
@@ -60,6 +58,10 @@ const Page = memo(({
   let top = 0;
   let left = 0;
   const offset = (scaledHeight - scaledWidth) / 2;
+
+  const pagePercentageOfViewport = document.getElementsByClassName('cf-pdf-scroll-view')[0].offsetHeight / scaledHeight;
+  const currentPageFraction = Math.min(pagePercentageOfViewport, 0.5);
+  const shouldSetCurrentPage = usePageVisibility(canvasRef, Math.pow(currentPageFraction, 3), '0px 500px 0px 500px');
 
   if (rotation.includes('90') || rotation.includes('270')) {
     rotatedHeight = scaledWidth;
