@@ -31,7 +31,7 @@ shared_examples "a validates required params are not null #document endpoint" do
         headers: authorization_header
       )
     end.not_to change(CmpDocument, :count)
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:bad_request)
   end
 end
 
@@ -123,7 +123,7 @@ describe Api::V1::CmpController, type: :request do
           )
         end.not_to change(CmpDocument, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end
@@ -174,14 +174,14 @@ describe Api::V1::CmpController, type: :request do
         expect(new_packet.veteran_last_name).to eq packet_post_data[:veteranLastName]
         expect(new_packet.veteran_id.to_i).to eq packet_post_data[:veteranId]
       end
-      it "returns 422" do
+      it "returns 400" do
         post(
           api_v1_cmp_packet_path,
           params: packet_post_data,
           as: :json,
           headers: authorization_header
         )
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end
