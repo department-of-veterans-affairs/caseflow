@@ -658,7 +658,9 @@ export const legacyBlockedAdvanceToJudge = ({
         assigned_to_id: assigneeId,
         appeal_id: oldTask.appealId,
         instructions: [
-              `Cancelled Tasks: ${cancelledTasks.map((task) => task.type)}`,
+          'Cancelled Tasks: \n' +
+              `${ cancelledTasks.map((task, i) => `${i + 1}. ${task.type} - Assigned to: ${task.assigned_to_name}`).
+                join('\n')}`,
               `${cancellationReason}: ${cancellationInstructions}`,
               instructions
         ]
