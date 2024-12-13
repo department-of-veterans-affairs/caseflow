@@ -43,7 +43,7 @@ export const Accordion = (
           headerClass={
             classnames(headerClass, { disabled: sectionIsDisabled })
           }
-          key={sectionTitle}
+          key={`${sectionId}-${sectionTitle}`}
           header={headerElement}
         >
           <div className="usa-accordion-content" {...sectionProps}>
