@@ -56,7 +56,8 @@ const CheckboxModal = (props) => {
       <div className="checkbox-modal-size">
         {props.checkboxData.map((checkboxText, index) => (
           <Checkbox
-            name={checkboxText}
+            name={index}
+            label={checkboxText}
             onChange={() => handleToggleCheckbox(index)}
             value={toggledCheckBoxes.indexOf(index) > -1}
           />))
