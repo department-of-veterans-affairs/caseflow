@@ -144,13 +144,12 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         end
         expect(page).to have_selector("#react-select-2-input[disabled]")
         expect(page).to have_text("Evidence Window Submission Task")
-        expect(page).to have_text("Provide context and instructions on this task")
+        expect(page).to have_text("Please provide context and instructions for this action")
         field = find_field("content", disabled: true)
         expect(field.tag_name).to eq("textarea")
         checkbox_label = "Waive Evidence Window"
         find("label", text: checkbox_label).click
         find_by_id("waiveReason").fill_in with: "test waive note"
-        all("#reactSelectContainer").last.click
         expect(page).to have_button("button-continue", disabled: false)
       end
     end
@@ -181,7 +180,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         end
 
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
 
@@ -199,7 +198,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
 
@@ -224,7 +223,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         using_wait_time(wait_time) do
           find_by_id("button-addTasks").click
         end
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-15").click
         expect(page).to have_button("button-continue", disabled: true)
 
@@ -234,7 +233,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         all("textarea")[1].fill_in with: "Correspondence Text"
         expect(page).to have_button("button-continue", disabled: true)
 
-        all("#reactSelectContainer")[1].click
+        all(".react-select__control")[1].click
         find_by_id("react-select-3-option-15").click
         expect(page).to have_button("button-continue", disabled: false)
       end
@@ -248,19 +247,19 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
-        expect((all("#reactSelectContainer")[0]).text).to include("Other Motion")
+        expect((all(".react-select__control")[0]).text).to include("Other Motion")
 
         page.all("#button-addTasks").first.click
-        all("#reactSelectContainer")[1].click
+        all(".react-select__control")[1].click
         find_by_id("react-select-3-option-15").click
         all("textarea")[1].fill_in with: "Correspondence Text"
-        expect(all("#reactSelectContainer")[1].text).to include("Other Motion")
+        expect(all(".react-select__control")[1].text).to include("Other Motion")
 
         page.all("#button-addTasks").first.click
-        all("#reactSelectContainer")[2].click
+        all(".react-select__control")[2].click
         find_by_id("react-select-4-option-15").click
         all("textarea")[2].fill_in with: "Correspondence Text"
       end
@@ -274,12 +273,12 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
-        expect(find_all("#reactSelectContainer").length).to eq(1)
+        expect(find_all(".react-select__control").length).to eq(1)
         find_all(".fa.fa-unlink").last.click
-        expect(find_all("#reactSelectContainer").length).to eq(0)
+        expect(find_all(".react-select__control").length).to eq(0)
       end
 
       it "Unlinks only one appeal if multiple are selected when the unlink appeal button is clicked" do
@@ -293,18 +292,18 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         end
 
         find_all("#button-addTasks").first.click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-15").click
         all("textarea")[0].fill_in with: "Correspondence Text"
 
         find_all("#button-addTasks").last.click
-        all("#reactSelectContainer")[1].click
+        all(".react-select__control")[1].click
         find_by_id("react-select-3-option-15").click
         all("textarea")[1].fill_in with: "Correspondence Text"
 
-        expect(find_all("#reactSelectContainer").length).to eq(2)
+        expect(find_all(".react-select__control").length).to eq(2)
         find_all(".fa.fa-unlink").last.click
-        expect(find_all("#reactSelectContainer").length).to eq(1)
+        expect(find_all(".react-select__control").length).to eq(1)
       end
     end
 
@@ -327,13 +326,13 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         expect(page).to have_content("CAVC Correspondence")
         expect(page).to_not have_content("Change Of Address")
 
         find_by_id("react-select-2-option-7").click
         find_by_id("content").fill_in with: "Correspondence Text"
-        expect((all("#reactSelectContainer")[0]).text).to include("Other Motion")
+        expect((all(".react-select__control")[0]).text).to include("Other Motion")
       end
 
       it "verifies logic still works for which tasks can be duplicated" do
@@ -345,24 +344,24 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         find_by_id("button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-0").click
         all("textarea")[0].fill_in with: "Correspondence Text"
-        expect((all("#reactSelectContainer")[0]).text).to include("CAVC Correspondence")
+        expect((all(".react-select__control")[0]).text).to include("CAVC Correspondence")
 
         page.all("#button-addTasks").first.click
-        all("#reactSelectContainer")[1].click
-        expect(all("#reactSelectContainer")[1].text).to_not include("CAVC Correspondence")
+        all(".react-select__control")[1].click
+        expect(all(".react-select__control")[1].text).to_not include("CAVC Correspondence")
 
         find_by_id("react-select-3-option-6").click
         all("textarea")[1].fill_in with: "Correspondence Text"
-        expect(all("#reactSelectContainer")[1].text).to include("Other Motion")
+        expect(all(".react-select__control")[1].text).to include("Other Motion")
 
         page.all("#button-addTasks").first.click
-        all("#reactSelectContainer")[2].click
+        all(".react-select__control")[2].click
         find_by_id("react-select-4-option-6").click
         all("textarea")[2].fill_in with: "Correspondence Text"
-        expect((all("#reactSelectContainer")[2]).text).to include("Other Motion")
+        expect((all(".react-select__control")[2]).text).to include("Other Motion")
       end
     end
   end

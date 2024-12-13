@@ -52,7 +52,7 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays confirm submission" do
         visit_intake_form_step_2_with_appeals
         click_button("+ Add tasks")
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("addAutotext").click
         within find_by_id("autotextModal") do
@@ -85,7 +85,7 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays a failed submission error banner" do
         visit_intake_form_step_2_with_appeals
         click_button("+ Add tasks")
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("addAutotext").click
         within find_by_id("autotextModal") do
@@ -113,7 +113,7 @@ RSpec.feature("Correspondence Intake submission") do
           end
         end
         page.find("#button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
         click_button("Continue")
@@ -140,7 +140,7 @@ RSpec.feature("Correspondence Intake submission") do
           end
 
           page.find("#button-addTasks").click
-          all("#reactSelectContainer")[0].click
+          all(".react-select__control")[0].click
           find("div", exact_text: "Docket Switch").click
           find_by_id("content").fill_in with: "Correspondence Text"
           click_button("Continue")
@@ -181,7 +181,7 @@ RSpec.feature("Correspondence Intake submission") do
           end
 
           page.find("#button-addTasks").click
-          all("#reactSelectContainer")[0].click
+          all(".react-select__control")[0].click
           find("div", exact_text: "CAVC Correspondence").click
           find_by_id("content").fill_in with: "Correspondence Text"
           click_button("Continue")
@@ -220,7 +220,7 @@ RSpec.feature("Correspondence Intake submission") do
           end
         end
         page.find("#button-addTasks").click
-        all("#reactSelectContainer")[0].click
+        all(".react-select__control")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
         click_button("Continue")
@@ -315,7 +315,7 @@ RSpec.feature("Correspondence Intake submission") do
       add_task_buttons.each { |button| max_new_tasks.times { button.click } }
 
       # Select each unique related to inactive appeal task
-      react_select_containers = page.all("#reactSelectContainer")
+      react_select_containers = page.all(".react-select__control")
       react_select_containers.each_with_index do |select_container, index|
         retry_when Capybara::ElementNotFound do
           using_wait_time(wait_time) do

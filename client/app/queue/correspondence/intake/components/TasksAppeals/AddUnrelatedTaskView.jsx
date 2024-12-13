@@ -90,37 +90,33 @@ export const AddUnrelatedTaskView = (props) => {
       </Button>}
       {addTasksVisible && <div
         className="gray-border">
-        <div className="area-above-add-tasks-button-not-related">
-          <div className="area-under-add-tasks-button-not-related-to-appeal">
-            <div className="new-tasks-not-related-to-an-appeal-title">
-              <b className="new-tasks-title-not-related-to-appeal">New Tasks</b>
-            </div>
-            <div className="area-under-new-tasks-title" />
-            <div className="area-above-add-task-view">
-              {getTasks().map((task) => (
-                <AddTaskView
-                  key={task.id}
-                  task={task}
-                  removeTask={removeTask}
-                  taskUpdatedCallback={taskUpdatedCallback}
-                  displayRemoveCheck
-                  allTaskTypeOptions={props.allTaskTypeOptions}
-                  availableTaskTypeOptions={availableTaskTypeOptions}
-                  autoTexts={props.autoTexts}
-                />
-              ))}
-            </div>
-            <div className="add-tasks-button-for-unrelated-appeals">
-              <Button
-                type="button"
-                onClick={clickAddTask}
-                disabled={newTasks.length === MAX_NUM_TASKS}
-                name="addTasks"
-                classNames={['cf-left-side']}>
+        <div className="new-tasks-not-related-to-an-appeal-title">
+          <b className="new-tasks-title-not-related-to-appeal">New Tasks</b>
+        </div>
+        <div className="area-under-new-tasks-title" />
+        <div className="area-above-add-task-view">
+          {getTasks().map((task) => (
+            <AddTaskView
+              key={task.id}
+              task={task}
+              removeTask={removeTask}
+              taskUpdatedCallback={taskUpdatedCallback}
+              displayRemoveCheck
+              allTaskTypeOptions={props.allTaskTypeOptions}
+              availableTaskTypeOptions={availableTaskTypeOptions}
+              autoTexts={props.autoTexts}
+            />
+          ))}
+        </div>
+        <div className="add-tasks-button-for-unrelated-appeals">
+          <Button
+            type="button"
+            onClick={clickAddTask}
+            disabled={newTasks.length === MAX_NUM_TASKS}
+            name="addTasks"
+            classNames={['cf-left-side']}>
                 + Add tasks
-              </Button>
-            </div>
-          </div>
+          </Button>
         </div>
       </div>}
     </div>
