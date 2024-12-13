@@ -18,9 +18,8 @@ class Correspondence::CorrespondenceDetails::CorrespondenceSerializer
   end
 
   attribute :tasks_unrelated_to_appeal do |object|
-    filtered_tasks = object.tasks_not_related_to_an_appeal
-
     tasks = []
+    filtered_tasks = object.tasks_not_related_to_an_appeal
 
     unless filtered_tasks.empty?
       filtered_tasks.each do |task|
