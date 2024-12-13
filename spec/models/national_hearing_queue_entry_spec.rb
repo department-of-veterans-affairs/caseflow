@@ -464,7 +464,6 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       expect(NationalHearingQueueEntry.count).to eq 0
 
       NationalHearingQueueEntry.refresh
-
       expect(
         NationalHearingQueueEntry.pluck(:appeal_id, :appeal_type)
       ).to match_array [
@@ -1477,7 +1476,7 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
       end
     end
   end
-  context "claimant_indicator" do
+  context "claimant_indicator_ama" do
     after(:each) { clean_up_after_threads }
     subject do
       NationalHearingQueueEntry.refresh
@@ -1550,6 +1549,149 @@ RSpec.describe NationalHearingQueueEntry, type: :model do
     end
   end
 
+  context "claimant_indicator_legacy" do
+    subject do
+      NationalHearingQueueEntry.refresh
+      NationalHearingQueueEntry.find_by(appeal: legacy_with_sched_task).contested_claim_indicator
+    end
+    let!(:case1) { create(:case, bfhr: "1", bfd19: 1.day.ago, bfac: "1") }
+    let!(:case2) { create(:case, bfhr: "2", bfd19: 2.days.ago, bfac: "5") }
+    let!(:case3) { create(:case, bfhr: "3", bfd19: 3.days.ago, bfac: "9") }
+    let!(:case4) { create(:case, bfhr: "4", bfd19: 1.day.ago, bfac: "1") }
+
+    let!(:legacy_request_issues) do
+      [
+        create(:case_issue, isskey: case4.bfkey, issmst: "Y", isspact: "N"),
+        create(:case_issue, isskey: case4.bfkey, issmst: "N", isspact: "Y")
+      ]
+    end
+
+    let!(:legacy_with_sched_task) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case1)
+    end
+
+    let!(:legacy_with_sched_task2) do
+      case4.case_issues = legacy_request_issues
+      case4.save!
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case4)
+    end
+
+    let!(:legacy_appeal_completed) do
+      create(:legacy_appeal,
+             :with_schedule_hearing_tasks,
+             :with_veteran,
+             vacols_case: case3).tap do |legacy_appeal|
+        ScheduleHearingTask.find_by(appeal: legacy_appeal).completed!
+      end
+    end
+
+    let!(:appeal_normal) { create(:appeal) }
+
+    let!(:legacy_appeal_normal) do
+      create(:legacy_appeal,
+             :with_root_task,
+             :with_veteran,
+             vacols_case: case2)
+    end
+
+    let(:ssn1) { Veteran.find_by(file_number: case1.bfcorlid[0..case1.bfcorlid.length - 2]).ssn }
+    let(:ssn2) { Veteran.find_by(file_number: case2.bfcorlid[0..case2.bfcorlid.length - 2]).ssn }
+    let(:ssn3) { Veteran.find_by(file_number: case3.bfcorlid[0..case3.bfcorlid.length - 2]).ssn }
+    let(:ssn4) { Veteran.find_by(file_number: case4.bfcorlid[0..case4.bfcorlid.length - 2]).ssn }
+
+    let(:request_issues) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
+      ]
+    end
+
+    let(:request_issues_mst_pact) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: true, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category B", mst_status: false, pact_status: true),
+        create(:request_issue, nonrating_issue_category: "Category C", mst_status: false, pact_status: false),
+        create(:request_issue, nonrating_issue_category: "Category D", mst_status: false, pact_status: false)
+      ]
+    end
+
+    before do
+      # legacy appeal update
+      cases = [case1, case2, case3, case4]
+      ssns = [ssn1, ssn2, ssn3, ssn4]
+      veteran_deceased = [true, false, false, false]
+
+      cases.each_with_index do |c, index|
+        VACOLS::Correspondent.find(c.bfcorkey).update!(ssn: ssns[index],
+                                                       sfnod: veteran_deceased[index] ? Time.zone.now : nil)
+
+        file_number = c.bfcorlid[0..c.bfcorlid.length - 2]
+
+        veteran = Veteran.find_by(file_number: file_number)
+        veteran.update!(state_of_residence: "va")
+        veteran.update!(country_of_residence: "usa")
+      end
+
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
+         WHERE appeal_id = #{legacy_with_sched_task.id} AND appeal_type = 'Legacy Appeal'"
+      )
+
+      # caching legacy appeal
+      CachedAppealService.new.cache_legacy_appeal_postgres_data([legacy_with_sched_task])
+      CachedAppealService.new.cache_legacy_appeal_postgres_data([legacy_with_sched_task2])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case1.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case2.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case3.bfkey])
+      CachedAppealService.new.cache_legacy_appeal_vacols_data([case4.bfkey])
+
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
+         WHERE appeal_id = #{legacy_with_sched_task.id} AND appeal_type = 'LegacyAppeal'"
+      )
+      ActiveRecord::Base.connection.execute(
+        "UPDATE cached_appeal_attributes
+         SET suggested_hearing_location = 'Oakland, CA (RO)'
+         WHERE appeal_id = #{legacy_with_sched_task2.id} AND appeal_type = 'LegacyAppeal'"
+      )
+    end
+
+    let!(:legacy_hearing_task) { legacy_with_sched_task.tasks.find_by(type: "ScheduleHearingTask") }
+    let!(:legacy_hearing_task2) { legacy_with_sched_task2.tasks.find_by(type: "ScheduleHearingTask") }
+      context "legacy_appeal associated with with the rep that has a qualifying reptype" do
+        it "associated with with the rep that has a reptype of 'C'" do
+          # byebug
+          is_expected.to eq true
+        end
+
+        # it "associated with with the rep that has a reptype of 'D'" do
+        #   is_expected.to eq true
+        # end
+
+        # it "associated with with the rep that has a reptype of 'E'" do
+        #   is_expected.to eq true
+        # end
+      end
+    end
+
+    # C
+    # D
+    # E
+    # No rep exists (appeal should still appear if all other criteria is met)
+    # Multiple reps (an appeal should only appear once)
+      # One is contested and one isn't
+      # Both are contesetd
+      # Neither are contested
   def stage_legacy_appeal(receipt_date: 1.day.ago, aod: false, cavc: false)
     vacols_case = create(:case, bfhr: "1", bfd19: receipt_date, bfac: cavc ? "7" : "1")
 
