@@ -205,8 +205,17 @@ class TasksController < ApplicationController
   end
 
   def error_found_upload_transcription_to_vbms
-    file_name = params[:file_info][:file_name]
-    set_flash_vbms_upload_success(file_name, appeal)
+    file_name = params["file_info"]["file_name"]
+    file_contents = params["file_info"]["file"]
+    response = process_information_to_vbms(file_name, file_contents)
+    if response.success?
+      # change status of ReviewTranscriptTask
+      complete_transcript_review
+      set_flash_vbms_upload_success(file_name, appeal)
+      render json: { success: true }, status: :ok
+    else
+      render json: { success: false }, status: :bad_request
+    end
   end
 
   def cancel_review_transcript_task
@@ -217,13 +226,31 @@ class TasksController < ApplicationController
       task.cancel_task_and_child_subtasks
       task.update!(instructions: instructions)
     end
-
-    render json: {}, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
   end
 
   private
+
+  def process_information_to_vbms(file_name, file_contents)
+    transcription_file = Hearings::TranscriptionFile.where(docket_number: appeal.docket_number)
+      .where(file_type: "pdf")
+      .order(date_upload_aws: :desc)
+      .first
+    transcription_file.upload_content_to_s3!(file_contents)
+    document_params =
+      {
+        veteran_file_number: appeal.veteran_file_number,
+        document_type: "Hearing Transcript",
+        document_subject: "notifications",
+        document_name: file_name,
+        application: "notification-report",
+        file: file_contents
+      }
+
+    PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
+  end
 
   def complete_transcript_review
     return unless task.is_a?(ReviewTranscriptTask) && task.active?
@@ -240,20 +267,6 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
-  end
-
-  def cancel_review_transcript_task
-    instructions = params[:task][:instructions]
-
-    ActiveRecord::Base.transaction do
-      task = ReviewTranscriptTask.find(params[:id])
-      task.cancel_task_and_child_subtasks
-      task.update!(instructions: instructions)
-    end
-
-    render json: {}, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
   end
 
   def send_initial_notification_letter
