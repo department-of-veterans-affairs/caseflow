@@ -10,9 +10,7 @@ const DocSizeIndicator = (props) => {
   const waitTime = parseInt(props.warningThreshold, 10) || 15;
 
   const showIcon = () => {
-    if (downloadTime > waitTime) {
-      props.enableBandwidthBanner();
-
+    if (props.featureToggles.bandwidthBanner && (downloadTime > waitTime)) {
       return true;
     }
   };
@@ -30,8 +28,8 @@ const DocSizeIndicator = (props) => {
 DocSizeIndicator.propTypes = {
   docSize: PropTypes.number.isRequired,
   browserSpeedInBytes: PropTypes.number.isRequired,
-  warningThreshold: PropTypes.number.isRequired,
-  enableBandwidthBanner: PropTypes.func.isRequired
+  warningThreshold: PropTypes.string.isRequired,
+  featureToggles: PropTypes.object
 };
 
 export default DocSizeIndicator;

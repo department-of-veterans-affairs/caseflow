@@ -2,15 +2,14 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import DocSizeIndicator from '../../../app/reader/DocSizeIndicator';
 
-const bandwidthFunction = jest.fn();
-
 it('shows file size', () => {
   const connectionSpeed = 1;
   const downloadSpeedInBytes = connectionSpeed * 125000;
   const { container } = render(<DocSizeIndicator docSize="1024"
     browserSpeedInBytes={downloadSpeedInBytes}
     warningThreshold={1}
-    enableBandwidthBanner={bandwidthFunction} />);
+    featureToggles={{ bandwidthBanner: true }}
+  />);
 
   expect(container).toHaveTextContent('1 kB');
 });
@@ -22,7 +21,8 @@ it('handles empty strings', () => {
     docSize=""
     browserSpeedInBytes={downloadSpeedInBytes}
     warningThreshold={1}
-    enableBandwidthBanner={bandwidthFunction} />);
+    featureToggles={{ bandwidthBanner: true }}
+  />);
 
   expect(container).toHaveTextContent('0 B');
 });
@@ -33,7 +33,8 @@ it('handles null', () => {
     docSize={null}
     browserSpeedInBytes={downloadSpeedInBytes}
     warningThreshold={1}
-    enableBandwidthBanner={bandwidthFunction} />);
+    featureToggles={{ bandwidthBanner: true }}
+  />);
 
   expect(container).toHaveTextContent('0 B');
 });
@@ -46,7 +47,8 @@ it('shows a file size warning when file size is large', () => {
     docSize={fileSize}
     browserSpeedInBytes={downloadSpeedInBytes}
     warningThreshold={1}
-    enableBandwidthBanner={bandwidthFunction} />);
+    featureToggles={{ bandwidthBanner: true }}
+  />);
 
   expect(getByTitle('Large File Warning')).toBeInTheDocument();
 });
@@ -58,7 +60,8 @@ it('does not show a file size warning when file size is not large', () => {
   const { queryByTitle } = render(<DocSizeIndicator
     docSize={fileSize}
     browserSpeedInBytes={downloadSpeedInBytes}
-    enableBandwidthBanner={bandwidthFunction} />);
+    featureToggles={{ bandwidthBanner: true }}
+  />);
 
   expect(queryByTitle('Large File Warning')).not.toBeInTheDocument();
 });

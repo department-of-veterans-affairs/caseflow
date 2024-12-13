@@ -18,6 +18,7 @@ import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
+import { documentDownloadTime, megaBitsToBytes } from './utils/network';
 
 export class PdfListView extends React.Component {
 
@@ -58,6 +59,22 @@ export class PdfListView extends React.Component {
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
     let tableView;
+    let showBandwidthBanner = false;
+
+    // This needs to be called here and not from a util file. This is because the value of the
+    // connection.downlink is not static and needs to be calculated at runtime.
+
+    const connection = (navigator.connection || navigator.mozConnection || navigator.webkitConnection);
+    let speed;
+
+    if (typeof connection === 'object') {
+      speed = connection.downlink;
+    } else {
+      speed = 1;
+    }
+
+    const browserSpeedinBytes = megaBitsToBytes(speed);
+    const waitTime = parseInt(this.props.warningThreshold, 10) || 15;
 
     if (noDocuments) {
       tableView = <NoSearchResults />;
@@ -67,6 +84,10 @@ export class PdfListView extends React.Component {
         onJumpToComment={this.props.onJumpToComment}
       />;
     } else {
+      showBandwidthBanner = this.props.documents.some((doc) => {
+        return documentDownloadTime(doc.file_size, browserSpeedinBytes) > waitTime;
+      });
+
       tableView = <DocumentsTable
         documents={this.props.documents}
         documentPathBase={this.props.documentPathBase}
@@ -77,7 +98,7 @@ export class PdfListView extends React.Component {
         setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
         featureToggles={this.props.featureToggles}
         readerPreferences={this.props.readerPreferences}
-        showBandwidthWarning={this.toggleShowBandwidthBanner}
+        showBandwidthWarning={showBandwidthBanner}
       />;
     }
 
@@ -95,7 +116,7 @@ export class PdfListView extends React.Component {
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
           {this.props.featureToggles.bandwidthBanner &&
-            <BandwidthAlert displayBanner={this.props.showBandwidthBanner} />}
+            <BandwidthAlert displayBanner={showBandwidthBanner} />}
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -149,7 +170,8 @@ PdfListView.propTypes = {
   queueRedirectUrl: PropTypes.string,
   queueTaskType: PropTypes.node,
   readerPreferences: PropTypes.object,
-  showBandwidthBanner: PropTypes.bool
+  showBandwidthBanner: PropTypes.bool,
+  warningThreshold: PropTypes.string
 };
 
 export default connect(

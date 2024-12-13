@@ -28,7 +28,6 @@ import {
   clearDocFilters,
   setDocTypes,
   setReceiptDateFilter,
-  enableBandwidthBanner,
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -219,6 +218,7 @@ class DocumentsTable extends React.Component {
       recipetFilterEnabled: true,
       fallbackState: ''
     };
+
   }
 
  executeReceiptFilter = () => {
@@ -721,8 +721,8 @@ class DocumentsTable extends React.Component {
         ),
         valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size}
           browserSpeedInBytes={mbpsToBps}
-          warningThreshold={this.props.readerPreferences}
-          enableBandwidthBanner={this.props.enableBandwidthBanner} />,
+          warningThreshold={this.props.readerPreferences.maximumFileWaitTime}
+          featureToggles={this.props.featureToggles} />,
       },
     ];
   };
@@ -779,7 +779,7 @@ DocumentsTable.propTypes = {
   setClearAllFiltersCallbacks: PropTypes.func.isRequired,
   featureToggles: PropTypes.object,
   readerPreferences: PropTypes.object,
-  enableBandwidthBanner: PropTypes.func.isRequired
+  showBandwidthBanner: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -796,7 +796,6 @@ const mapDispatchToProps = (dispatch) =>
       clearDocFilters,
       setDocTypes,
       setReceiptDateFilter,
-      enableBandwidthBanner
     },
     dispatch
   );
