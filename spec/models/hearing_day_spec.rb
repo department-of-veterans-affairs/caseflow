@@ -371,7 +371,7 @@ describe HearingDay, :all_dbs do
   context "begins_at" do
     context "no db value for begins_at" do
       subject { hearing_day.begins_at }
-      let(:default_slot_time) { "08:30" }
+      let(:default_slot_time) { request_type == "T" ? "09:00" : "08:30" }
       let(:first_slot_time) { nil }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
