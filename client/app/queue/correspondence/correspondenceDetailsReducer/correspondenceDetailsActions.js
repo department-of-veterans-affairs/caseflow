@@ -7,6 +7,7 @@ import { onReceiveTasks, deleteAmaTask } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
+// Redux Store Update Methods
 export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -16,6 +17,106 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
         message: bannerDetails.message,
         type: bannerDetails.type
       }
+    }
+  });
+};
+
+export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY,
+    payload: {
+      tasksUnrelatedToAppealEmpty
+    }
+  });
+};
+
+export const updateCorrespondenceInfo = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CORRESPONDENCE_INFO,
+      payload: {
+        correspondence
+      }
+    });
+  };
+
+export const updateVeteranInformation = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.VETERAN_INFORMATION,
+    payload: {
+      veteranInformation: payload
+    }
+  });
+};
+
+export const updateLinkedAppeals = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.LINKED_APPEALS,
+    payload: {
+      linkedAppeals: payload
+    }
+  });
+};
+
+export const updateExistingAppeals = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.EXISTING_APPEALS,
+    payload: {
+      existingAppeals: payload
+    }
+  });
+};
+
+export const updateTasksUnrelatedToAppeal = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL,
+    payload: {
+      tasksUnrelatedToAppeal: payload
+    }
+  });
+};
+
+export const updateCorrespondenceTypes = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_TYPES,
+    payload: {
+      correspondenceTypes: payload
+    }
+  });
+};
+
+export const updateGeneralInformation = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.GENERAL_INFORMATION,
+    payload: {
+      generalInformation: payload
+    }
+  });
+};
+
+export const updateResponseLetters = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESPONSE_LETTERS,
+    payload: {
+      responseLetters: payload
+    }
+  });
+};
+
+export const updateLinkedCorrespondences = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.LINKED_CORRESPONDENCES,
+    payload: {
+      linkedCorrespondences: payload
+    }
+  });
+};
+
+export const updateAllCorrespondences = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ALL_CORRESPONDENCES,
+    payload: {
+      allCorrespondences: payload
     }
   });
 };
@@ -328,15 +429,6 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
     });
 };
 
-export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY,
-    payload: {
-      tasksUnrelatedToAppealEmpty
-    }
-  });
-};
-
 // Add task not related to appeal
 export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch) => {
   const patchData = {
@@ -449,16 +541,6 @@ export const createCorrespondenceAppealTask = (data, correspondence, appealId) =
     });
 };
 
-export const updateCorrespondenceInfo = (correspondence) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.CORRESPONDENCE_INFO,
-      payload: {
-        correspondence
-      }
-    });
-  };
-
 export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch) => {
   return ApiUtil.patch(`/queue/correspondence/${uuid}/edit_general_information`, payload).
     then((response) => {
@@ -501,5 +583,106 @@ export const updateExpandedLinkedAppeals = (expandedLinkedAppeals, uuid) => (dis
         expandedLinkedAppeals
       }
     });
+  }
+};
+
+export const fetchVeteranInformation = (uuid) => async (dispatch) => {
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/veteran_information`);
+    const data = response.body;
+
+    dispatch(updateVeteranInformation(data));
+
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
+};
+
+export const fetchLinkedAppeals = (uuid) => async (dispatch) => {
+  try {
+    const response = await ApiUtil.get(`/queue/correspondence/${uuid}/linked_appeals`);
+    const data = response.body;
+
+    dispatch(updateLinkedAppeals(data));
+
+    return data;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
+  }
+};
+
+export const updateCorrespondenceStatus = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_STATUS,
+    payload: {
+      correspondenceStatus: payload
+    }
+  });
+};
+
+export const fetchCorrespondenceStatus = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/status`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).status;
+
+      dispatch(updateCorrespondenceStatus(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
+
+export const updateCorrespondenceMailTasks = (payload) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CORRESPONDENCE_MAIL_TASKS,
+    payload: {
+      mailTasks: payload
+    }
+  });
+};
+
+export const fetchCorrespondenceMailTasks = (uuid) => (dispatch) => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/mail_tasks`).
+    then((response) => {
+      const responseStatus = JSON.parse(response.text).mailTasks;
+
+      dispatch(updateCorrespondenceMailTasks(responseStatus));
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};
+
+export const fetchCorrespondenceDetailsInitialPayload = (uuid) => async (dispatch) => {
+  try {
+    const responses = await Promise.all([
+      dispatch(fetchVeteranInformation(uuid)),
+      dispatch(fetchLinkedAppeals(uuid))
+    ]);
+
+    return responses;
+  } catch (error) {
+    const errorMessage = error?.response?.body?.message ?
+      error.response.body.message.replace(/^Error:\s*/, '') :
+      error.message;
+
+    console.error(errorMessage);
   }
 };

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceDetailsController < CorrespondenceController
-  include CorrespondenceControllerConcern
-
   before_action :correspondence_details_access
 
   def correspondence_details
@@ -55,7 +53,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       correspondence: @correspondence,
       correspondence_documents: @correspondence[:correspondenceDocuments],
       general_information: general_information,
-      mail_tasks: mail_tasks,
       appeals_information: appeals,
       inbound_ops_team_users: User.inbound_ops_team_users.select(:css_id).pluck(:css_id),
       correspondence_types: CorrespondenceType.all
@@ -63,13 +60,12 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def serialized_correspondence
-    WorkQueue::CorrespondenceSerializer
+    Correspondence::CorrespondenceDetails::CorrespondenceSerializer
       .new(correspondence)
       .serializable_hash[:data][:attributes]
       .merge(general_information)
-      .merge(mail_tasks)
       .merge(appeals)
-      .merge(all_correspondences)
+      .merge(related_correspondences)
       .merge(prior_mail)
       .merge(user_access)
   end
@@ -87,7 +83,6 @@ class CorrespondenceDetailsController < CorrespondenceController
     {
       correspondence: @correspondence_details[:correspondence],
       general_information: @correspondence_details[:general_information],
-      mailTasks: @correspondence_details[:mail_tasks],
       corres_docs: @correspondence_details[:correspondence_documents]
     }
   end
@@ -181,10 +176,34 @@ class CorrespondenceDetailsController < CorrespondenceController
     render json: { tasks: json_appeal_tasks(tasks.flatten!) }
   end
 
+  def correspondence_status
+    render json: { status: correspondence.status }
+  end
+
+  def correspondence_mail_tasks
+    render json: {
+      mailTasks: correspondence.correspondence_mail_tasks.completed.map(&:label)
+    }
+  end
+
   def create_correspondence_appeal_task
     correspondence_intake_processor.create_appeal_related_tasks(params, current_user, @correspondence)
 
     correspondences_appeals_tasks
+  end
+
+  def veteran_information
+    render json: Correspondence::VeteranSerializer.new(veteran_by_correspondence).serializable_hash[:data][:attributes]
+  end
+
+  def linked_appeals
+    correspondence_appeals = correspondence.correspondence_appeals
+
+    serialized_appeals = correspondence_appeals.map do |appeal|
+      WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+
+    render json: serialized_appeals
   end
 
   private
@@ -246,7 +265,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def serialized_correspondence_appeals
     appeals = []
     correspondence.correspondence_appeals.map do |appeal|
-      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      appeals << WorkQueue::CorrespondenceLinkedAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
     end
 
     appeals
@@ -290,22 +309,16 @@ class CorrespondenceDetailsController < CorrespondenceController
     ).call
   end
 
-  def mail_tasks
-    {
-      mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
-    }
+  def related_correspondences
+    { all_correspondences: serialized_related_correspondences }
   end
 
-  def all_correspondences
-    { all_correspondences: serialized_correspondences }
-  end
-
-  def serialized_correspondences
+  def serialized_related_correspondences
     serialized_data.map { |correspondence| correspondence[:attributes] }
   end
 
   def serialized_data
-    serializer = WorkQueue::CorrespondenceDetailsSerializer.new(ordered_correspondences)
+    serializer = WorkQueue::RelatedCorrespondencesSerializer.new(ordered_correspondences)
     serializer.serializable_hash[:data]
   end
 
@@ -317,9 +330,19 @@ class CorrespondenceDetailsController < CorrespondenceController
     prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
       .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
     serialized_mail = prior_mail.map do |correspondence|
-      WorkQueue::CorrespondenceDetailsSerializer.new(correspondence).serializable_hash[:data][:attributes]
+      WorkQueue::RelatedCorrespondencesSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
 
     { prior_mail: serialized_mail }
+  end
+
+  def general_information
+    {
+      notes: correspondence.notes,
+      correspondence_type_id: correspondence.correspondence_type_id,
+      correspondence_tasks: correspondence.tasks.map do |task|
+        WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
+      end
+    }
   end
 end

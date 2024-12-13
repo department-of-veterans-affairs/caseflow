@@ -369,6 +369,8 @@ Rails.application.routes.draw do
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     get "/correspondence/:correspondence_uuid/correspondences_appeals_tasks",
           to: "correspondence_details#correspondences_appeals_tasks"
+    get "/correspondence/:correspondence_uuid/status", to: "correspondence_details#correspondence_status"
+    get "/correspondence/:correspondence_uuid/mail_tasks", to: "correspondence_details#correspondence_mail_tasks"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
     post "/correspondence/:correspondence_uuid/waive_evidence_submission_window_task",
@@ -386,6 +388,8 @@ Rails.application.routes.draw do
          to: "correspondence_details#save_correspondence_appeals"
     patch "/correspondence/:correspondence_uuid/create_correspondence_appeal_task",
          to: "correspondence_details#create_correspondence_appeal_task"
+    get "/correspondence/:correspondence_uuid/veteran_information", to: "correspondence_details#veteran_information"
+    get "/correspondence/:correspondence_uuid/linked_appeals", to: "correspondence_details#linked_appeals"
 
     resources :correspondence, param: :correspondence_uuid do
       post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
