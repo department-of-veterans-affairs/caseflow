@@ -15,8 +15,7 @@ RSpec.describe Events::DecisionReviewRemanded::CreateRemandClaimReview do
                     claim_review_establishment_last_submitted_at: DateTime.now.to_s,
                     claim_review_establishment_processed_at: DateTime.now.to_s,
                     claim_review_establishment_submitted_at: DateTime.now.to_s,
-                    veteran_file_number: "7479234"
-                    )
+                    veteran_file_number: "7479234")
   end
 
   describe ".process" do

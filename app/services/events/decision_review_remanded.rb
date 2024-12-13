@@ -36,7 +36,7 @@ class Events::DecisionReviewRemanded
                                                                          station_id: parser.station_id)
 
           # Create the Veteran. PII Info is stored in the headers
-          vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
+          Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
           supplemental_claim = Events::DecisionReviewRemanded::CreateRemandClaimReview.process!(
             event: event,
