@@ -206,14 +206,13 @@ class TasksController < ApplicationController
 
   def error_found_upload_transcription_to_vbms
     file_name = params["file_info"]["file_name"]
-    tmp_folder = Base64Service.to_file(params["file_info"]["file"], file_name)
-    current_file_path = tmp_folder.tempfile
-    info_file = split_filename(file_name)
-    response = process_information_to_vbms(info_file, file_name, current_file_path)
+    file_contents = params["file_info"]["file"]
+    response = process_information_to_vbms(file_name, file_contents)
     if response.success?
       # change status of ReviewTranscriptTask
       complete_transcript_review
       set_flash_vbms_upload_success(file_name, appeal)
+      render json: { success: true }, status: :ok
     else
       render json: { success: false }, status: :bad_request
     end
@@ -221,14 +220,12 @@ class TasksController < ApplicationController
 
   private
 
-  def process_information_to_vbms(info_file, file_name, current_file_path)
-    transcription_file = Hearings::TranscriptionFile.find_by(
-      hearing_id: info_file[:hearing_id],
-      hearing_type: info_file[:hearing_type],
-      file_type: info_file[:extension]
-    )
-    transcription_file.upload_content_to_s3!(current_file_path)
-    appeal = transcription_file.hearing.appeal
+  def process_information_to_vbms(file_name, file_contents)
+    transcription_file = Hearings::TranscriptionFile.where(docket_number: appeal.docket_number)
+      .where(file_type: "pdf")
+      .order(date_upload_aws: :desc)
+      .first
+    transcription_file.upload_content_to_s3!(file_contents)
     document_params =
       {
         veteran_file_number: appeal.veteran_file_number,
@@ -236,7 +233,7 @@ class TasksController < ApplicationController
         document_subject: "notifications",
         document_name: file_name,
         application: "notification-report",
-        file: current_file_path
+        file: file_contents
       }
 
     PrepareDocumentUploadToVbms.new(document_params, User.system_user, appeal).call
@@ -255,17 +252,6 @@ class TasksController < ApplicationController
     }
   end
 
-  def split_filename(file_name)
-    hearing_id = file_name.split("_")[1]
-    hearing_type = file_name.split("_")[2].split(".")[0]
-    extension = file_name.split(".")[1]
-    {
-      hearing_id: hearing_id,
-      hearing_type: hearing_type,
-      extension: extension
-    }
-  end
-
   def complete_transcript_review
     return unless task.is_a?(ReviewTranscriptTask) && task.active?
 
@@ -281,10 +267,6 @@ class TasksController < ApplicationController
       closed_at: Time.zone.now,
       completed_by_id: current_user.id
     )
-
-    render json: {}, status: :ok
-  rescue StandardError => error
-    render_update_errors(error)
   end
 
   def send_initial_notification_letter
