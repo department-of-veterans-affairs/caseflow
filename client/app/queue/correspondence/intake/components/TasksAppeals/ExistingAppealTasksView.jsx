@@ -93,6 +93,7 @@ export const ExistingAppealTasksView = (props) => {
         {getTasksForAppeal().map((task) => {
           return (
             <AddTaskView
+              classNames={['corr-intake-remove-task-button']}
               key={task.id}
               task={task}
               removeTask={removeTask}

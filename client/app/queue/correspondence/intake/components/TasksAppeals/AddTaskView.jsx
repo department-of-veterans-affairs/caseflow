@@ -54,7 +54,6 @@ const AddTaskView = (props) => {
       <div key={task.id}>
         {modalVisible &&
         <CheckboxModal
-          className="checkbox-modal-style"
           checkboxData={props.autoTexts}
           toggleModal={handleModalToggle}
           closeHandler={handleModalToggle}
@@ -96,7 +95,7 @@ const AddTaskView = (props) => {
             <Button
               name="Remove"
               onClick={() => props.removeTask(task.id)}
-              classNames={['cf-btn-link', 'cf-right-side', 'remove-task-button', 'corr-intake-remove-task-button']}
+              classNames={['corr-intake-remove-task-button', 'cf-btn-link', 'cf-right-side', 'remove-task-button']}
             >
               <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
             </Button>

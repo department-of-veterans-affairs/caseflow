@@ -510,6 +510,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .checkbox-modal-style .cf-modal-body {
   width: 50%;
   min-width: 750px;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .cf-modal-body {
@@ -879,6 +881,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
+    padding-bottom: 1.5rem;
   }
 
   .tasks-appeal-title {
@@ -897,6 +900,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 auto; // Center grid container horizontally
     padding-left: 40px;
     padding-right: 50px;
+
+    .corr-intake-remove-task-button {
+      margin-top: -8px;
+    }
+
+    .corr-intake-add-auto-button {
+      margin-top: -30px;
+    }
 
     // Media query for smaller screens
     @media (max-width: 1260px) {
@@ -926,7 +937,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     display: block;
     padding: 2rem;
     padding-left: 34px;
-    padding-bottom: 2.4% !important;
+    padding-bottom: 2.4%;
     margin-bottom: 20px;
     width: 45rem;
 
@@ -1096,7 +1107,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .review-tasks-and-appeal-box {
   margin-bottom: 2rem;
-  padding: 3rem 3rem;
+  padding: 3rem;
 }
 
 .mail-tasks-title {
@@ -2034,7 +2045,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .gray-border {
   border: 1px solid $color-cream;
-  padding-bottom: 1.5rem !important;
+  padding-bottom: 1.5rem;
 }
 
 .margin-bottom-for-add-task-view {
@@ -2205,11 +2216,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .corr-intake-add-auto-button {
-  margin-top: -30px !important;
+  margin-top: -30px;
 }
 
 .corr-intake-remove-task-button {
-  margin-top: -8px !important;
+  margin-top: -8px;
 }
 
 .intake-form-divider {
@@ -2237,11 +2248,4 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-top: 40px;
   }
 
-}
-
-.checkbox-modal-style {
-  .cf-modal-body {
-    overflow-x: hidden;
-    overflow-y: hidden;
-  }
 }
