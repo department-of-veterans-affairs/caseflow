@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "helpers/poa_access"
-
 describe "WarRoom::PoaAccess" do
   let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case), vbms_id: "000001234") }
   let!(:poa) { create(:bgs_power_of_attorney, file_number: "000001234") }

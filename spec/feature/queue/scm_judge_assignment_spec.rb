@@ -318,6 +318,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{COPY::ATTORNEY_TASK_LABEL}")
+          expect(page)
+            .to have_content("This appeal has been moved. Please check the case timeline for additional details.")
         end
       end
     end

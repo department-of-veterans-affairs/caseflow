@@ -192,6 +192,12 @@ export const caseTimelineTasksForAppeal = createSelector(
     (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
+export const latestCaseTimelineTaskForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) => orderBy(filter(completeTasksSelector(tasks),
+    (task) => !task.hideFromCaseTimeline), ['closedAt'], ['desc'])[0]
+);
+
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks) => orderBy(filter(incompleteTasksSelector(tasks),

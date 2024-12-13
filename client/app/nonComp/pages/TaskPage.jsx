@@ -13,6 +13,7 @@ import { completeTask, taskUpdateDefaultPage } from '../actions/task';
 import { ErrorAlert } from '../components/Alerts';
 import NonCompLayout from '../components/NonCompLayout';
 import Link from 'app/components/Link';
+import { DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE } from '../../../COPY';
 
 class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
@@ -89,7 +90,10 @@ class TaskPageUnconnected extends React.PureComponent {
           <div className="usa-grid-full">
             <div className="usa-width-two-thirds">
               <div className="cf-form-details">
-                <div><strong>Form being processed</strong> {longFormNameFromKey(appeal.formType)}</div>
+                <div><strong>Form being processed</strong> {
+                  task.type === 'Remand' ? DECISION_REVIEW_REQUEST_REMAND_FORM_TYPE :
+                    longFormNameFromKey(appeal.formType)
+                }</div>
                 <div><strong>Informal conference requested</strong> {appeal.informalConference ? 'Yes' : 'No'}</div>
                 <div><strong>Review by same office requested</strong> {appeal.sameOffice ? 'Yes' : 'No'}</div>
               </div>
@@ -121,6 +125,7 @@ TaskPageUnconnected.propTypes = {
     claimant: PropTypes.object,
     type: PropTypes.string,
     created_at: PropTypes.string,
+    appeal: PropTypes.object,
   }),
   businessLine: PropTypes.string,
   decisionIssuesStatus: PropTypes.object,
