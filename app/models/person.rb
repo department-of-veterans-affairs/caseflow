@@ -2,7 +2,7 @@
 
 class Person < CaseflowRecord
   include AssociatedBgsRecord
-  include BgsService
+  include BGSServiceConcern
   include EventConcern
 
   has_many :advance_on_docket_motions
