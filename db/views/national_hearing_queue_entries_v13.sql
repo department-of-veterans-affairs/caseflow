@@ -155,13 +155,7 @@ WITH latest_cutoff_date AS (
     END AS pact_indicator,
     correspondent.sfnod IS NOT NULL AS veteran_deceased_indicator,
     brieff.bfac = '7' AS cavc_indicator,
-    CASE
-      WHEN (((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ('C')) OR
-            ((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ('D')) OR
-            ((SELECT reptype FROM reps_awaiting_hearing_scheduling()) = ('E')))
-      THEN TRUE
-      ELSE false
-    END AS contested_claim_indicator
+    rep_for_sched.is_contested IS TRUE AS contested_claim_indicator
   FROM
     legacy_appeals
     JOIN tasks ON tasks.appeal_type = 'LegacyAppeal'
@@ -182,7 +176,13 @@ WITH latest_cutoff_date AS (
       MAX(isspact) AS pact
       FROM issues_awaiting_hearing_scheduling()
       GROUP BY isskey) AS fvi ON (fvi.isskey = brieff.bfkey)
-    LEFT JOIN reps_awaiting_hearing_scheduling() ON (repkey = legacy_appeals.vacols_id)
+    LEFT JOIN (
+	  SELECT
+	  	repkey,
+	  	BOOL_OR(reptype = ANY(ARRAY['C', 'D', 'E'])) AS is_contested
+	  FROM reps_awaiting_hearing_scheduling()
+	  GROUP BY repkey
+	) as rep_for_sched ON (rep_for_sched.repkey = brieff.bfkey)
   WHERE
     tasks.type = 'ScheduleHearingTask'
     AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
