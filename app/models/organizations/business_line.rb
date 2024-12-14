@@ -651,15 +651,20 @@ class BusinessLine < Organization
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def days_waiting_filter
       current_timestamp = ActiveRecord::Base.connection.quote(Time.zone.now)
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:operator]
         case operator
-        when ">", "<", "="
+        when ">", "<"
           <<-SQL
             AND (#{current_timestamp}::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
+          SQL
+        when "="
+          <<-SQL
+            AND EXTRACT(DAY FROM AGE(CURRENT_TIMESTAMP, tasks.assigned_at)) = '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
@@ -670,6 +675,7 @@ class BusinessLine < Organization
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def station_id_filter
       if query_params[:facilities].present?
